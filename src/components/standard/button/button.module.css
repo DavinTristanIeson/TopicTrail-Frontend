@@ -1,0 +1,16 @@
+.button__link {
+  text-decoration: none;
+  font-weight: bold;
+  color: orange;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+}
+
+.button__link:hover {
+  color: orange;
+}
+
+.button--submit {
+  height: 50px;
+  font-size: 20px;
+}
