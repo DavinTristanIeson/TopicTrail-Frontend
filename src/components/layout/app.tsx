@@ -1,24 +1,27 @@
 import useGetParentRef, { ParentRefType } from "@/hooks/parent-ref";
 import React from "react";
 import { useCombinedRefs } from "@/hooks/ref";
-import { Flex, ScrollArea } from "@mantine/core";
+import { AppShell, Flex, ScrollArea } from "@mantine/core";
+import LayoutStyles from './layout.module.css';
 
 interface AppLayoutProps {
-  Header?: React.ReactNode;
+  Aside?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 export default function AppLayout(props: AppLayoutProps) {
-  const { Header, children } = props;
+  const { Aside: Aside, children } = props;
   const loadingRef = useGetParentRef(ParentRefType.Loading);
   const scrollRef = useGetParentRef(ParentRefType.Scroll);
   const combineRef = useCombinedRefs(loadingRef, scrollRef);
   return (
-    <Flex h="100%" direction="column">
-      <header>{Header}</header>
-      <main ref={combineRef} className="flex-1 relative">
-        <ScrollArea scrollbars="y">{children}</ScrollArea>
-      </main>
-    </Flex>
+    <AppShell>
+      <AppShell.Aside>
+        {Aside}
+      </AppShell.Aside>
+      <AppShell.Main ref={combineRef}>
+        {children}
+      </AppShell.Main>
+    </AppShell>
   );
 }

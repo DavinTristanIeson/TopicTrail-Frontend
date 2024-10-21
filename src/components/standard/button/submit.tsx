@@ -14,10 +14,7 @@ export default function SubmitButton(props: ButtonProps) {
       radius="xl"
       loading={isSubmitting}
       disabled={(isDirty && !isValid) || props.disabled}
-      className={classNames(
-        props.variant === "appeal" ? ButtonStyles["button--submit"] : undefined,
-        props.className
-      )}
+      className={classNames(ButtonStyles["button--submit"], props.className)}
     />
   );
 }
