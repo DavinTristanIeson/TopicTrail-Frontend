@@ -6,22 +6,22 @@ import { ApiFetch } from "@/common/api/fetch";
 import { StaleTimes } from "../common/query";
 import { ApiResult, ExtendedApiResult } from "@/common/api/model";
 
-const ProjectQueryKeys = {
+export const ProjectQueryKeys = {
   listKey: "getProjects",
   detailKey: "getProject",
-  detail(input: IdInput){
+  detail(input: IdInput) {
     return [ProjectQueryKeys.detailKey, input.id];
   }
 }
 
 const ENDPOINT = "projects";
 
-export const useGetProjects: ApiQueryFunction<object, ExtendedApiResult<ProjectLiteModel[]>> = function (input, options) {
+export const useGetProjects: ApiQueryFunction<void, ExtendedApiResult<ProjectLiteModel[]>> = function (input, options) {
   return useQuery({
     queryKey: [ProjectQueryKeys.listKey],
     staleTime: StaleTimes.Long,
     ...options,
-    queryFn(){
+    queryFn() {
       return ApiFetch({
         url: ENDPOINT,
         classType: ProjectLiteModel,
@@ -36,7 +36,7 @@ export const useGetProject: ApiQueryFunction<IdInput, ApiResult<ProjectModel>> =
     queryKey: ProjectQueryKeys.detail(input),
     staleTime: StaleTimes.Long,
     ...options,
-    queryFn(){
+    queryFn() {
       return ApiFetch({
         url: `${ENDPOINT}/${input.id}`,
         classType: ProjectModel,

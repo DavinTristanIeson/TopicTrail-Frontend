@@ -8,7 +8,7 @@ export class ProjectLiteModel {
 
 export class ProjectModel {
   id: string;
-  
+
   @Type(() => ProjectConfigModel)
   config: ProjectConfigModel;
 }

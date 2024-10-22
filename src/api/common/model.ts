@@ -14,6 +14,10 @@ export interface IdInput {
   id: string;
 }
 
+export interface SearchableInput {
+  q?: string;
+}
+
 export type PaginatedInput<T = object> = T & {
   page?: number;
   size?: number;
