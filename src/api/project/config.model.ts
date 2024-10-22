@@ -1,6 +1,8 @@
 import { DataSourceTypeEnum, SchemaColumnTypeEnum } from "@/common/constants/enum";
 import { Expose, Type } from "class-transformer";
 
+export const PROJECT_CONFIG_VERSION = 1;
+
 export class ProjectDataSourceModel {
   path: string
   type: DataSourceTypeEnum;
@@ -43,7 +45,7 @@ export class TopicModelingConfigModel {
   maxTopics: number;
 
   @Expose({ name: "n_gram_range" })
-  nGramRange: number;
+  nGramRange: [number, number];
 
   @Expose({ name: "seed_topics" })
   seedTopics: string[][] | null;
@@ -61,35 +63,36 @@ export class ProjectSchemaModel {
 
   // Continuous
   @Expose({ name: "lower_bound" })
-  lowerBound?: number;
+  lowerBound?: number | null;
 
-  @Expose({ name: "lower_bound" })
-  upperBound?: number;
+  @Expose({ name: "upper_bound" })
+  upperBound?: number | null;
 
   // Categorical
   @Expose({ name: "min_frequency" })
-  minFrequency?: number;
+  minFrequency?: number | null;
 
   // Temporal
 
   @Expose({ name: "min_date" })
   @Type(() => Date)
-  minDate?: Date;
+  minDate?: Date | null;
 
   @Expose({ name: "max_date" })
   @Type(() => Date)
-  maxDate?: Date;
+  maxDate?: Date | null;
 
   bins?: number
 
   @Expose({ name: "datetime_format" })
-  datetimeFormat: string;
+  datetimeFormat?: string | null;
 
+  // Textual
   @Type(() => TextPreprocessingConfigModel)
-  preprocessing: TextPreprocessingConfigModel
+  preprocessing?: TextPreprocessingConfigModel
 
   @Type(() => TopicModelingConfigModel)
-  topic: TopicModelingConfigModel
+  topic?: TopicModelingConfigModel
 }
 
 
@@ -107,6 +110,6 @@ export class ProjectConfigModel {
   @Type(() => ProjectDataSourceModel)
   source: ProjectDataSourceModel
 
-  @Type(() => ProjectSchemaModel)
-  dfschema: ProjectSchemaModel;
+  @Type(() => ProjectSchemaManagerModel)
+  dfschema: ProjectSchemaManagerModel;
 }

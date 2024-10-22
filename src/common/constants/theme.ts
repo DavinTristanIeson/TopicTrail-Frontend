@@ -17,7 +17,7 @@ const mantineTheme = createTheme({
       "#5c5557"
     ],
   },
-  defaultRadius: 'lg',
+  defaultRadius: 'md',
   defaultGradient: {
     from: Colors.backgroundPrimary,
     to: Colors.foregroundPrimary,

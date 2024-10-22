@@ -1,6 +1,11 @@
 import { handleFormSubmission } from "@/common/utils/form";
-import React from "react"
-import { FieldValues, Form, FormProvider, UseFormReturn } from "react-hook-form";
+import React from "react";
+import {
+  FieldValues,
+  Form,
+  FormProvider,
+  UseFormReturn,
+} from "react-hook-form";
 
 interface FormMetaState {
   editable: boolean;
@@ -9,7 +14,7 @@ interface FormMetaState {
 
 const FormMetaStateContext = React.createContext<FormMetaState>({
   editable: false,
-  setEditable(){},
+  setEditable() {},
 });
 
 interface FormWrapperProps<T extends FieldValues> {
@@ -18,17 +23,21 @@ interface FormWrapperProps<T extends FieldValues> {
   children: React.ReactNode;
 }
 
-export default function FormWrapper<T extends FieldValues>(props: FormWrapperProps<T>){
-  const handleSubmit = handleFormSubmission(props.onSubmit, props.form);
+export default function FormWrapper<T extends FieldValues>(
+  props: FormWrapperProps<T>
+) {
+  const handleSubmit = props.form.handleSubmit(
+    handleFormSubmission(props.onSubmit, props.form.setError),
+    console.error
+  );
   const [editable, setEditable] = React.useState(false);
-  return <FormProvider {...props.form}>
-    <Form
-      control={props.form.control}
-      onSubmit={handleSubmit}
-    >
-      <FormMetaStateContext.Provider value={{editable, setEditable}}>
-        {props.children}
-      </FormMetaStateContext.Provider>
-    </Form>
+  return (
+    <FormProvider {...props.form}>
+      <Form control={props.form.control} onSubmit={handleSubmit as any}>
+        <FormMetaStateContext.Provider value={{ editable, setEditable }}>
+          {props.children}
+        </FormMetaStateContext.Provider>
+      </Form>
     </FormProvider>
+  );
 }

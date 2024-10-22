@@ -1,8 +1,8 @@
 import { ApiMutationFunction } from "@/common/api/fetch-types";
-import { ProjectCheckDatasetInput, ProjectCheckDatasetModel, ProjectCheckIdInput, ProjectCheckIdModel, ProjectModel } from "./model";
+import { ProjectCheckDatasetModel, ProjectCheckIdInput, ProjectCheckIdModel, ProjectModel } from "./model";
 import { ApiFetch } from "@/common/api/fetch";
 import { useMutation } from "@tanstack/react-query";
-import { ProjectConfigModel } from "./config.model";
+import { ProjectConfigModel, ProjectDataSourceModel } from "./config.model";
 import { queryClient } from "@/common/api/query-client";
 import { ProjectQueryKeys } from "./query";
 import { IdInput, UpdateInput } from "../common/model";
@@ -23,7 +23,7 @@ export const useProjectCheckId: ApiMutationFunction<ProjectCheckIdInput, ApiResu
   })
 }
 
-export const useProjectCheckDataset: ApiMutationFunction<ProjectCheckDatasetInput, ApiResult<ProjectCheckDatasetModel>> = function (options) {
+export const useProjectCheckDataset: ApiMutationFunction<ProjectDataSourceModel, ApiResult<ProjectCheckDatasetModel>> = function (options) {
   return useMutation({
     mutationFn(input) {
       return ApiFetch({

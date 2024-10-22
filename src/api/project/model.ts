@@ -29,7 +29,3 @@ export class ProjectCheckDatasetModel {
 export interface ProjectCheckIdInput {
   projectId: string;
 }
-
-export interface ProjectCheckDatasetInput {
-  path: string;
-}
