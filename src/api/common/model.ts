@@ -1,14 +1,11 @@
-export class BoundingBox {
-  x0: number;
-  x1: number;
-  y0: number;
-  y1: number;
+// Model
+export class EnumModel {
+  label: string;
+  value: string;
+  description: string;
 }
 
-export class Point {
-  x: number;
-  y: number;
-}
+// Input
 
 export interface IdInput {
   id: string;

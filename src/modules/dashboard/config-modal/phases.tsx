@@ -5,6 +5,7 @@ import {
 import Colors from "@/common/constants/colors";
 import {
   Alert,
+  Box,
   Flex,
   NumberInput,
   Select,
@@ -15,15 +16,33 @@ import { showNotification } from "@mantine/notifications";
 import React from "react";
 import Text from "@/components/standard/text";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { ArrowLeft, CheckCircle } from "@phosphor-icons/react";
+import { ArrowLeft, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { ProjectCheckDatasetModel } from "@/api/project/model";
-import { DataSourceTypeEnum } from "@/common/constants/enum";
+import { DataSourceTypeEnum, EnumList } from "@/common/constants/enum";
 import Button from "@/components/standard/button/base";
 import { ProjectConfigFormType } from "./form-type";
 import { formSetErrors, handleFormSubmission } from "@/common/utils/form";
+import EnumSelect from "@/components/widgets/enum-select";
+
+// +------------------+
+// | CHECK PROJECT ID |
+// +------------------+
 
 interface CreateProjectFlow_CheckProjectIdProps {
   onContinue(): void;
+}
+
+export function ProjectIdForm() {
+  const { register } = useFormContext<ProjectConfigFormType>();
+
+  return (
+    <TextInput
+      {...register("projectId")}
+      label="Project Name"
+      description="The name of the project should be unique."
+      required
+    />
+  );
 }
 
 export function CreateProjectFlow_CheckProjectId(
@@ -32,7 +51,6 @@ export function CreateProjectFlow_CheckProjectId(
   const { mutateAsync: check } = useProjectCheckId();
   const {
     getValues,
-    register,
     setError,
     formState: { errors },
   } = useFormContext<ProjectConfigFormType>();
@@ -66,13 +84,6 @@ export function CreateProjectFlow_CheckProjectId(
         directory in the same directory as the Wordsmith Project.
       </Alert>
 
-      <TextInput
-        {...register("projectId")}
-        label="Project Name"
-        placeholder="Enter the name of your project"
-        required
-      />
-
       <Button
         leftSection={<CheckCircle size={20} />}
         onClick={handleSubmit}
@@ -84,12 +95,16 @@ export function CreateProjectFlow_CheckProjectId(
   );
 }
 
-interface CreateProjectFlow_CheckDatasetProps {
-  onContinue(values: ProjectCheckDatasetModel): void;
-  onBack(): void;
+// +---------------+
+// | CHECK DATASET |
+// +---------------+
+interface ProjectConfigDataSourceFormProps {
+  readOnly: boolean;
 }
 
-function CreateProjectFlow_CheckDataset_FieldsSwitcher() {
+function ProjectConfigDataSourceFormFieldSwitcher(
+  props: ProjectConfigDataSourceFormProps
+) {
   const { control, register } = useFormContext<ProjectConfigFormType>();
   const type = useWatch({
     name: "source.type",
@@ -115,7 +130,7 @@ function CreateProjectFlow_CheckDataset_FieldsSwitcher() {
                 onChange={(value) => {
                   field.onChange(value === "" ? null : undefined);
                 }}
-                min={0}
+                min={1}
                 label="Delimiter"
                 placeholder=","
                 description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
@@ -133,18 +148,71 @@ function CreateProjectFlow_CheckDataset_FieldsSwitcher() {
         {...register("source.sheetName")}
         label="Sheet Name"
         description="The sheet that contains the data to be analyzed."
+        readOnly={props.readOnly}
+        required
       />
     );
   }
   return null;
 }
 
+export function ProjectConfigDataSourceForm(
+  props: ProjectConfigDataSourceFormProps
+) {
+  const { register, setValue } = useFormContext<ProjectConfigFormType>();
+  return (
+    <>
+      {props.readOnly && (
+        <Alert color={Colors.sentimentWarning}>
+          <Flex align="center">
+            <WarningCircle size={24} />
+            Fundamental dataset properties cannot be altered as your existing
+            columns will need to be cleared and re-configured. If you want to
+            change the dataset, we recommend creating a new project rather than
+            modifying this one.
+          </Flex>
+        </Alert>
+      )}
+      <Flex gap={24}>
+        <TextInput
+          {...register("source.path")}
+          label="Dataset Path"
+          placeholder="path/to/dataset"
+          description="Enter the path (preferably absolute) of your dataset. You can also specify the path relative to the directory of the Wordsmith Project, but this is not recommended."
+          required
+          readOnly={props.readOnly}
+          w="100%"
+        />
+        <EnumSelect
+          {...register("source.type")}
+          onChange={(value) => {
+            setValue("source.type", value as DataSourceTypeEnum);
+          }}
+          type={EnumList.DataSourceTypeEnum}
+          clearable={false}
+          label="Dataset Type"
+          description="We need to know the type of the dataset so that we can properly parse its contents."
+          readOnly={props.readOnly}
+          w="100%"
+        />
+      </Flex>
+      <Box w="50%">
+        <ProjectConfigDataSourceFormFieldSwitcher {...props} />
+      </Box>
+    </>
+  );
+}
+
+interface CreateProjectFlow_CheckDatasetProps {
+  onContinue(values: ProjectCheckDatasetModel): void;
+  onBack(): void;
+}
+
 export function CreateProjectFlow_CheckDataset(
   props: CreateProjectFlow_CheckDatasetProps
 ) {
   const { mutateAsync: check } = useProjectCheckDataset();
-  const { register, getValues, setValue, setError } =
-    useFormContext<ProjectConfigFormType>();
+  const { getValues, setError } = useFormContext<ProjectConfigFormType>();
   const handleSubmit = async () => {
     const values = getValues();
     try {
@@ -181,28 +249,7 @@ export function CreateProjectFlow_CheckDataset(
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
       </Alert>
 
-      <TextInput
-        {...register("source.path")}
-        label="Dataset Path"
-        placeholder="path/to/dataset"
-        description="Enter the path (preferably absolute) of your dataset. You can also specify the path relative to the directory of the Wordsmith Project, but this is not recommended."
-        required
-      />
-      <Select
-        {...register("source.type")}
-        onChange={(value) => {
-          setValue("source.type", value as DataSourceTypeEnum);
-        }}
-        clearable={false}
-        data={[
-          DataSourceTypeEnum.CSV,
-          DataSourceTypeEnum.Excel,
-          DataSourceTypeEnum.Parquet,
-        ]}
-        label="Dataset Type"
-        description="We need to know the type of the dataset so that we can properly parse its contents."
-      />
-      <CreateProjectFlow_CheckDataset_FieldsSwitcher />
+      <ProjectConfigDataSourceForm readOnly={false} />
 
       <Flex justify="between">
         <Button
