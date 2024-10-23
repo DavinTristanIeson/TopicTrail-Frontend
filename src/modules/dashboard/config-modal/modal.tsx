@@ -19,13 +19,16 @@ import {
 } from "./phases";
 import ProjectConfigFormBody from "./form-body";
 import FormWrapper from "@/components/utility/form/wrapper";
-import { useUpdateProject } from "@/api/project/mutation";
+import { useCreateProject, useUpdateProject } from "@/api/project/mutation";
+import { showNotification } from "@mantine/notifications";
+import Colors from "@/common/constants/colors";
+import { handleFormSubmission } from "@/common/utils/form";
 
 interface ProjectConfigModalProps {
   data?: ProjectConfigModel;
 }
 
-function CreateProjectConfigModalBody(props: ProjectConfigModalProps) {
+function CreateProjectConfigModalBody() {
   const [phase, setPhase] = React.useState(0);
   const resolver = yupResolver(ProjectConfigFormSchema);
   const form = useForm({
@@ -37,16 +40,35 @@ function CreateProjectConfigModalBody(props: ProjectConfigModalProps) {
   const onContinue = () => setPhase((phase) => phase + 1);
   const onBack = () => setPhase((phase) => phase - 1);
 
-  if (phase === 0) {
-    return <CreateProjectFlow_CheckProjectId onContinue={onContinue} />;
-  }
-  if (phase === 1) {
-    return (
-      <CreateProjectFlow_CheckDataset onContinue={onContinue} onBack={onBack} />
-    );
-  }
+  const { mutateAsync: create } = useCreateProject();
 
-  return <ProjectConfigFormBody />;
+  const handleSubmit = handleFormSubmission(
+    async (values: ProjectConfigFormType) => {
+      const res = await create(ProjectConfigFormType2Input(values));
+      if (res.message) {
+        showNotification({
+          color: Colors.sentimentSuccess,
+          message: res.message,
+        });
+      }
+    },
+    form.setError
+  );
+
+  return (
+    <FormWrapper form={form} onSubmit={handleSubmit}>
+      {phase === 0 && (
+        <CreateProjectFlow_CheckProjectId onContinue={onContinue} />
+      )}
+      {phase === 1 && (
+        <CreateProjectFlow_CheckDataset
+          onContinue={onContinue}
+          onBack={onBack}
+        />
+      )}
+      {phase === 2 && <ProjectConfigFormBody />}
+    </FormWrapper>
+  );
 }
 
 function EditProjectConfigModalBody(props: ProjectConfigModalProps) {
@@ -63,6 +85,12 @@ function EditProjectConfigModalBody(props: ProjectConfigModalProps) {
       id,
       body: ProjectConfigFormType2Input(values),
     });
+    if (res.message) {
+      showNotification({
+        color: Colors.sentimentSuccess,
+        message: res.message,
+      });
+    }
   };
 
   return (

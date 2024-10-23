@@ -75,7 +75,7 @@ export const ProjectConfigFormSchema = Yup.object({
       then: schema => schema.required(),
       otherwise: schema => schema.strip(),
     }),
-    topic: Yup.object({
+    topicModeling: Yup.object({
       lowMemory: Yup.boolean().required(),
       minTopicSize: Yup.number().positive().required(),
       maxTopicSize: Yup.number().required().moreThan(Yup.ref("minTopicSize")),
@@ -105,7 +105,7 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
       return {
         name: col.name,
         preprocessing: col.preprocessing as any,
-        topic: col.topic as any,
+        topicModeling: col.topicModeling as any,
         type: col.type,
         bins: col.bins,
         datetimeFormat: col.datetimeFormat,
@@ -135,9 +135,9 @@ export function ProjectConfigFormType2Input(values: ProjectConfigFormType): Proj
       columns: values.columns.map(col => {
         return {
           ...col,
-          topic: col.topic ? {
-            ...col.topic,
-            nGramRange: [col.topic.nGramRangeStart, col.topic.nGramRangeEnd]
+          topicModeling: col.topicModeling ? {
+            ...col.topicModeling,
+            nGramRange: [col.topicModeling.nGramRangeStart, col.topicModeling.nGramRangeEnd]
           } : undefined,
         }
       }),

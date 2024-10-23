@@ -1,51 +1,86 @@
-import { useFieldArray, useFormContext } from "react-hook-form";
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from "react-hook-form";
 import { ProjectConfigDataSourceForm, ProjectIdForm } from "./phases";
 import { ProjectConfigFormType } from "./form-type";
-import { Accordion, NumberInput } from "@mantine/core";
-import { SchemaColumnTypeEnum } from "@/common/constants/enum";
-import get from "lodash/get";
-import NumberField from "@/components/standard/fields/number-field";
+import { Accordion, TextInput } from "@mantine/core";
+import { EnumList, SchemaColumnTypeEnum } from "@/common/constants/enum";
+import {
+  ProjectConfigColumnCategoricalForm,
+  ProjectConfigColumnContinuousForm,
+  ProjectConfigColumnTemporalForm,
+  ProjectConfigColumnTextualForm,
+} from "./columns";
+import EnumSelect from "@/components/widgets/enum-select";
+import React from "react";
+import Text from "@/components/standard/text";
 
-interface ProjectConfigColumnFormProps {
-  type: SchemaColumnTypeEnum;
+interface ProjectConfigColumnFormItemProps {
+  accordionValue: string;
   index: number;
 }
 
-function ProjectConfigColumnForm(props: ProjectConfigColumnFormProps) {
-  const { type, index } = props;
-  const {
-    register,
-    setValue,
-    formState: { errors },
-  } = useFormContext<ProjectConfigFormType>();
-  const NAME = `columns.${index}` as const;
+function ProjectConfigColumnFormItemSwitcher(
+  props: ProjectConfigColumnFormItemProps
+) {
+  const { index } = props;
+  const { control } = useFormContext<ProjectConfigFormType>();
+  const type = useWatch({
+    name: `columns.${index}.type`,
+    control,
+  });
 
   if (type === SchemaColumnTypeEnum.Categorical) {
-    const FIELD_NAME = `${NAME}.minFrequency` as const;
-    return (
-      <>
-        <NumberField
-          name={FIELD_NAME}
-          label="Min. Frequency"
-          description="The minimum frequency for a value to be considered a category in the column."
-        />
-      </>
-    );
+    return <ProjectConfigColumnCategoricalForm index={index} />;
   }
   if (type === SchemaColumnTypeEnum.Continuous) {
-    return (
-      <>
-        <NumberInput
-          {...(register(FIELD_NAME) as any)}
-          error={get(errors, FIELD_NAME)?.message}
-          onChange={(value) =>
-            setValue(FIELD_NAME, typeof value === "string" ? 1 : value)
-          }
-        />
-      </>
-    );
+    return <ProjectConfigColumnContinuousForm index={index} />;
   }
-  return <></>;
+  if (type === SchemaColumnTypeEnum.Temporal) {
+    return <ProjectConfigColumnTemporalForm index={index} />;
+  }
+  if (type === SchemaColumnTypeEnum.Textual) {
+    return <ProjectConfigColumnTextualForm index={index} />;
+  }
+  return undefined;
+}
+
+function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
+  const { index, accordionValue } = props;
+  const { register } = useFormContext<ProjectConfigFormType>();
+  const NAME = `columns.${index}` as const;
+  return (
+    <Accordion.Item value={accordionValue}>
+      <Accordion.Control>
+        <Controller
+          name={`${NAME}.name`}
+          render={({ field }) => {
+            return (
+              <Text fw="bold" size="md">
+                {field.value}
+              </Text>
+            );
+          }}
+        />
+      </Accordion.Control>
+      <Accordion.Panel>
+        <TextInput
+          {...register(`${NAME}.name`)}
+          label="Name"
+          description="The name of the column. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
+        />
+        <EnumSelect
+          type={EnumList.SchemaColumnTypeEnum}
+          label="Type"
+          description="The type of the column. Please note that providing the wrong column type can cause the application to error."
+        />
+        <ProjectConfigColumnFormItemSwitcher {...props} />
+      </Accordion.Panel>
+    </Accordion.Item>
+  );
 }
 
 function ProjectConfigColumnsFieldArray() {
@@ -58,12 +93,15 @@ function ProjectConfigColumnsFieldArray() {
 
   return (
     <Accordion>
-      {fields.map((field) => (
-        <Accordion.Item key={field.__fieldId} value={field.name}>
-          <Accordion.Control>{field.name}</Accordion.Control>
-          <Accordion.Panel></Accordion.Panel>
-        </Accordion.Item>
-      ))}
+      {fields.map((field, index) => {
+        return (
+          <ProjectConfigColumnFormItem
+            index={index}
+            key={field.__fieldId}
+            accordionValue={field.__fieldId}
+          />
+        );
+      })}
     </Accordion>
   );
 }

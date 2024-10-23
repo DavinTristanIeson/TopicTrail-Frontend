@@ -7,7 +7,7 @@ import React from "react";
 import { maybeElement } from "@/common/utils/iterable";
 import { Plus } from "@phosphor-icons/react";
 import { useDebouncedState } from "@mantine/hooks";
-import ProjectConfigModal from "../modules/dashboard/create-modal/modal";
+import ProjectConfigModal from "@/modules/dashboard/config-modal/modal";
 import { ToggleDispatcher } from "@/hooks/dispatch-action";
 
 export default function Dashboard() {

@@ -92,7 +92,7 @@ export class ProjectSchemaModel {
   preprocessing?: TextPreprocessingConfigModel
 
   @Type(() => TopicModelingConfigModel)
-  topic?: TopicModelingConfigModel
+  topicModeling?: TopicModelingConfigModel
 }
 
 
