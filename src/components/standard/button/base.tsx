@@ -8,5 +8,5 @@ export type ButtonProps = RawButtonProps &
   React.ComponentPropsWithoutRef<"button">;
 
 export default function Button(props: ButtonProps) {
-  return <RawButton type="button" radius="xl" {...props} />;
+  return <RawButton type="button" {...props} />;
 }

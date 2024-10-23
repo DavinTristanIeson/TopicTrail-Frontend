@@ -2,11 +2,11 @@ const Colors = {
   text: 'black',
   textInverse: 'white',
 
-  foregroundPrimary: 'beige',
+  foregroundPrimary: '#6672af',
   foregroundDull: 'grey',
 
   backgroundScreen: 'lightgray',
-  backgroundPrimary: 'dimgray',
+  backgroundPrimary: '#424e88',
 
   sentimentWarning: 'yellow',
   sentimentError: 'red',

@@ -6,7 +6,7 @@ import {
 } from "react-hook-form";
 import { ProjectConfigDataSourceForm, ProjectIdForm } from "./phases";
 import { ProjectConfigFormType } from "./form-type";
-import { Accordion, TextInput } from "@mantine/core";
+import { Accordion } from "@mantine/core";
 import { EnumList, SchemaColumnTypeEnum } from "@/common/constants/enum";
 import {
   ProjectConfigColumnCategoricalForm,
@@ -14,9 +14,10 @@ import {
   ProjectConfigColumnTemporalForm,
   ProjectConfigColumnTextualForm,
 } from "./columns";
-import EnumSelect from "@/components/widgets/enum-select";
+import { EnumSelectField } from "@/components/widgets/enum-select";
 import React from "react";
 import Text from "@/components/standard/text";
+import { TextField } from "@/components/standard/fields/wrapper";
 
 interface ProjectConfigColumnFormItemProps {
   accordionValue: string;
@@ -50,7 +51,6 @@ function ProjectConfigColumnFormItemSwitcher(
 
 function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
   const { index, accordionValue } = props;
-  const { register } = useFormContext<ProjectConfigFormType>();
   const NAME = `columns.${index}` as const;
   return (
     <Accordion.Item value={accordionValue}>
@@ -67,12 +67,13 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
         />
       </Accordion.Control>
       <Accordion.Panel>
-        <TextInput
-          {...register(`${NAME}.name`)}
+        <TextField
+          name={`${NAME}.name`}
           label="Name"
           description="The name of the column. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
         />
-        <EnumSelect
+        <EnumSelectField
+          name={`${NAME}.type`}
           type={EnumList.SchemaColumnTypeEnum}
           label="Type"
           description="The type of the column. Please note that providing the wrong column type can cause the application to error."

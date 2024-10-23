@@ -3,6 +3,7 @@
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "no-unused-expressions": "warn",
-    "no-duplicate-imports": "error"
+    "no-duplicate-imports": "error",
+    "react/jsx-key": "warn"
   }
 }

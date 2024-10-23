@@ -1,17 +1,15 @@
-import { useFormContext } from "react-hook-form";
-import { ProjectConfigFormType } from "./form-type";
 import {
   NumberField,
   DateTimeField,
   SwitchField,
   TagsField,
+  TextField,
 } from "@/components/standard/fields/wrapper";
 import React from "react";
-import { Group, Switch, TextInput } from "@mantine/core";
+import { Group, Switch } from "@mantine/core";
 import Colors from "@/common/constants/colors";
 import Text from "@/components/standard/text";
 import TextLink from "@/components/standard/button/link";
-import get from "lodash/get";
 
 interface ProjectConfigColumnFormProps {
   index: number;
@@ -70,10 +68,6 @@ export function ProjectConfigColumnTemporalForm(
   props: ProjectConfigColumnFormProps
 ) {
   const { index } = props;
-  const {
-    formState: { errors },
-    register,
-  } = useFormContext<ProjectConfigFormType>();
   const NAME = `columns.${index}` as const;
 
   return (
@@ -93,9 +87,7 @@ export function ProjectConfigColumnTemporalForm(
         label="Latest Date"
         description="The latest value that can appear in the column; any later values will be set to this value."
       />
-      <TextInput
-        {...register(`${NAME}.datetimeFormat`)}
-        error={get(errors, `${NAME}.datetimeFormat`)?.message}
+      <TextField
         name={`${NAME}.datetimeFormat`}
         label="Datetime Format"
         description={

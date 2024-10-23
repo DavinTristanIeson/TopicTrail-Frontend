@@ -111,14 +111,18 @@ const ProjectConfigModal = React.forwardRef<
       onClose={() => {
         setOpened(false);
       }}
+      size={1200}
+      centered
       closeOnClickOutside={false}
     >
-      {opened &&
-        (!props.data ? (
-          <CreateProjectConfigModalBody />
-        ) : (
-          <EditProjectConfigModalBody {...props} />
-        ))}
+      <Modal.Body>
+        {opened &&
+          (!props.data ? (
+            <CreateProjectConfigModalBody />
+          ) : (
+            <EditProjectConfigModalBody {...props} />
+          ))}
+      </Modal.Body>
     </Modal>
   );
 });

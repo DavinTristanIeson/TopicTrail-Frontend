@@ -7,22 +7,23 @@ import {
   Alert,
   Box,
   Flex,
-  NumberInput,
-  Select,
+  Modal,
+  Stack,
   TextInput,
   Title,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import React from "react";
 import Text from "@/components/standard/text";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { ArrowLeft, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { ProjectCheckDatasetModel } from "@/api/project/model";
 import { DataSourceTypeEnum, EnumList } from "@/common/constants/enum";
 import Button from "@/components/standard/button/base";
 import { ProjectConfigFormType } from "./form-type";
 import { formSetErrors, handleFormSubmission } from "@/common/utils/form";
-import EnumSelect from "@/components/widgets/enum-select";
+import { EnumSelectField } from "@/components/widgets/enum-select";
+import { NumberField, TextField } from "@/components/standard/fields/wrapper";
 
 // +------------------+
 // | CHECK PROJECT ID |
@@ -33,11 +34,9 @@ interface CreateProjectFlow_CheckProjectIdProps {
 }
 
 export function ProjectIdForm() {
-  const { register } = useFormContext<ProjectConfigFormType>();
-
   return (
-    <TextInput
-      {...register("projectId")}
+    <TextField
+      name="projectId"
       label="Project Name"
       description="The name of the project should be unique."
       required
@@ -69,29 +68,27 @@ export function CreateProjectFlow_CheckProjectId(
   }, setError);
 
   return (
-    <>
+    <Stack>
       <Title order={2}>1/3: What&apos;s the name of your project?</Title>
-      <Alert>
+      <Text>
         First things first, please specify the name of your project. Note that
         your project can be found in the{" "}
-        <Text
-          style={{
-            fontFamily: "monospace",
-          }}
-        >
+        <Text c={Colors.foregroundPrimary} span>
           data
         </Text>{" "}
         directory in the same directory as the Wordsmith Project.
-      </Alert>
-
-      <Button
-        leftSection={<CheckCircle size={20} />}
-        onClick={handleSubmit}
-        disabled={!!errors.projectId}
-      >
-        Check Project Name
-      </Button>
-    </>
+      </Text>
+      <ProjectIdForm />
+      <Flex direction="row-reverse" w="100%">
+        <Button
+          leftSection={<CheckCircle size={20} />}
+          onClick={handleSubmit}
+          disabled={!!errors.projectId}
+        >
+          Check Project Name
+        </Button>
+      </Flex>
+    </Stack>
   );
 }
 
@@ -105,7 +102,7 @@ interface ProjectConfigDataSourceFormProps {
 function ProjectConfigDataSourceFormFieldSwitcher(
   props: ProjectConfigDataSourceFormProps
 ) {
-  const { control, register } = useFormContext<ProjectConfigFormType>();
+  const { control } = useFormContext<ProjectConfigFormType>();
   const type = useWatch({
     name: "source.type",
     control,
@@ -115,37 +112,27 @@ function ProjectConfigDataSourceFormFieldSwitcher(
     return (
       <>
         <TextInput
-          {...register("source.delimiter")}
+          name="source.delimiter"
           label="Delimiter"
           placeholder=","
           description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
           required
         />
-        <Controller
+        <NumberField
           name="source.limit"
-          render={({ field }) => {
-            return (
-              <NumberInput
-                value={field.value}
-                onChange={(value) => {
-                  field.onChange(value === "" ? null : undefined);
-                }}
-                min={1}
-                label="Delimiter"
-                placeholder=","
-                description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
-                required
-              />
-            );
-          }}
+          min={1}
+          label="Delimiter"
+          placeholder=","
+          description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
+          required
         />
       </>
     );
   }
   if (type === DataSourceTypeEnum.Excel) {
     return (
-      <TextInput
-        {...register("source.sheetName")}
+      <TextField
+        name="source.sheetName"
         label="Sheet Name"
         description="The sheet that contains the data to be analyzed."
         readOnly={props.readOnly}
@@ -159,7 +146,6 @@ function ProjectConfigDataSourceFormFieldSwitcher(
 export function ProjectConfigDataSourceForm(
   props: ProjectConfigDataSourceFormProps
 ) {
-  const { register, setValue } = useFormContext<ProjectConfigFormType>();
   return (
     <>
       {props.readOnly && (
@@ -174,8 +160,8 @@ export function ProjectConfigDataSourceForm(
         </Alert>
       )}
       <Flex gap={24}>
-        <TextInput
-          {...register("source.path")}
+        <TextField
+          name="source.path"
           label="Dataset Path"
           placeholder="path/to/dataset"
           description="Enter the path (preferably absolute) of your dataset. You can also specify the path relative to the directory of the Wordsmith Project, but this is not recommended."
@@ -183,11 +169,8 @@ export function ProjectConfigDataSourceForm(
           readOnly={props.readOnly}
           w="100%"
         />
-        <EnumSelect
-          {...register("source.type")}
-          onChange={(value) => {
-            setValue("source.type", value as DataSourceTypeEnum);
-          }}
+        <EnumSelectField
+          name="source.type"
           type={EnumList.DataSourceTypeEnum}
           clearable={false}
           label="Dataset Type"

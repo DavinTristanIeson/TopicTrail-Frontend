@@ -9,8 +9,3 @@
 .button__link:hover {
   color: var(--mantine-primary-color-filled);
 }
-
-.button--submit {
-  height: 50px;
-  font-size: 20px;
-}
