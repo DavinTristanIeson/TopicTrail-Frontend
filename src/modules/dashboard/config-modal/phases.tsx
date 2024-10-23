@@ -47,7 +47,7 @@ export function ProjectIdForm() {
 export function CreateProjectFlow_CheckProjectId(
   props: CreateProjectFlow_CheckProjectIdProps
 ) {
-  const { mutateAsync: check } = useProjectCheckId();
+  const { mutateAsync: check, isPending } = useProjectCheckId();
   const {
     getValues,
     setError,
@@ -70,7 +70,7 @@ export function CreateProjectFlow_CheckProjectId(
   return (
     <Stack>
       <Title order={2}>1/3: What&apos;s the name of your project?</Title>
-      <Text>
+      <Text wrap>
         First things first, please specify the name of your project. Note that
         your project can be found in the{" "}
         <Text c={Colors.foregroundPrimary} span>
@@ -84,6 +84,7 @@ export function CreateProjectFlow_CheckProjectId(
           leftSection={<CheckCircle size={20} />}
           onClick={handleSubmit}
           disabled={!!errors.projectId}
+          loading={isPending}
         >
           Check Project Name
         </Button>
@@ -110,23 +111,23 @@ function ProjectConfigDataSourceFormFieldSwitcher(
 
   if (type === DataSourceTypeEnum.CSV) {
     return (
-      <>
+      <Flex gap={24}>
         <TextInput
           name="source.delimiter"
           label="Delimiter"
           placeholder=","
           description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
           required
+          w="100%"
         />
         <NumberField
           name="source.limit"
           min={1}
-          label="Delimiter"
-          placeholder=","
-          description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
-          required
+          label="Rows Limit"
+          description="The maximum number of rows to be loaded from the file. Leave this as blank to load every single row."
+          w="100%"
         />
-      </>
+      </Flex>
     );
   }
   if (type === DataSourceTypeEnum.Excel) {
@@ -179,9 +180,7 @@ export function ProjectConfigDataSourceForm(
           w="100%"
         />
       </Flex>
-      <Box w="50%">
-        <ProjectConfigDataSourceFormFieldSwitcher {...props} />
-      </Box>
+      <ProjectConfigDataSourceFormFieldSwitcher {...props} />
     </>
   );
 }
@@ -194,7 +193,7 @@ interface CreateProjectFlow_CheckDatasetProps {
 export function CreateProjectFlow_CheckDataset(
   props: CreateProjectFlow_CheckDatasetProps
 ) {
-  const { mutateAsync: check } = useProjectCheckDataset();
+  const { mutateAsync: check, isPending } = useProjectCheckDataset();
   const { getValues, setError } = useFormContext<ProjectConfigFormType>();
   const handleSubmit = async () => {
     const values = getValues();
@@ -224,17 +223,16 @@ export function CreateProjectFlow_CheckDataset(
   };
 
   return (
-    <>
-      <Alert>
+    <Stack>
+      <Title order={2}>2/3: Where&apos;s the location of your dataset?</Title>
+      <Text>
         Next, we need a dataset to get started. Please specify the file path
         (e.g.: /user/path/to/dataset, ../path/to/dataset,
         C:/Users/User/path/to/dataset) so that we can access the dataset. Please
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
-      </Alert>
-
+      </Text>
       <ProjectConfigDataSourceForm readOnly={false} />
-
-      <Flex justify="between">
+      <Flex justify="space-between" w="100%">
         <Button
           leftSection={<ArrowLeft size={20} />}
           variant="outline"
@@ -242,10 +240,14 @@ export function CreateProjectFlow_CheckDataset(
         >
           Change Project Name?
         </Button>
-        <Button leftSection={<CheckCircle size={20} />} onClick={handleSubmit}>
+        <Button
+          leftSection={<CheckCircle size={20} />}
+          onClick={handleSubmit}
+          loading={isPending}
+        >
           Verify Dataset
         </Button>
       </Flex>
-    </>
+    </Stack>
   );
 }

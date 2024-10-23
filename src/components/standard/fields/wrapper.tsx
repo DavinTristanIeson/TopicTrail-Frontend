@@ -4,12 +4,14 @@ import {
   Switch,
   SwitchProps,
   TagsInput,
+  TagsInputProps,
   TextInput,
+  TextInputProps,
 } from "@mantine/core";
 import { DateTimePicker, DateTimePickerProps } from "@mantine/dates";
 import { useController } from "react-hook-form";
 
-interface TextFieldProps extends SwitchProps {
+interface TextFieldProps extends TextInputProps {
   name: string;
 }
 
@@ -18,7 +20,7 @@ export function TextField(props: TextFieldProps) {
     name: props.name,
   });
 
-  return <TextInput {...field} error={fieldState.error?.message} />;
+  return <TextInput {...field} error={fieldState.error?.message} {...props} />;
 }
 
 interface DateTimeFieldProps extends DateTimePickerProps {
@@ -81,7 +83,7 @@ export function SwitchField(props: SwitchFieldProps) {
   );
 }
 
-interface TagsFieldProps extends SwitchProps {
+interface TagsFieldProps extends TagsInputProps {
   name: string;
 }
 
@@ -90,5 +92,5 @@ export function TagsField(props: TagsFieldProps) {
     name: props.name,
   });
 
-  return <TagsInput {...field} error={fieldState.error?.message} />;
+  return <TagsInput {...field} error={fieldState.error?.message} {...props} />;
 }

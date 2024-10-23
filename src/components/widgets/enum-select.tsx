@@ -25,9 +25,9 @@ interface EnumSelectFieldProps extends EnumSelectInputProps {
 }
 
 export function EnumSelectField(props: EnumSelectFieldProps) {
-  const { field } = useController({
+  const { field, fieldState } = useController({
     name: props.name,
   });
 
-  return <EnumSelect {...field} {...props} />;
+  return <EnumSelect {...field} error={fieldState.error?.message} {...props} />;
 }
