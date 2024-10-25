@@ -33,28 +33,6 @@ export function formSetErrors(
   });
 };
 
-export function handleErrorFn<T extends (...args: any) => any>(fn: T): T {
-  return (async function (...args: any[]) {
-    try {
-      const result = await fn(...args);
-      return result;
-    } catch (e: any){
-      console.error(e);
-      if (e.message){
-        showNotification({
-          message: e.message.toString(),
-          color: Colors.sentimentError,
-        });
-      } else {
-        showNotification({
-          message: "An error has occurred during the submission of this form.",
-          color: Colors.sentimentError,
-        });
-      }
-    }
-  }) as T;
-}
-
 export function handleFormSubmission<T extends (...args: any) => any>(fn: T, setError: UseFormReturn<any>["setError"]) {
   return (async (...args: any[]) => {
     try {

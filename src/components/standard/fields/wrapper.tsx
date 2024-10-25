@@ -1,3 +1,4 @@
+import Colors from "@/common/constants/colors";
 import {
   NumberInput,
   NumberInputProps,
@@ -10,6 +11,7 @@ import {
 } from "@mantine/core";
 import { DateTimePicker, DateTimePickerProps } from "@mantine/dates";
 import { useController } from "react-hook-form";
+import Text from "../text";
 
 interface TextFieldProps extends TextInputProps {
   name: string;
@@ -59,6 +61,7 @@ export function DateTimeField(props: DateTimeFieldProps) {
 
 interface NumberFieldProps extends NumberInputProps {
   name: string;
+  percentage?: boolean;
 }
 
 export function NumberField(props: NumberFieldProps) {
@@ -73,15 +76,19 @@ export function NumberField(props: NumberFieldProps) {
   return (
     <NumberInput
       {...field}
+      value={props.percentage ? field.value * 100 : field.value}
       onChange={(e) => {
-        if (e === "") {
+        if (e === "" || typeof e === "string") {
           field.onChange(undefined);
         } else {
-          field.onChange(e);
+          field.onChange(props.percentage ? e / 100 : e);
         }
       }}
       disabled={isSubmitting || disabled}
       error={error?.message}
+      rightSection={
+        props.percentage ? <Text c={Colors.foregroundDull}>%</Text> : null
+      }
       {...props}
     />
   );

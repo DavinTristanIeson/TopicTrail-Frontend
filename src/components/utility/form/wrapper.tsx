@@ -1,4 +1,6 @@
 import { handleFormSubmission } from "@/common/utils/form";
+import { classNames } from "@/common/utils/styles";
+import { LoadingOverlay } from "@mantine/core";
 import React from "react";
 import {
   FieldValues,
@@ -6,16 +8,6 @@ import {
   FormProvider,
   UseFormReturn,
 } from "react-hook-form";
-
-interface FormMetaState {
-  editable: boolean;
-  setEditable: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const FormMetaStateContext = React.createContext<FormMetaState>({
-  editable: false,
-  setEditable() {},
-});
 
 interface FormWrapperProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -32,18 +24,20 @@ export default function FormWrapper<T extends FieldValues>(
     handleFormSubmission(props.onSubmit, props.form.setError),
     console.error
   );
-  const [editable, setEditable] = React.useState(false);
+
+  const {
+    formState: { isSubmitting },
+  } = props.form;
   return (
     <FormProvider {...props.form}>
       <Form
         control={props.form.control}
         onSubmit={handleSubmit as any}
-        className={props.className}
+        className={classNames("relative", props.className)}
         style={props.style}
       >
-        <FormMetaStateContext.Provider value={{ editable, setEditable }}>
-          {props.children}
-        </FormMetaStateContext.Provider>
+        <LoadingOverlay visible={isSubmitting} />
+        {props.children}
       </Form>
     </FormProvider>
   );

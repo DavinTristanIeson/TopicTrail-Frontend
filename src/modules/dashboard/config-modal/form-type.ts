@@ -2,6 +2,77 @@ import { PROJECT_CONFIG_VERSION, ProjectConfigModel } from '@/api/project/config
 import { DataSourceTypeEnum, SchemaColumnTypeEnum } from '@/common/constants/enum';
 import * as Yup from 'yup';
 
+export const ProjectConfigColumnFormSchema = Yup.object({
+  name: Yup.string().required(),
+  type: Yup.string().oneOf(Object.values(SchemaColumnTypeEnum)).required(),
+
+  lowerBound: Yup.number().nullable().when("type", {
+    is: SchemaColumnTypeEnum.Continuous,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
+  upperBound: Yup.number().nullable().when("type", {
+    is: SchemaColumnTypeEnum.Continuous,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }).moreThan(Yup.ref("lowerBound"), "For obvious reasons, the upper bound must be greater than the lower bound."),
+  minFrequency: Yup.number().min(1).nullable().when("type", {
+    is: SchemaColumnTypeEnum.Categorical,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
+  minDate: Yup.date().nullable().when("type", {
+    is: SchemaColumnTypeEnum.Temporal,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
+  maxDate: Yup.date().nullable().when("type", {
+    is: SchemaColumnTypeEnum.Temporal,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }).min(Yup.ref("minDate"), "For obvious reasons, the max date must be after min date."),
+  bins: Yup.number().positive().when("type", {
+    is: SchemaColumnTypeEnum.Temporal,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
+  datetimeFormat: Yup.string().nullable().when("type", {
+    is: SchemaColumnTypeEnum.Temporal,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
+  preprocessing: Yup.object({
+    ignoreTokens: Yup.array(Yup.string().required()).required(),
+    stopwords: Yup.array(Yup.string().required()).required(),
+    removeEmail: Yup.boolean().required(),
+    removeUrl: Yup.boolean().required(),
+    removeNumber: Yup.boolean().required(),
+  }).when("type", {
+    is: SchemaColumnTypeEnum.Textual,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
+  topicModeling: Yup.object({
+    lowMemory: Yup.boolean().required(),
+    minTopicSize: Yup.number().positive().required(),
+    maxTopicSize: Yup.number().nullable().moreThan(Yup.ref("minTopicSize")),
+    maxTopics: Yup.number().nullable().positive(),
+    nGramRangeStart: Yup.number().positive().required(),
+    nGramRangeEnd: Yup.number().positive().required().moreThan(Yup.ref('nGramRangeStart')),
+    noOutliers: Yup.boolean().required(),
+    representOutliers: Yup.boolean().required(),
+    seedTopics: Yup.array(
+      Yup.array(
+        Yup.string().required()
+      ).required()
+    ).min(1).nullable()
+  }).when("type", {
+    is: SchemaColumnTypeEnum.Textual,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  })
+});
+
 export const ProjectConfigFormSchema = Yup.object({
   projectId: Yup.string().required().max(255).matches(
     /^[a-zA-Z0-9-_. ]+$/,
@@ -25,79 +96,43 @@ export const ProjectConfigFormSchema = Yup.object({
       otherwise: schema => schema.strip(),
     }),
   }).required(),
-  columns: Yup.array(Yup.object({
-    name: Yup.string().required(),
-    type: Yup.string().oneOf(Object.values(SchemaColumnTypeEnum)).required(),
-
-    lowerBound: Yup.number().nullable().when("type", {
-      is: SchemaColumnTypeEnum.Continuous,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }),
-    upperBound: Yup.number().nullable().when("type", {
-      is: SchemaColumnTypeEnum.Continuous,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }).moreThan(Yup.ref("lowerBound"), "For obvious reasons, the upper bound must be greater than the lower bound."),
-    minFrequency: Yup.number().min(1).nullable().when("type", {
-      is: SchemaColumnTypeEnum.Categorical,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }),
-    minDate: Yup.date().nullable().when("type", {
-      is: SchemaColumnTypeEnum.Temporal,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }),
-    maxDate: Yup.date().nullable().when("type", {
-      is: SchemaColumnTypeEnum.Temporal,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }).min(Yup.ref("minDate"), "For obvious reasons, the max date must be after min date."),
-    bins: Yup.number().positive().when("type", {
-      is: SchemaColumnTypeEnum.Temporal,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }),
-    datetimeFormat: Yup.string().nullable().when("type", {
-      is: SchemaColumnTypeEnum.Temporal,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }),
-    preprocessing: Yup.object({
-      ignoreTokens: Yup.array(Yup.string().required()).required(),
-      stopwords: Yup.array(Yup.string().required()).required(),
-      removeEmail: Yup.boolean().required(),
-      removeUrl: Yup.boolean().required(),
-      removeNumber: Yup.boolean().required(),
-    }).when("type", {
-      is: SchemaColumnTypeEnum.Textual,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    }),
-    topicModeling: Yup.object({
-      lowMemory: Yup.boolean().required(),
-      minTopicSize: Yup.number().positive().required(),
-      maxTopicSize: Yup.number().required().moreThan(Yup.ref("minTopicSize")),
-      maxTopics: Yup.number().positive().required(),
-      nGramRangeStart: Yup.number().positive().required(),
-      nGramRangeEnd: Yup.number().positive().required().moreThan(Yup.ref('nGramRangeStart')),
-      noOutliers: Yup.boolean().required(),
-      representOutliers: Yup.boolean().required(),
-      seedTopics: Yup.array(
-        Yup.array(
-          Yup.string().required()
-        ).required()
-      ).min(1).nullable().required()
-    }).when("type", {
-      is: SchemaColumnTypeEnum.Textual,
-      then: schema => schema.required(),
-      otherwise: schema => schema.strip(),
-    })
-  })).required()
+  columns: Yup.array().required()
 })
 
+export type ProjectConfigColumnFormType = Yup.InferType<typeof ProjectConfigColumnFormSchema>;
 export type ProjectConfigFormType = Yup.InferType<typeof ProjectConfigFormSchema>;
+
+export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColumnTypeEnum){
+  return {
+    name,
+    type,
+    preprocessing: type === SchemaColumnTypeEnum.Textual ? {
+      ignoreTokens: [],
+      removeEmail: true,
+      removeNumber: true,
+      removeUrl: true,
+      stopwords: [],
+    } : undefined,
+    topicModeling: type === SchemaColumnTypeEnum.Textual ? {
+      lowMemory: false,
+      maxTopics: null,
+      maxTopicSize: 1 / 20,
+      minTopicSize: 15,
+      nGramRangeEnd: 2,
+      nGramRangeStart: 1,
+      noOutliers: false,
+      representOutliers: false,
+      seedTopics: null,
+    } : undefined,
+    bins: type === SchemaColumnTypeEnum.Temporal ? 10 : undefined,
+    datetimeFormat: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
+    lowerBound: type === SchemaColumnTypeEnum.Continuous ? null : undefined,
+    maxDate: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
+    minDate: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
+    minFrequency: type === SchemaColumnTypeEnum.Categorical ? 1 : undefined,
+    upperBound: type === SchemaColumnTypeEnum.Continuous ? null : undefined
+  } as ProjectConfigColumnFormType
+}
 
 export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectConfigFormType {
   return {
@@ -119,10 +154,10 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
     projectId: data?.projectId ?? '',
     source: {
       path: data?.source?.path ?? '',
-      type: data?.source?.type ?? DataSourceTypeEnum.CSV,
+      type: data?.source?.type ?? undefined as any,
       delimiter: data?.source?.delimiter ?? ',',
       limit: data?.source?.limit ?? null,
-      sheetName: data?.source?.sheetName,
+      sheetName: data?.source?.sheetName ?? '',
     }
   }
 }

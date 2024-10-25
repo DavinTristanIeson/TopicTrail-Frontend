@@ -23,6 +23,8 @@ import { useCreateProject, useUpdateProject } from "@/api/project/mutation";
 import { showNotification } from "@mantine/notifications";
 import Colors from "@/common/constants/colors";
 import { handleFormSubmission } from "@/common/utils/form";
+import { useRouter } from "next/router";
+import NavigationRoutes from "@/common/constants/routes";
 
 interface ProjectConfigModalProps {
   data?: ProjectConfigModel;
@@ -41,6 +43,7 @@ function CreateProjectConfigModalBody() {
   const onBack = () => setPhase((phase) => phase - 1);
 
   const { mutateAsync: create } = useCreateProject();
+  const router = useRouter();
 
   const handleSubmit = handleFormSubmission(
     async (values: ProjectConfigFormType) => {
@@ -51,6 +54,12 @@ function CreateProjectConfigModalBody() {
           message: res.message,
         });
       }
+      router.push({
+        pathname: NavigationRoutes.Project,
+        query: {
+          id: res.data.id,
+        },
+      });
     },
     form.setError
   );
@@ -76,10 +85,11 @@ function EditProjectConfigModalBody(props: ProjectConfigModalProps) {
   const form = useForm({
     mode: "onChange",
     resolver,
-    defaultValues: ProjectConfigDefaultValues(),
+    defaultValues: ProjectConfigDefaultValues(props.data),
   });
   const { mutateAsync: update } = useUpdateProject();
   const id = props.data!.projectId;
+  const router = useRouter();
   const handleSubmit = async (values: ProjectConfigFormType) => {
     const res = await update({
       id,
@@ -91,6 +101,12 @@ function EditProjectConfigModalBody(props: ProjectConfigModalProps) {
         message: res.message,
       });
     }
+    router.push({
+      pathname: NavigationRoutes.Project,
+      query: {
+        id: res.data.id,
+      },
+    });
   };
 
   return (

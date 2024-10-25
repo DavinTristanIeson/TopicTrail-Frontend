@@ -1,8 +1,17 @@
 import { Type } from "class-transformer";
 import { ProjectConfigModel } from "./config.model";
+import { ProjectTaskStatus } from "@/common/constants/enum";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 
 // Models
+export class ProjectTaskResult<T> {
+  data: T
+  status: ProjectTaskStatus;
+  message?: string;
+  error?: string;
+  progress?: number;
+}
+
 export class ProjectLiteModel {
   id: string;
   path: string;

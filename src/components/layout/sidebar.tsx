@@ -1,4 +1,4 @@
-import { handleErrorFn } from "@/common/utils/form";
+import { handleErrorFn } from "@/common/utils/error";
 import Colors from "@/common/constants/colors";
 import { useRouter } from "next/router";
 import React from "react";

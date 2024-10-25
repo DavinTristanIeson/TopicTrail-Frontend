@@ -6,10 +6,11 @@ import {
   TextField,
 } from "@/components/standard/fields/wrapper";
 import React from "react";
-import { Divider, Group, Stack, Switch } from "@mantine/core";
+import { Divider, Group, Stack, Switch, SwitchGroup } from "@mantine/core";
 import Colors from "@/common/constants/colors";
 import Text from "@/components/standard/text";
 import TextLink from "@/components/standard/button/link";
+import { useFormContext } from "react-hook-form";
 
 interface ProjectConfigColumnFormProps {
   index: number;
@@ -21,21 +22,12 @@ export function ProjectConfigColumnCategoricalForm(
   const { index } = props;
   const NAME = `columns.${index}` as const;
 
-  const [isPercentage, setIsPercentage] = React.useState(false);
-
   return (
     <Group>
-      <Switch
-        checked={isPercentage}
-        onChange={(e) => setIsPercentage(e.target.checked)}
-      />
       <NumberField
         name={`${NAME}.minFrequency`}
         label="Min. Frequency"
-        decimalScale={isPercentage ? 0 : undefined}
-        rightSection={
-          isPercentage ? <Text c={Colors.foregroundDull}>%</Text> : undefined
-        }
+        decimalScale={0}
         description="The minimum frequency for a value to be considered a category in the column."
       />
     </Group>
@@ -118,17 +110,27 @@ export function ProjectConfigColumnTextualForm(
         <TagsField
           label="Ignore Tokens"
           name={`${PREPROCESSING_NAME}.ignoreTokens`}
+          description={
+            <Text size="xs">
+              The words that should be
+              <Text span fw="bold" inherit>
+                {` ignored `}
+              </Text>
+              during the preprocessing step. Use this option to preserve
+              important names or words.
+            </Text>
+          }
         />
         <TagsField
           name={`${PREPROCESSING_NAME}.stopwords`}
           label="Stop Words"
           description={
             <Text size="xs">
-              The words that
+              The words that should be
               <Text span fw="bold" inherit>
-                {` should `}
+                {` excluded `}
               </Text>
-              be excluded from the documents.
+              from the documents.
             </Text>
           }
         />
@@ -158,22 +160,20 @@ export function ProjectConfigColumnTextualForm(
           label="Low Memory"
           description="Turn this mode on if you want to perform other tasks while waiting for the topic modeling procedure to finish."
         />
-        <Group justify="space-between">
-          <NumberField
-            name={`${TOPIC_MODELING_NAME}.minTopicSize`}
-            label="Min. Topic Size"
-            min={1}
-            description="The minimal number of similar documents to be considered a topic."
-            w="100%"
-          />
-          <NumberField
-            name={`${TOPIC_MODELING_NAME}.maxTopicSize`}
-            label="Max. Topic Size"
-            min={1}
-            description="The maximum number of documents that are grouped into the same topic. A low value will make the algorithm discover more specific topics, while a high value encourages the model to find more generic, but potentially imbalanced topics."
-            w="100%"
-          />
-        </Group>
+        <NumberField
+          name={`${TOPIC_MODELING_NAME}.minTopicSize`}
+          label="Min. Topic Size"
+          min={1}
+          description="The minimal number of similar documents to be considered a topic."
+          required
+        />
+        <NumberField
+          name={`${TOPIC_MODELING_NAME}.maxTopicSize`}
+          label="Max. Topic Size"
+          max={100}
+          percentage
+          description="The maximum number of documents that are grouped into the same topic. A low value will make the algorithm discover more specific topics, while a high value encourages the model to find more generic, but potentially imbalanced topics. Note that this field is in percentages."
+        />
         <NumberField
           name={`${TOPIC_MODELING_NAME}.maxTopics`}
           label="Max Topics"
@@ -181,21 +181,21 @@ export function ProjectConfigColumnTextualForm(
           description="The maximum number of topics that can be discovered by the model. If the model discovers more topics than this threshold, then the smaller topics will be merged iteratively into a bigger topic."
         />
         <Stack>
-          <Group justify="space-between">
+          <Group>
             <NumberField
               name={`${TOPIC_MODELING_NAME}.nGramRangeStart`}
               label="N-Gram Range Start"
               min={1}
-              w="100%"
+              className="flex-1"
             />
             <NumberField
               name={`${TOPIC_MODELING_NAME}.nGramRangeEnd`}
               label="N-Gram Range End"
               min={1}
-              w="100%"
+              className="flex-1"
             />
           </Group>
-          <Text size="sm">
+          <Text size="sm" c={Colors.foregroundDull}>
             N-Gram Range specifies the length of the phrases that can be used as
             the topic representation. For example, n-gram range of length (1, 2)
             will allow phrases like &quot;door&quot; and &quot;door hinge&quot;

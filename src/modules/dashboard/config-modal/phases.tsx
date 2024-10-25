@@ -19,7 +19,10 @@ import { ArrowLeft, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { ProjectCheckDatasetModel } from "@/api/project/model";
 import { DataSourceTypeEnum, EnumList } from "@/common/constants/enum";
 import Button from "@/components/standard/button/base";
-import { ProjectConfigFormType } from "./form-type";
+import {
+  DefaultProjectSchemaColumnValues,
+  ProjectConfigFormType,
+} from "./form-type";
 import { formSetErrors, handleFormSubmission } from "@/common/utils/form";
 import { EnumSelectField } from "@/components/widgets/enum-select";
 import { NumberField, TextField } from "@/components/standard/fields/wrapper";
@@ -215,19 +218,7 @@ export function CreateProjectFlow_CheckDataset(
       setValue(
         "columns",
         res.data.columns.map((column) => {
-          return {
-            ...column,
-            // This should be undefinedable, Yup.InferType doesn't do well with when's.
-            preprocessing: undefined as any,
-            topicModeling: undefined as any,
-            bins: 10,
-            datetimeFormat: undefined,
-            lowerBound: undefined,
-            maxDate: undefined,
-            minDate: undefined,
-            minFrequency: 1,
-            upperBound: undefined,
-          };
+          return DefaultProjectSchemaColumnValues(column.name, column.type);
         })
       );
       props.onContinue(res.data);
@@ -257,7 +248,7 @@ export function CreateProjectFlow_CheckDataset(
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
       </Text>
       <LoadingOverlay visible={isPending} />
-      <ProjectConfigDataSourceForm disabled={isPending} />
+      <ProjectConfigDataSourceForm disabled={false} />
       <Flex justify="space-between" w="100%">
         <Button
           leftSection={<ArrowLeft size={20} />}

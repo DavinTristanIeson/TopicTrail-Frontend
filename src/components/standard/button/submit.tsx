@@ -11,7 +11,7 @@ export default function SubmitButton(props: ButtonProps) {
       {...props}
       type="submit"
       loading={isSubmitting}
-      disabled={(isDirty && !isValid) || props.disabled}
+      disabled={props.disabled}
       className={classNames(props.className)}
     />
   );

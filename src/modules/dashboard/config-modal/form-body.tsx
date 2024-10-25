@@ -9,6 +9,7 @@ import {
   Group,
   Stack,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import { EnumList, SchemaColumnTypeEnum } from "@/common/constants/enum";
 import {
@@ -29,9 +30,13 @@ import {
   GridFour,
   Question,
   TextAUnderline,
+  Warning,
 } from "@phosphor-icons/react";
 import SubmitButton from "@/components/standard/button/submit";
-import FieldWatcher from "@/components/standard/fields/watcher";
+import FieldWatcher, {
+  FieldErrorWatcher,
+} from "@/components/standard/fields/watcher";
+import Colors from "@/common/constants/colors";
 
 interface ProjectConfigColumnFormItemProps {
   accordionValue: string;
@@ -77,6 +82,19 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
               | undefined;
             return (
               <Group>
+                <FieldErrorWatcher name={NAME}>
+                  {(error) =>
+                    error && (
+                      <Tooltip
+                        label={error}
+                        radius="sm"
+                        color={Colors.sentimentError}
+                      >
+                        <Warning color={Colors.sentimentError} />
+                      </Tooltip>
+                    )
+                  }
+                </FieldErrorWatcher>
                 {type === SchemaColumnTypeEnum.Categorical ? (
                   <GridFour />
                 ) : type === SchemaColumnTypeEnum.Continuous ? (
@@ -102,12 +120,14 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
             name={`${NAME}.name`}
             label="Name"
             description="The name of the column. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
+            required
           />
           <EnumSelectField
             name={`${NAME}.type`}
             type={EnumList.SchemaColumnTypeEnum}
             label="Type"
             description="The type of the column. Please note that providing the wrong column type can cause the application to error."
+            required
           />
           <Divider />
           <ProjectConfigColumnFormItemSwitcher {...props} />
