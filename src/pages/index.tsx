@@ -22,7 +22,7 @@ function ProjectListItem(props: ProjectLiteModel) {
       shadow="xs"
       w="100%"
       p="md"
-      className="flex justify-between align-start hover:bg-blend-darken"
+      className="flex justify-between align-start hover:bg-gray-50 cursor-pointer"
       onClick={() => {
         router.push({
           pathname: NavigationRoutes.Project,
@@ -77,23 +77,23 @@ export default function Dashboard() {
               Create New Project
             </Button>
           </Stack>
+          <UseQueryWrapperComponent
+            query={query}
+            loadingComponent={<Loader type="dots" size={48} />}
+          >
+            {(data) => (
+              <ul className="flex flex-col gap-2 w-full">
+                {data.data
+                  .filter((project) =>
+                    q == null ? true : project.id.includes(q)
+                  )
+                  .map((project) => (
+                    <ProjectListItem key={project.id} {...project} />
+                  ))}
+              </ul>
+            )}
+          </UseQueryWrapperComponent>
         </Stack>
-        <UseQueryWrapperComponent
-          query={query}
-          loadingComponent={<Loader type="dots" size={48} />}
-        >
-          {(data) => (
-            <ul className="flex flex-col gap-2 w-full">
-              {data.data
-                .filter((project) =>
-                  q == null ? true : project.id.includes(q)
-                )
-                .map((project) => (
-                  <ProjectListItem key={project.id} {...project} />
-                ))}
-            </ul>
-          )}
-        </UseQueryWrapperComponent>
       </Stack>
     </AppLayout>
   );

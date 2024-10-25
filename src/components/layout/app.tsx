@@ -23,7 +23,7 @@ export default function AppLayout(props: AppLayoutProps) {
       navbar={
         Sidebar
           ? {
-              width: 320,
+              width: 240,
               breakpoint: "sm",
               collapsed: {
                 mobile: !opened,

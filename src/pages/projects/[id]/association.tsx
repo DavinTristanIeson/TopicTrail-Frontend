@@ -1,14 +1,14 @@
 import { ProjectModel } from "@/api/project/model";
 import AppProjectLayout from "@/modules/projects/common/layout";
 
-function ProjectTopicsPageBody(props: ProjectModel) {
+function ProjectAssociationPageBody(props: ProjectModel) {
   return <></>;
 }
 
-export default function ProjectTopicsPage() {
+export default function ProjectAssociationPage() {
   return (
     <AppProjectLayout>
-      {(project) => <ProjectTopicsPageBody {...project} />}
+      {(project) => <ProjectAssociationPageBody {...project} />}
     </AppProjectLayout>
   );
 }

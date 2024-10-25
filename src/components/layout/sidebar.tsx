@@ -3,12 +3,14 @@ import Colors from "@/common/constants/colors";
 import { useRouter } from "next/router";
 import React from "react";
 import PromiseButton from "../standard/button/promise";
+import { Url } from "next/dist/shared/lib/router/router";
+import { Divider, Group, Stack } from "@mantine/core";
 
 export interface AppNavigationLink {
   label: string;
   icon?: React.ReactNode;
   onClick?(): void;
-  href?: string;
+  url?: Url;
 }
 interface AppSidebarLinkRendererProps {
   links: AppNavigationLink[];
@@ -17,28 +19,34 @@ interface AppSidebarLinkRendererProps {
 export function AppSidebarLinkRenderer({ links }: AppSidebarLinkRendererProps) {
   const router = useRouter();
   return (
-    <>
+    <Stack>
       {links?.map((link) => {
         return (
           <PromiseButton
             key={link.label}
             variant="subtle"
             color={Colors.foregroundPrimary}
-            leftSection={link.icon}
+            fullWidth
             onClick={
               link.onClick
                 ? handleErrorFn(link.onClick)
-                : link.href
+                : link.url
                 ? () => {
-                    router.push(link.href!);
+                    router.push(link.url!);
                   }
                 : undefined
             }
+            classNames={{
+              inner: "justify-start",
+            }}
           >
-            {link.label}
+            <Group justify="flex-start" w="100%">
+              {link.icon}
+              {link.label}
+            </Group>
           </PromiseButton>
         );
       })}
-    </>
+    </Stack>
   );
 }
