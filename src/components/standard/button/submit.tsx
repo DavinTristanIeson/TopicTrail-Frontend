@@ -1,6 +1,5 @@
 import { classNames } from "@/common/utils/styles";
 import { useFormContext } from "react-hook-form";
-import ButtonStyles from "./button.module.css";
 import { Button, ButtonProps } from "@mantine/core";
 
 export default function SubmitButton(props: ButtonProps) {
@@ -11,13 +10,9 @@ export default function SubmitButton(props: ButtonProps) {
     <Button
       {...props}
       type="submit"
-      radius="xl"
       loading={isSubmitting}
-      disabled={(isDirty && !isValid) || props.disabled}
-      className={classNames(
-        props.variant === "appeal" ? ButtonStyles["button--submit"] : undefined,
-        props.className
-      )}
+      disabled={props.disabled}
+      className={classNames(props.className)}
     />
   );
 }

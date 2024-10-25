@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Loader, Title } from "@mantine/core";
+import { Box, Button, Flex, Title } from "@mantine/core";
 import Text from "@/components/standard/text/base";
 import Colors from "@/common/constants/colors";
-import LayoutStyles from "./layout.module.css";
+import { ArrowClockwise } from "@phosphor-icons/react";
 
 export interface ErrorViewComponentProps {
   title?: string;
@@ -20,22 +20,19 @@ export default function ErrorViewComponent(props: ErrorViewComponentProps) {
       justify="center"
       w="100%"
       h="100%"
-      className={LayoutStyles["error__root"]}
+      className="bg-black/[0.2] p-3 rounded-xl"
     >
-      <Title order={3} c={Colors.textInverse}>
-        {title ?? "Failed to load content"}
-      </Title>
-      {message && (
-        <Text variant="regular" color="textInverse">
-          {message}
-        </Text>
-      )}
+      <Title order={3}>{title ?? "Failed to load content"}</Title>
+      {message && <Text variant="regular">{message}</Text>}
       <Box h={8} />
       {refetch && (
         <Button
+          miw={200}
+          size="md"
           variant="filled"
           onClick={refetch}
           color={Colors.sentimentError}
+          leftSection={<ArrowClockwise size={20} />}
         >
           Refresh
         </Button>

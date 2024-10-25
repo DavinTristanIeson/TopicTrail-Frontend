@@ -5,8 +5,8 @@ import Script, { ScriptProps } from "next/script";
 import React from "react";
 
 import { MaybeFC, MaybeFCType } from "@/components/utility/maybe";
-import LoadingViewComponent from "../layout/loading-view";
 import ErrorViewComponent from "../layout/error-view-component";
+import { LoadingOverlay } from "@mantine/core";
 
 interface FetchWrapperSharedProps {
   loadingComponent?: React.ReactNode;
@@ -47,7 +47,15 @@ export default function FetchWrapperComponent(props: WrapperProps) {
   } = props;
 
   if (isLoading) {
-    return loadingComponent || <LoadingViewComponent />;
+    return (
+      loadingComponent || (
+        <LoadingOverlay
+          visible
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+        />
+      )
+    );
   } else if (error) {
     if (errorComponent) {
       return errorComponent;

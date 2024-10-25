@@ -8,7 +8,7 @@ interface CommonQueryFunctionProps {
   url: string;
   params?: Record<string, any>;
   method: Options["method"];
-  classType: (new (...args: any) => any);
+  classType: (new (...args: any) => any) | undefined;
   body?: any;
   client?: KyInstance;
 }
@@ -25,7 +25,7 @@ export async function ApiFetch(props: CommonQueryFunctionProps): Promise<any> {
   try {
     const response = await usedClient(props.url, clientProps);
     const result = await response.json() as any;
-    const data = plainToInstance(props.classType, result.data)
+    const data = props.classType ? plainToInstance(props.classType, result.data) : result.data;
     return {
       data,
       ...result

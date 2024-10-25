@@ -5,19 +5,19 @@ const mantineTheme = createTheme({
   primaryColor: 'parallel',
   colors: {
     parallel: [
-      "#fbf3f5",
-      "#e7e7e7",
-      "#cdcdcd",
-      "#b2b2b2",
-      "#9a9a9a",
-      "#8b8b8b",
-      "#848484",
-      "#717171",
-      "#656565",
-      "#5c5557"
+      "#eff2ff",
+      "#dfe2f2",
+      "#bdc2de",
+      "#99a0ca",
+      "#7a84b9",
+      "#6672af",
+      "#5c69ac",
+      "#4c5897",
+      "#424e88",
+      "#36437a"
     ],
   },
-  defaultRadius: 'lg',
+  defaultRadius: 'md',
   defaultGradient: {
     from: Colors.backgroundPrimary,
     to: Colors.foregroundPrimary,

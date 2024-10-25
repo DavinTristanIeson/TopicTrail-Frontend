@@ -19,7 +19,7 @@ export interface PaginationMeta {
 }
 
 export interface ExtendedApiResult<T> extends PaginationMeta {
-  data: T[]
+  data: T
   message?: string;
 
   total: number;
