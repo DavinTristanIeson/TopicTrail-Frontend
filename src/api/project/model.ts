@@ -1,9 +1,11 @@
 import { Type } from "class-transformer";
 import { ProjectConfigModel } from "./config.model";
+import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 
 // Models
 export class ProjectLiteModel {
   id: string;
+  path: string;
 }
 
 export class ProjectModel {
@@ -20,7 +22,7 @@ export class ProjectCheckIdModel {
 export class ProjectCheckDatasetModel {
   columns: {
     name: string;
-    type: string;
+    type: SchemaColumnTypeEnum;
   }[];
 }
 

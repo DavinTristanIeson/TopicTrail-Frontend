@@ -16,11 +16,22 @@ interface TextFieldProps extends TextInputProps {
 }
 
 export function TextField(props: TextFieldProps) {
-  const { field, fieldState } = useController({
+  const {
+    field,
+    fieldState: { error },
+    formState: { isSubmitting, disabled },
+  } = useController({
     name: props.name,
   });
 
-  return <TextInput {...field} error={fieldState.error?.message} {...props} />;
+  return (
+    <TextInput
+      {...field}
+      error={error?.message}
+      disabled={isSubmitting || disabled}
+      {...props}
+    />
+  );
 }
 
 interface DateTimeFieldProps extends DateTimePickerProps {
@@ -28,12 +39,21 @@ interface DateTimeFieldProps extends DateTimePickerProps {
 }
 
 export function DateTimeField(props: DateTimeFieldProps) {
-  const { field, fieldState } = useController({
+  const {
+    field,
+    fieldState: { error },
+    formState: { isSubmitting, disabled },
+  } = useController({
     name: props.name,
   });
 
   return (
-    <DateTimePicker {...field} error={fieldState.error?.message} {...props} />
+    <DateTimePicker
+      {...field}
+      error={error?.message}
+      disabled={isSubmitting || disabled}
+      {...props}
+    />
   );
 }
 
@@ -42,7 +62,11 @@ interface NumberFieldProps extends NumberInputProps {
 }
 
 export function NumberField(props: NumberFieldProps) {
-  const { field, fieldState } = useController({
+  const {
+    field,
+    fieldState: { error },
+    formState: { isSubmitting, disabled },
+  } = useController({
     name: props.name,
   });
 
@@ -56,7 +80,8 @@ export function NumberField(props: NumberFieldProps) {
           field.onChange(e);
         }
       }}
-      error={fieldState.error?.message}
+      disabled={isSubmitting || disabled}
+      error={error?.message}
       {...props}
     />
   );
@@ -67,18 +92,21 @@ interface SwitchFieldProps extends SwitchProps {
 }
 
 export function SwitchField(props: SwitchFieldProps) {
-  const { field, fieldState } = useController({
+  const {
+    field: { value, ...restField },
+    fieldState: { error },
+    formState: { disabled, isSubmitting },
+  } = useController({
     name: props.name,
   });
 
   return (
     <Switch
-      checked={field.value}
-      onChange={field.onChange}
-      onBlur={field.onBlur}
-      disabled={field.disabled}
-      ref={field.ref}
-      error={fieldState.error?.message}
+      checked={value}
+      {...restField}
+      error={error?.message}
+      disabled={isSubmitting || disabled}
+      {...props}
     />
   );
 }
@@ -88,9 +116,20 @@ interface TagsFieldProps extends TagsInputProps {
 }
 
 export function TagsField(props: TagsFieldProps) {
-  const { field, fieldState } = useController({
+  const {
+    field,
+    fieldState: { error },
+    formState: { isSubmitting, disabled },
+  } = useController({
     name: props.name,
   });
 
-  return <TagsInput {...field} error={fieldState.error?.message} {...props} />;
+  return (
+    <TagsInput
+      {...field}
+      error={error?.message}
+      disabled={isSubmitting || disabled}
+      {...props}
+    />
+  );
 }

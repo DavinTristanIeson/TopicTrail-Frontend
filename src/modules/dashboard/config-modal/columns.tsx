@@ -6,7 +6,7 @@ import {
   TextField,
 } from "@/components/standard/fields/wrapper";
 import React from "react";
-import { Group, Switch } from "@mantine/core";
+import { Divider, Group, Stack, Switch } from "@mantine/core";
 import Colors from "@/common/constants/colors";
 import Text from "@/components/standard/text";
 import TextLink from "@/components/standard/button/link";
@@ -112,9 +112,9 @@ export function ProjectConfigColumnTextualForm(
   const TOPIC_MODELING_NAME = `columns.${index}.topicModeling` as const;
 
   return (
-    <div>
+    <Stack>
       <Text fw="bold">Preprocessing Configuration</Text>
-      <div>
+      <Stack>
         <TagsField
           label="Ignore Tokens"
           name={`${PREPROCESSING_NAME}.ignoreTokens`}
@@ -123,9 +123,9 @@ export function ProjectConfigColumnTextualForm(
           name={`${PREPROCESSING_NAME}.stopwords`}
           label="Stop Words"
           description={
-            <Text>
+            <Text size="xs">
               The words that
-              <Text inline fw="bold">
+              <Text span fw="bold" inherit>
                 {` should `}
               </Text>
               be excluded from the documents.
@@ -147,10 +147,12 @@ export function ProjectConfigColumnTextualForm(
           label="Remove number?"
           description="Should all numbers be removed? Turn this off if numbers are important."
         />
-      </div>
+      </Stack>
+
+      <Divider />
 
       <Text fw="bold">Topic Modeling Configuration</Text>
-      <div>
+      <Stack>
         <SwitchField
           name={`${TOPIC_MODELING_NAME}.lowMemory`}
           label="Low Memory"
@@ -178,7 +180,7 @@ export function ProjectConfigColumnTextualForm(
           min={1}
           description="The maximum number of topics that can be discovered by the model. If the model discovers more topics than this threshold, then the smaller topics will be merged iteratively into a bigger topic."
         />
-        <div>
+        <Stack>
           <Group justify="space-between">
             <NumberField
               name={`${TOPIC_MODELING_NAME}.nGramRangeStart`}
@@ -200,7 +202,7 @@ export function ProjectConfigColumnTextualForm(
             to be included into the the topic representation; but phrases like
             &quot;the door hinge&quot; will be excluded.
           </Text>
-        </div>
+        </Stack>
         <Group justify="space-between">
           <SwitchField
             label="No Outliers"
@@ -213,7 +215,7 @@ export function ProjectConfigColumnTextualForm(
             name="representOutliers"
           />
         </Group>
-      </div>
-    </div>
+      </Stack>
+    </Stack>
   );
 }

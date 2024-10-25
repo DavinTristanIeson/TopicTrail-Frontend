@@ -66,7 +66,7 @@ function CreateProjectConfigModalBody() {
           onBack={onBack}
         />
       )}
-      {phase === 2 && <ProjectConfigFormBody />}
+      {phase === 2 && <ProjectConfigFormBody onBack={onBack} />}
     </FormWrapper>
   );
 }
@@ -95,7 +95,7 @@ function EditProjectConfigModalBody(props: ProjectConfigModalProps) {
 
   return (
     <FormWrapper form={form} onSubmit={handleSubmit}>
-      <ProjectConfigFormBody />
+      <ProjectConfigFormBody onBack={undefined} />
     </FormWrapper>
   );
 }

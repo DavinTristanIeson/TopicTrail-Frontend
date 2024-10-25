@@ -5,9 +5,8 @@ import {
 import Colors from "@/common/constants/colors";
 import {
   Alert,
-  Box,
   Flex,
-  Modal,
+  LoadingOverlay,
   Stack,
   TextInput,
   Title,
@@ -33,13 +32,18 @@ interface CreateProjectFlow_CheckProjectIdProps {
   onContinue(): void;
 }
 
-export function ProjectIdForm() {
+interface ProjectIdFormProps {
+  disabled?: boolean;
+}
+
+export function ProjectIdForm(props: ProjectIdFormProps) {
   return (
     <TextField
       name="projectId"
       label="Project Name"
       description="The name of the project should be unique."
       required
+      disabled={props.disabled}
     />
   );
 }
@@ -68,7 +72,8 @@ export function CreateProjectFlow_CheckProjectId(
   }, setError);
 
   return (
-    <Stack>
+    <Stack className="relative">
+      <LoadingOverlay visible={isPending} />
       <Title order={2}>1/3: What&apos;s the name of your project?</Title>
       <Text wrap>
         First things first, please specify the name of your project. Note that
@@ -78,7 +83,7 @@ export function CreateProjectFlow_CheckProjectId(
         </Text>{" "}
         directory in the same directory as the Wordsmith Project.
       </Text>
-      <ProjectIdForm />
+      <ProjectIdForm disabled={isPending} />
       <Flex direction="row-reverse" w="100%">
         <Button
           leftSection={<CheckCircle size={20} />}
@@ -97,7 +102,7 @@ export function CreateProjectFlow_CheckProjectId(
 // | CHECK DATASET |
 // +---------------+
 interface ProjectConfigDataSourceFormProps {
-  readOnly: boolean;
+  disabled: boolean;
 }
 
 function ProjectConfigDataSourceFormFieldSwitcher(
@@ -136,7 +141,7 @@ function ProjectConfigDataSourceFormFieldSwitcher(
         name="source.sheetName"
         label="Sheet Name"
         description="The sheet that contains the data to be analyzed."
-        readOnly={props.readOnly}
+        readOnly={props.disabled}
         required
       />
     );
@@ -149,9 +154,9 @@ export function ProjectConfigDataSourceForm(
 ) {
   return (
     <>
-      {props.readOnly && (
+      {props.disabled && (
         <Alert color={Colors.sentimentWarning}>
-          <Flex align="center">
+          <Flex align="center" gap={16} py={8}>
             <WarningCircle size={24} />
             Fundamental dataset properties cannot be altered as your existing
             columns will need to be cleared and re-configured. If you want to
@@ -167,7 +172,7 @@ export function ProjectConfigDataSourceForm(
           placeholder="path/to/dataset"
           description="Enter the path (preferably absolute) of your dataset. You can also specify the path relative to the directory of the Wordsmith Project, but this is not recommended."
           required
-          readOnly={props.readOnly}
+          disabled={props.disabled}
           w="100%"
         />
         <EnumSelectField
@@ -176,7 +181,7 @@ export function ProjectConfigDataSourceForm(
           clearable={false}
           label="Dataset Type"
           description="We need to know the type of the dataset so that we can properly parse its contents."
-          readOnly={props.readOnly}
+          disabled={props.disabled}
           w="100%"
         />
       </Flex>
@@ -194,7 +199,8 @@ export function CreateProjectFlow_CheckDataset(
   props: CreateProjectFlow_CheckDatasetProps
 ) {
   const { mutateAsync: check, isPending } = useProjectCheckDataset();
-  const { getValues, setError } = useFormContext<ProjectConfigFormType>();
+  const { getValues, setError, setValue } =
+    useFormContext<ProjectConfigFormType>();
   const handleSubmit = async () => {
     const values = getValues();
     try {
@@ -205,6 +211,25 @@ export function CreateProjectFlow_CheckDataset(
           color: Colors.sentimentSuccess,
         });
       }
+
+      setValue(
+        "columns",
+        res.data.columns.map((column) => {
+          return {
+            ...column,
+            // This should be undefinedable, Yup.InferType doesn't do well with when's.
+            preprocessing: undefined as any,
+            topicModeling: undefined as any,
+            bins: 10,
+            datetimeFormat: undefined,
+            lowerBound: undefined,
+            maxDate: undefined,
+            minDate: undefined,
+            minFrequency: 1,
+            upperBound: undefined,
+          };
+        })
+      );
       props.onContinue(res.data);
     } catch (e: any) {
       console.error(e);
@@ -223,7 +248,7 @@ export function CreateProjectFlow_CheckDataset(
   };
 
   return (
-    <Stack>
+    <Stack className="relative">
       <Title order={2}>2/3: Where&apos;s the location of your dataset?</Title>
       <Text>
         Next, we need a dataset to get started. Please specify the file path
@@ -231,7 +256,8 @@ export function CreateProjectFlow_CheckDataset(
         C:/Users/User/path/to/dataset) so that we can access the dataset. Please
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
       </Text>
-      <ProjectConfigDataSourceForm readOnly={false} />
+      <LoadingOverlay visible={isPending} />
+      <ProjectConfigDataSourceForm disabled={isPending} />
       <Flex justify="space-between" w="100%">
         <Button
           leftSection={<ArrowLeft size={20} />}

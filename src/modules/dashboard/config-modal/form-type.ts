@@ -8,7 +8,7 @@ export const ProjectConfigFormSchema = Yup.object({
     "The project name must also be a valid file name."
   ),
   source: Yup.object({
-    path: Yup.string().required().matches(/^[a-zA-Z0-9-_. /\/]+$/, "Please provide a valid path"),
+    path: Yup.string().required().matches(/^[a-zA-Z0-9-_. :/\\]+$/, "Please provide a valid path"),
     type: Yup.string().oneOf(Object.values(DataSourceTypeEnum)).required(),
     sheetName: Yup.string().when("type", {
       is: DataSourceTypeEnum.Excel,

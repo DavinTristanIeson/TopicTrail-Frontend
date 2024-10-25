@@ -1,12 +1,15 @@
-import {
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-} from "react-hook-form";
+import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { ProjectConfigDataSourceForm, ProjectIdForm } from "./phases";
 import { ProjectConfigFormType } from "./form-type";
-import { Accordion } from "@mantine/core";
+import {
+  Accordion,
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Stack,
+  Title,
+} from "@mantine/core";
 import { EnumList, SchemaColumnTypeEnum } from "@/common/constants/enum";
 import {
   ProjectConfigColumnCategoricalForm,
@@ -18,6 +21,17 @@ import { EnumSelectField } from "@/components/widgets/enum-select";
 import React from "react";
 import Text from "@/components/standard/text";
 import { TextField } from "@/components/standard/fields/wrapper";
+import {
+  ArrowLeft,
+  ChartBar,
+  Clock,
+  FloppyDisk,
+  GridFour,
+  Question,
+  TextAUnderline,
+} from "@phosphor-icons/react";
+import SubmitButton from "@/components/standard/button/submit";
+import FieldWatcher from "@/components/standard/fields/watcher";
 
 interface ProjectConfigColumnFormItemProps {
   accordionValue: string;
@@ -55,30 +69,49 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
   return (
     <Accordion.Item value={accordionValue}>
       <Accordion.Control>
-        <Controller
-          name={`${NAME}.name`}
-          render={({ field }) => {
+        <FieldWatcher names={[`${NAME}.name`, `${NAME}.type`]}>
+          {(values) => {
+            const name = values[`${NAME}.name`] as string | undefined;
+            const type = values[`${NAME}.type`] as
+              | SchemaColumnTypeEnum
+              | undefined;
             return (
-              <Text fw="bold" size="md">
-                {field.value}
-              </Text>
+              <Group>
+                {type === SchemaColumnTypeEnum.Categorical ? (
+                  <GridFour />
+                ) : type === SchemaColumnTypeEnum.Continuous ? (
+                  <ChartBar />
+                ) : type === SchemaColumnTypeEnum.Temporal ? (
+                  <Clock />
+                ) : type === SchemaColumnTypeEnum.Textual ? (
+                  <TextAUnderline />
+                ) : (
+                  <Question />
+                )}
+                <Text fw="bold" size="md">
+                  {name}
+                </Text>
+              </Group>
             );
           }}
-        />
+        </FieldWatcher>
       </Accordion.Control>
       <Accordion.Panel>
-        <TextField
-          name={`${NAME}.name`}
-          label="Name"
-          description="The name of the column. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
-        />
-        <EnumSelectField
-          name={`${NAME}.type`}
-          type={EnumList.SchemaColumnTypeEnum}
-          label="Type"
-          description="The type of the column. Please note that providing the wrong column type can cause the application to error."
-        />
-        <ProjectConfigColumnFormItemSwitcher {...props} />
+        <Stack>
+          <TextField
+            name={`${NAME}.name`}
+            label="Name"
+            description="The name of the column. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
+          />
+          <EnumSelectField
+            name={`${NAME}.type`}
+            type={EnumList.SchemaColumnTypeEnum}
+            label="Type"
+            description="The type of the column. Please note that providing the wrong column type can cause the application to error."
+          />
+          <Divider />
+          <ProjectConfigColumnFormItemSwitcher {...props} />
+        </Stack>
       </Accordion.Panel>
     </Accordion.Item>
   );
@@ -107,12 +140,35 @@ function ProjectConfigColumnsFieldArray() {
   );
 }
 
-export default function ProjectConfigFormBody() {
+interface ProjectConfigFormBodyProps {
+  onBack?(): void;
+}
+
+export default function ProjectConfigFormBody(
+  props: ProjectConfigFormBodyProps
+) {
   return (
-    <>
+    <Stack>
       <ProjectIdForm />
-      <ProjectConfigDataSourceForm readOnly />
+
+      <Title order={4}>Dataset</Title>
+      <ProjectConfigDataSourceForm disabled />
+
+      <Title order={4}>Schema</Title>
       <ProjectConfigColumnsFieldArray />
-    </>
+
+      <Flex justify="space-between" direction="row-reverse" align="center">
+        <SubmitButton leftSection={<FloppyDisk size={20} />}>
+          Save Project
+        </SubmitButton>
+        <Button
+          leftSection={<ArrowLeft size={20} />}
+          variant="outline"
+          onClick={props.onBack}
+        >
+          Change Project Name?
+        </Button>
+      </Flex>
+    </Stack>
   );
 }
