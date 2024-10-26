@@ -60,9 +60,14 @@ interface AppProjectLayoutProps {
 
 export default function AppProjectLayout(props: AppProjectLayoutProps) {
   const id = useRouter().query.id as string;
-  const query = useGetProject({
-    id,
-  });
+  const query = useGetProject(
+    {
+      id,
+    },
+    {
+      enabled: !!id,
+    }
+  );
   return (
     <AppLayout
       Header={<AppHeader back title={id} />}

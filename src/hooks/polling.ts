@@ -126,5 +126,21 @@ export function usePolling(props: UsePollingProps) {
     }, interval);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, enabled]);
+  }, [key, enabled, interval]);
+}
+
+
+interface PollingRendererProps {
+  interval: number;
+  children?(): React.ReactNode;
+}
+
+
+export function PollingRenderer(props: PollingRendererProps){
+  const [flip, flop] = React.useState(false);
+  usePolling({
+    fn: () => flop(flip => !flip),
+    interval: props.interval,
+  });
+  return props.children?.();
 }

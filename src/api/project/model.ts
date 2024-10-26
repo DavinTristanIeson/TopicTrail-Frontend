@@ -10,6 +10,11 @@ export class ProjectTaskResult<T> {
   message?: string;
   error?: string;
   progress?: number;
+  timestamp: number;
+
+  static isPending(data: ProjectTaskResult<any>): boolean {
+    return data.status === ProjectTaskStatus.Pending || data.status === ProjectTaskStatus.Idle
+  }
 }
 
 export class ProjectLiteModel {

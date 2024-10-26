@@ -31,11 +31,6 @@ export interface TopicModelingStatusInput {
   id: string;
 }
 
-export interface TopicSimilarityInput {
-  id: string;
-  column: string;
-}
-
 export interface TopicsInput {
   id: string;
   column: string;

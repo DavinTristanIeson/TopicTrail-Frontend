@@ -3,7 +3,7 @@ import { IdInput } from "../common/model";
 import { useMutation } from "@tanstack/react-query";
 import { ApiFetch } from "@/common/api/fetch";
 import { queryClient } from "@/common/api/query-client";
-import { TopicQueryKeys } from "./query";
+import { projectTopicsEndpoint, TopicQueryKeys } from "./query";
 import { ApiResult } from "@/common/api/model";
 
 const ENDPOINT = "projects";
@@ -36,7 +36,7 @@ export const useStartTopicModeling: ApiMutationFunction<IdInput, ApiResult<never
     ...options,
     mutationFn(body){
       return ApiFetch({
-        url: `${ENDPOINT}/${body.id}`,
+        url: `${projectTopicsEndpoint(body.id)}/start`,
         classType: undefined,
         method: 'post',
       })

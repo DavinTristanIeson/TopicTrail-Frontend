@@ -24,7 +24,7 @@ export type ApiQueryFunction<
 > = GenericApiQueryFunction<
   TInput,
   UseQueryResult<TData, TError>,
-  UseQueryOptions<TData, TError>
+  Partial<UseQueryOptions<TData, TError>>
 >;
 
 export type InfiniteApiQueryFunction<
@@ -34,7 +34,7 @@ export type InfiniteApiQueryFunction<
 > = GenericApiQueryFunction<
   TInput,
   UseInfiniteQueryResult<TData, TError>,
-  UseInfiniteQueryOptions<TData, TError>
+  Partial<UseInfiniteQueryOptions<TData, TError>>
 >;
 
 export type ApiMutationFunction<
@@ -45,5 +45,5 @@ export type ApiMutationFunction<
 > = GenericApiQueryFunction<
   TConfig,
   UseMutationResult<TResult, TError, TInput>,
-  UseMutationOptions<TResult, TError, TInput>
+  Partial<UseMutationOptions<TResult, TError, TInput>>
 >;

@@ -1,5 +1,5 @@
 import { ApiQueryFunction } from "@/common/api/fetch-types";
-import { TopicModelingStatusInput, TopicSimilarityInput, TopicSimilarityModel, TopicsInput, TopicsModel } from "./model";
+import { TopicModelingStatusInput, TopicSimilarityModel, TopicsInput, TopicsModel } from "./model";
 import { ProjectTaskResult } from "../project/model";
 import { useQuery } from "@tanstack/react-query";
 import { ApiFetch } from "@/common/api/fetch";
@@ -17,12 +17,12 @@ export const TopicQueryKeys = {
   },
 
   topicSimilarityKey: 'getTopicSimilarity',
-  topicSimilarity(input: TopicSimilarityInput){
+  topicSimilarity(input: TopicsInput){
     return [TopicQueryKeys.topicSimilarityKey, input.id, input.column];
   }
 }
 
-function endpoint(id: string){
+export function projectTopicsEndpoint(id: string){
   return `projects/${id}/topics`;
 }
 
@@ -33,7 +33,6 @@ export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskRes
       return ApiFetch({
         classType: undefined,
         method: 'get',
-        body: input,
         url: `projects/${input.id}/status`
       });
     }
@@ -47,22 +46,20 @@ export const useGetTopics: ApiQueryFunction<TopicsInput, ProjectTaskResult<Topic
       return ApiFetch({
         classType: TopicsModel,
         method: 'get',
-        params: input,
-        url: `${endpoint(input.id)}/${input.column}`
+        url: `${projectTopicsEndpoint(input.id)}/${input.column}`
       });
     }
   });
 }
 
-export const useGetTopicSimilarity: ApiQueryFunction<TopicSimilarityInput, ProjectTaskResult<TopicsModel>> = function (input, options){
+export const useGetTopicSimilarity: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicsModel>> = function (input, options){
   return useQuery({
     queryKey: TopicQueryKeys.topicSimilarity(input),
     queryFn(){
       return ApiFetch({
         classType: TopicSimilarityModel,
         method: 'get',
-        params: input,
-        url: `${endpoint(input.id)}/${input.column}/similarity`
+        url: `${projectTopicsEndpoint(input.id)}/${input.column}/similarity`
       });
     }
   });
