@@ -27,8 +27,8 @@ export async function ApiFetch(props: CommonQueryFunctionProps): Promise<any> {
     const result = await response.json() as any;
     const data = props.classType ? plainToInstance(props.classType, result.data) : result.data;
     return {
+      ...result,
       data,
-      ...result
     }
   } catch (e: any) {
     throw await toApiError(e);

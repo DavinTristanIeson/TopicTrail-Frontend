@@ -1,7 +1,10 @@
 import { ProjectModel } from "@/api/project/model";
 import { useGetTopicModelingStatus, useStartTopicModeling } from "@/api/topics";
+import { ProjectTaskStatus } from "@/common/constants/enum";
 import AppProjectLayout from "@/modules/projects/common/layout";
 import ProcedureStatus from "@/modules/projects/common/procedure";
+import TopicsRenderer from "@/modules/projects/topics/renderer";
+import { Divider, Stack } from "@mantine/core";
 
 function ProjectTopicsPageBody(props: ProjectModel) {
   const {
@@ -12,13 +15,14 @@ function ProjectTopicsPageBody(props: ProjectModel) {
   } = useGetTopicModelingStatus({
     id: props.id,
   });
+
   const {
     mutateAsync,
     isPending,
     error: errorExecute,
   } = useStartTopicModeling();
   return (
-    <div>
+    <Stack gap={64}>
       <ProcedureStatus
         title="Topic Modeling"
         description="Let our algorithms discover the hidden topics present in your dataset. This procedure may take a few seconds up to a few minutes depending on the size of your dataset. Feel free to grab a coffee while you wait!"
@@ -30,9 +34,17 @@ function ProjectTopicsPageBody(props: ProjectModel) {
           })
         }
         loading={isLoading || isPending}
-        error={errorExecute?.message ?? errorStatus?.message}
+        error={
+          errorExecute?.message || (status ? errorStatus?.message : undefined)
+        }
       />
-    </div>
+
+      <Divider />
+
+      {status?.status == ProjectTaskStatus.Success && (
+        <TopicsRenderer {...props.config} />
+      )}
+    </Stack>
   );
 }
 

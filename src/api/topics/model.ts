@@ -1,17 +1,18 @@
 import { ProjectTaskStatus } from "@/common/constants/enum";
 import { Expose } from "class-transformer";
+import { PlotParams } from "react-plotly.js";
 
 // Model
 
 export class TopicsModel {
-  plot: string;
+  plot: PlotParams;
+
+  topics: string[];
 
   @Expose({name: "topic_words"})
   topicWords: Record<string, [string, number][]>;
 
-  frequencies: Record<string, number>;
-  hierarchy: Record<string, string[]>;
-
+  frequencies: number[];
   outliers: number;
   total: number;
 }

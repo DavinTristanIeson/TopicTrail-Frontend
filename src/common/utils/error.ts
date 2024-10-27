@@ -73,7 +73,7 @@ export function handleErrorFn<T extends (...args: any) => any>(fn: T): T {
         });
       } else {
         showNotification({
-          message: "An error has occurred during the submission of this form.",
+          message: "An unexpected error has occurred.",
           color: Colors.sentimentError,
         });
       }

@@ -7,10 +7,12 @@ import Button from "@/components/standard/button/base";
 import Text from "@/components/standard/text";
 import { PollingRenderer, usePolling } from "@/hooks/polling";
 import {
+  Flex,
   Group,
   Loader,
   LoadingOverlay,
   Paper,
+  PaperProps,
   RingProgress,
   Stack,
 } from "@mantine/core";
@@ -36,6 +38,16 @@ interface ProcedureStatusProps {
   refetch(): void;
   execute(): Promise<ApiResult<unknown>>;
   refetchInterval?: number;
+  /** Hide if idle or success */
+  quiet?: boolean;
+
+  // Components
+  AboveDescription?: React.ReactNode;
+  BelowDescription?: React.ReactNode;
+
+  mantineProps?: {
+    root?: PaperProps;
+  };
 }
 
 export default function ProcedureStatus(props: ProcedureStatusProps) {
@@ -48,6 +60,10 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     refetch,
     execute,
     refetchInterval = 5000,
+    quiet,
+    AboveDescription,
+    BelowDescription,
+    mantineProps,
   } = props;
   const [lastOperationTime, setLastOperationTime] = React.useState<
     Dayjs | undefined
@@ -66,36 +82,33 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     actionIcon: React.ReactNode;
 
   const isPending = data && ProjectTaskResult.isPending(data) && !error;
-  if (
-    (error && lastOperationTime != undefined) ||
-    props.data?.status === ProjectTaskStatus.Failed
-  ) {
+  if (error || data?.status === ProjectTaskStatus.Failed) {
     color = Colors.sentimentError;
     icon = <XCircle size={48} color={Colors.sentimentError} />;
     defaultMessage = error ?? "Sorry! An unexpected error has occurred.";
     actionMessage = "Try Again?";
     actionIcon = <Play />;
-  } else if (!props.data) {
+  } else if (!data) {
     color = Colors.text;
     icon = <Clock color={Colors.backgroundDull} size={48} />;
     actionMessage = "Start";
     actionIcon = <Play />;
     defaultMessage = description;
-  } else if (props.data.status === ProjectTaskStatus.Idle) {
+  } else if (data.status === ProjectTaskStatus.Idle) {
     color = Colors.backgroundDull;
     icon = <Clock color={Colors.backgroundDull} size={48} />;
     actionMessage = "Refresh";
     actionIcon = <ArrowClockwise />;
     defaultMessage =
       "The server is busy doing other tasks at the moment. Please wait for a few seconds...";
-  } else if (props.data.status === ProjectTaskStatus.Pending) {
+  } else if (data.status === ProjectTaskStatus.Pending) {
     color = Colors.foregroundPrimary;
     icon = <Loader size={32} color={Colors.foregroundPrimary}></Loader>;
     defaultMessage =
       "Please wait for a few seconds while we prepare everything...";
     actionMessage = "Refresh";
     actionIcon = <ArrowClockwise />;
-  } else if (props.data.status === ProjectTaskStatus.Success) {
+  } else if (data.status === ProjectTaskStatus.Success) {
     color = Colors.sentimentSuccess;
     icon = <CheckCircle size={48} color={Colors.sentimentSuccess} />;
     defaultMessage = "The procedure has completed successfully.";
@@ -105,8 +118,23 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     return null;
   }
 
+  const canBeHidden =
+    (data?.status === ProjectTaskStatus.Idle ||
+      data?.status === ProjectTaskStatus.Success) &&
+    !error;
+  if (quiet && canBeHidden) {
+    console.log("HELLO");
+    return null;
+  }
+
   return (
-    <Paper shadow="sm" p={16} maw={600} className="relative">
+    <Paper
+      shadow="sm"
+      p={16}
+      maw={600}
+      className="relative"
+      {...mantineProps?.root}
+    >
       <LoadingOverlay visible={loading} />
       <Group align="start" wrap="nowrap">
         <RingProgress
@@ -123,17 +151,10 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
           <Text size="lg" fw="bold">
             {title}
           </Text>
+          {AboveDescription}
           <Text wrap>{data?.message ?? defaultMessage}</Text>
-          <Group justify="space-between">
-            {lastOperationTime && (
-              <PollingRenderer interval={5000}>
-                {() => (
-                  <Text>{`Last ${
-                    isPending ? "checked" : "ran"
-                  } ${lastOperationTime.fromNow()}`}</Text>
-                )}
-              </PollingRenderer>
-            )}
+          {BelowDescription}
+          <Flex align="center" justify="space-between" direction="row-reverse">
             <Button
               leftSection={actionIcon}
               onClick={handleErrorFn(async () => {
@@ -154,7 +175,16 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
             >
               {actionMessage}
             </Button>
-          </Group>
+            {lastOperationTime && (
+              <PollingRenderer interval={5000}>
+                {() => (
+                  <Text c={Colors.foregroundDull}>{`Last ${
+                    isPending ? "checked" : "ran"
+                  } ${lastOperationTime.fromNow()}`}</Text>
+                )}
+              </PollingRenderer>
+            )}
+          </Flex>
         </Stack>
       </Group>
     </Paper>

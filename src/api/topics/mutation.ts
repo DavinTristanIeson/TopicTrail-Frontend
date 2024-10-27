@@ -5,6 +5,7 @@ import { ApiFetch } from "@/common/api/fetch";
 import { queryClient } from "@/common/api/query-client";
 import { projectTopicsEndpoint, TopicQueryKeys } from "./query";
 import { ApiResult } from "@/common/api/model";
+import { TopicsInput } from "./model";
 
 const ENDPOINT = "projects";
 export function invalidateTopicQueries(id: string){
@@ -43,6 +44,25 @@ export const useStartTopicModeling: ApiMutationFunction<IdInput, ApiResult<never
     },
     onSuccess(data, variables, context) {
       invalidateTopicQueries(variables.id);
+    },
+  });
+}
+
+
+export const useSendTopicRequest: ApiMutationFunction<TopicsInput, ApiResult<never>> = function (options){
+  return useMutation({
+    ...options,
+    mutationFn(body){
+      return ApiFetch({
+        url: `${projectTopicsEndpoint(body.id)}/${body.column}`,
+        classType: undefined,
+        method: 'post',
+      })
+    },
+    onSuccess(data, variables, context) {
+      queryClient.invalidateQueries({
+        queryKey: TopicQueryKeys.topics(variables),
+      });
     },
   });
 }

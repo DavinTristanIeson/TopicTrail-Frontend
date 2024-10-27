@@ -25,7 +25,7 @@ const Text = forwardRef<HTMLDivElement, TextProps>((props, ref) => {
       {...rest}
       ref={ref}
       className={classNames(
-        wrap ? "text-wrap break-all" : "text-nowrap",
+        wrap ? "text-wrap break-words" : "text-nowrap",
         className
       )}
     />
