@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 
 export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
+  datasetName: Yup.string().required(),
   type: Yup.string().oneOf(Object.values(SchemaColumnTypeEnum)).required(),
 
   lowerBound: Yup.number().nullable().when("type", {
@@ -105,6 +106,7 @@ export type ProjectConfigFormType = Yup.InferType<typeof ProjectConfigFormSchema
 export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColumnTypeEnum){
   return {
     name,
+    datasetName: name,
     type,
     preprocessing: type === SchemaColumnTypeEnum.Textual ? {
       ignoreTokens: [],
@@ -136,9 +138,10 @@ export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColum
 
 export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectConfigFormType {
   return {
-    columns: data?.dfschema.columns.map(col => {
+    columns: data?.dataSchema.columns.map(col => {
       return {
         name: col.name,
+        datasetName: col.datasetName ?? col.name,
         preprocessing: col.preprocessing as any,
         topicModeling: col.topicModeling as any,
         type: col.type,
@@ -166,7 +169,7 @@ export function ProjectConfigFormType2Input(values: ProjectConfigFormType): Proj
   return {
     ...values,
     version: PROJECT_CONFIG_VERSION,
-    dfschema: {
+    dataSchema: {
       columns: values.columns.map(col => {
         return {
           ...col,

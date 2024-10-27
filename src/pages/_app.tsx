@@ -27,7 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
           limit={10}
           position="top-right"
           zIndex={9999999}
-          autoClose={4000}
+          autoClose={5000}
         />
         <QueryClientProvider client={queryClient}>
           {/* Enable this if you need to debug react query */}

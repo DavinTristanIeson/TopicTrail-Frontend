@@ -22,7 +22,10 @@ import {
   XCircle,
 } from "@phosphor-icons/react";
 import React from "react";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
+import { showNotification } from "@mantine/notifications";
+import { ApiResult } from "@/common/api/model";
+import { handleErrorFn } from "@/common/utils/error";
 
 interface ProcedureStatusProps {
   title: string;
@@ -31,7 +34,7 @@ interface ProcedureStatusProps {
   data: ProjectTaskResult<unknown> | undefined;
   error: string | undefined;
   refetch(): void;
-  execute(): void;
+  execute(): Promise<ApiResult<unknown>>;
   refetchInterval?: number;
 }
 
@@ -46,7 +49,9 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     execute,
     refetchInterval = 5000,
   } = props;
-  const [operationTime, setLastOperationTime] = React.useState(dayjs());
+  const [lastOperationTime, setLastOperationTime] = React.useState<
+    Dayjs | undefined
+  >(undefined);
 
   usePolling({
     fn: refetch,
@@ -60,15 +65,18 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     actionMessage: string,
     actionIcon: React.ReactNode;
 
-  const isPending = data && ProjectTaskResult.isPending(data);
-  if (error || props.data?.status === ProjectTaskStatus.Failed) {
+  const isPending = data && ProjectTaskResult.isPending(data) && !error;
+  if (
+    (error && lastOperationTime != undefined) ||
+    props.data?.status === ProjectTaskStatus.Failed
+  ) {
     color = Colors.sentimentError;
     icon = <XCircle size={48} color={Colors.sentimentError} />;
     defaultMessage = error ?? "Sorry! An unexpected error has occurred.";
     actionMessage = "Try Again?";
     actionIcon = <Play />;
   } else if (!props.data) {
-    color = Colors.backgroundDull;
+    color = Colors.text;
     icon = <Clock color={Colors.backgroundDull} size={48} />;
     actionMessage = "Start";
     actionIcon = <Play />;
@@ -82,7 +90,7 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
       "The server is busy doing other tasks at the moment. Please wait for a few seconds...";
   } else if (props.data.status === ProjectTaskStatus.Pending) {
     color = Colors.foregroundPrimary;
-    icon = <Loader size={48} color={Colors.foregroundPrimary} />;
+    icon = <Loader size={32} color={Colors.foregroundPrimary}></Loader>;
     defaultMessage =
       "Please wait for a few seconds while we prepare everything...";
     actionMessage = "Refresh";
@@ -100,13 +108,13 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
   return (
     <Paper shadow="sm" p={16} maw={600} className="relative">
       <LoadingOverlay visible={loading} />
-      <Group align="start">
+      <Group align="start" wrap="nowrap">
         <RingProgress
           size={96}
           label={<Group justify="center">{icon}</Group>}
           sections={[
             {
-              color: Colors.foregroundPrimary,
+              color: color,
               value: (data?.progress ?? 0) * 100,
             },
           ]}
@@ -117,24 +125,32 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
           </Text>
           <Text wrap>{data?.message ?? defaultMessage}</Text>
           <Group justify="space-between">
-            <PollingRenderer interval={5000}>
-              {() => (
-                <Text>{`Last ${
-                  isPending ? "checked" : "ran"
-                } ${operationTime.fromNow()}`}</Text>
-              )}
-            </PollingRenderer>
+            {lastOperationTime && (
+              <PollingRenderer interval={5000}>
+                {() => (
+                  <Text>{`Last ${
+                    isPending ? "checked" : "ran"
+                  } ${lastOperationTime.fromNow()}`}</Text>
+                )}
+              </PollingRenderer>
+            )}
             <Button
-              loading={data ? ProjectTaskResult.isPending(data) : undefined}
               leftSection={actionIcon}
-              onClick={() => {
+              onClick={handleErrorFn(async () => {
                 if (isPending) {
                   refetch();
                 } else {
-                  execute();
+                  const res = await execute();
+                  if (res.message) {
+                    showNotification({
+                      message: res.message,
+                      color: Colors.sentimentSuccess,
+                    });
+                  }
+                  refetch();
                 }
                 setLastOperationTime(dayjs());
-              }}
+              })}
             >
               {actionMessage}
             </Button>

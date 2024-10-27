@@ -31,7 +31,7 @@ import { NumberField, TextField } from "@/components/standard/fields/wrapper";
 // | CHECK PROJECT ID |
 // +------------------+
 
-interface CreateProjectFlow_CheckProjectIdProps {
+interface ConfigureProjectFlow_CheckProjectIdProps {
   onContinue(): void;
 }
 
@@ -51,8 +51,8 @@ export function ProjectIdForm(props: ProjectIdFormProps) {
   );
 }
 
-export function CreateProjectFlow_CheckProjectId(
-  props: CreateProjectFlow_CheckProjectIdProps
+export function ConfigureProjectFlow_CheckProjectId(
+  props: ConfigureProjectFlow_CheckProjectIdProps
 ) {
   const { mutateAsync: check, isPending } = useProjectCheckId();
   const {
@@ -76,7 +76,10 @@ export function CreateProjectFlow_CheckProjectId(
 
   return (
     <Stack className="relative">
-      <LoadingOverlay visible={isPending} />
+      <LoadingOverlay
+        visible={isPending}
+        overlayProps={{ radius: "sm", blur: 2 }}
+      />
       <Title order={2}>1/3: What&apos;s the name of your project?</Title>
       <Text wrap>
         First things first, please specify the name of your project. Note that
@@ -152,28 +155,17 @@ function ProjectConfigDataSourceFormFieldSwitcher(
   return null;
 }
 
-export function ProjectConfigDataSourceForm(
+export function ConfigureDataSourceForm(
   props: ProjectConfigDataSourceFormProps
 ) {
   return (
     <>
-      {props.disabled && (
-        <Alert color={Colors.sentimentWarning}>
-          <Flex align="center" gap={16} py={8}>
-            <WarningCircle size={24} />
-            Fundamental dataset properties cannot be altered as your existing
-            columns will need to be cleared and re-configured. If you want to
-            change the dataset, we recommend creating a new project rather than
-            modifying this one.
-          </Flex>
-        </Alert>
-      )}
       <Flex gap={24}>
         <TextField
           name="source.path"
           label="Dataset Path"
           placeholder="path/to/dataset"
-          description="Enter the path (preferably absolute) of your dataset. You can also specify the path relative to the directory of the Wordsmith Project, but this is not recommended."
+          description="Enter the absolute file path or relative file path (relative to the directory of the Wordsmith Project) to your dataset."
           required
           disabled={props.disabled}
           w="100%"
@@ -193,13 +185,14 @@ export function ProjectConfigDataSourceForm(
   );
 }
 
-interface CreateProjectFlow_CheckDatasetProps {
+interface ConfigureProjectFlow_CheckDatasetProps {
   onContinue(values: ProjectCheckDatasetModel): void;
   onBack(): void;
+  hasData: boolean;
 }
 
-export function CreateProjectFlow_CheckDataset(
-  props: CreateProjectFlow_CheckDatasetProps
+export function ConfigureProjectFlow_CheckDataset(
+  props: ConfigureProjectFlow_CheckDatasetProps
 ) {
   const { mutateAsync: check, isPending } = useProjectCheckDataset();
   const { getValues, setError, setValue } =
@@ -247,8 +240,18 @@ export function CreateProjectFlow_CheckDataset(
         C:/Users/User/path/to/dataset) so that we can access the dataset. Please
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
       </Text>
+      {props.hasData && (
+        <Alert color={Colors.sentimentWarning}>
+          <Flex align="center" gap={16} py={8}>
+            <WarningCircle size={24} />
+            Note that once your dataset has been changed, any existing columns
+            will need to be re-configured. Perhaps you should create a new
+            project instead if you want to keep the column configurations.
+          </Flex>
+        </Alert>
+      )}
       <LoadingOverlay visible={isPending} />
-      <ProjectConfigDataSourceForm disabled={false} />
+      <ConfigureDataSourceForm disabled={false} />
       <Flex justify="space-between" w="100%">
         <Button
           leftSection={<ArrowLeft size={20} />}

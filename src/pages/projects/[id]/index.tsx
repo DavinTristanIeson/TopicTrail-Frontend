@@ -12,7 +12,11 @@ function ProjectTopicsPageBody(props: ProjectModel) {
   } = useGetTopicModelingStatus({
     id: props.id,
   });
-  const { mutate, isPending, error: errorExecute } = useStartTopicModeling();
+  const {
+    mutateAsync,
+    isPending,
+    error: errorExecute,
+  } = useStartTopicModeling();
   return (
     <div>
       <ProcedureStatus
@@ -21,7 +25,7 @@ function ProjectTopicsPageBody(props: ProjectModel) {
         data={status}
         refetch={refetch}
         execute={() =>
-          mutate({
+          mutateAsync({
             id: props.id,
           })
         }

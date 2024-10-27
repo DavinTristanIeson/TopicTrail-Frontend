@@ -33,7 +33,7 @@ export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskRes
       return ApiFetch({
         classType: undefined,
         method: 'get',
-        url: `projects/${input.id}/status`
+        url: `${projectTopicsEndpoint(input.id)}/status`
       });
     }
   });

@@ -1,5 +1,5 @@
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
-import { ProjectConfigDataSourceForm, ProjectIdForm } from "./phases";
+import { ConfigureDataSourceForm, ProjectIdForm } from "./phases";
 import { ProjectConfigFormType } from "./form-type";
 import {
   Accordion,
@@ -116,12 +116,22 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
       </Accordion.Control>
       <Accordion.Panel>
         <Stack>
-          <TextField
-            name={`${NAME}.name`}
-            label="Name"
-            description="The name of the column. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
-            required
-          />
+          <Group align="center">
+            <TextField
+              name={`${NAME}.name`}
+              label="Name"
+              description="The name of the column. This field is CASE-SENSITIVE! Please make sure that the title of this column does not contain any special characters."
+              required
+              w="47%"
+            />
+            <TextField
+              name={`${NAME}.datasetName`}
+              label="Dataset Name"
+              description="The name of the column in the original dataset. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
+              required
+              w="47%"
+            />
+          </Group>
           <EnumSelectField
             name={`${NAME}.type`}
             type={EnumList.SchemaColumnTypeEnum}
@@ -169,10 +179,11 @@ export default function ProjectConfigFormBody(
 ) {
   return (
     <Stack>
-      <ProjectIdForm />
+      <Title order={2}>3/3: Project Configuration</Title>
+      <ProjectIdForm disabled />
 
       <Title order={4}>Dataset</Title>
-      <ProjectConfigDataSourceForm disabled />
+      <ConfigureDataSourceForm disabled />
 
       <Title order={4}>Schema</Title>
       <ProjectConfigColumnsFieldArray />
