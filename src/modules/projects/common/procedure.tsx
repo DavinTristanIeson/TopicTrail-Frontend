@@ -128,13 +128,7 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
   }
 
   return (
-    <Paper
-      shadow="sm"
-      p={16}
-      maw={600}
-      className="relative"
-      {...mantineProps?.root}
-    >
+    <Paper shadow="sm" p={16} className="relative" {...mantineProps?.root}>
       <LoadingOverlay visible={loading} />
       <Group align="start" wrap="nowrap">
         <RingProgress

@@ -11,6 +11,7 @@ export interface AppNavigationLink {
   icon?: React.ReactNode;
   onClick?(): void;
   url?: Url;
+  loading?: boolean;
 }
 interface AppSidebarLinkRendererProps {
   links: AppNavigationLink[];
@@ -25,6 +26,7 @@ export function AppSidebarLinkRenderer({ links }: AppSidebarLinkRendererProps) {
           <PromiseButton
             key={link.label}
             variant="subtle"
+            loading={link.loading}
             color={Colors.foregroundPrimary}
             fullWidth
             onClick={

@@ -1,11 +1,9 @@
-import { ProjectTaskStatus } from "@/common/constants/enum";
 import { Expose } from "class-transformer";
-import { PlotParams } from "react-plotly.js";
 
 // Model
 
 export class TopicsModel {
-  plot: PlotParams;
+  plot: string;
 
   topics: string[];
 

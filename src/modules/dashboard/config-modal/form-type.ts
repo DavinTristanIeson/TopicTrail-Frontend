@@ -142,8 +142,6 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
       return {
         name: col.name,
         datasetName: col.datasetName ?? col.name,
-        preprocessing: col.preprocessing as any,
-        topicModeling: col.topicModeling as any,
         type: col.type,
         bins: col.bins,
         datetimeFormat: col.datetimeFormat,
@@ -151,8 +149,14 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
         maxDate: col.maxDate,
         minDate: col.minDate,
         minFrequency: col.minFrequency,
-        upperBound: col.upperBound
-      };
+        upperBound: col.upperBound,
+        preprocessing: col.preprocessing,
+        topicModeling: col.topicModeling ? {
+          ...col.topicModeling,
+          nGramRangeStart: col.topicModeling.nGramRange[0],
+          nGramRangeEnd: col.topicModeling.nGramRange[1],
+        } : undefined,
+      } as ProjectConfigColumnFormType;
     }) ?? [],
     projectId: data?.projectId ?? '',
     source: {

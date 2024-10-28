@@ -29,15 +29,18 @@ import NavigationRoutes from "@/common/constants/routes";
 interface ProjectConfigModalProps {
   data?: ProjectConfigModel;
 }
+interface ProjectConfigModalBodyProps extends ProjectConfigModalProps {
+  onClose(): void;
+}
 
-function ProjectConfigModalBody(props: ProjectConfigModalProps) {
-  const { data } = props;
-  const [phase, setPhase] = React.useState(0);
+function ProjectConfigModalBody(props: ProjectConfigModalBodyProps) {
+  const { data, onClose } = props;
+  const [phase, setPhase] = React.useState(data ? 2 : 0);
   const resolver = yupResolver(ProjectConfigFormSchema);
   const form = useForm({
     mode: "onChange",
     resolver,
-    defaultValues: ProjectConfigDefaultValues(),
+    defaultValues: ProjectConfigDefaultValues(data),
   });
 
   const onContinue = () => setPhase((phase) => phase + 1);
@@ -64,6 +67,7 @@ function ProjectConfigModalBody(props: ProjectConfigModalProps) {
         });
       }
 
+      onClose();
       if (!data) {
         router.push({
           pathname: NavigationRoutes.Project,
@@ -108,7 +112,11 @@ const ProjectConfigModal = React.forwardRef<
       centered
       closeOnClickOutside={false}
     >
-      <Modal.Body>{opened && <ProjectConfigModalBody {...props} />}</Modal.Body>
+      <Modal.Body>
+        {opened && (
+          <ProjectConfigModalBody {...props} onClose={() => setOpened(false)} />
+        )}
+      </Modal.Body>
     </Modal>
   );
 });

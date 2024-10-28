@@ -94,6 +94,7 @@ export class ProjectSchemaModel {
   @Type(() => TextPreprocessingConfigModel)
   preprocessing?: TextPreprocessingConfigModel
 
+  @Expose({name: "topic_modeling"})
   @Type(() => TopicModelingConfigModel)
   topicModeling?: TopicModelingConfigModel
 }

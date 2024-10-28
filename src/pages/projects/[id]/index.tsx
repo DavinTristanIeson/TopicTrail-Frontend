@@ -19,6 +19,7 @@ function ProjectTopicsPageBody(props: ProjectModel) {
   const {
     mutateAsync,
     isPending,
+    data: hasSentRequest,
     error: errorExecute,
   } = useStartTopicModeling();
   return (
@@ -35,14 +36,16 @@ function ProjectTopicsPageBody(props: ProjectModel) {
         }
         loading={isLoading || isPending}
         error={
-          errorExecute?.message || (status ? errorStatus?.message : undefined)
+          errorExecute?.message ||
+          (!!hasSentRequest ? errorStatus?.message : undefined)
         }
       />
 
-      <Divider />
-
       {status?.status == ProjectTaskStatus.Success && (
-        <TopicsRenderer {...props.config} />
+        <>
+          <Divider />
+          <TopicsRenderer {...props.config} />
+        </>
       )}
     </Stack>
   );

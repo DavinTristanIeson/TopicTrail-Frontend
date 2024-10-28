@@ -6,15 +6,12 @@ import React from "react";
 import ProcedureStatus from "../common/procedure";
 import dynamic from "next/dynamic";
 import { handleErrorFn } from "@/common/utils/error";
-import { showNotification } from "@mantine/notifications";
-import Colors from "@/common/constants/colors";
-import { error } from "console";
+import { PlotParams } from "react-plotly.js";
 
 // See this discussion: https://github.com/plotly/react-plotly.js/issues/272
-// const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
 export default function TopicsRenderer(config: ProjectConfigModel) {
-  console.log(config);
   const [columnName, setColumnName] = React.useState(
     config.dataSchema.columns.find(
       (col) => col.type == SchemaColumnTypeEnum.Textual
@@ -22,21 +19,34 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
   );
   const {
     data,
-    isFetching,
+    isLoading,
     refetch,
     error: errorStatus,
   } = useGetTopics({
     id: config.projectId,
     column: columnName,
   });
-  const { mutateAsync, isPending, error: errorExecute } = useSendTopicRequest();
+  const {
+    mutateAsync,
+    isPending,
+    error: errorExecute,
+    data: hasSentRequest,
+  } = useSendTopicRequest();
   const requestTopic = handleErrorFn(async (column: string) => {
     const res = await mutateAsync({
       id: config.projectId,
       column,
     });
+    setColumnName(column);
     return res;
   });
+
+  const plot = React.useMemo<PlotParams>(() => {
+    if (!data?.data.plot) {
+      return undefined;
+    }
+    return JSON.parse(data.data.plot);
+  }, [data]);
 
   return (
     <Stack>
@@ -54,7 +64,6 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
             maw={400}
             onChange={(e) => {
               if (!e) return;
-              setColumnName(e);
               requestTopic(e);
             }}
             label="Column"
@@ -72,15 +81,14 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
         }
         execute={() => requestTopic(columnName)}
         error={
-          errorExecute?.message ?? (data ? errorStatus?.message : undefined)
+          errorExecute?.message ??
+          (hasSentRequest ? errorStatus?.message : undefined)
         }
-        loading={isFetching || isPending}
+        loading={isLoading || isPending}
         refetch={refetch}
-        refetchInterval={5000}
+        refetchInterval={3000}
       />
-      {/* <div className="relative">
-        {data?.data.plot && <Plot {...data?.data.plot} />}
-      </div> */}
+      <div className="relative w-full">{plot && <Plot {...plot} />}</div>
     </Stack>
   );
 }
