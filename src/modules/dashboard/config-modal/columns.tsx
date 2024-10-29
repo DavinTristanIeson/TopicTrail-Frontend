@@ -6,11 +6,10 @@ import {
   TextField,
 } from "@/components/standard/fields/wrapper";
 import React from "react";
-import { Divider, Group, Stack, Switch, SwitchGroup } from "@mantine/core";
+import { Divider, Group, Stack } from "@mantine/core";
 import Colors from "@/common/constants/colors";
 import Text from "@/components/standard/text";
 import TextLink from "@/components/standard/button/link";
-import { useFormContext } from "react-hook-form";
 
 interface ProjectConfigColumnFormProps {
   index: number;

@@ -7,8 +7,7 @@ import { projectTopicsEndpoint, TopicQueryKeys } from "./query";
 import { ApiResult } from "@/common/api/model";
 import { TopicsInput } from "./model";
 
-const ENDPOINT = "projects";
-export function invalidateTopicQueries(id: string){
+export function invalidateTopicQueries(id: string) {
   queryClient.invalidateQueries({
     queryKey: [TopicQueryKeys.topicModelingKey, id]
   });
@@ -19,7 +18,7 @@ export function invalidateTopicQueries(id: string){
     queryKey: [TopicQueryKeys.topicsKey, id]
   });
 }
-export function removeTopicQueries(id: string){
+export function removeTopicQueries(id: string) {
   queryClient.removeQueries({
     queryKey: [TopicQueryKeys.topicModelingKey, id]
   });
@@ -32,37 +31,55 @@ export function removeTopicQueries(id: string){
 }
 
 
-export const useStartTopicModeling: ApiMutationFunction<IdInput, ApiResult<never>> = function (options){
+export const useStartTopicModeling: ApiMutationFunction<IdInput, ApiResult<void>> = function (options) {
   return useMutation({
     ...options,
-    mutationFn(body){
+    mutationFn(body) {
       return ApiFetch({
         url: `${projectTopicsEndpoint(body.id)}/start`,
         classType: undefined,
         method: 'post',
       })
     },
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       invalidateTopicQueries(variables.id);
     },
   });
 }
 
 
-export const useSendTopicRequest: ApiMutationFunction<TopicsInput, ApiResult<never>> = function (options){
+export const useSendTopicRequest: ApiMutationFunction<TopicsInput, ApiResult<void>> = function (options) {
   return useMutation({
     ...options,
-    mutationFn(body){
+    mutationFn(body) {
       return ApiFetch({
         url: `${projectTopicsEndpoint(body.id)}/${body.column}`,
         classType: undefined,
         method: 'post',
       })
     },
-    onSuccess(data, variables, context) {
+    onSuccess(data, variables) {
       queryClient.invalidateQueries({
         queryKey: TopicQueryKeys.topics(variables),
       });
+    },
+  });
+}
+
+export const useSendTopicSimilarityRequest: ApiMutationFunction<TopicsInput, ApiResult<void>> = function (options) {
+  return useMutation({
+    ...options,
+    mutationFn(input) {
+      return ApiFetch({
+        classType: undefined,
+        method: 'post',
+        url: `${projectTopicsEndpoint(input.id)}/${input.column}/similarity`
+      });
+    },
+    onSuccess(data, variables) {
+      queryClient.invalidateQueries({
+        queryKey: TopicQueryKeys.topicSimilarity(variables),
+      })
     },
   });
 }

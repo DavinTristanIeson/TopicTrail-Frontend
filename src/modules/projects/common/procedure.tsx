@@ -1,6 +1,4 @@
 import { ProjectTaskResult } from "@/api/project/model";
-import { useStartTopicModeling } from "@/api/topics/mutation";
-import { useGetTopicModelingStatus } from "@/api/topics/query";
 import Colors from "@/common/constants/colors";
 import { ProjectTaskStatus } from "@/common/constants/enum";
 import Button from "@/components/standard/button/base";
@@ -28,6 +26,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { showNotification } from "@mantine/notifications";
 import { ApiResult } from "@/common/api/model";
 import { handleErrorFn } from "@/common/utils/error";
+import {
+  ApiMutationFunction,
+  ApiQueryFunction,
+} from "@/common/api/fetch-types";
 
 interface ProcedureStatusProps {
   title: string;
@@ -183,4 +185,48 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
       </Group>
     </Paper>
   );
+}
+
+interface UseTriggerProcedureProps<TInput extends object, TOutput> {
+  useGetStatus: ApiQueryFunction<TInput, ProjectTaskResult<TOutput>>;
+  useSendRequest: ApiMutationFunction<TInput, ApiResult<any>>;
+  input: TInput;
+}
+
+interface UseTriggerProcedureReturn<TOutput> {
+  data: ProjectTaskResult<TOutput> | undefined;
+  execute(): Promise<ApiResult<unknown>>;
+  error: string | undefined;
+  loading: boolean;
+  refetch(): void;
+  refetchInterval: number;
+}
+
+export function useTriggerProcedure<TInput extends object, TOutput>(
+  props: UseTriggerProcedureProps<TInput, TOutput>
+): UseTriggerProcedureReturn<TOutput> {
+  const { useGetStatus, useSendRequest, input } = props;
+  const {
+    data: status,
+    isLoading,
+    error: errorStatus,
+    refetch,
+  } = useGetStatus(input);
+  const {
+    data: hasSentRequest,
+    isPending,
+    error: errorExecute,
+    mutateAsync: request,
+  } = useSendRequest(input);
+
+  return {
+    data: status,
+    execute: () => request(input),
+    error:
+      errorExecute?.message ??
+      (hasSentRequest ? errorStatus?.message : undefined),
+    loading: isLoading || isPending,
+    refetch: refetch,
+    refetchInterval: 5000,
+  };
 }
