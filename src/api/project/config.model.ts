@@ -61,6 +61,9 @@ export class ProjectSchemaModel {
   name: string;
   type: SchemaColumnTypeEnum;
 
+  @Expose({name: "dataset_name"})
+  datasetName: string | null;
+
   // Continuous
   @Expose({ name: "lower_bound" })
   lowerBound?: number | null;
@@ -91,6 +94,7 @@ export class ProjectSchemaModel {
   @Type(() => TextPreprocessingConfigModel)
   preprocessing?: TextPreprocessingConfigModel
 
+  @Expose({name: "topic_modeling"})
   @Type(() => TopicModelingConfigModel)
   topicModeling?: TopicModelingConfigModel
 }
@@ -110,6 +114,7 @@ export class ProjectConfigModel {
   @Type(() => ProjectDataSourceModel)
   source: ProjectDataSourceModel
 
+  @Expose({name: "data_schema"})
   @Type(() => ProjectSchemaManagerModel)
-  dfschema: ProjectSchemaManagerModel;
+  dataSchema: ProjectSchemaManagerModel;
 }

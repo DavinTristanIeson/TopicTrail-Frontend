@@ -1,23 +1,26 @@
-import { ProjectTaskStatus } from "@/common/constants/enum";
 import { Expose } from "class-transformer";
 
 // Model
 
 export class TopicsModel {
-  plot: string;
+  column: string;
 
+  plot: string;
+  
+  topics: string[];
   @Expose({name: "topic_words"})
   topicWords: Record<string, [string, number][]>;
 
-  frequencies: Record<string, number>;
-  hierarchy: Record<string, string[]>;
-
+  frequencies: number[];
   outliers: number;
   total: number;
 }
 
 export class TopicSimilarityModel {
-  plot: string;
+  column: string;
+  
+  heatmap: string;
+  ldavis: string;
   topics: string[];
 
   @Expose({name: "similarity_matrix"})
@@ -29,11 +32,6 @@ export class TopicSimilarityModel {
 
 export interface TopicModelingStatusInput {
   id: string;
-}
-
-export interface TopicSimilarityInput {
-  id: string;
-  column: string;
 }
 
 export interface TopicsInput {

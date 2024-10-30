@@ -1,7 +1,8 @@
 import Colors from "@/common/constants/colors";
 import { ActionIcon, Group, Title } from "@mantine/core";
-import { ArrowLeft } from "@phosphor-icons/react";
+import { ArrowLeft, DoorOpen } from "@phosphor-icons/react";
 import { useRouter } from "next/router";
+import Button from "../standard/button/base";
 
 interface AppHeaderProps {
   back?: boolean;
@@ -11,18 +12,19 @@ interface AppHeaderProps {
 export default function AppHeader(props: AppHeaderProps) {
   const router = useRouter();
   return (
-    <>
+    <Group justify="space-between" className="flex-1">
+      <Title order={1}>{props.title ?? "WORDSMITH"}</Title>
       {props.back && (
-        <ActionIcon
-          variant="transparent"
+        <Button
+          variant="outline"
+          leftSection={<DoorOpen />}
           onClick={() => {
             router.back();
           }}
         >
-          <ArrowLeft size={32} color={Colors.foregroundPrimary} />
-        </ActionIcon>
+          Go Back
+        </Button>
       )}
-      <Title order={1}>{props.title ?? "WORDSMITH"}</Title>
-    </>
+    </Group>
   );
 }

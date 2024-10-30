@@ -34,7 +34,6 @@ export function useSingletonTimeout(): UseSingletonTimeoutReturn {
   };
 }
 
-
 interface PollingLimitProps {
   /** How many times has the polling callback been called? */
   times: number;
@@ -42,10 +41,10 @@ interface PollingLimitProps {
   millis: number;
 }
 interface UsePollingProps {
-  /** How many times can the callback be invoked? If this is a callback, it should return a boolean that indicates whether the polling should continue or not. */
+  /** How many times can the callback be invoked? If this is a callback, it should return a boolean that indicates whether the polling should continue or not. You should probably use refs to refer to any variable inside this. */
   limit?:
-    | Partial<PollingLimitProps>
-    | ((constraint: PollingLimitProps) => boolean);
+  | Partial<PollingLimitProps>
+  | ((constraint: PollingLimitProps) => boolean);
   enabled?: boolean;
   /** Interval (in millis) between polling invocations */
   interval: number;
@@ -115,16 +114,29 @@ export function usePolling(props: UsePollingProps) {
       }
       times.current++;
 
-      if (limit == null) {
-        return;
-      }
-
       if (!shouldContinue()) {
         onEnd();
       }
       lock.current = false;
     }, interval);
 
+    return clearInterval;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, enabled]);
+}
+
+
+interface PollingRendererProps {
+  interval: number;
+  children?(): React.ReactNode;
+}
+
+
+export function PollingRenderer(props: PollingRendererProps) {
+  const [, flop] = React.useState(false);
+  usePolling({
+    fn: () => flop(flip => !flip),
+    interval: props.interval,
+  });
+  return props.children?.();
 }

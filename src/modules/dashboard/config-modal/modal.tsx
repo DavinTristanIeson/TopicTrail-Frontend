@@ -14,8 +14,8 @@ import {
 import { useForm } from "react-hook-form";
 import { ProjectConfigModel } from "@/api/project/config.model";
 import {
-  CreateProjectFlow_CheckDataset,
-  CreateProjectFlow_CheckProjectId,
+  ConfigureProjectFlow_CheckDataset,
+  ConfigureProjectFlow_CheckProjectId,
 } from "./phases";
 import ProjectConfigFormBody from "./form-body";
 import FormWrapper from "@/components/utility/form/wrapper";
@@ -29,37 +29,53 @@ import NavigationRoutes from "@/common/constants/routes";
 interface ProjectConfigModalProps {
   data?: ProjectConfigModel;
 }
+interface ProjectConfigModalBodyProps extends ProjectConfigModalProps {
+  onClose(): void;
+}
 
-function CreateProjectConfigModalBody() {
-  const [phase, setPhase] = React.useState(0);
+function ProjectConfigModalBody(props: ProjectConfigModalBodyProps) {
+  const { data, onClose } = props;
+  const [phase, setPhase] = React.useState(data ? 2 : 0);
   const resolver = yupResolver(ProjectConfigFormSchema);
   const form = useForm({
     mode: "onChange",
     resolver,
-    defaultValues: ProjectConfigDefaultValues(),
+    defaultValues: ProjectConfigDefaultValues(data),
   });
 
   const onContinue = () => setPhase((phase) => phase + 1);
   const onBack = () => setPhase((phase) => phase - 1);
 
   const { mutateAsync: create } = useCreateProject();
+  const { mutateAsync: update } = useUpdateProject();
   const router = useRouter();
 
   const handleSubmit = handleFormSubmission(
     async (values: ProjectConfigFormType) => {
-      const res = await create(ProjectConfigFormType2Input(values));
+      const input = ProjectConfigFormType2Input(values);
+      const res = data
+        ? await update({
+            id: data.projectId,
+            body: input,
+          })
+        : await create(input);
+
       if (res.message) {
         showNotification({
           color: Colors.sentimentSuccess,
           message: res.message,
         });
       }
-      router.push({
-        pathname: NavigationRoutes.Project,
-        query: {
-          id: res.data.id,
-        },
-      });
+
+      onClose();
+      if (!data) {
+        router.push({
+          pathname: NavigationRoutes.Project,
+          query: {
+            id: res.data.id,
+          },
+        });
+      }
     },
     form.setError
   );
@@ -67,51 +83,16 @@ function CreateProjectConfigModalBody() {
   return (
     <FormWrapper form={form} onSubmit={handleSubmit}>
       {phase === 0 && (
-        <CreateProjectFlow_CheckProjectId onContinue={onContinue} />
+        <ConfigureProjectFlow_CheckProjectId onContinue={onContinue} />
       )}
       {phase === 1 && (
-        <CreateProjectFlow_CheckDataset
+        <ConfigureProjectFlow_CheckDataset
           onContinue={onContinue}
           onBack={onBack}
+          hasData={!!data}
         />
       )}
       {phase === 2 && <ProjectConfigFormBody onBack={onBack} />}
-    </FormWrapper>
-  );
-}
-
-function EditProjectConfigModalBody(props: ProjectConfigModalProps) {
-  const resolver = yupResolver(ProjectConfigFormSchema);
-  const form = useForm({
-    mode: "onChange",
-    resolver,
-    defaultValues: ProjectConfigDefaultValues(props.data),
-  });
-  const { mutateAsync: update } = useUpdateProject();
-  const id = props.data!.projectId;
-  const router = useRouter();
-  const handleSubmit = async (values: ProjectConfigFormType) => {
-    const res = await update({
-      id,
-      body: ProjectConfigFormType2Input(values),
-    });
-    if (res.message) {
-      showNotification({
-        color: Colors.sentimentSuccess,
-        message: res.message,
-      });
-    }
-    router.push({
-      pathname: NavigationRoutes.Project,
-      query: {
-        id: res.data.id,
-      },
-    });
-  };
-
-  return (
-    <FormWrapper form={form} onSubmit={handleSubmit}>
-      <ProjectConfigFormBody onBack={undefined} />
     </FormWrapper>
   );
 }
@@ -132,12 +113,9 @@ const ProjectConfigModal = React.forwardRef<
       closeOnClickOutside={false}
     >
       <Modal.Body>
-        {opened &&
-          (!props.data ? (
-            <CreateProjectConfigModalBody />
-          ) : (
-            <EditProjectConfigModalBody {...props} />
-          ))}
+        {opened && (
+          <ProjectConfigModalBody {...props} onClose={() => setOpened(false)} />
+        )}
       </Modal.Body>
     </Modal>
   );

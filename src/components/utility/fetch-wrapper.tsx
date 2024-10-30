@@ -47,15 +47,7 @@ export default function FetchWrapperComponent(props: WrapperProps) {
   } = props;
 
   if (isLoading) {
-    return (
-      loadingComponent || (
-        <LoadingOverlay
-          visible
-          zIndex={1000}
-          overlayProps={{ radius: "sm", blur: 2 }}
-        />
-      )
-    );
+    return loadingComponent || <LoadingOverlay visible zIndex={1000} />;
   } else if (error) {
     if (errorComponent) {
       return errorComponent;

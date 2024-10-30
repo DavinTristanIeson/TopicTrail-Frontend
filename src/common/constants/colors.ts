@@ -4,9 +4,9 @@ const Colors = {
 
   foregroundPrimary: '#6672af',
   foregroundDull: 'grey',
-
-  backgroundScreen: 'lightgray',
+  
   backgroundPrimary: '#424e88',
+  backgroundDull: 'lightgray',
 
   sentimentWarning: 'yellow',
   sentimentError: 'red',

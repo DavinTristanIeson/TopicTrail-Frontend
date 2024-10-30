@@ -1,4 +1,4 @@
-import { createTheme } from "@mantine/core";
+import { createTheme, LoadingOverlay } from "@mantine/core";
 import Colors from "./colors";
 
 const mantineTheme = createTheme({
@@ -22,6 +22,13 @@ const mantineTheme = createTheme({
     from: Colors.backgroundPrimary,
     to: Colors.foregroundPrimary,
     deg: 45,
+  },
+  components: {
+    LoadingOverlay: LoadingOverlay.extend({
+      defaultProps: {
+        overlayProps: { radius: "sm", blur: 2 }
+      }
+    })
   }
 });
 

@@ -9,6 +9,7 @@ export interface ToggleDispatcher {
 export function useSetupToggleDispatcher(ref: React.ForwardedRef<ToggleDispatcher | undefined>){
   const [opened, setOpened] = React.useState(false);
   useImperativeHandle(ref, () => {
+    console.log(ref);
     return {
       toggle(){
         setOpened(prev => !prev);
