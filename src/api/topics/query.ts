@@ -28,6 +28,7 @@ export function projectTopicsEndpoint(id: string){
 
 export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskResult<never>> = function (input, options){
   return useQuery({
+    ...options,
     queryKey: TopicQueryKeys.topicModeling(input),
     queryFn(){
       return ApiFetch({
@@ -41,6 +42,7 @@ export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskRes
 
 export const useGetTopics: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicsModel>> = function (input, options){
   return useQuery({
+    ...options,
     queryKey: TopicQueryKeys.topics(input),
     queryFn(){
       return ApiFetch({
@@ -54,6 +56,7 @@ export const useGetTopics: ApiQueryFunction<TopicsInput, ProjectTaskResult<Topic
 
 export const useGetTopicSimilarity: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicSimilarityModel>> = function (input, options){
   return useQuery({
+    ...options,
     queryKey: TopicQueryKeys.topicSimilarity(input),
     queryFn(){
       return ApiFetch({

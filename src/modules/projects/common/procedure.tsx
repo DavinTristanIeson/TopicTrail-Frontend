@@ -191,6 +191,8 @@ interface UseTriggerProcedureProps<TInput extends object, TOutput> {
   useGetStatus: ApiQueryFunction<TInput, ProjectTaskResult<TOutput>>;
   useSendRequest: ApiMutationFunction<TInput, ApiResult<any>>;
   input: TInput;
+  keepPreviousData: boolean;
+  enabled?: boolean;
 }
 
 interface UseTriggerProcedureReturn<TOutput> {
@@ -205,13 +207,17 @@ interface UseTriggerProcedureReturn<TOutput> {
 export function useTriggerProcedure<TInput extends object, TOutput>(
   props: UseTriggerProcedureProps<TInput, TOutput>
 ): UseTriggerProcedureReturn<TOutput> {
-  const { useGetStatus, useSendRequest, input } = props;
+  const { useGetStatus, useSendRequest, input, keepPreviousData, enabled } =
+    props;
   const {
     data: status,
     isLoading,
     error: errorStatus,
     refetch,
-  } = useGetStatus(input);
+  } = useGetStatus(input, {
+    placeholderData: keepPreviousData ? (prev) => prev : undefined,
+    enabled,
+  });
   const {
     data: hasSentRequest,
     isPending,

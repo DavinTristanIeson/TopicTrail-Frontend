@@ -6,6 +6,7 @@ import { queryClient } from "@/common/api/query-client";
 import { projectTopicsEndpoint, TopicQueryKeys } from "./query";
 import { ApiResult } from "@/common/api/model";
 import { TopicsInput } from "./model";
+import { VariableAssociationQueryKeys } from "../association/query";
 
 export function invalidateTopicQueries(id: string) {
   queryClient.invalidateQueries({
@@ -17,6 +18,9 @@ export function invalidateTopicQueries(id: string) {
   queryClient.invalidateQueries({
     queryKey: [TopicQueryKeys.topicsKey, id]
   });
+  queryClient.invalidateQueries({
+    queryKey: [VariableAssociationQueryKeys.associationKey, id]
+  })
 }
 export function removeTopicQueries(id: string) {
   queryClient.removeQueries({

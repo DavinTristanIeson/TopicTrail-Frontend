@@ -37,6 +37,7 @@ import FieldWatcher, {
   FieldErrorWatcher,
 } from "@/components/standard/fields/watcher";
 import Colors from "@/common/constants/colors";
+import { ProjectSchemaTypeIcon } from "@/modules/projects/common/select";
 
 interface ProjectConfigColumnFormItemProps {
   accordionValue: string;
@@ -95,17 +96,7 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
                     )
                   }
                 </FieldErrorWatcher>
-                {type === SchemaColumnTypeEnum.Categorical ? (
-                  <GridFour />
-                ) : type === SchemaColumnTypeEnum.Continuous ? (
-                  <ChartBar />
-                ) : type === SchemaColumnTypeEnum.Temporal ? (
-                  <Clock />
-                ) : type === SchemaColumnTypeEnum.Textual ? (
-                  <TextAUnderline />
-                ) : (
-                  <Question />
-                )}
+                <ProjectSchemaTypeIcon type={type} />
                 <Text fw="bold" size="md">
                   {name}
                 </Text>

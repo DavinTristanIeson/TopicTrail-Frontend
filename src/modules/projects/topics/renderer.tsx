@@ -1,5 +1,9 @@
 import { ProjectConfigModel } from "@/api/project/config.model";
-import { useGetTopics, useSendTopicRequest } from "@/api/topics";
+import {
+  TopicQueryKeys,
+  useGetTopics,
+  useSendTopicRequest,
+} from "@/api/topics";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 import { Button, Group, Select, Stack, Title } from "@mantine/core";
 import React from "react";
@@ -8,6 +12,7 @@ import { Info } from "@phosphor-icons/react";
 import PlotRenderer from "../common/plots";
 import TopicSimilarityPlot from "./similarity";
 import { ToggleDispatcher } from "@/hooks/dispatch-action";
+import { queryClient } from "@/common/api/query-client";
 
 export default function TopicsRenderer(config: ProjectConfigModel) {
   const [columnName, setColumnName] = React.useState(
@@ -23,6 +28,7 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
       id: config.projectId,
       column: columnName,
     },
+    keepPreviousData: false,
   });
 
   const plot = procedureProps?.data?.data.plot;
@@ -46,7 +52,15 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
               maw={400}
               onChange={async (e) => {
                 if (!e) return;
-                await procedureProps.execute();
+                const cacheState = queryClient.getQueryState(
+                  TopicQueryKeys.topics({
+                    id: config.projectId,
+                    column: e,
+                  })
+                );
+                if (!cacheState?.data || cacheState.isInvalidated) {
+                  await procedureProps.execute();
+                }
                 setColumnName(e);
               }}
               label="Column"

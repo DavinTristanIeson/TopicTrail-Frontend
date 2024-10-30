@@ -31,6 +31,7 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
       id: config.projectId,
       column,
     },
+    keepPreviousData: true,
   });
 
   // Run on mount
