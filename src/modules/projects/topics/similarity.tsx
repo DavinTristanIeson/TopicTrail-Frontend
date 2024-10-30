@@ -4,18 +4,22 @@ import {
   useGetTopicSimilarity,
   useSendTopicSimilarityRequest,
 } from "@/api/topics";
-import { capitalize } from "lodash";
 import PlotRenderer from "../common/plots";
 import {
   ToggleDispatcher,
   useSetupToggleDispatcher,
 } from "@/hooks/dispatch-action";
-import { Modal } from "@mantine/core";
+import { Box, Modal, Select, Title } from "@mantine/core";
 import React from "react";
 
 interface TopicSimilarityPlotProps {
   column: string;
   config: ProjectConfigModel;
+}
+
+enum TopicSimilarityVisualizationMethod {
+  Ldavis = "ldavis",
+  Heatmap = "heatmap",
 }
 
 function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
@@ -35,21 +39,55 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const plot = procedureProps.data?.data?.plot;
+  const heatmap = procedureProps.data?.data?.heatmap;
+  const ldavis = procedureProps.data?.data?.ldavis;
+  const [mode, setMode] = React.useState(
+    TopicSimilarityVisualizationMethod.Heatmap
+  );
 
   return (
     <>
       <ProcedureStatus
         {...procedureProps}
-        title={`Inter-topic Relationship of ${capitalize(column)}`}
-        description={`View the relationship between the topics in ${capitalize(
-          column
-        )}`}
+        title={`Inter-topic Relationship of ${column}`}
+        description={`View the relationship between the topics in ${column}`}
+        BelowDescription={
+          <Select
+            value={mode}
+            onChange={setMode as (value: string | null) => void}
+            label="Visualization Method"
+            data={[
+              {
+                label: "Heatmap",
+                value: TopicSimilarityVisualizationMethod.Heatmap,
+              },
+              {
+                label: "LDAVis-style",
+                value: TopicSimilarityVisualizationMethod.Ldavis,
+              },
+            ]}
+            allowDeselect={false}
+            clearable={false}
+            description={
+              mode === TopicSimilarityVisualizationMethod.Heatmap
+                ? "Heatmaps show the similarity between two topics. Deeper shades indicate higher similarity."
+                : mode === TopicSimilarityVisualizationMethod.Ldavis
+                ? "The LDAvis visualization method shows how topics are related to each other based on proximity. The size of the bubbles indicate the number of documents that are assigned to that topic."
+                : "Choose a visualization method"
+            }
+          />
+        }
         refetchInterval={3000}
       />
-      {plot && (
+      <Box h={48} />
+      {heatmap && mode === TopicSimilarityVisualizationMethod.Heatmap && (
         <div className="relative w-full">
-          <PlotRenderer plot={plot} />
+          <PlotRenderer plot={heatmap} />
+        </div>
+      )}
+      {ldavis && mode === TopicSimilarityVisualizationMethod.Ldavis && (
+        <div className="relative w-full">
+          <PlotRenderer plot={ldavis} />
         </div>
       )}
     </>
@@ -66,7 +104,7 @@ const TopicSimilarityPlotModal = React.forwardRef<
     <Modal
       opened={opened}
       onClose={() => setOpened(false)}
-      title={`Topic Similarity of ${capitalize(column)}`}
+      title={<Title order={2}>{`Topic Similarity of ${column}`}</Title>}
       size={1200}
     >
       {opened && <TopicSimilarityPlot {...props} />}

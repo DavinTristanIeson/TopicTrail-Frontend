@@ -52,7 +52,7 @@ export const useGetTopics: ApiQueryFunction<TopicsInput, ProjectTaskResult<Topic
   });
 }
 
-export const useGetTopicSimilarity: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicsModel>> = function (input, options){
+export const useGetTopicSimilarity: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicSimilarityModel>> = function (input, options){
   return useQuery({
     queryKey: TopicQueryKeys.topicSimilarity(input),
     queryFn(){

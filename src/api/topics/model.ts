@@ -3,10 +3,11 @@ import { Expose } from "class-transformer";
 // Model
 
 export class TopicsModel {
+  column: string;
+
   plot: string;
-
+  
   topics: string[];
-
   @Expose({name: "topic_words"})
   topicWords: Record<string, [string, number][]>;
 
@@ -16,7 +17,10 @@ export class TopicsModel {
 }
 
 export class TopicSimilarityModel {
-  plot: string;
+  column: string;
+  
+  heatmap: string;
+  ldavis: string;
   topics: string[];
 
   @Expose({name: "similarity_matrix"})

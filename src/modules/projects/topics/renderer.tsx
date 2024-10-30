@@ -78,11 +78,7 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
       />
       <TopicSimilarityPlot column={columnName} config={config} ref={remote} />
       <div className="relative w-full">
-        {plot && (
-          <div className="relative w-full">
-            <PlotRenderer plot={plot} />
-          </div>
-        )}
+        {plot && <PlotRenderer plot={plot} />}
       </div>
     </Stack>
   );

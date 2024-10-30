@@ -26,7 +26,13 @@ export default function PlotRenderer(props: PlotRendererProps) {
         </Paper>
       }
     >
-      <Plot {...plotParams} />
+      <Plot
+        {...plotParams}
+        config={{
+          scrollZoom: true,
+          displaylogo: false,
+        }}
+      />
     </Suspense>
   );
 }
