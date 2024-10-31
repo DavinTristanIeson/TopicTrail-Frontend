@@ -3,25 +3,24 @@ import { useGetVariableAssociationStatus } from "@/api/association/query";
 import { ProjectModel } from "@/api/project/model";
 import Colors from "@/common/constants/colors";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
-import CustomizableSelect from "@/components/standard/select/customizable";
 import ProjectAssociationRenderer from "@/modules/projects/association/renderer";
 import AppProjectLayout from "@/modules/projects/common/layout";
 import ProcedureStatus, {
   useTriggerProcedure,
 } from "@/modules/projects/common/procedure";
 import { ProjectColumnSelectInput } from "@/modules/projects/common/select";
-import { Group, Select, Stack, Title } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { ArrowsLeftRight } from "@phosphor-icons/react";
 import React from "react";
 
 function ProjectAssociationPageBody(props: ProjectModel) {
   const { config } = props;
-  const [column1, setColumn1] = React.useState<string | undefined>(
+  const [column1, setColumn1] = React.useState<string | null>(
     config.dataSchema.columns.find(
-      (col) => col.type !== SchemaColumnTypeEnum.Textual
-    )?.name
+      (col) => col.type === SchemaColumnTypeEnum.Textual
+    )?.name ?? null
   );
-  const [column2, setColumn2] = React.useState<string | undefined>(undefined);
+  const [column2, setColumn2] = React.useState<string | null>(null);
   const procedureProps = useTriggerProcedure({
     useGetStatus: useGetVariableAssociationStatus,
     useSendRequest: useSendVariableAssociationRequest,
@@ -43,17 +42,19 @@ function ProjectAssociationPageBody(props: ProjectModel) {
         BelowDescription={
           <Group>
             <ProjectColumnSelectInput
+              value={column1}
               data={config.dataSchema.columns.filter(
                 (col) => col.type === SchemaColumnTypeEnum.Textual
               )}
-              onChange={(col) => setColumn1(col?.name)}
+              onChange={(col) => setColumn1(col?.name ?? null)}
             />
             <ArrowsLeftRight color={Colors.foregroundDull} />
             <ProjectColumnSelectInput
+              value={column2}
               data={config.dataSchema.columns.filter(
                 (col) => col.type !== SchemaColumnTypeEnum.Unique
               )}
-              onChange={(col) => setColumn2(col?.name)}
+              onChange={(col) => setColumn2(col?.name ?? null)}
             />
           </Group>
         }

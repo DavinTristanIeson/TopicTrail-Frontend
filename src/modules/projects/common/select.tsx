@@ -2,7 +2,7 @@ import { ProjectSchemaModel } from "@/api/project/config.model";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 import CustomizableSelect from "@/components/standard/select/customizable";
 import Text from "@/components/standard/text";
-import { ComboboxItem, Group } from "@mantine/core";
+import { ComboboxItem, Group, SelectProps } from "@mantine/core";
 import {
   ChartBar,
   Clock,
@@ -31,7 +31,7 @@ export function ProjectSchemaTypeIcon(props: ProjectSchemaTypeIconProps) {
     return <Clock />;
   }
   if (type === SchemaColumnTypeEnum.Textual) {
-    <TextAUnderline />;
+    return <TextAUnderline />;
   }
   return <Question />;
 }
@@ -47,13 +47,17 @@ export function ProjectColumnItemRenderer(item: ProjectColumnItemData) {
 
 interface ProjectColumnSelectInputProps {
   data: ProjectSchemaModel[];
+  value: string | null;
   onChange(column: ProjectSchemaModel | null): void;
+  selectProps?: Partial<SelectProps>;
 }
 
 export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
-  const { onChange, data } = props;
+  const { onChange, data, value, selectProps } = props;
   return (
     <CustomizableSelect
+      {...selectProps}
+      value={value}
       ItemRenderer={ProjectColumnItemRenderer}
       data={data.map((item) => {
         return {
@@ -65,7 +69,8 @@ export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
       onChange={(value) => {
         onChange(value?.data ?? null);
       }}
-      value={null}
+      allowDeselect={false}
+      placeholder="Pick a column"
     />
   );
 }

@@ -7,30 +7,30 @@ import { IdInput } from "../common/model";
 
 export const TopicQueryKeys = {
   topicModelingKey: 'getTopicModelingStatus',
-  topicModeling(input: TopicModelingStatusInput){
+  topicModeling(input: TopicModelingStatusInput) {
     return [TopicQueryKeys.topicModelingKey, input.id];
   },
 
   topicsKey: 'getTopics',
-  topics(input: TopicsInput){
+  topics(input: TopicsInput) {
     return [TopicQueryKeys.topicsKey, input.id, input.column]
   },
 
   topicSimilarityKey: 'getTopicSimilarity',
-  topicSimilarity(input: TopicsInput){
+  topicSimilarity(input: TopicsInput) {
     return [TopicQueryKeys.topicSimilarityKey, input.id, input.column];
   }
 }
 
-export function projectTopicsEndpoint(id: string){
+export function projectTopicsEndpoint(id: string) {
   return `projects/${id}/topics`;
 }
 
-export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskResult<never>> = function (input, options){
+export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskResult<never>> = function (input, options) {
   return useQuery({
     ...options,
     queryKey: TopicQueryKeys.topicModeling(input),
-    queryFn(){
+    queryFn() {
       return ApiFetch({
         classType: undefined,
         method: 'get',
@@ -40,29 +40,35 @@ export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskRes
   });
 }
 
-export const useGetTopics: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicsModel>> = function (input, options){
+export const useGetTopics: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicsModel>> = function (input, options) {
   return useQuery({
     ...options,
     queryKey: TopicQueryKeys.topics(input),
-    queryFn(){
+    queryFn() {
       return ApiFetch({
         classType: TopicsModel,
         method: 'get',
-        url: `${projectTopicsEndpoint(input.id)}/${input.column}`
+        params: {
+          column: input.column,
+        },
+        url: `${projectTopicsEndpoint(input.id)}`
       });
     }
   });
 }
 
-export const useGetTopicSimilarity: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicSimilarityModel>> = function (input, options){
+export const useGetTopicSimilarity: ApiQueryFunction<TopicsInput, ProjectTaskResult<TopicSimilarityModel>> = function (input, options) {
   return useQuery({
     ...options,
     queryKey: TopicQueryKeys.topicSimilarity(input),
-    queryFn(){
+    queryFn() {
       return ApiFetch({
         classType: TopicSimilarityModel,
         method: 'get',
-        url: `${projectTopicsEndpoint(input.id)}/${input.column}/similarity`
+        params: {
+          column: input.column
+        },
+        url: `${projectTopicsEndpoint(input.id)}/similarity`
       });
     }
   });
