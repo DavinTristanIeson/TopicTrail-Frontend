@@ -13,6 +13,7 @@ export default function TextLink(props: TextLinkProps) {
   return (
     <Link
       {...props}
+      target="_blank"
       className={classNames(
         ButtonStyles["button__link"],
         props.span ? "inline-block" : undefined,

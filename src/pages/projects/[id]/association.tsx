@@ -1,6 +1,10 @@
 import { useSendVariableAssociationRequest } from "@/api/association/mutation";
-import { useGetVariableAssociationStatus } from "@/api/association/query";
+import {
+  useGetVariableAssociationStatus,
+  VariableAssociationQueryKeys,
+} from "@/api/association/query";
 import { ProjectModel } from "@/api/project/model";
+import { queryClient } from "@/common/api/query-client";
 import Colors from "@/common/constants/colors";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 import ProjectAssociationRenderer from "@/modules/projects/association/renderer";
@@ -12,6 +16,7 @@ import { ProjectColumnSelectInput } from "@/modules/projects/common/select";
 import { Group, Stack } from "@mantine/core";
 import { ArrowsLeftRight } from "@phosphor-icons/react";
 import React from "react";
+import { flushSync } from "react-dom";
 
 function ProjectAssociationPageBody(props: ProjectModel) {
   const { config } = props;
@@ -34,6 +39,23 @@ function ProjectAssociationPageBody(props: ProjectModel) {
   });
   const data = procedureProps.data?.data;
 
+  const shouldRunProcedure = async () => {
+    if (!column1 || !column2) {
+      return;
+    }
+    const cacheState = queryClient.getQueryState(
+      VariableAssociationQueryKeys.association({
+        id: config.projectId,
+        column1,
+        column2,
+      })
+    );
+    if (!cacheState?.data || cacheState.isInvalidated) {
+      await procedureProps.execute();
+      procedureProps.refetch();
+    }
+  };
+
   return (
     <Stack>
       <ProcedureStatus
@@ -46,7 +68,10 @@ function ProjectAssociationPageBody(props: ProjectModel) {
               data={config.dataSchema.columns.filter(
                 (col) => col.type === SchemaColumnTypeEnum.Textual
               )}
-              onChange={(col) => setColumn1(col?.name ?? null)}
+              onChange={(col) => {
+                setColumn1(col?.name ?? null);
+                flushSync(shouldRunProcedure);
+              }}
             />
             <ArrowsLeftRight color={Colors.foregroundDull} />
             <ProjectColumnSelectInput
@@ -54,7 +79,10 @@ function ProjectAssociationPageBody(props: ProjectModel) {
               data={config.dataSchema.columns.filter(
                 (col) => col.type !== SchemaColumnTypeEnum.Unique
               )}
-              onChange={(col) => setColumn2(col?.name ?? null)}
+              onChange={(col) => {
+                setColumn2(col?.name ?? null);
+                flushSync(shouldRunProcedure);
+              }}
             />
           </Group>
         }

@@ -66,6 +66,7 @@ export function ProjectConfigColumnTemporalForm(
       <NumberField
         name={`${NAME}.bins`}
         label="Bins / Time Slots"
+        required
         description="This value specifies how many partitions will be created from the range of date values. For example, with bins = 4, values from 1st January 2024 to 31st January 2024 can be partitioned into: Jan 1 to Jan 7, Jan 8 to Jan 15, Jan 16 to Jan 23, and Jan 24 to Jan 31. This will be useful when studying how the topics develop with time."
       />
       <DateTimeField
@@ -82,7 +83,7 @@ export function ProjectConfigColumnTemporalForm(
         name={`${NAME}.datetimeFormat`}
         label="Datetime Format"
         description={
-          <Text>
+          <Text size="xs">
             The datetime format used for the column. You can find the reference
             for the format in here:
             <TextLink href="https://strftime.org/">
