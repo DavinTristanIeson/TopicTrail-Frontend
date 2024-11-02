@@ -7,6 +7,7 @@ import { projectTopicsEndpoint, TopicQueryKeys } from "./query";
 import { ApiResult } from "@/common/api/model";
 import { TopicsInput } from "./model";
 import { VariableAssociationQueryKeys } from "../association/query";
+import { TopicEvaluationQueryKeys } from "../evaluation/query";
 
 export function invalidateTopicQueries(id: string) {
   queryClient.invalidateQueries({
@@ -20,7 +21,10 @@ export function invalidateTopicQueries(id: string) {
   });
   queryClient.invalidateQueries({
     queryKey: [VariableAssociationQueryKeys.associationKey, id]
-  })
+  });
+  queryClient.invalidateQueries({
+    queryKey: [TopicEvaluationQueryKeys.evaluationKey, id],
+  });
 }
 export function removeTopicQueries(id: string) {
   queryClient.removeQueries({
@@ -31,6 +35,12 @@ export function removeTopicQueries(id: string) {
   });
   queryClient.removeQueries({
     queryKey: [TopicQueryKeys.topicsKey, id]
+  });
+  queryClient.removeQueries({
+    queryKey: [VariableAssociationQueryKeys.associationKey, id]
+  });
+  queryClient.removeQueries({
+    queryKey: [TopicEvaluationQueryKeys.evaluationKey, id],
   });
 }
 

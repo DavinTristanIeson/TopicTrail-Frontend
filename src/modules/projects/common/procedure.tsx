@@ -30,6 +30,7 @@ import {
   ApiMutationFunction,
   ApiQueryFunction,
 } from "@/common/api/fetch-types";
+import { queryClient } from "@/common/api/query-client";
 
 interface ProcedureStatusProps {
   title: string;
@@ -193,6 +194,7 @@ interface UseTriggerProcedureProps<TInput extends object, TOutput> {
   input: TInput;
   keepPreviousData: boolean;
   enabled?: boolean;
+  autostart: boolean;
 }
 
 interface UseTriggerProcedureReturn<TOutput> {
@@ -207,8 +209,14 @@ interface UseTriggerProcedureReturn<TOutput> {
 export function useTriggerProcedure<TInput extends object, TOutput>(
   props: UseTriggerProcedureProps<TInput, TOutput>
 ): UseTriggerProcedureReturn<TOutput> {
-  const { useGetStatus, useSendRequest, input, keepPreviousData, enabled } =
-    props;
+  const {
+    useGetStatus,
+    useSendRequest,
+    input,
+    keepPreviousData,
+    enabled,
+    autostart,
+  } = props;
   const {
     data: status,
     isLoading,
@@ -219,20 +227,29 @@ export function useTriggerProcedure<TInput extends object, TOutput>(
     enabled,
   });
   const {
-    data: hasSentRequest,
     isPending,
     error: errorExecute,
     mutateAsync: request,
+    mutate: requestSync,
   } = useSendRequest(input);
+
+  React.useEffect(() => {
+    if (!status && !!errorStatus && autostart) {
+      requestSync(input);
+    }
+  }, [status, errorStatus]);
 
   return {
     data: status,
     execute: () => request(input),
-    error:
-      errorExecute?.message ??
-      (hasSentRequest ? errorStatus?.message : undefined),
+    error: errorExecute?.message ?? (status ? errorStatus?.message : undefined),
     loading: isLoading || isPending,
     refetch: refetch,
     refetchInterval: 5000,
   };
+}
+
+export function isAdvisedToRunProcedure(queryKey: string[]) {
+  const cacheState = queryClient.getQueryState(queryKey);
+  return !cacheState?.data || cacheState.isInvalidated;
 }

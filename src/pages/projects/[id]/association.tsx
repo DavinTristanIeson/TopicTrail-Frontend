@@ -10,6 +10,7 @@ import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 import ProjectAssociationRenderer from "@/modules/projects/association/renderer";
 import AppProjectLayout from "@/modules/projects/common/layout";
 import ProcedureStatus, {
+  isAdvisedToRunProcedure,
   useTriggerProcedure,
 } from "@/modules/projects/common/procedure";
 import { ProjectColumnSelectInput } from "@/modules/projects/common/select";
@@ -30,6 +31,7 @@ function ProjectAssociationPageBody(props: ProjectModel) {
     useGetStatus: useGetVariableAssociationStatus,
     useSendRequest: useSendVariableAssociationRequest,
     keepPreviousData: true,
+    autostart: true,
     input: {
       id: config.projectId,
       column1: column1!,
@@ -38,23 +40,6 @@ function ProjectAssociationPageBody(props: ProjectModel) {
     enabled: !!column1 && !!column2,
   });
   const data = procedureProps.data?.data;
-
-  const shouldRunProcedure = async () => {
-    if (!column1 || !column2) {
-      return;
-    }
-    const cacheState = queryClient.getQueryState(
-      VariableAssociationQueryKeys.association({
-        id: config.projectId,
-        column1,
-        column2,
-      })
-    );
-    if (!cacheState?.data || cacheState.isInvalidated) {
-      await procedureProps.execute();
-      procedureProps.refetch();
-    }
-  };
 
   return (
     <Stack>
@@ -68,9 +53,9 @@ function ProjectAssociationPageBody(props: ProjectModel) {
               data={config.dataSchema.columns.filter(
                 (col) => col.type === SchemaColumnTypeEnum.Textual
               )}
-              onChange={(col) => {
-                setColumn1(col?.name ?? null);
-                flushSync(shouldRunProcedure);
+              onChange={async (col) => {
+                if (!col) return;
+                setColumn1(col.name);
               }}
             />
             <ArrowsLeftRight color={Colors.foregroundDull} />
@@ -80,8 +65,8 @@ function ProjectAssociationPageBody(props: ProjectModel) {
                 (col) => col.type !== SchemaColumnTypeEnum.Unique
               )}
               onChange={(col) => {
-                setColumn2(col?.name ?? null);
-                flushSync(shouldRunProcedure);
+                if (!col) return;
+                setColumn1(col.name);
               }}
             />
           </Group>

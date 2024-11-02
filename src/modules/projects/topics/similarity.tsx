@@ -31,6 +31,7 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
       id: config.projectId,
       column,
     },
+    autostart: true,
     keepPreviousData: true,
   });
 
