@@ -5,7 +5,7 @@ import {
   useSendTopicRequest,
 } from "@/api/topics";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
-import { Button, Group, Select, Stack, Title } from "@mantine/core";
+import { Button, Group, Stack, Title } from "@mantine/core";
 import React from "react";
 import ProcedureStatus, { useTriggerProcedure } from "../common/procedure";
 import { Info } from "@phosphor-icons/react";
@@ -13,6 +13,7 @@ import PlotRenderer from "../common/plots";
 import TopicSimilarityPlot from "./similarity";
 import { ToggleDispatcher } from "@/hooks/dispatch-action";
 import { queryClient } from "@/common/api/query-client";
+import { ProjectColumnSelectInput } from "../common/select";
 
 export default function TopicsRenderer(config: ProjectConfigModel) {
   const [columnName, setColumnName] = React.useState(
@@ -46,35 +47,32 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
         refetchInterval={3000}
         BelowDescription={
           <Group align="flex-end">
-            <Select
+            <ProjectColumnSelectInput
               value={columnName}
-              w="100%"
-              maw={400}
               onChange={async (e) => {
                 if (!e) return;
                 const cacheState = queryClient.getQueryState(
                   TopicQueryKeys.topics({
                     id: config.projectId,
-                    column: e,
+                    column: e.name,
                   })
                 );
                 if (!cacheState?.data || cacheState.isInvalidated) {
                   await procedureProps.execute();
                 }
-                setColumnName(e);
+                setColumnName(e.name);
               }}
-              label="Column"
-              description="Which textual column do you wish to analyze?"
-              required
-              clearable={false}
-              allowDeselect={false}
-              disabled={procedureProps.loading}
-              data={config.dataSchema.columns.map((col) => {
-                return {
-                  label: col.name,
-                  value: col.name,
-                };
-              })}
+              selectProps={{
+                w: "100%",
+                maw: 400,
+                label: "Column",
+                description: "Which textual column do you wish to analyze?",
+                required: true,
+                disabled: procedureProps.loading,
+              }}
+              data={config.dataSchema.columns.filter(
+                (col) => col.type === SchemaColumnTypeEnum.Textual
+              )}
             />
             {procedureProps.data && (
               <Button

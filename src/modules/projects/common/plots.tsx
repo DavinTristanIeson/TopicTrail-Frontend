@@ -29,7 +29,7 @@ export default function PlotRenderer(props: PlotRendererProps) {
       <Plot
         {...plotParams}
         config={{
-          scrollZoom: true,
+          scrollZoom: false,
           displaylogo: false,
         }}
       />

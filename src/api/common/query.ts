@@ -11,11 +11,12 @@ export const StaleTimes = {
 }
 
 const ENDPOINT = "enums"
-export const useGetEnum: ApiQueryFunction<string, ApiResult<EnumModel[]>> = function (input, options){
+export const useGetEnum: ApiQueryFunction<string, ApiResult<EnumModel[]>> = function (input, options) {
   return useQuery({
+    ...options,
     queryKey: ['getEnums', input],
     staleTime: Infinity,
-    queryFn(){
+    queryFn() {
       return ApiFetch({
         classType: EnumModel,
         method: 'get',

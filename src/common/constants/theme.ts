@@ -2,9 +2,9 @@ import { createTheme, LoadingOverlay } from "@mantine/core";
 import Colors from "./colors";
 
 const mantineTheme = createTheme({
-  primaryColor: 'parallel',
+  primaryColor: 'wordsmith',
   colors: {
-    parallel: [
+    wordsmith: [
       "#eff2ff",
       "#dfe2f2",
       "#bdc2de",

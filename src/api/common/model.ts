@@ -2,7 +2,7 @@
 export class EnumModel {
   label: string;
   value: string;
-  description: string;
+  description?: string;
 }
 
 // Input

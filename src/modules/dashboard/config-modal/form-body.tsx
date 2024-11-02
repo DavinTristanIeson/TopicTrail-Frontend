@@ -1,6 +1,9 @@
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { ConfigureDataSourceForm, ProjectIdForm } from "./phases";
-import { ProjectConfigFormType } from "./form-type";
+import {
+  DefaultProjectSchemaColumnValues,
+  ProjectConfigFormType,
+} from "./form-type";
 import {
   Accordion,
   Button,
@@ -22,16 +25,7 @@ import { EnumSelectField } from "@/components/widgets/enum-select";
 import React from "react";
 import Text from "@/components/standard/text";
 import { TextField } from "@/components/standard/fields/wrapper";
-import {
-  ArrowLeft,
-  ChartBar,
-  Clock,
-  FloppyDisk,
-  GridFour,
-  Question,
-  TextAUnderline,
-  Warning,
-} from "@phosphor-icons/react";
+import { ArrowLeft, FloppyDisk, Warning } from "@phosphor-icons/react";
 import SubmitButton from "@/components/standard/button/submit";
 import FieldWatcher, {
   FieldErrorWatcher,
@@ -72,6 +66,7 @@ function ProjectConfigColumnFormItemSwitcher(
 function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
   const { index, accordionValue } = props;
   const NAME = `columns.${index}` as const;
+  const { setValue, getValues } = useFormContext<ProjectConfigFormType>();
   return (
     <Accordion.Item value={accordionValue}>
       <Accordion.Control>
@@ -129,6 +124,20 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
             label="Type"
             description="The type of the column. Please note that providing the wrong column type can cause the application to error."
             required
+            allowDeselect={false}
+            clearable={false}
+            onChange={(type) => {
+              if (type == null) {
+                return;
+              }
+              setValue(
+                NAME,
+                DefaultProjectSchemaColumnValues(
+                  getValues(`${NAME}.name`),
+                  type as SchemaColumnTypeEnum
+                )
+              );
+            }}
           />
           <Divider />
           <ProjectConfigColumnFormItemSwitcher {...props} />

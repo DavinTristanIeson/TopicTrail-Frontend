@@ -4,19 +4,17 @@ import {
   Input,
   InputBase,
   Loader,
+  SelectProps,
   useCombobox,
 } from "@mantine/core";
 import React from "react";
 
-interface CustomizableSelectProps<T extends ComboboxItem> {
+interface CustomizableSelectProps<T extends ComboboxItem>
+  extends Omit<SelectProps, "onChange"> {
   onChange(value: T | null): void;
   loading?: boolean;
   value: string | null;
   data: T[];
-
-  label?: React.ReactNode;
-  required?: boolean;
-  placeholder?: React.ReactNode;
 
   ItemRenderer(item: T): React.ReactNode;
 }
@@ -33,6 +31,7 @@ export default function CustomizableSelect<T extends ComboboxItem>(
     placeholder,
     required,
     ItemRenderer,
+    allowDeselect = true,
   } = props;
   const store = useCombobox();
   const selectedComboboxItem = React.useMemo(
@@ -42,13 +41,14 @@ export default function CustomizableSelect<T extends ComboboxItem>(
   return (
     <Combobox
       store={store}
-      onOptionSubmit={(value) => {
-        if (value == null) {
+      onOptionSubmit={(newValue) => {
+        if ((newValue == null || newValue == value) && allowDeselect) {
           onChange(null);
           return;
         }
-        const option = data.find((x) => x.value === value);
+        const option = data.find((x) => x.value === newValue);
         onChange(option ?? null);
+        store.closeDropdown();
       }}
     >
       <Combobox.Target>
@@ -60,6 +60,7 @@ export default function CustomizableSelect<T extends ComboboxItem>(
           required={required}
           rightSection={loading ? <Loader /> : <Combobox.Chevron />}
           rightSectionPointerEvents="none"
+          miw={200}
           onClick={() => store.toggleDropdown()}
         >
           {selectedComboboxItem?.label ?? (

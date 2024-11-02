@@ -57,7 +57,10 @@ export const useSendTopicRequest: ApiMutationFunction<TopicsInput, ApiResult<voi
     ...options,
     mutationFn(body) {
       return ApiFetch({
-        url: `${projectTopicsEndpoint(body.id)}/${body.column}`,
+        url: `${projectTopicsEndpoint(body.id)}`,
+        params: {
+          column: body.column,
+        },
         classType: undefined,
         method: 'post',
       })
@@ -77,7 +80,10 @@ export const useSendTopicSimilarityRequest: ApiMutationFunction<TopicsInput, Api
       return ApiFetch({
         classType: undefined,
         method: 'post',
-        url: `${projectTopicsEndpoint(input.id)}/${input.column}/similarity`
+        params: {
+          column: input.column,
+        },
+        url: `${projectTopicsEndpoint(input.id)}/similarity`
       });
     },
     onSuccess(data, variables) {
