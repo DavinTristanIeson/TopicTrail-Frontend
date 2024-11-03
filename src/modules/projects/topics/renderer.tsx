@@ -1,7 +1,14 @@
 import { ProjectConfigModel } from "@/api/project/config.model";
-import { useGetTopics, useSendTopicRequest } from "@/api/topics";
+import { TopicsModel, useGetTopics, useSendTopicRequest } from "@/api/topics";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
-import { Button, Group, Stack, Title } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Paper,
+  RingProgress,
+  Stack,
+  Title,
+} from "@mantine/core";
 import React from "react";
 import ProcedureStatus, { useTriggerProcedure } from "../common/procedure";
 import { Info } from "@phosphor-icons/react";
@@ -9,6 +16,78 @@ import PlotRenderer from "../common/plots";
 import TopicSimilarityPlot from "./similarity";
 import { ToggleDispatcher } from "@/hooks/dispatch-action";
 import { ProjectColumnSelectInput } from "../common/select";
+import { SupplementaryInfoField } from "../common/table";
+import Colors from "@/common/constants/colors";
+import Text from "@/components/standard/text";
+
+function TopicRendererBody(props: TopicsModel) {
+  const outlierPercentage = (props.outliers / props.total) * 100;
+  const validPercentage = (props.valid / props.total) * 100;
+  const invalidPercentage = (props.invalid / props.total) * 100;
+  return (
+    <Group wrap="wrap" align="stretch">
+      {props.plot && (
+        <Paper className="p-3 relative w-full" miw={720}>
+          <PlotRenderer plot={props.plot} />
+        </Paper>
+      )}
+      <Paper miw={480}>
+        <Group>
+          <SupplementaryInfoField
+            label="Outliers"
+            value={props.outliers}
+            color={Colors.sentimentError}
+            tooltip="Some documents may be categorized as outliers because they do not possess enough informative words to be categorized into any of the available topics."
+          />
+          <SupplementaryInfoField label="Valid" value={props.outliers} />
+          <SupplementaryInfoField
+            label="Invalid"
+            value={props.outliers}
+            color={Colors.foregroundDull}
+            tooltip="Some documents may end up being invalid after the preprocessing step according to your preprocessing configuration. For example: short documents or documents with a lot of common words may end up being filtered after they have been preprocessed due to their abnormally short length."
+          />
+        </Group>
+        <RingProgress
+          size={180}
+          thickness={16}
+          label={
+            <Stack align="center">
+              <Text
+                size="xs"
+                ta="center"
+                px="xs"
+                style={{ pointerEvents: "none" }}
+                c={Colors.foregroundDull}
+              >
+                Total
+              </Text>
+              <Text size="lg" c={Colors.foregroundPrimary}>
+                {props.total}
+              </Text>
+            </Stack>
+          }
+          sections={[
+            {
+              value: outlierPercentage,
+              color: Colors.sentimentError,
+              tooltip: "Outliers",
+            },
+            {
+              value: invalidPercentage,
+              color: Colors.foregroundDull,
+              tooltip: "Invalid",
+            },
+            {
+              value: validPercentage,
+              color: Colors.foregroundPrimary,
+              tooltip: "Valid",
+            },
+          ]}
+        />
+      </Paper>
+    </Group>
+  );
+}
 
 export default function TopicsRenderer(config: ProjectConfigModel) {
   const [columnName, setColumnName] = React.useState(
@@ -29,7 +108,7 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
     keepPreviousData: false,
   });
 
-  const plot = procedureProps?.data?.data.plot;
+  const data = procedureProps?.data?.data;
   const remote = React.useRef<ToggleDispatcher | undefined>();
 
   return (
@@ -70,16 +149,14 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
                 leftSection={<Info />}
                 variant="subtle"
               >
-                View Intertopic Relationship
+                Topic Overview
               </Button>
             )}
           </Group>
         }
       />
       <TopicSimilarityPlot column={columnName} config={config} ref={remote} />
-      <div className="relative w-full">
-        {plot && <PlotRenderer plot={plot} />}
-      </div>
+      {data && data.plot && <TopicRendererBody {...data} />}
     </Stack>
   );
 }

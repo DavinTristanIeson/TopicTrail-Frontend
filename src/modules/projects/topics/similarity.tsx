@@ -20,6 +20,7 @@ interface TopicSimilarityPlotProps {
 enum TopicSimilarityVisualizationMethod {
   Ldavis = "ldavis",
   Heatmap = "heatmap",
+  Barchart = "barchart",
 }
 
 function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
@@ -43,6 +44,7 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
 
   const heatmap = procedureProps.data?.data?.heatmap;
   const ldavis = procedureProps.data?.data?.ldavis;
+  const topicsBarchart = procedureProps.data?.data?.topicsBarchart;
   const [mode, setMode] = React.useState(
     TopicSimilarityVisualizationMethod.Heatmap
   );
@@ -67,6 +69,10 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
                 label: "LDAVis-style",
                 value: TopicSimilarityVisualizationMethod.Ldavis,
               },
+              {
+                label: "Topic Words Barchart",
+                value: TopicSimilarityVisualizationMethod.Barchart,
+              },
             ]}
             allowDeselect={false}
             clearable={false}
@@ -75,6 +81,8 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
                 ? "Heatmaps show the similarity between two topics. Deeper shades indicate higher similarity."
                 : mode === TopicSimilarityVisualizationMethod.Ldavis
                 ? "The LDAvis visualization method shows how topics are related to each other based on proximity. The size of the bubbles indicate the number of documents that are assigned to that topic."
+                : mode === TopicSimilarityVisualizationMethod.Barchart
+                ? "This visualization method does not actually show the relationship between the topics. Rather, it shows a high level overview of the keywords in each topic."
                 : "Choose a visualization method"
             }
           />
@@ -92,6 +100,12 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
           <PlotRenderer plot={ldavis} />
         </div>
       )}
+      {topicsBarchart &&
+        mode === TopicSimilarityVisualizationMethod.Barchart && (
+          <div className="relative w-full">
+            <PlotRenderer plot={topicsBarchart} />
+          </div>
+        )}
     </>
   );
 }

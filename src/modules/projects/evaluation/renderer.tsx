@@ -1,6 +1,6 @@
 import { TopicEvaluationModel } from "@/api/evaluation/model";
 import PlotRenderer from "../common/plots";
-import { Alert, Group, Select, Stack, Title } from "@mantine/core";
+import { Alert, Group, Paper, Select, Stack, Title } from "@mantine/core";
 import React from "react";
 import Colors from "@/common/constants/colors";
 import { Info } from "@phosphor-icons/react";
@@ -32,6 +32,8 @@ export default function TopicEvaluationRenderer(props: TopicEvaluationModel) {
             </Text>
           </div>
         </Group>
+      </Alert>
+      <Paper shadow="sm">
         <Group justify="space-around">
           <SupplementaryInfoField
             label="Topic Coherence"
@@ -42,9 +44,11 @@ export default function TopicEvaluationRenderer(props: TopicEvaluationModel) {
             value={props.topicDiversityScore.toFixed(4)}
           />
         </Group>
-      </Alert>
-      <Title order={3}>Coherence Scores per Topic</Title>
-      <PlotRenderer plot={props.cvBarchart} />
+      </Paper>
+      <Paper>
+        <Title order={3}>Coherence Scores per Topic</Title>
+        <PlotRenderer plot={props.cvBarchart} />
+      </Paper>
     </Stack>
   );
 }

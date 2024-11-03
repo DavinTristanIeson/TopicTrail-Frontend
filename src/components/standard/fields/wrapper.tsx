@@ -84,6 +84,7 @@ export function NumberField(props: NumberFieldProps) {
           field.onChange(props.percentage ? e / 100 : e);
         }
       }}
+      decimalScale={props.percentage ? 4 : 0}
       disabled={isSubmitting || disabled}
       error={error?.message}
       rightSection={

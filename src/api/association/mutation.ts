@@ -11,7 +11,7 @@ export const useSendVariableAssociationRequest: ApiMutationFunction<VariableAsso
     ...options,
     mutationFn(body) {
       return ApiFetch({
-        url: `${projectAssociationEndpoint(body.id)}`,
+        url: `${projectAssociationEndpoint(body.id)}/start`,
         params: {
           column1: body.column1,
           column2: body.column2,

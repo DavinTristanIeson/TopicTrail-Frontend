@@ -11,7 +11,7 @@ export const useSendTopicEvaluationRequest: ApiMutationFunction<TopicsInput, Api
     ...options,
     mutationFn(body) {
       return ApiFetch({
-        url: `${projectEvaluationEndpoint(body.id)}`,
+        url: `${projectEvaluationEndpoint(body.id)}/start`,
         params: {
           column: body.column,
         },

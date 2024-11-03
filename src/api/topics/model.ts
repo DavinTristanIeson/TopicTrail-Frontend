@@ -12,8 +12,14 @@ export class TopicsModel {
   topicWords: Record<string, [string, number][]>;
 
   frequencies: number[];
-  outliers: number;
+
+  @Expose({name: "frequency_barchart"})
+  frequencyBarchart: string;
+
   total: number;
+  outliers: number;
+  valid: number;
+  invalid: number;
 }
 
 export class TopicSimilarityModel {
@@ -22,6 +28,9 @@ export class TopicSimilarityModel {
   heatmap: string;
   ldavis: string;
   topics: string[];
+
+  @Expose({name: "topics_barchart"})
+  topicsBarchart: string;
 
   @Expose({name: "similarity_matrix"})
   similarityMatrix: number[][];

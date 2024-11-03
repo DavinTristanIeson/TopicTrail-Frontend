@@ -22,6 +22,9 @@ export const TopicQueryKeys = {
   }
 }
 
+export function projectTopicModelingEndpoint(id: string) {
+  return `projects/${id}/topic-modeling`;
+}
 export function projectTopicsEndpoint(id: string) {
   return `projects/${id}/topics`;
 }
@@ -34,7 +37,7 @@ export const useGetTopicModelingStatus: ApiQueryFunction<IdInput, ProjectTaskRes
       return ApiFetch({
         classType: undefined,
         method: 'get',
-        url: `${projectTopicsEndpoint(input.id)}/status`
+        url: `${projectTopicModelingEndpoint(input.id)}/status`
       });
     }
   });

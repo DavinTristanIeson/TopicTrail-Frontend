@@ -19,7 +19,7 @@ export default function PlotRenderer(props: PlotRendererProps) {
     <Suspense
       fallback={
         <Paper shadow="sm">
-          <Stack>
+          <Stack align="center">
             <Loader size={32} />
             <Text size="lg">Loading plot...</Text>
           </Stack>

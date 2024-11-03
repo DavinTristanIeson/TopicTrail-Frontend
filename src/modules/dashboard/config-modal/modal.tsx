@@ -2,7 +2,7 @@ import {
   ToggleDispatcher,
   useSetupToggleDispatcher,
 } from "@/hooks/dispatch-action";
-import { Modal } from "@mantine/core";
+import { Flex, Modal } from "@mantine/core";
 import React from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -25,6 +25,9 @@ import Colors from "@/common/constants/colors";
 import { handleFormSubmission } from "@/common/utils/form";
 import { useRouter } from "next/router";
 import NavigationRoutes from "@/common/constants/routes";
+import Button from "@/components/standard/button/base";
+import { TrashSimple } from "@phosphor-icons/react";
+import { DeleteProjectModal } from "../project-management";
 
 interface ProjectConfigModalProps {
   data?: ProjectConfigModel;
@@ -102,22 +105,51 @@ const ProjectConfigModal = React.forwardRef<
   ProjectConfigModalProps
 >((props, ref) => {
   const [opened, setOpened] = useSetupToggleDispatcher(ref);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   return (
-    <Modal
-      opened={opened}
-      onClose={() => {
-        setOpened(false);
-      }}
-      size={1200}
-      centered
-      closeOnClickOutside={false}
-    >
-      <Modal.Body>
-        {opened && (
-          <ProjectConfigModalBody {...props} onClose={() => setOpened(false)} />
+    <>
+      {props.data && (
+        <DeleteProjectModal
+          project={isDeleting ? props.data?.projectId : undefined}
+          onClose={() => setIsDeleting(false)}
+        />
+      )}
+      <Modal
+        opened={opened}
+        onClose={() => {
+          setOpened(false);
+        }}
+        size={1200}
+        centered
+        closeOnClickOutside={false}
+      >
+        {props.data && (
+          <Modal.Header>
+            <Flex direction="row-reverse" w="100%">
+              <Button
+                variant="outline"
+                leftSection={<TrashSimple />}
+                color={Colors.sentimentError}
+                onClick={() => {
+                  setOpened(false);
+                  setIsDeleting(true);
+                }}
+              >
+                Delete Project
+              </Button>
+            </Flex>
+          </Modal.Header>
         )}
-      </Modal.Body>
-    </Modal>
+        <Modal.Body>
+          {opened && (
+            <ProjectConfigModalBody
+              {...props}
+              onClose={() => setOpened(false)}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
+    </>
   );
 });
 ProjectConfigModal.displayName = "CreateProjectModal";

@@ -48,6 +48,11 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     removeEmail: Yup.boolean().required(),
     removeUrl: Yup.boolean().required(),
     removeNumber: Yup.boolean().required(),
+    minWordFrequency: Yup.number().positive().required(),
+    maxWordFrequency: Yup.number().positive().required(),
+    maxUniqueWords: Yup.number().positive().required(),
+    minDocumentLength: Yup.number().positive().required(),
+    minWordLength: Yup.number().positive().required(),
   }).when("type", {
     is: SchemaColumnTypeEnum.Textual,
     then: schema => schema.required(),
@@ -114,6 +119,11 @@ export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColum
       removeNumber: true,
       removeUrl: true,
       stopwords: [],
+      maxUniqueWords: 1_000_000,
+      maxWordFrequency: 1 / 2,
+      minWordFrequency: 5,
+      minDocumentLength: 5,
+      minWordLength: 3,
     } : undefined,
     topicModeling: type === SchemaColumnTypeEnum.Textual ? {
       lowMemory: false,
