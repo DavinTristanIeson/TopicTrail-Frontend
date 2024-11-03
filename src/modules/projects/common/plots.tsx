@@ -17,8 +17,6 @@ export default function PlotRenderer(props: PlotRendererProps) {
     return JSON.parse(plot);
   }, [plot]);
 
-  console.log(width, height);
-
   return (
     <Suspense
       fallback={

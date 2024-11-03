@@ -36,7 +36,7 @@ function TopicRendererBody(props: TopicsModel) {
       )}
       <Paper p={16} className="relative w-full">
         <Stack align="center">
-          <Group gap={32}>
+          <Group gap={32} justify="space-around" w="100%">
             <SupplementaryInfoField
               label="Outliers"
               value={props.outliers}
@@ -65,7 +65,7 @@ function TopicRendererBody(props: TopicsModel) {
                 >
                   Total
                 </Text>
-                <Text size="lg" c={Colors.foregroundPrimary}>
+                <Text size="lg" c={Colors.foregroundPrimary} fw="bold">
                   {props.total}
                 </Text>
               </Stack>

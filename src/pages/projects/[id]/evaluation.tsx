@@ -1,20 +1,14 @@
 import { useSendTopicEvaluationRequest } from "@/api/evaluation/mutation";
-import {
-  TopicEvaluationQueryKeys,
-  useGetTopicEvaluationStatus,
-} from "@/api/evaluation/query";
+import { useGetTopicEvaluationStatus } from "@/api/evaluation/query";
 import { ProjectModel } from "@/api/project";
-import { TopicQueryKeys } from "@/api/topics";
-import { queryClient } from "@/common/api/query-client";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 import AppProjectLayout from "@/modules/projects/common/layout";
 import ProcedureStatus, {
-  isAdvisedToRunProcedure,
   useTriggerProcedure,
 } from "@/modules/projects/common/procedure";
 import { ProjectColumnSelectInput } from "@/modules/projects/common/select";
 import TopicEvaluationRenderer from "@/modules/projects/evaluation/renderer";
-import { Paper, Stack, Title } from "@mantine/core";
+import { Group, Paper, Stack } from "@mantine/core";
 import React from "react";
 
 function TopicEvaluationPageBody(props: ProjectModel) {
@@ -43,7 +37,7 @@ function TopicEvaluationPageBody(props: ProjectModel) {
         title="Topic Evaluation"
         description="Find out the quality of the topics that were discovered by the topic modeling algorithm. Note that the scores may be harder to interpret than classic classification scores like accuracy and precision."
         BelowDescription={
-          <Stack>
+          <Group>
             <ProjectColumnSelectInput
               value={columnName}
               data={config.dataSchema.columns.filter(
@@ -57,10 +51,9 @@ function TopicEvaluationPageBody(props: ProjectModel) {
                 label: "Column",
                 description:
                   "Pick the column whose topics are to be evaluated. The topic modeling procedure has to be executed beforehand.",
-                maw: 375,
               }}
             />
-          </Stack>
+          </Group>
         }
         {...procedureProps}
       />

@@ -23,13 +23,19 @@ export class VariableAssociationDataModel {
   // Temporal
   @Expose({name: "line_plot"})
   linePlot?: string;
-  @Type(() => Date)
-  bins?: Date[];
 }
 
 export class VariableAssociationModel {
   column1: string;
   column2: string;
+  total: number;
+  excluded: number;
+
+  @Expose({name: "excluded_left"})
+  excludedLeft: number;
+  
+  @Expose({name: "excluded_right"})
+  excludedRight: number;
 
   @Type(() => VariableAssociationDataModel)
   data: VariableAssociationDataModel;

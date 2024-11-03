@@ -66,6 +66,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
 interface DeleteProjectModalProps {
   project: string | undefined;
   onClose(): void;
+  onDelete?(): void;
 }
 
 export function DeleteProjectModal(props: DeleteProjectModalProps) {
@@ -105,6 +106,7 @@ export function DeleteProjectModal(props: DeleteProjectModalProps) {
                       color: Colors.sentimentSuccess,
                     });
                   }
+                  props.onDelete?.();
                   props.onClose();
                 })}
               >

@@ -106,12 +106,21 @@ const ProjectConfigModal = React.forwardRef<
 >((props, ref) => {
   const [opened, setOpened] = useSetupToggleDispatcher(ref);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const router = useRouter();
+  const data = props.data;
   return (
     <>
-      {props.data && (
+      {data && (
         <DeleteProjectModal
-          project={isDeleting ? props.data?.projectId : undefined}
+          project={isDeleting ? data.projectId : undefined}
           onClose={() => setIsDeleting(false)}
+          onDelete={() => {
+            router.replace(NavigationRoutes.Project, {
+              query: {
+                id: data.projectId,
+              },
+            });
+          }}
         />
       )}
       <Modal

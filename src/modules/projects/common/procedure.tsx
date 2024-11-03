@@ -115,7 +115,11 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     actionMessage = "Run Again?";
     actionIcon = <Play />;
   } else {
-    return null;
+    color = Colors.backgroundDull;
+    icon = <Clock color={Colors.backgroundDull} size={48} />;
+    actionMessage = "Start";
+    actionIcon = <ArrowClockwise />;
+    defaultMessage = description;
   }
 
   return (
