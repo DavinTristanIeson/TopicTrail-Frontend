@@ -30,6 +30,7 @@ import {
   ApiMutationFunction,
   ApiQueryFunction,
 } from "@/common/api/fetch-types";
+import { queryClient } from "@/common/api/query-client";
 
 interface ProcedureStatusProps {
   title: string;
@@ -40,8 +41,6 @@ interface ProcedureStatusProps {
   refetch(): void;
   execute(): Promise<ApiResult<unknown>>;
   refetchInterval?: number;
-  /** Hide if idle or success */
-  quiet?: boolean;
 
   // Components
   AboveDescription?: React.ReactNode;
@@ -62,7 +61,6 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     refetch,
     execute,
     refetchInterval = 5000,
-    quiet,
     AboveDescription,
     BelowDescription,
     mantineProps,
@@ -117,16 +115,11 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     actionMessage = "Run Again?";
     actionIcon = <Play />;
   } else {
-    return null;
-  }
-
-  const canBeHidden =
-    (data?.status === ProjectTaskStatus.Idle ||
-      data?.status === ProjectTaskStatus.Success) &&
-    !error;
-  if (quiet && canBeHidden) {
-    console.log("HELLO");
-    return null;
+    color = Colors.backgroundDull;
+    icon = <Clock color={Colors.backgroundDull} size={48} />;
+    actionMessage = "Start";
+    actionIcon = <ArrowClockwise />;
+    defaultMessage = description;
   }
 
   return (
@@ -191,8 +184,8 @@ interface UseTriggerProcedureProps<TInput extends object, TOutput> {
   useGetStatus: ApiQueryFunction<TInput, ProjectTaskResult<TOutput>>;
   useSendRequest: ApiMutationFunction<TInput, ApiResult<any>>;
   input: TInput;
-  keepPreviousData: boolean;
   enabled?: boolean;
+  autostart: boolean;
 }
 
 interface UseTriggerProcedureReturn<TOutput> {
@@ -207,32 +200,40 @@ interface UseTriggerProcedureReturn<TOutput> {
 export function useTriggerProcedure<TInput extends object, TOutput>(
   props: UseTriggerProcedureProps<TInput, TOutput>
 ): UseTriggerProcedureReturn<TOutput> {
-  const { useGetStatus, useSendRequest, input, keepPreviousData, enabled } =
-    props;
+  const { useGetStatus, useSendRequest, input, enabled, autostart } = props;
   const {
     data: status,
     isLoading,
     error: errorStatus,
     refetch,
   } = useGetStatus(input, {
-    placeholderData: keepPreviousData ? (prev) => prev : undefined,
     enabled,
   });
   const {
-    data: hasSentRequest,
     isPending,
     error: errorExecute,
     mutateAsync: request,
+    mutate: requestSync,
   } = useSendRequest(input);
+
+  React.useEffect(() => {
+    if (!status && !!errorStatus && autostart) {
+      requestSync(input);
+      refetch();
+    }
+  }, [status, errorStatus, autostart]);
 
   return {
     data: status,
     execute: () => request(input),
-    error:
-      errorExecute?.message ??
-      (hasSentRequest ? errorStatus?.message : undefined),
+    error: errorExecute?.message ?? (status ? errorStatus?.message : undefined),
     loading: isLoading || isPending,
     refetch: refetch,
     refetchInterval: 5000,
   };
+}
+
+export function isAdvisedToRunProcedure(queryKey: string[]) {
+  const cacheState = queryClient.getQueryState(queryKey);
+  return !cacheState?.data || cacheState.isInvalidated;
 }

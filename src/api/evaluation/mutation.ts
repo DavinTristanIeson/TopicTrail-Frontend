@@ -1,20 +1,19 @@
 import { ApiMutationFunction } from "@/common/api/fetch-types";
 import { ApiResult } from "@/common/api/model";
-import { VariableAssociationInput } from "./model";
 import { useMutation } from "@tanstack/react-query";
 import { ApiFetch } from "@/common/api/fetch";
-import { projectAssociationEndpoint, VariableAssociationQueryKeys } from "./query";
+import { projectEvaluationEndpoint, TopicEvaluationQueryKeys} from "./query";
 import { queryClient } from "@/common/api/query-client";
+import { TopicsInput } from "../topics";
 
-export const useSendVariableAssociationRequest: ApiMutationFunction<VariableAssociationInput, ApiResult<void>> = function (options) {
+export const useSendTopicEvaluationRequest: ApiMutationFunction<TopicsInput, ApiResult<void>> = function (options) {
   return useMutation({
     ...options,
     mutationFn(body) {
       return ApiFetch({
-        url: `${projectAssociationEndpoint(body.id)}/start`,
+        url: `${projectEvaluationEndpoint(body.id)}/start`,
         params: {
-          column1: body.column1,
-          column2: body.column2,
+          column: body.column,
         },
         classType: undefined,
         method: 'post',
@@ -22,7 +21,7 @@ export const useSendVariableAssociationRequest: ApiMutationFunction<VariableAsso
     },
     onSuccess(data, variables) {
       queryClient.invalidateQueries({
-        queryKey: VariableAssociationQueryKeys.association(variables),
+        queryKey: TopicEvaluationQueryKeys.evaluation(variables),
       });
     },
   });

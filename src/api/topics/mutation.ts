@@ -3,10 +3,11 @@ import { IdInput } from "../common/model";
 import { useMutation } from "@tanstack/react-query";
 import { ApiFetch } from "@/common/api/fetch";
 import { queryClient } from "@/common/api/query-client";
-import { projectTopicsEndpoint, TopicQueryKeys } from "./query";
+import { projectTopicModelingEndpoint, projectTopicsEndpoint, TopicQueryKeys } from "./query";
 import { ApiResult } from "@/common/api/model";
 import { TopicsInput } from "./model";
 import { VariableAssociationQueryKeys } from "../association/query";
+import { TopicEvaluationQueryKeys } from "../evaluation/query";
 
 export function invalidateTopicQueries(id: string) {
   queryClient.invalidateQueries({
@@ -20,7 +21,10 @@ export function invalidateTopicQueries(id: string) {
   });
   queryClient.invalidateQueries({
     queryKey: [VariableAssociationQueryKeys.associationKey, id]
-  })
+  });
+  queryClient.invalidateQueries({
+    queryKey: [TopicEvaluationQueryKeys.evaluationKey, id],
+  });
 }
 export function removeTopicQueries(id: string) {
   queryClient.removeQueries({
@@ -32,6 +36,12 @@ export function removeTopicQueries(id: string) {
   queryClient.removeQueries({
     queryKey: [TopicQueryKeys.topicsKey, id]
   });
+  queryClient.removeQueries({
+    queryKey: [VariableAssociationQueryKeys.associationKey, id]
+  });
+  queryClient.removeQueries({
+    queryKey: [TopicEvaluationQueryKeys.evaluationKey, id],
+  });
 }
 
 
@@ -40,7 +50,7 @@ export const useStartTopicModeling: ApiMutationFunction<IdInput, ApiResult<void>
     ...options,
     mutationFn(body) {
       return ApiFetch({
-        url: `${projectTopicsEndpoint(body.id)}/start`,
+        url: `${projectTopicModelingEndpoint(body.id)}/start`,
         classType: undefined,
         method: 'post',
       })
@@ -57,7 +67,7 @@ export const useSendTopicRequest: ApiMutationFunction<TopicsInput, ApiResult<voi
     ...options,
     mutationFn(body) {
       return ApiFetch({
-        url: `${projectTopicsEndpoint(body.id)}`,
+        url: `${projectTopicsEndpoint(body.id)}/start`,
         params: {
           column: body.column,
         },
@@ -83,7 +93,7 @@ export const useSendTopicSimilarityRequest: ApiMutationFunction<TopicsInput, Api
         params: {
           column: input.column,
         },
-        url: `${projectTopicsEndpoint(input.id)}/similarity`
+        url: `${projectTopicsEndpoint(input.id)}/similarity/start`
       });
     },
     onSuccess(data, variables) {

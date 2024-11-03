@@ -1,25 +1,106 @@
 import { ProjectConfigModel } from "@/api/project/config.model";
-import {
-  TopicQueryKeys,
-  useGetTopics,
-  useSendTopicRequest,
-} from "@/api/topics";
+import { TopicsModel, useGetTopics, useSendTopicRequest } from "@/api/topics";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
-import { Button, Group, Stack, Title } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Paper,
+  RingProgress,
+  Stack,
+  Title,
+} from "@mantine/core";
 import React from "react";
 import ProcedureStatus, { useTriggerProcedure } from "../common/procedure";
 import { Info } from "@phosphor-icons/react";
 import PlotRenderer from "../common/plots";
 import TopicSimilarityPlot from "./similarity";
 import { ToggleDispatcher } from "@/hooks/dispatch-action";
-import { queryClient } from "@/common/api/query-client";
 import { ProjectColumnSelectInput } from "../common/select";
+import { SupplementaryInfoField } from "../common/table";
+import Colors from "@/common/constants/colors";
+import Text from "@/components/standard/text";
+
+function TopicRendererBody(props: TopicsModel) {
+  const outlierPercentage = (props.outliers / props.total) * 100;
+  const validPercentage = (props.valid / props.total) * 100;
+  const invalidPercentage = (props.invalid / props.total) * 100;
+  return (
+    <>
+      {props.topicsBarchart && (
+        <Paper className="relative w-full" p={16}>
+          <PlotRenderer
+            plot={props.topicsBarchart}
+            height={Math.ceil(props.topics.length / 4) * 360}
+          />
+        </Paper>
+      )}
+      <Paper p={16} className="relative w-full">
+        <Stack align="center">
+          <Group gap={32} justify="space-around" w="100%">
+            <SupplementaryInfoField
+              label="Outliers"
+              value={props.outliers}
+              color={Colors.sentimentError}
+              tooltip="Some documents may be categorized as outliers because they do not possess enough informative words to be categorized into any of the available topics."
+            />
+            <SupplementaryInfoField label="Valid" value={props.valid} />
+            <SupplementaryInfoField
+              label="Invalid"
+              value={props.invalid}
+              color={Colors.foregroundDull}
+              tooltip="Some documents may end up being invalid after the preprocessing step according to your preprocessing configuration. For example: short documents or documents with a lot of common words may end up being filtered after they have been preprocessed due to their abnormally short length."
+            />
+          </Group>
+          <RingProgress
+            size={180}
+            thickness={16}
+            label={
+              <Stack align="center" gap={0}>
+                <Text
+                  size="xs"
+                  ta="center"
+                  px="xs"
+                  style={{ pointerEvents: "none" }}
+                  c={Colors.foregroundDull}
+                >
+                  Total
+                </Text>
+                <Text size="lg" c={Colors.foregroundPrimary} fw="bold">
+                  {props.total}
+                </Text>
+              </Stack>
+            }
+            sections={[
+              {
+                value: outlierPercentage,
+                color: Colors.sentimentError,
+                tooltip: `Outliers (${outlierPercentage.toFixed(2)}%)`,
+              },
+              {
+                value: invalidPercentage,
+                color: Colors.foregroundDull,
+                tooltip: `Invalid (${invalidPercentage.toFixed(2)}%)`,
+              },
+              {
+                value: validPercentage,
+                color: Colors.foregroundPrimary,
+                tooltip: `Valid (${validPercentage.toFixed(2)}%)`,
+              },
+            ]}
+          />
+        </Stack>
+
+        <PlotRenderer plot={props.frequencyBarchart} />
+      </Paper>
+    </>
+  );
+}
 
 export default function TopicsRenderer(config: ProjectConfigModel) {
   const [columnName, setColumnName] = React.useState(
     config.dataSchema.columns.find(
       (col) => col.type == SchemaColumnTypeEnum.Textual
-    )!.name
+    )?.name ?? ""
   );
 
   const procedureProps = useTriggerProcedure({
@@ -29,17 +110,15 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
       id: config.projectId,
       column: columnName,
     },
-    keepPreviousData: false,
+    autostart: true,
+    enabled: !!columnName,
   });
 
-  const plot = procedureProps?.data?.data.plot;
+  const data = procedureProps?.data?.data;
   const remote = React.useRef<ToggleDispatcher | undefined>();
 
   return (
     <Stack>
-      <Stack align="center">
-        <Title order={2}>Topics</Title>
-      </Stack>
       <ProcedureStatus
         {...procedureProps}
         title={`Topics of ${columnName}`}
@@ -51,15 +130,6 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
               value={columnName}
               onChange={async (e) => {
                 if (!e) return;
-                const cacheState = queryClient.getQueryState(
-                  TopicQueryKeys.topics({
-                    id: config.projectId,
-                    column: e.name,
-                  })
-                );
-                if (!cacheState?.data || cacheState.isInvalidated) {
-                  await procedureProps.execute();
-                }
                 setColumnName(e.name);
               }}
               selectProps={{
@@ -82,16 +152,14 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
                 leftSection={<Info />}
                 variant="subtle"
               >
-                View Intertopic Relationship
+                Topic Overview
               </Button>
             )}
           </Group>
         }
       />
       <TopicSimilarityPlot column={columnName} config={config} ref={remote} />
-      <div className="relative w-full">
-        {plot && <PlotRenderer plot={plot} />}
-      </div>
+      {data && data.topicsBarchart && <TopicRendererBody {...data} />}
     </Stack>
   );
 }

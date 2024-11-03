@@ -20,6 +20,7 @@ interface TopicSimilarityPlotProps {
 enum TopicSimilarityVisualizationMethod {
   Ldavis = "ldavis",
   Heatmap = "heatmap",
+  Dendrogram = "dendrogram",
 }
 
 function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
@@ -31,7 +32,7 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
       id: config.projectId,
       column,
     },
-    keepPreviousData: true,
+    autostart: true,
   });
 
   // Run on mount
@@ -42,9 +43,14 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
 
   const heatmap = procedureProps.data?.data?.heatmap;
   const ldavis = procedureProps.data?.data?.ldavis;
+  const topicsBarchart = procedureProps.data?.data?.dendrogram;
   const [mode, setMode] = React.useState(
-    TopicSimilarityVisualizationMethod.Heatmap
+    TopicSimilarityVisualizationMethod.Ldavis
   );
+  const plotProps = {
+    width: 1080,
+    height: 640,
+  };
 
   return (
     <>
@@ -59,12 +65,16 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
             label="Visualization Method"
             data={[
               {
+                label: "LDAVis-style",
+                value: TopicSimilarityVisualizationMethod.Ldavis,
+              },
+              {
                 label: "Heatmap",
                 value: TopicSimilarityVisualizationMethod.Heatmap,
               },
               {
-                label: "LDAVis-style",
-                value: TopicSimilarityVisualizationMethod.Ldavis,
+                label: "Dendrogram",
+                value: TopicSimilarityVisualizationMethod.Dendrogram,
               },
             ]}
             allowDeselect={false}
@@ -74,6 +84,8 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
                 ? "Heatmaps show the similarity between two topics. Deeper shades indicate higher similarity."
                 : mode === TopicSimilarityVisualizationMethod.Ldavis
                 ? "The LDAvis visualization method shows how topics are related to each other based on proximity. The size of the bubbles indicate the number of documents that are assigned to that topic."
+                : mode === TopicSimilarityVisualizationMethod.Dendrogram
+                ? "Dendrogram shows how each topic could have been clustered together by linking two topics at a time. This forms a hierarchy of related topics."
                 : "Choose a visualization method"
             }
           />
@@ -83,14 +95,20 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
       <Box h={48} />
       {heatmap && mode === TopicSimilarityVisualizationMethod.Heatmap && (
         <div className="relative w-full">
-          <PlotRenderer plot={heatmap} />
+          <PlotRenderer plot={heatmap} {...plotProps} />
         </div>
       )}
       {ldavis && mode === TopicSimilarityVisualizationMethod.Ldavis && (
         <div className="relative w-full">
-          <PlotRenderer plot={ldavis} />
+          <PlotRenderer plot={ldavis} {...plotProps} />
         </div>
       )}
+      {topicsBarchart &&
+        mode === TopicSimilarityVisualizationMethod.Dendrogram && (
+          <div className="relative w-full">
+            <PlotRenderer plot={topicsBarchart} {...plotProps} />
+          </div>
+        )}
     </>
   );
 }

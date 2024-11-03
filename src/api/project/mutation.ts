@@ -7,7 +7,7 @@ import { queryClient } from "@/common/api/query-client";
 import { ProjectQueryKeys } from "./query";
 import { IdInput, UpdateInput } from "../common/model";
 import { ApiResult } from "@/common/api/model";
-import { invalidateTopicQueries } from "../topics/mutation";
+import { invalidateTopicQueries, removeTopicQueries } from "../topics/mutation";
 
 const ENDPOINT = "projects"
 export const useProjectCheckId: ApiMutationFunction<ProjectCheckIdInput, ApiResult<ProjectCheckIdModel>> = function (options) {
@@ -72,7 +72,7 @@ export const useUpdateProject: ApiMutationFunction<UpdateInput<ProjectConfigMode
       queryClient.invalidateQueries({
         queryKey: ProjectQueryKeys.detail(variables),
       });
-      invalidateTopicQueries(variables.id);
+      removeTopicQueries(variables.id);
       // Remember to invalidate a bunch of topic modeling stuff afterwards
     },
   })
@@ -95,7 +95,7 @@ export const useDeleteProject: ApiMutationFunction<IdInput, ApiResult<never>> = 
       queryClient.removeQueries({
         queryKey: ProjectQueryKeys.detail(variables),
       });
-      // Remember to invalidate a bunch of topic modeling stuff afterwards
+      removeTopicQueries(variables.id);
     },
   })
 }

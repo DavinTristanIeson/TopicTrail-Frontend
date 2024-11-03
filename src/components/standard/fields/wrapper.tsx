@@ -79,11 +79,12 @@ export function NumberField(props: NumberFieldProps) {
       value={props.percentage ? field.value * 100 : field.value}
       onChange={(e) => {
         if (e === "" || typeof e === "string") {
-          field.onChange(undefined);
+          field.onChange(null);
         } else {
           field.onChange(props.percentage ? e / 100 : e);
         }
       }}
+      decimalScale={props.percentage ? 4 : 0}
       disabled={isSubmitting || disabled}
       error={error?.message}
       rightSection={

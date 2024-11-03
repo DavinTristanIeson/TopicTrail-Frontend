@@ -29,6 +29,21 @@ export class TextPreprocessingConfigModel {
 
   @Expose({ name: "remove_number" })
   removeNumber: boolean;
+  
+  @Expose({ name: "min_word_frequency" })
+  minWordFrequency: number;
+
+  @Expose({ name: "max_word_frequency" })
+  maxWordFrequency: number;
+
+  @Expose({ name: "max_unique_words" })
+  maxUniqueWords: number;
+
+  @Expose({ name: "min_document_length" })
+  minDocumentLength: number;
+
+  @Expose({ name: "min_word_length" })
+  minWordLength: number;
 }
 
 export class TopicModelingConfigModel {

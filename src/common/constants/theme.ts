@@ -1,4 +1,4 @@
-import { createTheme, LoadingOverlay } from "@mantine/core";
+import { createTheme, LoadingOverlay, Paper } from "@mantine/core";
 import Colors from "./colors";
 
 const mantineTheme = createTheme({
@@ -27,6 +27,11 @@ const mantineTheme = createTheme({
     LoadingOverlay: LoadingOverlay.extend({
       defaultProps: {
         overlayProps: { radius: "sm", blur: 2 }
+      }
+    }),
+    Paper: Paper.extend({
+      defaultProps: {
+        shadow: 'sm'
       }
     })
   }

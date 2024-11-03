@@ -4,16 +4,23 @@ import { Expose } from "class-transformer";
 
 export class TopicsModel {
   column: string;
-
-  plot: string;
   
   topics: string[];
   @Expose({name: "topic_words"})
   topicWords: Record<string, [string, number][]>;
 
   frequencies: number[];
-  outliers: number;
+
+  @Expose({name: "frequency_barchart"})
+  frequencyBarchart: string;
+
+  @Expose({name: "topics_barchart"})
+  topicsBarchart: string;
+
   total: number;
+  outliers: number;
+  valid: number;
+  invalid: number;
 }
 
 export class TopicSimilarityModel {
@@ -21,6 +28,8 @@ export class TopicSimilarityModel {
   
   heatmap: string;
   ldavis: string;
+  dendrogram: string;
+
   topics: string[];
 
   @Expose({name: "similarity_matrix"})
