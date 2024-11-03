@@ -128,7 +128,7 @@ export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColum
     topicModeling: type === SchemaColumnTypeEnum.Textual ? {
       lowMemory: false,
       maxTopics: null,
-      maxTopicSize: 1 / 20,
+      maxTopicSize: 1 / 10,
       minTopicSize: 15,
       nGramRangeEnd: 2,
       nGramRangeStart: 1,

@@ -10,31 +10,43 @@ import { SupplementaryInfoField } from "../common/table";
 export default function TopicEvaluationRenderer(props: TopicEvaluationModel) {
   return (
     <Stack>
-      <Alert color={Colors.sentimentInfo}>
-        <Group>
-          <Info />
-          <div>
-            <Text>
-              Topic coherence is a quantitative measure of the interpretability
-              of a topic. They assess how well the words that make up a topic is
-              supported by the actual documents. The metric of topic coherence
-              used in this evaluation is C_V scoring. Generally, C_v scores
-              higher than 0.55 can be considered acceptably coherent, but this
-              varies from dataset to dataset. Higher C_v scores indicate more
-              coherent topics.
-            </Text>
-            <Text>
-              On the other hand, topic diversity measures the overlap between
-              the keywords of the discovered topics. A high topic diversity
-              value indicates that the words used to describe the topics have
-              little overlap with one another and so they discriminate the
-              topics more clearly.
-            </Text>
-          </div>
-        </Group>
-      </Alert>
-      <Paper shadow="sm">
-        <Group justify="space-around">
+      <Paper shadow="sm" p={16}>
+        <Alert color={Colors.sentimentInfo}>
+          <Group align="center" wrap="nowrap">
+            <Info size={36} />
+            <Stack>
+              <Text>
+                <Text fw="bold" span>
+                  Topic coherence
+                </Text>{" "}
+                is a quantitative measure of the interpretability of a topic.
+                They assess how well the words that make up a topic is supported
+                by the actual documents. The metric of topic coherence used in
+                this evaluation is C_V scoring. Generally, C_v scores higher
+                than 0.55 can be considered acceptably coherent, but this varies
+                from dataset to dataset. Higher C_v scores indicate more
+                coherent topics.
+              </Text>
+              <Text>
+                On the other hand,{" "}
+                <Text fw="bold" span>
+                  topic diversity
+                </Text>{" "}
+                measures the overlap between the keywords of the discovered
+                topics. A high topic diversity value (nearing 1) indicates that
+                the words used to describe the topics have little overlap with
+                one another and so they discriminate the topics more clearly.
+                Topic diversity ranges from 0 to 1, with 0 being least diverse
+                and 1 being most diverse.
+              </Text>
+              <Text>
+                Use this metric to figure out how much you can trust the topics
+                discovered by the topic modeling algorithm.
+              </Text>
+            </Stack>
+          </Group>
+        </Alert>
+        <Group justify="space-around" pt={16}>
           <SupplementaryInfoField
             label="Topic Coherence"
             value={props.cvScore.toFixed(4)}
@@ -44,9 +56,9 @@ export default function TopicEvaluationRenderer(props: TopicEvaluationModel) {
             value={props.topicDiversityScore.toFixed(4)}
           />
         </Group>
-      </Paper>
-      <Paper>
-        <Title order={3}>Coherence Scores per Topic</Title>
+        <Title order={3} ta="center" pt={32}>
+          Coherence Scores per Topic
+        </Title>
         <PlotRenderer plot={props.cvBarchart} />
       </Paper>
     </Stack>

@@ -14,6 +14,7 @@ import {
   ArrowsLeftRight,
   FileMagnifyingGlass,
   Gear,
+  ListMagnifyingGlass,
   Table,
 } from "@phosphor-icons/react";
 import { useRouter } from "next/router";
@@ -56,6 +57,16 @@ function ProjectNavbar(props: ProjectNavbarProps) {
             icon: <ArrowsLeftRight size={24} />,
             url: {
               pathname: NavigationRoutes.ProjectAssociation,
+              query: {
+                id,
+              },
+            },
+          },
+          {
+            label: "Evaluation",
+            icon: <ListMagnifyingGlass size={24} />,
+            url: {
+              pathname: NavigationRoutes.ProjectEvaluation,
               query: {
                 id,
               },

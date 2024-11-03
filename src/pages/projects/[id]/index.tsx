@@ -15,7 +15,7 @@ function ProjectTopicsPageBody(props: ProjectModel) {
     input: {
       id: props.id,
     },
-    keepPreviousData: true,
+    autostart: false,
   });
   return (
     <Stack gap={64}>
@@ -26,10 +26,7 @@ function ProjectTopicsPageBody(props: ProjectModel) {
       />
 
       {procedureProps.data?.status == ProjectTaskStatus.Success && (
-        <>
-          <Divider />
-          <TopicsRenderer {...props.config} />
-        </>
+        <TopicsRenderer {...props.config} />
       )}
     </Stack>
   );

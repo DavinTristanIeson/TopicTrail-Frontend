@@ -14,7 +14,7 @@ import ProcedureStatus, {
 } from "@/modules/projects/common/procedure";
 import { ProjectColumnSelectInput } from "@/modules/projects/common/select";
 import TopicEvaluationRenderer from "@/modules/projects/evaluation/renderer";
-import { Stack } from "@mantine/core";
+import { Paper, Stack, Title } from "@mantine/core";
 import React from "react";
 
 function TopicEvaluationPageBody(props: ProjectModel) {
@@ -31,40 +31,54 @@ function TopicEvaluationPageBody(props: ProjectModel) {
       id: props.id,
       column: columnName!,
     },
-    autostart: true,
+    autostart: false,
     enabled: !!columnName,
-    keepPreviousData: true,
   });
 
   const data = procedureProps.data?.data;
+
   return (
     <Stack>
       <ProcedureStatus
         title="Topic Evaluation"
         description="Find out the quality of the topics that were discovered by the topic modeling algorithm. Note that the scores may be harder to interpret than classic classification scores like accuracy and precision."
         BelowDescription={
-          <ProjectColumnSelectInput
-            value={columnName}
-            data={config.dataSchema.columns.filter(
-              (col) => col.type === SchemaColumnTypeEnum.Textual
-            )}
-            onChange={async (col) => {
-              if (!col) return;
-              setColumnName(col.name);
-            }}
-          />
+          <Stack>
+            <ProjectColumnSelectInput
+              value={columnName}
+              data={config.dataSchema.columns.filter(
+                (col) => col.type === SchemaColumnTypeEnum.Textual
+              )}
+              onChange={async (col) => {
+                if (!col) return;
+                setColumnName(col.name);
+              }}
+              selectProps={{
+                label: "Column",
+                description:
+                  "Pick the column whose topics are to be evaluated. The topic modeling procedure has to be executed beforehand.",
+                maw: 375,
+              }}
+            />
+          </Stack>
         }
         {...procedureProps}
       />
-      {data && <TopicEvaluationRenderer {...data} />}
+      {data && data.cvScore != null && (
+        <Paper className="relative w-full">
+          <TopicEvaluationRenderer {...data} />
+        </Paper>
+      )}
     </Stack>
   );
 }
 
 export default function TopicEvaluationPage() {
   return (
-    <AppProjectLayout>
-      {(project) => <TopicEvaluationPageBody {...project} />}
-    </AppProjectLayout>
+    <>
+      <AppProjectLayout>
+        {(project) => <TopicEvaluationPageBody {...project} />}
+      </AppProjectLayout>
+    </>
   );
 }

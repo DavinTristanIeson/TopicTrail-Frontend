@@ -8,12 +8,16 @@ const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
 interface PlotRendererProps {
   plot: string;
+  width?: number;
+  height?: number;
 }
 export default function PlotRenderer(props: PlotRendererProps) {
-  const { plot } = props;
+  const { plot, width = 1280, height = 720 } = props;
   const plotParams = React.useMemo<PlotParams>(() => {
     return JSON.parse(plot);
   }, [plot]);
+
+  console.log(width, height);
 
   return (
     <Suspense
@@ -28,8 +32,15 @@ export default function PlotRenderer(props: PlotRendererProps) {
     >
       <Plot
         {...plotParams}
+        layout={{
+          ...plotParams.layout,
+          width,
+          height,
+        }}
         config={{
-          scrollZoom: false,
+          scrollZoom: true,
+          autosizable: true,
+          responsive: true,
           displaylogo: false,
         }}
       />

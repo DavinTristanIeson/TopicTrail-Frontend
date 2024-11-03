@@ -152,13 +152,13 @@ export function ProjectConfigColumnTextualForm(
         <NumberField
           name={`${PREPROCESSING_NAME}.minWordFrequency`}
           label="Min. Word Frequency"
-          description="Words with frequencies below this limit will be removed from the documents. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
+          description="Words with frequencies below this threshold will be removed from the documents. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
         />
         <NumberField
           name={`${PREPROCESSING_NAME}.maxWordFrequency`}
-          label="Stop Words"
+          label="Max. Word Frequency"
           percentage
-          description="Words with frequencies above this limit will be removed from the documents. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
+          description="Words with frequencies above this threshold will be removed from the documents. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
         />
         <NumberField
           name={`${PREPROCESSING_NAME}.maxUniqueWords`}
@@ -168,12 +168,12 @@ export function ProjectConfigColumnTextualForm(
         <NumberField
           name={`${PREPROCESSING_NAME}.minDocumentLength`}
           label="Min. Number of Words in a Document"
-          description="Documents with words less than this limit will not be included in the topic modeling procedure as they provide too little information."
+          description="Documents with words less than this threshold will not be included in the topic modeling procedure as they provide too little information."
         />
         <NumberField
           name={`${PREPROCESSING_NAME}.minWordLength`}
           label="Min. Number of Characters in a Word"
-          description={`Words with characters less than this limit will be omitted as they do not provide enough information. Consider setting this to 2 if you have acronyms in your dataset, or include any important acronyms in the "Ignore Tokens" field`}
+          description={`Words with characters less than this threshold will be omitted as they do not provide enough information. Consider setting this to 2 if you have acronyms in your dataset, or include any important acronyms in the "Ignore Tokens" field`}
         />
       </Stack>
 
@@ -232,13 +232,13 @@ export function ProjectConfigColumnTextualForm(
         <Group justify="space-between">
           <SwitchField
             label="No Outliers"
-            description="Should the model produce any outliers? If this is set to false, all documents will be assigned to one topic."
-            name="noOutliers"
+            description={`Should the model produce any outliers? If this is set to false, all documents will be assigned to one topic. Note that this option alone only affects the document-topic assignments. It doesn't affect the topic representations (and frequencies) if you don't enable "Represent Outliers".`}
+            name={`${TOPIC_MODELING_NAME}.noOutliers`}
           />
           <SwitchField
             label="Represent Outliers"
             description="Should the outliers be included in the topic representation? This is only enabled if No Outliers is set to true. Note that by enabling this option, you risk polluting the topic representations found by the model with irrelevant words."
-            name="representOutliers"
+            name={`${TOPIC_MODELING_NAME}.representOutliers`}
           />
         </Group>
       </Stack>

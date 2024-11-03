@@ -25,67 +25,74 @@ function TopicRendererBody(props: TopicsModel) {
   const validPercentage = (props.valid / props.total) * 100;
   const invalidPercentage = (props.invalid / props.total) * 100;
   return (
-    <Group wrap="wrap" align="stretch">
-      {props.plot && (
-        <Paper className="p-3 relative w-full" miw={720}>
-          <PlotRenderer plot={props.plot} />
+    <>
+      {props.topicsBarchart && (
+        <Paper className="relative w-full" p={16}>
+          <PlotRenderer
+            plot={props.topicsBarchart}
+            height={Math.ceil(props.topics.length / 4) * 360}
+          />
         </Paper>
       )}
-      <Paper miw={480}>
-        <Group>
-          <SupplementaryInfoField
-            label="Outliers"
-            value={props.outliers}
-            color={Colors.sentimentError}
-            tooltip="Some documents may be categorized as outliers because they do not possess enough informative words to be categorized into any of the available topics."
+      <Paper p={16} className="relative w-full">
+        <Stack align="center">
+          <Group gap={32}>
+            <SupplementaryInfoField
+              label="Outliers"
+              value={props.outliers}
+              color={Colors.sentimentError}
+              tooltip="Some documents may be categorized as outliers because they do not possess enough informative words to be categorized into any of the available topics."
+            />
+            <SupplementaryInfoField label="Valid" value={props.valid} />
+            <SupplementaryInfoField
+              label="Invalid"
+              value={props.invalid}
+              color={Colors.foregroundDull}
+              tooltip="Some documents may end up being invalid after the preprocessing step according to your preprocessing configuration. For example: short documents or documents with a lot of common words may end up being filtered after they have been preprocessed due to their abnormally short length."
+            />
+          </Group>
+          <RingProgress
+            size={180}
+            thickness={16}
+            label={
+              <Stack align="center" gap={0}>
+                <Text
+                  size="xs"
+                  ta="center"
+                  px="xs"
+                  style={{ pointerEvents: "none" }}
+                  c={Colors.foregroundDull}
+                >
+                  Total
+                </Text>
+                <Text size="lg" c={Colors.foregroundPrimary}>
+                  {props.total}
+                </Text>
+              </Stack>
+            }
+            sections={[
+              {
+                value: outlierPercentage,
+                color: Colors.sentimentError,
+                tooltip: `Outliers (${outlierPercentage.toFixed(2)}%)`,
+              },
+              {
+                value: invalidPercentage,
+                color: Colors.foregroundDull,
+                tooltip: `Invalid (${invalidPercentage.toFixed(2)}%)`,
+              },
+              {
+                value: validPercentage,
+                color: Colors.foregroundPrimary,
+                tooltip: `Valid (${validPercentage.toFixed(2)}%)`,
+              },
+            ]}
           />
-          <SupplementaryInfoField label="Valid" value={props.outliers} />
-          <SupplementaryInfoField
-            label="Invalid"
-            value={props.outliers}
-            color={Colors.foregroundDull}
-            tooltip="Some documents may end up being invalid after the preprocessing step according to your preprocessing configuration. For example: short documents or documents with a lot of common words may end up being filtered after they have been preprocessed due to their abnormally short length."
-          />
-        </Group>
-        <RingProgress
-          size={180}
-          thickness={16}
-          label={
-            <Stack align="center">
-              <Text
-                size="xs"
-                ta="center"
-                px="xs"
-                style={{ pointerEvents: "none" }}
-                c={Colors.foregroundDull}
-              >
-                Total
-              </Text>
-              <Text size="lg" c={Colors.foregroundPrimary}>
-                {props.total}
-              </Text>
-            </Stack>
-          }
-          sections={[
-            {
-              value: outlierPercentage,
-              color: Colors.sentimentError,
-              tooltip: "Outliers",
-            },
-            {
-              value: invalidPercentage,
-              color: Colors.foregroundDull,
-              tooltip: "Invalid",
-            },
-            {
-              value: validPercentage,
-              color: Colors.foregroundPrimary,
-              tooltip: "Valid",
-            },
-          ]}
-        />
+        </Stack>
+
+        <PlotRenderer plot={props.frequencyBarchart} />
       </Paper>
-    </Group>
+    </>
   );
 }
 
@@ -105,7 +112,6 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
     },
     autostart: true,
     enabled: !!columnName,
-    keepPreviousData: false,
   });
 
   const data = procedureProps?.data?.data;
@@ -113,9 +119,6 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
 
   return (
     <Stack>
-      <Stack align="center">
-        <Title order={2}>Topics</Title>
-      </Stack>
       <ProcedureStatus
         {...procedureProps}
         title={`Topics of ${columnName}`}
@@ -156,7 +159,7 @@ export default function TopicsRenderer(config: ProjectConfigModel) {
         }
       />
       <TopicSimilarityPlot column={columnName} config={config} ref={remote} />
-      {data && data.plot && <TopicRendererBody {...data} />}
+      {data && data.topicsBarchart && <TopicRendererBody {...data} />}
     </Stack>
   );
 }

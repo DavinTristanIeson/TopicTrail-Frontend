@@ -41,8 +41,6 @@ interface ProcedureStatusProps {
   refetch(): void;
   execute(): Promise<ApiResult<unknown>>;
   refetchInterval?: number;
-  /** Hide if idle or success */
-  quiet?: boolean;
 
   // Components
   AboveDescription?: React.ReactNode;
@@ -63,7 +61,6 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     refetch,
     execute,
     refetchInterval = 5000,
-    quiet,
     AboveDescription,
     BelowDescription,
     mantineProps,
@@ -118,15 +115,6 @@ export default function ProcedureStatus(props: ProcedureStatusProps) {
     actionMessage = "Run Again?";
     actionIcon = <Play />;
   } else {
-    return null;
-  }
-
-  const canBeHidden =
-    (data?.status === ProjectTaskStatus.Idle ||
-      data?.status === ProjectTaskStatus.Success) &&
-    !error;
-  if (quiet && canBeHidden) {
-    console.log("HELLO");
     return null;
   }
 
@@ -192,7 +180,6 @@ interface UseTriggerProcedureProps<TInput extends object, TOutput> {
   useGetStatus: ApiQueryFunction<TInput, ProjectTaskResult<TOutput>>;
   useSendRequest: ApiMutationFunction<TInput, ApiResult<any>>;
   input: TInput;
-  keepPreviousData: boolean;
   enabled?: boolean;
   autostart: boolean;
 }
@@ -209,21 +196,13 @@ interface UseTriggerProcedureReturn<TOutput> {
 export function useTriggerProcedure<TInput extends object, TOutput>(
   props: UseTriggerProcedureProps<TInput, TOutput>
 ): UseTriggerProcedureReturn<TOutput> {
-  const {
-    useGetStatus,
-    useSendRequest,
-    input,
-    keepPreviousData,
-    enabled,
-    autostart,
-  } = props;
+  const { useGetStatus, useSendRequest, input, enabled, autostart } = props;
   const {
     data: status,
     isLoading,
     error: errorStatus,
     refetch,
   } = useGetStatus(input, {
-    placeholderData: keepPreviousData ? (prev) => prev : undefined,
     enabled,
   });
   const {
@@ -236,8 +215,9 @@ export function useTriggerProcedure<TInput extends object, TOutput>(
   React.useEffect(() => {
     if (!status && !!errorStatus && autostart) {
       requestSync(input);
+      refetch();
     }
-  }, [status, errorStatus]);
+  }, [status, errorStatus, autostart]);
 
   return {
     data: status,

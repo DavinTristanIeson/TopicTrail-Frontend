@@ -30,7 +30,6 @@ function ProjectAssociationPageBody(props: ProjectModel) {
   const procedureProps = useTriggerProcedure({
     useGetStatus: useGetVariableAssociationStatus,
     useSendRequest: useSendVariableAssociationRequest,
-    keepPreviousData: true,
     autostart: true,
     input: {
       id: config.projectId,
