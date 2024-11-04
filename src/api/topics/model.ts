@@ -29,6 +29,7 @@ export class TopicSimilarityModel {
   heatmap: string;
   ldavis: string;
   dendrogram: string;
+  scatterplot: string;
 
   topics: string[];
 

@@ -28,6 +28,7 @@ import NavigationRoutes from "@/common/constants/routes";
 import Button from "@/components/standard/button/base";
 import { TrashSimple } from "@phosphor-icons/react";
 import { DeleteProjectModal } from "../project-management";
+import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 
 interface ProjectConfigModalProps {
   data?: ProjectConfigModel;
@@ -80,7 +81,16 @@ function ProjectConfigModalBody(props: ProjectConfigModalBodyProps) {
         });
       }
     },
-    form.setError
+    (name, error) => {
+      const errorName = name
+        .split(".")
+        .filter(
+          (section) =>
+            !Object.values(SchemaColumnTypeEnum).includes(section as any)
+        )
+        .join(".");
+      form.setError(errorName as any, error);
+    }
   );
 
   return (

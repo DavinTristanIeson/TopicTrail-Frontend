@@ -1,5 +1,5 @@
-import { PROJECT_CONFIG_VERSION, ProjectConfigModel } from '@/api/project/config.model';
-import { DataSourceTypeEnum, SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { ProjectConfigModel } from '@/api/project/config.model';
+import { DataSourceTypeEnum, DocumentEmbeddingMethodEnum, FillNaModeEnum, SchemaColumnTypeEnum } from '@/common/constants/enum';
 import * as Yup from 'yup';
 
 export const ProjectConfigColumnFormSchema = Yup.object({
@@ -42,6 +42,12 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }),
+  fillNa: Yup.string().oneOf(Object.values(FillNaModeEnum)).required(),
+  fillNaValue: Yup.mixed().when("fillna", {
+    is: FillNaModeEnum.Value,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
   preprocessing: Yup.object({
     ignoreTokens: Yup.array(Yup.string().required()).required(),
     stopwords: Yup.array(Yup.string().required()).required(),
@@ -71,7 +77,8 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       Yup.array(
         Yup.string().required()
       ).required()
-    ).min(1).nullable()
+    ).min(1).nullable(),
+    embeddingMethod: Yup.string().oneOf(Object.values(DocumentEmbeddingMethodEnum)).required(),
   }).when("type", {
     is: SchemaColumnTypeEnum.Textual,
     then: schema => schema.required(),
@@ -113,6 +120,8 @@ export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColum
     name,
     datasetName: name,
     type,
+    fillNa: FillNaModeEnum.Exclude,
+    fillNaValue: undefined,
     preprocessing: type === SchemaColumnTypeEnum.Textual ? {
       ignoreTokens: [],
       removeEmail: true,
@@ -135,6 +144,7 @@ export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColum
       noOutliers: false,
       representOutliers: false,
       seedTopics: null,
+      embeddingMethod: DocumentEmbeddingMethodEnum.Doc2Vec,
     } : undefined,
     bins: type === SchemaColumnTypeEnum.Temporal ? 10 : undefined,
     datetimeFormat: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
@@ -160,6 +170,8 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
         minDate: col.minDate,
         minFrequency: col.minFrequency,
         upperBound: col.upperBound,
+        fillNa: col.fillNa,
+        fillNaValue: col.fillNaValue,
         preprocessing: col.preprocessing,
         topicModeling: col.topicModeling ? {
           ...col.topicModeling,
@@ -182,7 +194,6 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
 export function ProjectConfigFormType2Input(values: ProjectConfigFormType): ProjectConfigModel {
   return {
     ...values,
-    version: PROJECT_CONFIG_VERSION,
     dataSchema: {
       columns: values.columns.map(col => {
         return {

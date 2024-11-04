@@ -1,7 +1,5 @@
-import { DataSourceTypeEnum, SchemaColumnTypeEnum } from "@/common/constants/enum";
+import { DataSourceTypeEnum, DocumentEmbeddingMethodEnum, FillNaModeEnum, SchemaColumnTypeEnum } from "@/common/constants/enum";
 import { Expose, Type } from "class-transformer";
-
-export const PROJECT_CONFIG_VERSION = 1;
 
 export class ProjectDataSourceModel {
   path: string
@@ -70,6 +68,9 @@ export class TopicModelingConfigModel {
 
   @Expose({ name: "represent_outliers" })
   representOutliers: boolean;
+
+  @Expose({name: "embedding_method"})
+  embeddingMethod: DocumentEmbeddingMethodEnum;
 }
 
 export class ProjectSchemaModel {
@@ -78,6 +79,12 @@ export class ProjectSchemaModel {
 
   @Expose({name: "dataset_name"})
   datasetName: string | null;
+
+  @Expose({name: "fill_na"})
+  fillNa: FillNaModeEnum;
+
+  @Expose({name: "fill_na_value"})
+  fillNaValue?: string | number;
 
   // Continuous
   @Expose({ name: "lower_bound" })
@@ -121,8 +128,6 @@ export class ProjectSchemaManagerModel {
 }
 
 export class ProjectConfigModel {
-  version: number;
-
   @Expose({ name: "project_id" })
   projectId: string;
 

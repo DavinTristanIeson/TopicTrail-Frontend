@@ -24,8 +24,11 @@ import {
   ProjectConfigFormType,
 } from "./form-type";
 import { formSetErrors, handleFormSubmission } from "@/common/utils/form";
-import { EnumSelectField } from "@/components/widgets/enum-select";
-import { NumberField, TextField } from "@/components/standard/fields/wrapper";
+import {
+  NumberField,
+  SelectField,
+  TextField,
+} from "@/components/standard/fields/wrapper";
 
 // +------------------+
 // | CHECK PROJECT ID |
@@ -170,9 +173,22 @@ export function ConfigureDataSourceForm(
           disabled={props.disabled}
           w="100%"
         />
-        <EnumSelectField
+        <SelectField
           name="source.type"
-          type={EnumList.DataSourceTypeEnum}
+          data={[
+            {
+              label: "CSV",
+              value: DataSourceTypeEnum.CSV,
+            },
+            {
+              label: "Excel",
+              value: DataSourceTypeEnum.Excel,
+            },
+            {
+              label: "Parquet",
+              value: DataSourceTypeEnum.Parquet,
+            },
+          ]}
           clearable={false}
           label="Dataset Type"
           description="We need to know the type of the dataset so that we can properly parse its contents."

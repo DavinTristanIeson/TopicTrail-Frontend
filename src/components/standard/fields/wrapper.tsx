@@ -2,6 +2,8 @@ import Colors from "@/common/constants/colors";
 import {
   NumberInput,
   NumberInputProps,
+  Select,
+  SelectProps,
   Switch,
   SwitchProps,
   TagsInput,
@@ -134,6 +136,29 @@ export function TagsField(props: TagsFieldProps) {
 
   return (
     <TagsInput
+      {...field}
+      error={error?.message}
+      disabled={isSubmitting || disabled}
+      {...props}
+    />
+  );
+}
+
+interface SelectFieldProps extends SelectProps {
+  name: string;
+}
+
+export function SelectField(props: SelectFieldProps) {
+  const {
+    field,
+    fieldState: { error },
+    formState: { isSubmitting, disabled },
+  } = useController({
+    name: props.name,
+  });
+
+  return (
+    <Select
       {...field}
       error={error?.message}
       disabled={isSubmitting || disabled}
