@@ -15,7 +15,7 @@ import {
   FillNaModeEnum,
   SchemaColumnTypeEnum,
 } from "@/common/constants/enum";
-import { useController, useFormContext } from "react-hook-form";
+import { useController } from "react-hook-form";
 
 interface ProjectConfigColumnFormProps {
   parentName: string;

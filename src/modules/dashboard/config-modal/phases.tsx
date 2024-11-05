@@ -17,7 +17,7 @@ import Text from "@/components/standard/text";
 import { useFormContext, useWatch } from "react-hook-form";
 import { ArrowLeft, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { ProjectCheckDatasetModel } from "@/api/project/model";
-import { DataSourceTypeEnum, EnumList } from "@/common/constants/enum";
+import { DataSourceTypeEnum } from "@/common/constants/enum";
 import Button from "@/components/standard/button/base";
 import {
   DefaultProjectSchemaColumnValues,

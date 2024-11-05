@@ -10,12 +10,11 @@ import {
   Divider,
   Flex,
   Group,
-  Select,
   Stack,
   Title,
   Tooltip,
 } from "@mantine/core";
-import { EnumList, SchemaColumnTypeEnum } from "@/common/constants/enum";
+import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 import {
   ProjectConfigColumnCategoricalForm,
   ProjectConfigColumnContinuousForm,
@@ -24,7 +23,7 @@ import {
 } from "./columns";
 import React from "react";
 import Text from "@/components/standard/text";
-import { TextField } from "@/components/standard/fields/wrapper";
+import { SelectField, TextField } from "@/components/standard/fields/wrapper";
 import { ArrowLeft, FloppyDisk, Warning } from "@phosphor-icons/react";
 import SubmitButton from "@/components/standard/button/submit";
 import FieldWatcher, {
@@ -115,33 +114,32 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
               w="47%"
             />
           </Group>
-          <Select
+          <SelectField
             name={`${parentName}.type`}
-            type={EnumList.SchemaColumnTypeEnum}
             label="Type"
             description="The type of the column. Please note that providing the wrong column type can cause the application to error."
             required
             allowDeselect={false}
             data={[
               {
-                label: SchemaColumnTypeEnum.Categorical,
-                value: "Categorical",
+                value: SchemaColumnTypeEnum.Categorical,
+                label: "Categorical",
               },
               {
-                label: SchemaColumnTypeEnum.Continuous,
-                value: "Continuous",
+                value: SchemaColumnTypeEnum.Continuous,
+                label: "Continuous",
               },
               {
-                label: SchemaColumnTypeEnum.Temporal,
-                value: "Temporal",
+                value: SchemaColumnTypeEnum.Temporal,
+                label: "Temporal",
               },
               {
-                label: SchemaColumnTypeEnum.Textual,
-                value: "Textual",
+                value: SchemaColumnTypeEnum.Textual,
+                label: "Textual",
               },
               {
-                label: SchemaColumnTypeEnum.Unique,
-                value: "Unique",
+                value: SchemaColumnTypeEnum.Unique,
+                label: "Unique",
               },
             ]}
             clearable={false}
@@ -216,7 +214,7 @@ export default function ProjectConfigFormBody(
           variant="outline"
           onClick={props.onBack}
         >
-          Change Project Name?
+          Change Dataset?
         </Button>
       </Flex>
     </Stack>
