@@ -40,7 +40,7 @@ interface ProjectConfigModalBodyProps extends ProjectConfigModalProps {
 function ProjectConfigModalBody(props: ProjectConfigModalBodyProps) {
   const { data, onClose } = props;
   const [phase, setPhase] = React.useState(data ? 2 : 0);
-  const resolver = yupResolver(ProjectConfigFormSchema);
+  const resolver = yupResolver(ProjectConfigFormSchema());
   const form = useForm({
     mode: "onChange",
     resolver,
@@ -125,11 +125,7 @@ const ProjectConfigModal = React.forwardRef<
           project={isDeleting ? data.projectId : undefined}
           onClose={() => setIsDeleting(false)}
           onDelete={() => {
-            router.replace(NavigationRoutes.Project, {
-              query: {
-                id: data.projectId,
-              },
-            });
+            router.replace(NavigationRoutes.Dashboard);
           }}
         />
       )}

@@ -7,5 +7,6 @@
     "no-unused-expressions": "warn",
     "no-duplicate-imports": "error",
     "react/jsx-key": "warn"
-  }
+  },
+  "ignorePatterns": ["scripts/**"]
 }

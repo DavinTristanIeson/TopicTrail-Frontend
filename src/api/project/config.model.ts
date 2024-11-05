@@ -52,10 +52,10 @@ export class TopicModelingConfigModel {
   minTopicSize: number;
 
   @Expose({ name: "max_topic_size" })
-  maxTopicSize: number;
+  maxTopicSize: number | null;
 
   @Expose({ name: "max_topics" })
-  maxTopics: number;
+  maxTopics: number | null;
 
   @Expose({ name: "n_gram_range" })
   nGramRange: [number, number];

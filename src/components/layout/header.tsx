@@ -1,8 +1,8 @@
-import Colors from "@/common/constants/colors";
-import { ActionIcon, Group, Title } from "@mantine/core";
-import { ArrowLeft, DoorOpen } from "@phosphor-icons/react";
+import { Group, Title } from "@mantine/core";
+import { DoorOpen } from "@phosphor-icons/react";
 import { useRouter } from "next/router";
 import Button from "../standard/button/base";
+import NavigationRoutes from "@/common/constants/routes";
 
 interface AppHeaderProps {
   back?: boolean;
@@ -19,7 +19,7 @@ export default function AppHeader(props: AppHeaderProps) {
           variant="outline"
           leftSection={<DoorOpen />}
           onClick={() => {
-            router.back();
+            router.replace(NavigationRoutes.Dashboard);
           }}
         >
           Go Back

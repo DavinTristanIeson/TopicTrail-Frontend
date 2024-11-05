@@ -7,7 +7,7 @@ import { queryClient } from "@/common/api/query-client";
 import { ProjectQueryKeys } from "./query";
 import { IdInput, UpdateInput } from "../common/model";
 import { ApiResult } from "@/common/api/model";
-import { invalidateTopicQueries, removeTopicQueries } from "../topics/mutation";
+import { removeTopicQueries } from "../topics/mutation";
 
 const ENDPOINT = "projects"
 export const useProjectCheckId: ApiMutationFunction<ProjectCheckIdInput, ApiResult<ProjectCheckIdModel>> = function (options) {

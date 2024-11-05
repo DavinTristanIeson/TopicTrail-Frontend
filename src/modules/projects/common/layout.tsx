@@ -15,7 +15,6 @@ import {
   FileMagnifyingGlass,
   Gear,
   ListMagnifyingGlass,
-  Table,
 } from "@phosphor-icons/react";
 import { useRouter } from "next/router";
 import React from "react";
@@ -42,16 +41,16 @@ function ProjectNavbar(props: ProjectNavbarProps) {
               },
             },
           },
-          {
-            label: "Table",
-            icon: <Table size={24} />,
-            url: {
-              pathname: NavigationRoutes.ProjectTable,
-              query: {
-                id,
-              },
-            },
-          },
+          // {
+          //   label: "Table",
+          //   icon: <Table size={24} />,
+          //   url: {
+          //     pathname: NavigationRoutes.ProjectTable,
+          //     query: {
+          //       id,
+          //     },
+          //   },
+          // },
           {
             label: "Association",
             icon: <ArrowsLeftRight size={24} />,
@@ -112,7 +111,7 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
       Sidebar={<ProjectNavbar config={query.data?.data.config} />}
     >
       <UseQueryWrapperComponent query={query}>
-        {(data) => <MaybeFC props={data.data} children={props.children} />}
+        {(data) => <MaybeFC props={data.data}>{props.children}</MaybeFC>}
       </UseQueryWrapperComponent>
     </AppLayout>
   );

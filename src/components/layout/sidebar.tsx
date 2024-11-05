@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import PromiseButton from "../standard/button/promise";
 import { Url } from "next/dist/shared/lib/router/router";
-import { Divider, Group, Stack } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 
 export interface AppNavigationLink {
   label: string;

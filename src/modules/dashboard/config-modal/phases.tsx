@@ -71,9 +71,15 @@ export function ConfigureProjectFlow_CheckProjectId(
     if (res.message) {
       showNotification({
         message: res.message,
-        color: Colors.sentimentSuccess,
+        color: res.data.available
+          ? Colors.sentimentSuccess
+          : Colors.sentimentError,
       });
     }
+    if (!res.data.available) {
+      return;
+    }
+
     props.onContinue();
   }, setError);
 
@@ -191,7 +197,7 @@ export function ConfigureDataSourceForm(
           ]}
           clearable={false}
           label="Dataset Type"
-          description="We need to know the type of the dataset so that we can properly parse its contents."
+          description="We need to know the type of the dataset so that we can properly parse its contents. If you specify the wrong type, we won't be able to read the file."
           disabled={props.disabled}
           w="100%"
         />
@@ -227,7 +233,7 @@ export function ConfigureProjectFlow_CheckDataset(
       setValue(
         "columns",
         res.data.columns.map((column) => {
-          return DefaultProjectSchemaColumnValues(column.name, column.type);
+          return DefaultProjectSchemaColumnValues(column);
         })
       );
       props.onContinue(res.data);

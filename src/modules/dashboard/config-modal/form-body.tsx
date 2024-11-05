@@ -149,10 +149,10 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
               }
               setValue(
                 parentName,
-                DefaultProjectSchemaColumnValues(
-                  getValues(`${parentName}.name`),
-                  type as SchemaColumnTypeEnum
-                )
+                DefaultProjectSchemaColumnValues({
+                  name: getValues(`${parentName}.name`),
+                  type: type as SchemaColumnTypeEnum,
+                })
               );
             }}
           />

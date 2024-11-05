@@ -17,7 +17,7 @@ import {
 } from "@/modules/dashboard/project-management";
 
 export default function Dashboard() {
-  const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
+  const [q, setQ] = useDebouncedState<string | undefined>(undefined, 300);
   const query = useGetProjects();
 
   const remote = React.useRef<ToggleDispatcher | undefined>();
@@ -63,7 +63,9 @@ export default function Dashboard() {
               <ul className="flex flex-col gap-2 w-full">
                 {data.data
                   .filter((project) =>
-                    q == null ? true : project.id.includes(q)
+                    q == null
+                      ? true
+                      : project.id.toLowerCase().includes(q.toLowerCase())
                   )
                   .map((project) => (
                     <ProjectListItem

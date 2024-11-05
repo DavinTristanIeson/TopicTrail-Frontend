@@ -4,7 +4,7 @@ import { Button, ButtonProps } from "@mantine/core";
 
 export default function SubmitButton(props: ButtonProps) {
   const {
-    formState: { isSubmitting, isDirty, isValid },
+    formState: { isSubmitting },
   } = useFormContext();
   return (
     <Button

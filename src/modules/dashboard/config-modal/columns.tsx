@@ -247,6 +247,7 @@ export function ProjectConfigColumnTextualForm(
               important names or words.
             </Text>
           }
+          placeholder="Type a word and then press ENTER."
         />
         <TagsField
           name={`${PREPROCESSING_NAME}.stopwords`}
@@ -260,6 +261,7 @@ export function ProjectConfigColumnTextualForm(
               from the documents.
             </Text>
           }
+          placeholder="Type a word and then press ENTER."
         />
         <SwitchField
           name={`${PREPROCESSING_NAME}.removeEmail`}

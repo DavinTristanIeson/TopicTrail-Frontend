@@ -38,9 +38,11 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
 
   // Run on mount
   React.useEffect(() => {
-    procedureProps.execute();
+    if (!procedureProps.data) {
+      procedureProps.execute();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [procedureProps.data]);
 
   const heatmap = procedureProps.data?.data?.heatmap;
   const ldavis = procedureProps.data?.data?.ldavis;

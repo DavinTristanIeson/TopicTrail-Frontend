@@ -1,5 +1,5 @@
 import { PaginationMeta } from "@/common/api/model";
-import { Pagination as RawPagination, Select } from "@mantine/core";
+import { Pagination as RawPagination } from "@mantine/core";
 import React from "react";
 
 interface PaginationSetupProps {
