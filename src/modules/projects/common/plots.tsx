@@ -34,6 +34,7 @@ export default function PlotRenderer(props: PlotRendererProps) {
           ...plotParams.layout,
           width,
           height,
+          dragmode: "pan",
         }}
         config={{
           scrollZoom: true,

@@ -217,11 +217,11 @@ export function useTriggerProcedure<TInput extends object, TOutput>(
   } = useSendRequest(input);
 
   React.useEffect(() => {
-    if (!status && !!errorStatus && autostart) {
+    if (!status && !!errorStatus && autostart && !isLoading) {
       requestSync(input);
       refetch();
     }
-  }, [status, errorStatus, autostart]);
+  }, [status, errorStatus, autostart, isLoading, input, refetch, requestSync]);
 
   return {
     data: status,

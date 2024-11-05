@@ -56,7 +56,7 @@ export const useStartTopicModeling: ApiMutationFunction<IdInput, ApiResult<void>
       })
     },
     onSuccess(data, variables) {
-      invalidateTopicQueries(variables.id);
+      removeTopicQueries(variables.id);
     },
   });
 }

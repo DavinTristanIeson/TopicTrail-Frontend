@@ -6,28 +6,107 @@ import {
   TextField,
 } from "@/components/standard/fields/wrapper";
 import React from "react";
-import { Divider, Group, Stack } from "@mantine/core";
+import { Divider, Group, Select, Stack } from "@mantine/core";
 import Colors from "@/common/constants/colors";
 import Text from "@/components/standard/text";
 import TextLink from "@/components/standard/button/link";
+import {
+  DocumentEmbeddingMethodEnum,
+  FillNaModeEnum,
+  SchemaColumnTypeEnum,
+} from "@/common/constants/enum";
+import { useController } from "react-hook-form";
 
 interface ProjectConfigColumnFormProps {
-  index: number;
+  parentName: string;
+}
+
+function ProjectConfigFillNaOption(
+  props: ProjectConfigColumnFormProps & {
+    type: SchemaColumnTypeEnum;
+  }
+) {
+  const { parentName, type } = props;
+  const { field } = useController({
+    name: `${parentName}.fillNa`,
+  });
+  const labels: Record<FillNaModeEnum, string> = {
+    [FillNaModeEnum.Exclude]:
+      "All missing values will be left as-is. They will be excluded when finding the association between the topics and other variables.",
+    [FillNaModeEnum.ForwardFill]:
+      "The latest valid value will be used to replace the missing values. For example: 12, 13, N/A, N/A, 14 will become 12, 13, 13, 13, 14 as the latest valid value is 13. USE THIS WITH CAUTION: Only use this if the behavior makes sense, otherwise use Exclude or Fill Value.",
+    [FillNaModeEnum.BackwardFill]:
+      "The next valid value will be used to replace the missing values. For example: 12, 13, N/A, N/A, 14 will become 12, 13, 14, 14, 14 as the next valid value is 14. USE THIS WITH CAUTION: Only use this if the behavior makes sense, otherwise use Exclude or Fill Value.",
+    [FillNaModeEnum.Value]:
+      "The user-specified value will be used to replace the missing values.",
+  };
+
+  const sharedFillValueFieldProps = {
+    name: `${parentName}.fillNaValue`,
+    label: "Fill Value",
+    description: "Value used to substitute missing values.",
+    required: true,
+  };
+
+  return (
+    <Group>
+      <Select
+        value={field.value}
+        onChange={field.onChange}
+        allowDeselect={false}
+        clearable={false}
+        label="Fill N/A Mode"
+        description={`Defines how missing values should be handled. ${
+          labels[field.value as FillNaModeEnum] ?? ""
+        }`}
+        required
+        data={[
+          {
+            label: "Exclude",
+            value: FillNaModeEnum.Exclude,
+          },
+          {
+            label: "Fill Forward",
+            value: FillNaModeEnum.ForwardFill,
+          },
+          {
+            label: "Fill Backward",
+            value: FillNaModeEnum.BackwardFill,
+          },
+          {
+            label: "Fill Value",
+            value: FillNaModeEnum.Value,
+          },
+        ]}
+      />
+      {field.value === FillNaModeEnum.Value &&
+        (type === SchemaColumnTypeEnum.Continuous ? (
+          <NumberField {...sharedFillValueFieldProps} />
+        ) : type === SchemaColumnTypeEnum.Temporal ? (
+          <DateTimeField {...sharedFillValueFieldProps} />
+        ) : (
+          <TextField {...sharedFillValueFieldProps} />
+        ))}
+    </Group>
+  );
 }
 
 export function ProjectConfigColumnCategoricalForm(
   props: ProjectConfigColumnFormProps
 ) {
-  const { index } = props;
-  const NAME = `columns.${index}` as const;
+  const { parentName } = props;
 
   return (
     <Group>
       <NumberField
-        name={`${NAME}.minFrequency`}
+        name={`${parentName}.minFrequency`}
         label="Min. Frequency"
         decimalScale={0}
         description="The minimum frequency for a value to be considered a category in the column."
+      />
+      <ProjectConfigFillNaOption
+        parentName={parentName}
+        type={SchemaColumnTypeEnum.Categorical}
       />
     </Group>
   );
@@ -36,20 +115,23 @@ export function ProjectConfigColumnCategoricalForm(
 export function ProjectConfigColumnContinuousForm(
   props: ProjectConfigColumnFormProps
 ) {
-  const { index } = props;
-  const NAME = `columns.${index}` as const;
+  const { parentName } = props;
 
   return (
     <>
       <NumberField
-        name={`${NAME}.lowerBound`}
+        name={`${parentName}.lowerBound`}
         label="Lower Bound"
         description="The lowest value that can appear in the column; any lower values will be set to this value."
       />
       <NumberField
-        name={`${NAME}.upperBound`}
+        name={`${parentName}.upperBound`}
         label="Upper Bound"
         description="The highest value that can appear in the column; any higher values will be set to this value."
+      />
+      <ProjectConfigFillNaOption
+        parentName={parentName}
+        type={SchemaColumnTypeEnum.Continuous}
       />
     </>
   );
@@ -58,29 +140,28 @@ export function ProjectConfigColumnContinuousForm(
 export function ProjectConfigColumnTemporalForm(
   props: ProjectConfigColumnFormProps
 ) {
-  const { index } = props;
-  const NAME = `columns.${index}` as const;
+  const { parentName } = props;
 
   return (
     <>
       <NumberField
-        name={`${NAME}.bins`}
+        name={`${parentName}.bins`}
         label="Bins / Time Slots"
         required
         description="This value specifies how many partitions will be created from the range of date values. For example, with bins = 4, values from 1st January 2024 to 31st January 2024 can be partitioned into: Jan 1 to Jan 7, Jan 8 to Jan 15, Jan 16 to Jan 23, and Jan 24 to Jan 31. This will be useful when studying how the topics develop with time."
       />
       <DateTimeField
-        name={`${NAME}.minDate`}
+        name={`${parentName}.minDate`}
         label="Earliest Date"
         description="The earliest value that can appear in the column; any earlier values will be set to this value."
       />
       <DateTimeField
-        name={`${NAME}.maxDate`}
+        name={`${parentName}.maxDate`}
         label="Latest Date"
         description="The latest value that can appear in the column; any later values will be set to this value."
       />
       <TextField
-        name={`${NAME}.datetimeFormat`}
+        name={`${parentName}.datetimeFormat`}
         label="Datetime Format"
         description={
           <Text size="xs">
@@ -92,16 +173,62 @@ export function ProjectConfigColumnTemporalForm(
           </Text>
         }
       />
+      <ProjectConfigFillNaOption
+        parentName={parentName}
+        type={SchemaColumnTypeEnum.Temporal}
+      />
     </>
+  );
+}
+
+function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
+  const { field } = useController({
+    name: `${props.parentName}.topicModeling.embeddingMethod`,
+  });
+
+  const labels: Record<DocumentEmbeddingMethodEnum, string> = {
+    [DocumentEmbeddingMethodEnum.Doc2Vec]:
+      "Doc2Vec embeddings are fast compared to SBERT, but they need a lot of documents (preferably >5,000) to work well. Use this if you have many short documents.",
+    [DocumentEmbeddingMethodEnum.SBERT]:
+      "SBERT embeddings are more semantically accurate than Doc2Vec, but they take a long time to process on devices without GPUs. Use this if you only have a few short documents.",
+    [DocumentEmbeddingMethodEnum.TFIDF]:
+      "TF-IDF embeddings do not capture the semantic relationship between words so they may perform worse on short documents. Use this if your documents are long.",
+  };
+  return (
+    <Select
+      value={field.value}
+      onChange={field.onChange}
+      data={[
+        {
+          label: "Doc2Vec",
+          value: DocumentEmbeddingMethodEnum.Doc2Vec,
+        },
+        {
+          label: "SBERT",
+          value: DocumentEmbeddingMethodEnum.SBERT,
+        },
+        {
+          label: "TF-IDF Vectorization",
+          value: DocumentEmbeddingMethodEnum.TFIDF,
+        },
+      ]}
+      allowDeselect={false}
+      clearable={false}
+      required
+      label="Document Embedding Method"
+      description={`The method that is used to convert the documents into a numerical representation that the algorithm can understand. ${
+        labels[field.value as DocumentEmbeddingMethodEnum.Doc2Vec] ?? ""
+      }`}
+    />
   );
 }
 
 export function ProjectConfigColumnTextualForm(
   props: ProjectConfigColumnFormProps
 ) {
-  const { index } = props;
-  const PREPROCESSING_NAME = `columns.${index}.preprocessing` as const;
-  const TOPIC_MODELING_NAME = `columns.${index}.topicModeling` as const;
+  const { parentName } = props;
+  const PREPROCESSING_NAME = `${parentName}.preprocessing` as const;
+  const TOPIC_MODELING_NAME = `${parentName}.topicModeling` as const;
 
   return (
     <Stack>
@@ -120,6 +247,7 @@ export function ProjectConfigColumnTextualForm(
               important names or words.
             </Text>
           }
+          placeholder="Type a word and then press ENTER."
         />
         <TagsField
           name={`${PREPROCESSING_NAME}.stopwords`}
@@ -133,6 +261,7 @@ export function ProjectConfigColumnTextualForm(
               from the documents.
             </Text>
           }
+          placeholder="Type a word and then press ENTER."
         />
         <SwitchField
           name={`${PREPROCESSING_NAME}.removeEmail`}
@@ -181,6 +310,7 @@ export function ProjectConfigColumnTextualForm(
 
       <Text fw="bold">Topic Modeling Configuration</Text>
       <Stack>
+        <EmbeddingMethodSelectField {...props} />
         <SwitchField
           name={`${TOPIC_MODELING_NAME}.lowMemory`}
           label="Low Memory"

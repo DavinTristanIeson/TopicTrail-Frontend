@@ -28,6 +28,7 @@ import NavigationRoutes from "@/common/constants/routes";
 import Button from "@/components/standard/button/base";
 import { TrashSimple } from "@phosphor-icons/react";
 import { DeleteProjectModal } from "../project-management";
+import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 
 interface ProjectConfigModalProps {
   data?: ProjectConfigModel;
@@ -39,7 +40,7 @@ interface ProjectConfigModalBodyProps extends ProjectConfigModalProps {
 function ProjectConfigModalBody(props: ProjectConfigModalBodyProps) {
   const { data, onClose } = props;
   const [phase, setPhase] = React.useState(data ? 2 : 0);
-  const resolver = yupResolver(ProjectConfigFormSchema);
+  const resolver = yupResolver(ProjectConfigFormSchema());
   const form = useForm({
     mode: "onChange",
     resolver,
@@ -80,7 +81,16 @@ function ProjectConfigModalBody(props: ProjectConfigModalBodyProps) {
         });
       }
     },
-    form.setError
+    (name, error) => {
+      const errorName = name
+        .split(".")
+        .filter(
+          (section) =>
+            !Object.values(SchemaColumnTypeEnum).includes(section as any)
+        )
+        .join(".");
+      form.setError(errorName as any, error);
+    }
   );
 
   return (
@@ -115,11 +125,7 @@ const ProjectConfigModal = React.forwardRef<
           project={isDeleting ? data.projectId : undefined}
           onClose={() => setIsDeleting(false)}
           onDelete={() => {
-            router.replace(NavigationRoutes.Project, {
-              query: {
-                id: data.projectId,
-              },
-            });
+            router.replace(NavigationRoutes.Dashboard);
           }}
         />
       )}

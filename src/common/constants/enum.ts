@@ -6,12 +6,25 @@ export enum AssociationDataTypeEnum {
   Temporal = 'temporal',
 }
 
+export enum DocumentEmbeddingMethodEnum {
+  Doc2Vec = 'doc2vec',
+  SBERT = 'sbert',
+  TFIDF = 'tfidf',
+}
+
 export enum SchemaColumnTypeEnum {
   Continuous = 'continuous',
   Categorical = 'categorical',
   Temporal = 'temporal',
   Textual = 'textual',
   Unique = 'unique',
+}
+
+export enum FillNaModeEnum {
+  ForwardFill = 'ffill',
+  BackwardFill = 'bfill',
+  Value = 'value',
+  Exclude = 'exclude',
 }
 
 export enum DataSourceTypeEnum {
@@ -29,7 +42,9 @@ export enum ProjectTaskStatus {
 
 export enum EnumList {
   AssociationDataTypeEnum = 'AssociationDataTypeEnum',
+  DocumentEmbeddingMethodEnum = 'DocumentEmbeddingMethodEnum',
   SchemaColumnTypeEnum = 'SchemaColumnTypeEnum',
+  FillNaModeEnum = 'FillNaModeEnum',
   DataSourceTypeEnum = 'DataSourceTypeEnum',
   ProjectTaskStatus = 'ProjectTaskStatus',
 }

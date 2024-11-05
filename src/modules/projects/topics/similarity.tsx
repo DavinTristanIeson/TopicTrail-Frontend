@@ -21,6 +21,7 @@ enum TopicSimilarityVisualizationMethod {
   Ldavis = "ldavis",
   Heatmap = "heatmap",
   Dendrogram = "dendrogram",
+  ScatterPlot = "scatterplot",
 }
 
 function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
@@ -37,13 +38,16 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
 
   // Run on mount
   React.useEffect(() => {
-    procedureProps.execute();
+    if (!procedureProps.data) {
+      procedureProps.execute();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [procedureProps.data]);
 
   const heatmap = procedureProps.data?.data?.heatmap;
   const ldavis = procedureProps.data?.data?.ldavis;
-  const topicsBarchart = procedureProps.data?.data?.dendrogram;
+  const dendrogram = procedureProps.data?.data?.dendrogram;
+  const scatterplot = procedureProps.data?.data?.scatterplot;
   const [mode, setMode] = React.useState(
     TopicSimilarityVisualizationMethod.Ldavis
   );
@@ -76,6 +80,10 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
                 label: "Dendrogram",
                 value: TopicSimilarityVisualizationMethod.Dendrogram,
               },
+              {
+                label: "Scatterplot",
+                value: TopicSimilarityVisualizationMethod.ScatterPlot,
+              },
             ]}
             allowDeselect={false}
             clearable={false}
@@ -86,6 +94,8 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
                 ? "The LDAvis visualization method shows how topics are related to each other based on proximity. The size of the bubbles indicate the number of documents that are assigned to that topic."
                 : mode === TopicSimilarityVisualizationMethod.Dendrogram
                 ? "Dendrogram shows how each topic could have been clustered together by linking two topics at a time. This forms a hierarchy of related topics."
+                : mode === TopicSimilarityVisualizationMethod.ScatterPlot
+                ? "The scatter plot shows how each document has been clustered according to the topic modeling algorithm. Note that some clusters may look messy or even incongruous; that may be because the visualization method removes too much information when transforming the high-dimensional document vectors to points on a 2D diagram, so the clusters don't look valid."
                 : "Choose a visualization method"
             }
           />
@@ -103,10 +113,15 @@ function TopicSimilarityPlot(props: TopicSimilarityPlotProps) {
           <PlotRenderer plot={ldavis} {...plotProps} />
         </div>
       )}
-      {topicsBarchart &&
-        mode === TopicSimilarityVisualizationMethod.Dendrogram && (
+      {dendrogram && mode === TopicSimilarityVisualizationMethod.Dendrogram && (
+        <div className="relative w-full">
+          <PlotRenderer plot={dendrogram} {...plotProps} />
+        </div>
+      )}
+      {scatterplot &&
+        mode === TopicSimilarityVisualizationMethod.ScatterPlot && (
           <div className="relative w-full">
-            <PlotRenderer plot={topicsBarchart} {...plotProps} />
+            <PlotRenderer plot={scatterplot} {...plotProps} />
           </div>
         )}
     </>

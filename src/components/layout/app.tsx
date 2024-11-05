@@ -1,5 +1,4 @@
 import React from "react";
-import { useCombinedRefs } from "@/hooks/ref";
 import { AppShell, Burger, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 

@@ -1,6 +1,6 @@
 import { TopicEvaluationModel } from "@/api/evaluation/model";
 import PlotRenderer from "../common/plots";
-import { Alert, Group, Paper, Select, Stack, Title } from "@mantine/core";
+import { Alert, Group, Paper, Stack, Title } from "@mantine/core";
 import React from "react";
 import Colors from "@/common/constants/colors";
 import { Info } from "@phosphor-icons/react";
@@ -22,10 +22,15 @@ export default function TopicEvaluationRenderer(props: TopicEvaluationModel) {
                 is a quantitative measure of the interpretability of a topic.
                 They assess how well the words that make up a topic is supported
                 by the actual documents. The metric of topic coherence used in
-                this evaluation is C_V scoring. Generally, C_v scores higher
-                than 0.55 can be considered acceptably coherent, but this varies
-                from dataset to dataset. Higher C_v scores indicate more
-                coherent topics.
+                this evaluation is C_V scoring which ranges from 0 (not coherent
+                at all) to 1 (coherent). Generally, C_v scores higher than 0.55
+                can be considered acceptably coherent while scores less than 0.4
+                is low, but this varies from dataset to dataset, and also from
+                the number of topics. Higher C_v scores indicate more coherent
+                topics. If you keep on getting low C_V scores, consider setting
+                a maximum number of topics to constrain the number of topics.
+                The low scores may have been caused by the small topics
+                discovered by the topic modeling algorithm.
               </Text>
               <Text>
                 On the other hand,{" "}
@@ -41,7 +46,13 @@ export default function TopicEvaluationRenderer(props: TopicEvaluationModel) {
               </Text>
               <Text>
                 Use this metric to figure out how much you can trust the topics
-                discovered by the topic modeling algorithm.
+                discovered by the topic modeling algorithm. Although, note that
+                these metrics are{" "}
+                <Text span fw="bold">
+                  approximations
+                </Text>{" "}
+                of human judgement; what&apos;s important is whether you - as
+                the user - can understand the topic or not.
               </Text>
             </Stack>
           </Group>

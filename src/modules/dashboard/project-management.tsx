@@ -40,9 +40,9 @@ export function ProjectListItem(props: ProjectListItemProps) {
         });
       }}
     >
-      <div>
+      <div className="flex-1">
         <Text>{props.id}</Text>
-        <Text c={Colors.foregroundDull}>{`from data/${props.id}`}</Text>
+        <Text c={Colors.foregroundDull}>{`from ${props.path}`}</Text>
       </div>
       <Group gap={12}>
         <Eye size={24} color={Colors.foregroundPrimary} />

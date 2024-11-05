@@ -1,14 +1,7 @@
 import { ProjectConfigModel } from "@/api/project/config.model";
 import { TopicsModel, useGetTopics, useSendTopicRequest } from "@/api/topics";
 import { SchemaColumnTypeEnum } from "@/common/constants/enum";
-import {
-  Button,
-  Group,
-  Paper,
-  RingProgress,
-  Stack,
-  Title,
-} from "@mantine/core";
+import { Button, Group, Paper, RingProgress, Stack } from "@mantine/core";
 import React from "react";
 import ProcedureStatus, { useTriggerProcedure } from "../common/procedure";
 import { Info } from "@phosphor-icons/react";

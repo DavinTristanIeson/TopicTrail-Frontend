@@ -6,7 +6,7 @@ import ProcedureStatus, {
   useTriggerProcedure,
 } from "@/modules/projects/common/procedure";
 import TopicsRenderer from "@/modules/projects/topics/renderer";
-import { Divider, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 
 function ProjectTopicsPageBody(props: ProjectModel) {
   const procedureProps = useTriggerProcedure({

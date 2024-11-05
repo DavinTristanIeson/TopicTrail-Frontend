@@ -14,17 +14,16 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { EnumList, SchemaColumnTypeEnum } from "@/common/constants/enum";
+import { SchemaColumnTypeEnum } from "@/common/constants/enum";
 import {
   ProjectConfigColumnCategoricalForm,
   ProjectConfigColumnContinuousForm,
   ProjectConfigColumnTemporalForm,
   ProjectConfigColumnTextualForm,
 } from "./columns";
-import { EnumSelectField } from "@/components/widgets/enum-select";
 import React from "react";
 import Text from "@/components/standard/text";
-import { TextField } from "@/components/standard/fields/wrapper";
+import { SelectField, TextField } from "@/components/standard/fields/wrapper";
 import { ArrowLeft, FloppyDisk, Warning } from "@phosphor-icons/react";
 import SubmitButton from "@/components/standard/button/submit";
 import FieldWatcher, {
@@ -35,50 +34,47 @@ import { ProjectSchemaTypeIcon } from "@/modules/projects/common/select";
 
 interface ProjectConfigColumnFormItemProps {
   accordionValue: string;
-  index: number;
+  parentName: `columns.${number}`;
 }
 
 function ProjectConfigColumnFormItemSwitcher(
   props: ProjectConfigColumnFormItemProps
 ) {
-  const { index } = props;
-  const { control } = useFormContext<ProjectConfigFormType>();
+  const { parentName } = props;
   const type = useWatch({
-    name: `columns.${index}.type`,
-    control,
+    name: `${parentName}.type`,
   });
 
   if (type === SchemaColumnTypeEnum.Categorical) {
-    return <ProjectConfigColumnCategoricalForm index={index} />;
+    return <ProjectConfigColumnCategoricalForm parentName={parentName} />;
   }
   if (type === SchemaColumnTypeEnum.Continuous) {
-    return <ProjectConfigColumnContinuousForm index={index} />;
+    return <ProjectConfigColumnContinuousForm parentName={parentName} />;
   }
   if (type === SchemaColumnTypeEnum.Temporal) {
-    return <ProjectConfigColumnTemporalForm index={index} />;
+    return <ProjectConfigColumnTemporalForm parentName={parentName} />;
   }
   if (type === SchemaColumnTypeEnum.Textual) {
-    return <ProjectConfigColumnTextualForm index={index} />;
+    return <ProjectConfigColumnTextualForm parentName={parentName} />;
   }
   return undefined;
 }
 
 function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
-  const { index, accordionValue } = props;
-  const NAME = `columns.${index}` as const;
+  const { parentName, accordionValue } = props;
   const { setValue, getValues } = useFormContext<ProjectConfigFormType>();
   return (
     <Accordion.Item value={accordionValue}>
       <Accordion.Control>
-        <FieldWatcher names={[`${NAME}.name`, `${NAME}.type`]}>
+        <FieldWatcher names={[`${parentName}.name`, `${parentName}.type`]}>
           {(values) => {
-            const name = values[`${NAME}.name`] as string | undefined;
-            const type = values[`${NAME}.type`] as
+            const name = values[`${parentName}.name`] as string | undefined;
+            const type = values[`${parentName}.type`] as
               | SchemaColumnTypeEnum
               | undefined;
             return (
               <Group>
-                <FieldErrorWatcher name={NAME}>
+                <FieldErrorWatcher name={parentName}>
                   {(error) =>
                     error && (
                       <Tooltip
@@ -104,38 +100,59 @@ function ProjectConfigColumnFormItem(props: ProjectConfigColumnFormItemProps) {
         <Stack>
           <Group align="center">
             <TextField
-              name={`${NAME}.name`}
+              name={`${parentName}.name`}
               label="Name"
               description="The name of the column. This field is CASE-SENSITIVE! Please make sure that the title of this column does not contain any special characters."
               required
               w="47%"
             />
             <TextField
-              name={`${NAME}.datasetName`}
+              name={`${parentName}.datasetName`}
               label="Dataset Name"
               description="The name of the column in the original dataset. This field is CASE-SENSITIVE, which means that 'abc' and 'ABC' are treated as different words!"
               required
               w="47%"
             />
           </Group>
-          <EnumSelectField
-            name={`${NAME}.type`}
-            type={EnumList.SchemaColumnTypeEnum}
+          <SelectField
+            name={`${parentName}.type`}
             label="Type"
             description="The type of the column. Please note that providing the wrong column type can cause the application to error."
             required
             allowDeselect={false}
+            data={[
+              {
+                value: SchemaColumnTypeEnum.Categorical,
+                label: "Categorical",
+              },
+              {
+                value: SchemaColumnTypeEnum.Continuous,
+                label: "Continuous",
+              },
+              {
+                value: SchemaColumnTypeEnum.Temporal,
+                label: "Temporal",
+              },
+              {
+                value: SchemaColumnTypeEnum.Textual,
+                label: "Textual",
+              },
+              {
+                value: SchemaColumnTypeEnum.Unique,
+                label: "Unique",
+              },
+            ]}
             clearable={false}
             onChange={(type) => {
               if (type == null) {
                 return;
               }
               setValue(
-                NAME,
-                DefaultProjectSchemaColumnValues(
-                  getValues(`${NAME}.name`),
-                  type as SchemaColumnTypeEnum
-                )
+                parentName,
+                DefaultProjectSchemaColumnValues({
+                  name: getValues(`${parentName}.name`),
+                  type: type as SchemaColumnTypeEnum,
+                })
               );
             }}
           />
@@ -160,7 +177,7 @@ function ProjectConfigColumnsFieldArray() {
       {fields.map((field, index) => {
         return (
           <ProjectConfigColumnFormItem
-            index={index}
+            parentName={`columns.${index}`}
             key={field.__fieldId}
             accordionValue={field.__fieldId}
           />
@@ -197,7 +214,7 @@ export default function ProjectConfigFormBody(
           variant="outline"
           onClick={props.onBack}
         >
-          Change Project Name?
+          Change Dataset?
         </Button>
       </Flex>
     </Stack>

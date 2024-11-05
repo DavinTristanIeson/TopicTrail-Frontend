@@ -17,15 +17,18 @@ import Text from "@/components/standard/text";
 import { useFormContext, useWatch } from "react-hook-form";
 import { ArrowLeft, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 import { ProjectCheckDatasetModel } from "@/api/project/model";
-import { DataSourceTypeEnum, EnumList } from "@/common/constants/enum";
+import { DataSourceTypeEnum } from "@/common/constants/enum";
 import Button from "@/components/standard/button/base";
 import {
   DefaultProjectSchemaColumnValues,
   ProjectConfigFormType,
 } from "./form-type";
 import { formSetErrors, handleFormSubmission } from "@/common/utils/form";
-import { EnumSelectField } from "@/components/widgets/enum-select";
-import { NumberField, TextField } from "@/components/standard/fields/wrapper";
+import {
+  NumberField,
+  SelectField,
+  TextField,
+} from "@/components/standard/fields/wrapper";
 
 // +------------------+
 // | CHECK PROJECT ID |
@@ -68,9 +71,15 @@ export function ConfigureProjectFlow_CheckProjectId(
     if (res.message) {
       showNotification({
         message: res.message,
-        color: Colors.sentimentSuccess,
+        color: res.data.available
+          ? Colors.sentimentSuccess
+          : Colors.sentimentError,
       });
     }
+    if (!res.data.available) {
+      return;
+    }
+
     props.onContinue();
   }, setError);
 
@@ -170,12 +179,25 @@ export function ConfigureDataSourceForm(
           disabled={props.disabled}
           w="100%"
         />
-        <EnumSelectField
+        <SelectField
           name="source.type"
-          type={EnumList.DataSourceTypeEnum}
+          data={[
+            {
+              label: "CSV",
+              value: DataSourceTypeEnum.CSV,
+            },
+            {
+              label: "Excel",
+              value: DataSourceTypeEnum.Excel,
+            },
+            {
+              label: "Parquet",
+              value: DataSourceTypeEnum.Parquet,
+            },
+          ]}
           clearable={false}
           label="Dataset Type"
-          description="We need to know the type of the dataset so that we can properly parse its contents."
+          description="We need to know the type of the dataset so that we can properly parse its contents. If you specify the wrong type, we won't be able to read the file."
           disabled={props.disabled}
           w="100%"
         />
@@ -211,7 +233,7 @@ export function ConfigureProjectFlow_CheckDataset(
       setValue(
         "columns",
         res.data.columns.map((column) => {
-          return DefaultProjectSchemaColumnValues(column.name, column.type);
+          return DefaultProjectSchemaColumnValues(column);
         })
       );
       props.onContinue(res.data);

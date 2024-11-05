@@ -1,7 +1,6 @@
-import { Type } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { ProjectConfigModel } from "./config.model";
-import { ProjectTaskStatus } from "@/common/constants/enum";
-import { SchemaColumnTypeEnum } from "@/common/constants/enum";
+import { SchemaColumnTypeEnum, DocumentEmbeddingMethodEnum, ProjectTaskStatus } from "@/common/constants/enum";
 
 // Models
 export class ProjectTaskResult<T> {
@@ -33,11 +32,25 @@ export class ProjectCheckIdModel {
   available: boolean;
 }
 
+export class ProjectDatasetInferredColumnModel {
+  name: string;
+  type: SchemaColumnTypeEnum;
+
+  @Expose({name: "min_topic_size"})
+  minTopicSize?: number;
+  
+  @Expose({name: "embedding_method"})
+  embeddingMethod?: DocumentEmbeddingMethodEnum;
+
+  @Expose({name: "min_document_length"})
+  minDocumentLength?: number;
+
+  @Expose({name: "min_word_frequency"})
+  minWordFrequency?: number;
+}
 export class ProjectCheckDatasetModel {
-  columns: {
-    name: string;
-    type: SchemaColumnTypeEnum;
-  }[];
+  @Type(() => ProjectDatasetInferredColumnModel)
+  columns: ProjectDatasetInferredColumnModel[];
 }
 
 // Input

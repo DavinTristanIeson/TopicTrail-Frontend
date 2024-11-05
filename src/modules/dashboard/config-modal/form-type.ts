@@ -1,8 +1,9 @@
-import { PROJECT_CONFIG_VERSION, ProjectConfigModel } from '@/api/project/config.model';
-import { DataSourceTypeEnum, SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { ProjectDatasetInferredColumnModel } from '@/api/project';
+import { ProjectConfigModel } from '@/api/project/config.model';
+import { DataSourceTypeEnum, DocumentEmbeddingMethodEnum, FillNaModeEnum, SchemaColumnTypeEnum } from '@/common/constants/enum';
 import * as Yup from 'yup';
 
-export const ProjectConfigColumnFormSchema = Yup.object({
+export const ProjectConfigColumnFormSchema = () => Yup.object({
   name: Yup.string().required(),
   datasetName: Yup.string().required(),
   type: Yup.string().oneOf(Object.values(SchemaColumnTypeEnum)).required(),
@@ -42,6 +43,12 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }),
+  fillNa: Yup.string().oneOf(Object.values(FillNaModeEnum)).required(),
+  fillNaValue: Yup.mixed().when("fillna", {
+    is: FillNaModeEnum.Value,
+    then: schema => schema.required(),
+    otherwise: schema => schema.strip(),
+  }),
   preprocessing: Yup.object({
     ignoreTokens: Yup.array(Yup.string().required()).required(),
     stopwords: Yup.array(Yup.string().required()).required(),
@@ -71,7 +78,8 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       Yup.array(
         Yup.string().required()
       ).required()
-    ).min(1).nullable()
+    ).min(1).nullable(),
+    embeddingMethod: Yup.string().oneOf(Object.values(DocumentEmbeddingMethodEnum)).required(),
   }).when("type", {
     is: SchemaColumnTypeEnum.Textual,
     then: schema => schema.required(),
@@ -79,7 +87,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   })
 });
 
-export const ProjectConfigFormSchema = Yup.object({
+export const ProjectConfigFormSchema = () => Yup.object({
   projectId: Yup.string().required().max(255).matches(
     /^[a-zA-Z0-9-_. ]+$/,
     "The project name must also be a valid file name."
@@ -102,18 +110,20 @@ export const ProjectConfigFormSchema = Yup.object({
       otherwise: schema => schema.strip(),
     }),
   }).required(),
-  columns: Yup.array().required()
+  columns: Yup.array(ProjectConfigColumnFormSchema()).required()
 })
 
-export type ProjectConfigColumnFormType = Yup.InferType<typeof ProjectConfigColumnFormSchema>;
-export type ProjectConfigFormType = Yup.InferType<typeof ProjectConfigFormSchema>;
+export type ProjectConfigColumnFormType = Yup.InferType<ReturnType<typeof ProjectConfigColumnFormSchema>>;
+export type ProjectConfigFormType = Yup.InferType<ReturnType<typeof ProjectConfigFormSchema>>;
 
-export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColumnTypeEnum){
+export function DefaultProjectSchemaColumnValues(column: ProjectDatasetInferredColumnModel){
   return {
-    name,
-    datasetName: name,
-    type,
-    preprocessing: type === SchemaColumnTypeEnum.Textual ? {
+    name: column.name,
+    datasetName: column.name,
+    type: column.type,
+    fillNa: FillNaModeEnum.Exclude,
+    fillNaValue: null as any,
+    preprocessing: column.type === SchemaColumnTypeEnum.Textual ? {
       ignoreTokens: [],
       removeEmail: true,
       removeNumber: true,
@@ -121,28 +131,29 @@ export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColum
       stopwords: [],
       maxUniqueWords: 1_000_000,
       maxWordFrequency: 1 / 2,
-      minWordFrequency: 5,
-      minDocumentLength: 5,
+      minWordFrequency: column.minWordFrequency ?? 5,
+      minDocumentLength: column.minDocumentLength ?? 5,
       minWordLength: 3,
-    } : undefined,
-    topicModeling: type === SchemaColumnTypeEnum.Textual ? {
+    } : null,
+    topicModeling: column.type === SchemaColumnTypeEnum.Textual ? {
       lowMemory: false,
       maxTopics: null,
       maxTopicSize: 1 / 10,
-      minTopicSize: 15,
-      nGramRangeEnd: 2,
+      minTopicSize: column.minTopicSize ?? 15,
       nGramRangeStart: 1,
+      nGramRangeEnd: 2,
       noOutliers: false,
       representOutliers: false,
       seedTopics: null,
-    } : undefined,
-    bins: type === SchemaColumnTypeEnum.Temporal ? 10 : undefined,
-    datetimeFormat: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
-    lowerBound: type === SchemaColumnTypeEnum.Continuous ? null : undefined,
-    maxDate: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
-    minDate: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
-    minFrequency: type === SchemaColumnTypeEnum.Categorical ? 1 : undefined,
-    upperBound: type === SchemaColumnTypeEnum.Continuous ? null : undefined
+      embeddingMethod: column.embeddingMethod ?? DocumentEmbeddingMethodEnum.Doc2Vec,
+    } : null,
+    bins: 10,
+    datetimeFormat: null,
+    lowerBound: null,
+    maxDate: null,
+    minDate: null,
+    minFrequency: 1,
+    upperBound: null,
   } as ProjectConfigColumnFormType
 }
 
@@ -160,6 +171,8 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
         minDate: col.minDate,
         minFrequency: col.minFrequency,
         upperBound: col.upperBound,
+        fillNa: col.fillNa,
+        fillNaValue: col.fillNaValue,
         preprocessing: col.preprocessing,
         topicModeling: col.topicModeling ? {
           ...col.topicModeling,
@@ -171,7 +184,7 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
     projectId: data?.projectId ?? '',
     source: {
       path: data?.source?.path ?? '',
-      type: data?.source?.type ?? undefined as any,
+      type: data?.source?.type ?? DataSourceTypeEnum.CSV,
       delimiter: data?.source?.delimiter ?? ',',
       limit: data?.source?.limit ?? null,
       sheetName: data?.source?.sheetName ?? '',
@@ -182,13 +195,16 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
 export function ProjectConfigFormType2Input(values: ProjectConfigFormType): ProjectConfigModel {
   return {
     ...values,
-    version: PROJECT_CONFIG_VERSION,
     dataSchema: {
       columns: values.columns.map(col => {
         return {
           ...col,
+          fillNaValue: (col.fillNaValue ?? undefined) as string | number | undefined,
           topicModeling: col.topicModeling ? {
             ...col.topicModeling,
+            maxTopicSize: col.topicModeling.maxTopicSize ?? null,
+            maxTopics: col.topicModeling.maxTopics ?? null,
+            seedTopics: col.topicModeling.seedTopics ?? null,
             nGramRange: [col.topicModeling.nGramRangeStart, col.topicModeling.nGramRangeEnd]
           } : undefined,
         }
