@@ -279,15 +279,15 @@ export function ProjectConfigColumnTextualForm(
           description="Should all numbers be removed? Turn this off if numbers are important."
         />
         <NumberField
-          name={`${PREPROCESSING_NAME}.minWordFrequency`}
-          label="Min. Word Frequency"
-          description="Words with frequencies below this threshold will be removed from the documents. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
+          name={`${PREPROCESSING_NAME}.minDf`}
+          label="Min. Document Frequency per Word"
+          description="Words that appears in less documents than this threshold will be removed. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
         />
         <NumberField
-          name={`${PREPROCESSING_NAME}.maxWordFrequency`}
-          label="Max. Word Frequency"
+          name={`${PREPROCESSING_NAME}.maxDf`}
+          label="Max. Document Frequency per Word"
           percentage
-          description="Words with frequencies above this threshold will be removed from the documents. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
+          description="Words that appears in more documents than this threshold will be removed. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
         />
         <NumberField
           name={`${PREPROCESSING_NAME}.maxUniqueWords`}
@@ -351,7 +351,7 @@ export function ProjectConfigColumnTextualForm(
               className="flex-1"
             />
           </Group>
-          <Text size="sm" c={Colors.foregroundDull}>
+          <Text size="xs" c={Colors.foregroundDull}>
             N-Gram Range specifies the length of the phrases that can be used as
             the topic representation. For example, n-gram range of length (1, 2)
             will allow phrases like &quot;door&quot; and &quot;door hinge&quot;

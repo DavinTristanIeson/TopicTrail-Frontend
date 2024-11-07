@@ -67,6 +67,7 @@ interface NumberFieldProps extends NumberInputProps {
 }
 
 export function NumberField(props: NumberFieldProps) {
+  const { percentage, ...restProps } = props;
   const {
     field,
     fieldState: { error },
@@ -78,21 +79,23 @@ export function NumberField(props: NumberFieldProps) {
   return (
     <NumberInput
       {...field}
-      value={props.percentage ? field.value * 100 : field.value}
+      value={
+        field.value == null ? "" : percentage ? field.value * 100 : field.value
+      }
       onChange={(e) => {
         if (e === "" || typeof e === "string") {
           field.onChange(null);
         } else {
-          field.onChange(props.percentage ? e / 100 : e);
+          field.onChange(percentage ? e / 100 : e);
         }
       }}
-      decimalScale={props.percentage ? 4 : 0}
+      decimalScale={percentage ? 4 : 0}
       disabled={isSubmitting || disabled}
       error={error?.message}
       rightSection={
-        props.percentage ? <Text c={Colors.foregroundDull}>%</Text> : null
+        percentage ? <Text c={Colors.foregroundDull}>%</Text> : null
       }
-      {...props}
+      {...restProps}
     />
   );
 }

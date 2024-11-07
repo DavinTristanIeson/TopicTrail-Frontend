@@ -10,27 +10,23 @@ export const ProjectConfigColumnFormSchema = () => Yup.object({
 
   lowerBound: Yup.number().nullable().when("type", {
     is: SchemaColumnTypeEnum.Continuous,
-    then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }),
   upperBound: Yup.number().nullable().when("type", {
     is: SchemaColumnTypeEnum.Continuous,
-    then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }).moreThan(Yup.ref("lowerBound"), "For obvious reasons, the upper bound must be greater than the lower bound."),
-  minFrequency: Yup.number().min(1).nullable().when("type", {
+  minFrequency: Yup.number().min(1).when("type", {
     is: SchemaColumnTypeEnum.Categorical,
     then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }),
   minDate: Yup.date().nullable().when("type", {
     is: SchemaColumnTypeEnum.Temporal,
-    then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }),
   maxDate: Yup.date().nullable().when("type", {
     is: SchemaColumnTypeEnum.Temporal,
-    then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }).min(Yup.ref("minDate"), "For obvious reasons, the max date must be after min date."),
   bins: Yup.number().positive().when("type", {
@@ -40,11 +36,10 @@ export const ProjectConfigColumnFormSchema = () => Yup.object({
   }),
   datetimeFormat: Yup.string().nullable().when("type", {
     is: SchemaColumnTypeEnum.Temporal,
-    then: schema => schema.required(),
     otherwise: schema => schema.strip(),
   }),
-  fillNa: Yup.string().oneOf(Object.values(FillNaModeEnum)).required(),
-  fillNaValue: Yup.mixed().when("fillna", {
+  fillNa: Yup.string().oneOf(Object.values(FillNaModeEnum)).nullable(),
+  fillNaValue: Yup.mixed().when("fillNa", {
     is: FillNaModeEnum.Value,
     then: schema => schema.required(),
     otherwise: schema => schema.strip(),
@@ -55,9 +50,9 @@ export const ProjectConfigColumnFormSchema = () => Yup.object({
     removeEmail: Yup.boolean().required(),
     removeUrl: Yup.boolean().required(),
     removeNumber: Yup.boolean().required(),
-    minWordFrequency: Yup.number().positive().required(),
-    maxWordFrequency: Yup.number().positive().required(),
-    maxUniqueWords: Yup.number().positive().required(),
+    minDf: Yup.number().positive().required(),
+    maxDf: Yup.number().positive().required(),
+    maxUniqueWords: Yup.number().positive().nullable(),
     minDocumentLength: Yup.number().positive().required(),
     minWordLength: Yup.number().positive().required(),
   }).when("type", {
@@ -67,8 +62,8 @@ export const ProjectConfigColumnFormSchema = () => Yup.object({
   }),
   topicModeling: Yup.object({
     lowMemory: Yup.boolean().required(),
-    minTopicSize: Yup.number().positive().required(),
-    maxTopicSize: Yup.number().nullable().moreThan(Yup.ref("minTopicSize")),
+    minTopicSize: Yup.number().min(2).required(),
+    maxTopicSize: Yup.number().nullable(),
     maxTopics: Yup.number().nullable().positive(),
     nGramRangeStart: Yup.number().positive().required(),
     nGramRangeEnd: Yup.number().positive().required().moreThan(Yup.ref('nGramRangeStart')),
@@ -129,16 +124,16 @@ export function DefaultProjectSchemaColumnValues(column: ProjectDatasetInferredC
       removeNumber: true,
       removeUrl: true,
       stopwords: [],
-      maxUniqueWords: 1_000_000,
-      maxWordFrequency: 1 / 2,
-      minWordFrequency: column.minWordFrequency ?? 5,
+      maxUniqueWords: null,
+      maxDf: 1 / 2,
+      minDf: column.minDf ?? 5,
       minDocumentLength: column.minDocumentLength ?? 5,
       minWordLength: 3,
     } : null,
     topicModeling: column.type === SchemaColumnTypeEnum.Textual ? {
       lowMemory: false,
       maxTopics: null,
-      maxTopicSize: 1 / 10,
+      maxTopicSize: 1 / 5,
       minTopicSize: column.minTopicSize ?? 15,
       nGramRangeStart: 1,
       nGramRangeEnd: 2,
@@ -199,7 +194,12 @@ export function ProjectConfigFormType2Input(values: ProjectConfigFormType): Proj
       columns: values.columns.map(col => {
         return {
           ...col,
+          fillNa: col.fillNa ?? null,
           fillNaValue: (col.fillNaValue ?? undefined) as string | number | undefined,
+          preprocessing: col.preprocessing ? {
+            ...col.preprocessing,
+            maxUniqueWords: col.preprocessing.maxUniqueWords ?? null,
+          } : undefined,
           topicModeling: col.topicModeling ? {
             ...col.topicModeling,
             maxTopicSize: col.topicModeling.maxTopicSize ?? null,

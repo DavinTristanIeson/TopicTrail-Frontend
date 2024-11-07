@@ -45,8 +45,8 @@ export class ProjectDatasetInferredColumnModel {
   @Expose({name: "min_document_length"})
   minDocumentLength?: number;
 
-  @Expose({name: "min_word_frequency"})
-  minWordFrequency?: number;
+  @Expose({name: "min_df"})
+  minDf?: number;
 }
 export class ProjectCheckDatasetModel {
   @Type(() => ProjectDatasetInferredColumnModel)
