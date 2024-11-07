@@ -28,14 +28,14 @@ export class TextPreprocessingConfigModel {
   @Expose({ name: "remove_number" })
   removeNumber: boolean;
   
-  @Expose({ name: "min_word_frequency" })
-  minWordFrequency: number;
+  @Expose({ name: "min_df" })
+  minDf: number;
 
-  @Expose({ name: "max_word_frequency" })
-  maxWordFrequency: number;
+  @Expose({ name: "max_df" })
+  maxDf: number;
 
   @Expose({ name: "max_unique_words" })
-  maxUniqueWords: number;
+  maxUniqueWords: number | null;
 
   @Expose({ name: "min_document_length" })
   minDocumentLength: number;
@@ -81,7 +81,7 @@ export class ProjectSchemaModel {
   datasetName: string | null;
 
   @Expose({name: "fill_na"})
-  fillNa: FillNaModeEnum;
+  fillNa: FillNaModeEnum | null;
 
   @Expose({name: "fill_na_value"})
   fillNaValue?: string | number;
