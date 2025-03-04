@@ -1,7 +1,3 @@
-import {
-  ToggleDispatcher,
-  useSetupToggleDispatcher,
-} from "@/hooks/dispatch-action";
 import { CheckIcon, Flex, Modal, Title } from "@mantine/core";
 import React from "react";
 import Text from "../standard/text";
@@ -9,6 +5,7 @@ import Button from "../standard/button/base";
 import { TrashSimple, X } from "@phosphor-icons/react";
 import Colors from "@/common/constants/colors";
 import PromiseButton from "../standard/button/promise";
+import { DisclosureTrigger, useDisclosureTrigger } from "@/hooks/disclosure";
 
 interface ConfirmationDialogProps {
   title?: React.ReactNode;
@@ -20,14 +17,14 @@ interface ConfirmationDialogProps {
 }
 
 const ConfirmationDialog = React.forwardRef<
-  ToggleDispatcher | undefined,
+  DisclosureTrigger | undefined,
   ConfirmationDialogProps
 >(function ConfirmationDialog(props, ref) {
-  const [opened, setOpened] = useSetupToggleDispatcher(ref);
+  const [opened, { close }] = useDisclosureTrigger(ref);
   return (
     <Modal
       opened={opened}
-      onClose={() => setOpened(false)}
+      onClose={close}
       centered
       title={
         <Title order={3} fw="bold">
@@ -47,11 +44,7 @@ const ConfirmationDialog = React.forwardRef<
         >
           {props.positiveAction ?? "Confirm"}
         </PromiseButton>
-        <Button
-          variant="outline"
-          leftSection={<X />}
-          onClick={() => setOpened(false)}
-        >
+        <Button variant="outline" leftSection={<X />} onClick={close}>
           Cancel
         </Button>
       </Flex>

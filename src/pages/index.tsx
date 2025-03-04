@@ -1,33 +1,37 @@
-import { useGetProjects } from "@/api/project/query";
-import AppLayout from "@/components/layout/app";
-import { Title, TextInput, Stack, Loader } from "@mantine/core";
-import Text from "@/components/standard/text";
-import React from "react";
-import { MagnifyingGlass, Plus } from "@phosphor-icons/react";
-import { useDebouncedState } from "@mantine/hooks";
-import ProjectConfigModal from "@/modules/dashboard/config-modal/modal";
-import { ToggleDispatcher } from "@/hooks/dispatch-action";
-import Colors from "@/common/constants/colors";
-import AppHeader from "@/components/layout/header";
-import Button from "@/components/standard/button/base";
-import { UseQueryWrapperComponent } from "@/components/utility/fetch-wrapper";
+import { useGetProjects } from '@/api/project/query';
+import AppLayout from '@/components/layout/app';
+import { Title, TextInput, Stack, Loader } from '@mantine/core';
+import Text from '@/components/standard/text';
+import React from 'react';
+import { MagnifyingGlass, Plus } from '@phosphor-icons/react';
+import { useDebouncedState } from '@mantine/hooks';
+import ProjectConfigModal from '@/modules/config-modal';
 import {
-  DeleteProjectModal,
-  ProjectListItem,
-} from "@/modules/dashboard/project-management";
+  DisclosureTrigger,
+  ParametrizedDisclosureTrigger,
+} from '@/hooks/disclosure';
+import Colors from '@/common/constants/colors';
+import AppHeader from '@/components/layout/header';
+import Button from '@/components/standard/button/base';
+import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
+import { DeleteProjectModal, ProjectListItem } from '@/modules/project/actions';
 
 export default function Dashboard() {
   const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
   const query = useGetProjects();
 
-  const remote = React.useRef<ToggleDispatcher | undefined>();
-  const [deletingProject, setDeletingProject] = React.useState<
-    string | undefined
-  >(undefined);
+  const createRemote = React.useRef<DisclosureTrigger | null>(null);
+  const deleteRemote =
+    React.useRef<ParametrizedDisclosureTrigger<string> | null>(null);
+
+  const onDelete = React.useCallback((id: string) => {
+    deleteRemote.current?.open(id);
+  }, []);
 
   return (
     <AppLayout Header={<AppHeader />}>
-      <ProjectConfigModal ref={remote} />
+      <ProjectConfigModal ref={createRemote} />
+      <DeleteProjectModal ref={deleteRemote} />
       <Stack w="100%" align="center">
         <Stack align="center" pt={64} maw={880} py={64}>
           <Title order={2}>Choose a Project!</Title>
@@ -49,7 +53,7 @@ export default function Dashboard() {
               leftSection={<Plus size={16} />}
               fullWidth
               onClick={() => {
-                remote.current?.open();
+                createRemote.current?.open();
               }}
             >
               Create New Project
@@ -59,29 +63,24 @@ export default function Dashboard() {
             query={query}
             loadingComponent={<Loader type="dots" size={48} />}
           >
-            {(data) => (
-              <ul className="flex flex-col gap-2 w-full">
-                {data.data
-                  .filter((project) =>
-                    q == null ? true : project.id.includes(q)
-                  )
-                  .map((project) => (
+            {(data) => {
+              const projects = data.data.filter((project) =>
+                q == null ? true : project.id.includes(q),
+              );
+              return (
+                <ul className="flex flex-col gap-2 w-full">
+                  {projects.map((project) => (
                     <ProjectListItem
                       key={project.id}
                       {...project}
-                      onDelete={setDeletingProject}
+                      onDelete={onDelete}
                     />
                   ))}
-              </ul>
-            )}
+                </ul>
+              );
+            }}
           </UseQueryWrapperComponent>
         </Stack>
-        <DeleteProjectModal
-          project={deletingProject}
-          onClose={() => {
-            setDeletingProject(undefined);
-          }}
-        />
       </Stack>
     </AppLayout>
   );

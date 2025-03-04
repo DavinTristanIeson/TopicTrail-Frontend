@@ -1,6 +1,5 @@
-import Colors from "@/common/constants/colors";
-import { ActionIcon, Group, Title } from "@mantine/core";
-import { ArrowLeft, DoorOpen } from "@phosphor-icons/react";
+import { Group, Title } from "@mantine/core";
+import { DoorOpen } from "@phosphor-icons/react";
 import { useRouter } from "next/router";
 import Button from "../standard/button/base";
 

@@ -5,6 +5,8 @@ export class EnumModel {
   description?: string;
 }
 
+export type DataFrame = Record<string, any>[];
+
 // Input
 
 export interface IdInput {

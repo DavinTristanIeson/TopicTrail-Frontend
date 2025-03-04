@@ -2,9 +2,9 @@ import { createTheme, LoadingOverlay, Paper } from "@mantine/core";
 import Colors from "./colors";
 
 const mantineTheme = createTheme({
-  primaryColor: 'wordsmith',
+  primaryColor: 'brand',
   colors: {
-    wordsmith: [
+    brand: [
       "#eff2ff",
       "#dfe2f2",
       "#bdc2de",

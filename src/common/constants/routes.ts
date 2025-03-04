@@ -2,8 +2,9 @@ enum NavigationRoutes {
   Dashboard = '/',
   Project = '/projects/[id]',
   ProjectTable = '/projects/[id]/table',
-  ProjectAssociation = '/projects/[id]/association',
-  ProjectEvaluation = '/projects/[id]/evaluation',
+  ProjectComparison = '/projects/[id]/comparison',
+  ProjectTopicCorrelation = '/projects/[id]/topic-correlation',
+  Help = '/help',
 }
 
 export default NavigationRoutes;

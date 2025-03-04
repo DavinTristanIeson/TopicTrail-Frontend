@@ -1,17 +1,15 @@
 import { ApiQueryFunction } from "@/common/api/fetch-types";
-import { ProjectLiteModel, ProjectModel } from "./model";
+import { InferDatasetColumnModel, ProjectCheckDatasetColumnInput, ProjectLiteModel, ProjectModel } from "./model";
 import { IdInput } from "../common/model";
 import { useQuery } from "@tanstack/react-query";
 import { ApiFetch } from "@/common/api/fetch";
-import { StaleTimes } from "../common/query";
+import { StaleTimes } from "../common/utils";
 import { ApiResult, ExtendedApiResult } from "@/common/api/model";
 
 export const ProjectQueryKeys = {
   listKey: "getProjects",
   detailKey: "getProject",
-  detail(input: IdInput) {
-    return [ProjectQueryKeys.detailKey, input.id];
-  }
+  inferColumnKey: 'inferProjectDatasetColumn'
 }
 
 const ENDPOINT = "projects";
@@ -33,7 +31,7 @@ export const useGetProjects: ApiQueryFunction<void, ExtendedApiResult<ProjectLit
 
 export const useGetProject: ApiQueryFunction<IdInput, ApiResult<ProjectModel>> = function (input, options) {
   return useQuery({
-    queryKey: ProjectQueryKeys.detail(input),
+    queryKey: [ProjectQueryKeys.detailKey, input.id],
     staleTime: StaleTimes.Long,
     ...options,
     queryFn() {
@@ -45,3 +43,23 @@ export const useGetProject: ApiQueryFunction<IdInput, ApiResult<ProjectModel>> =
     }
   });
 }
+
+
+export const useInferProjectDatasetColumn: ApiQueryFunction<
+  ProjectCheckDatasetColumnInput,
+  ApiResult<InferDatasetColumnModel>
+> = function (input, options) {
+  return useQuery({
+    staleTime: StaleTimes.Medium,
+    queryKey: [ProjectQueryKeys.inferColumnKey, input.source, input.column, input.dtype],
+    queryFn(input) {
+      return ApiFetch({
+        classType: InferDatasetColumnModel,
+        method: 'post',
+        body: input,
+        url: `${ENDPOINT}/check-dataset-column`,
+      });
+    },
+    ...options,
+  });
+};
