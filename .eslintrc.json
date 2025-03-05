@@ -6,6 +6,7 @@
     "@typescript-eslint/no-unused-expressions": "warn",
     "no-unused-expressions": "warn",
     "no-duplicate-imports": "error",
-    "react/jsx-key": "warn"
+    "react/jsx-key": "warn",
+    "@typescript-eslint/no-namespace": "off"
   }
 }

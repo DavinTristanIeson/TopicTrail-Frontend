@@ -2,20 +2,24 @@ import { ProjectConfigModel } from '@/api/project/model';
 import { DataSourceTypeEnum, DocumentEmbeddingMethodEnum, DocumentPreprocessingMethodEnum, GeospatialRoleEnum, SchemaColumnTypeEnum } from '@/common/constants/enum';
 import * as Yup from 'yup';
 
-const FileNameSchema = Yup.string().required().max(255).matches(
-  /^[a-zA-Z0-9-_. ]+$/,
-  "This field must only contain letters, numbers, spaces, or the following special characters: \"-\", \"_\", and \".\""
-);
+function nullIfNaN(value: number): number | null {
+  return value === Number(value) ? value : null;
+}
+
+function nullIfEmpty(value: any): any | null {
+  return value || null;
+}
+
 export const ProjectConfigColumnFormSchema = Yup.object({
-  name: FileNameSchema,
-  alias: Yup.string().nullable(),
+  name: Yup.string().required(),
+  alias: Yup.string().nullable().required(),
   type: Yup.string().oneOf(Object.values(SchemaColumnTypeEnum)).required(),
 
-  binCount: Yup.number().positive().nullable().when("type", {
+  binCount: Yup.number().positive().transform(nullIfNaN).nullable().when("type", {
     is: SchemaColumnTypeEnum.Continuous,
     otherwise: schema => schema.strip(),
   }),
-  bins: Yup.array(Yup.number().required()).nullable().when("type", {
+  bins: Yup.array(Yup.number().required()).transform(nullIfEmpty).nullable().when("type", {
     is: SchemaColumnTypeEnum.Continuous,
     otherwise: schema => schema.strip(),
   }).transform((value) => {
@@ -23,22 +27,23 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       return value.sort((a, b) => a - b);
     }
     throw new Error("This field does not contain an array. This is most likely be a developer oversight.");
-  }),
+  }).min(1),
 
   categoryOrder: Yup.array(Yup.string().required()).when("type", {
     is: SchemaColumnTypeEnum.OrderedCategorical,
     otherwise: schema => schema.strip()
   }),
 
-  datetimeFormat: Yup.string().nullable().when("type", {
+  datetimeFormat: Yup.string().transform(nullIfEmpty).nullable().when("type", {
     is: SchemaColumnTypeEnum.Temporal,
     otherwise: schema => schema.strip(),
   }),
 
-  isJson: Yup.boolean().nullable().when("type", {
+  isJson: Yup.boolean().required().when("type", {
     is: SchemaColumnTypeEnum.MultiCategorical,
     otherwise: schema => schema.strip(),
   }),
+
   delimiter: Yup.string().when("type", {
     is: SchemaColumnTypeEnum.MultiCategorical,
     then: schema => schema.when("isJson", {
@@ -73,15 +78,17 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   topicModeling: Yup.object({
     lowMemory: Yup.boolean().required(),
     minTopicSize: Yup.number().positive().required(),
-    maxTopicSize: Yup.number().nullable().moreThan(Yup.ref("minTopicSize")),
-    maxTopics: Yup.number().nullable().positive(),
+    maxTopicSize: Yup.number().transform(nullIfNaN).nullable().moreThan(Yup.ref("minTopicSize")),
+    maxTopics: Yup.number().transform(nullIfNaN).nullable().positive(),
     nGramRangeStart: Yup.number().positive().required(),
     nGramRangeEnd: Yup.number().positive().required().moreThan(Yup.ref('nGramRangeStart')),
     noOutliers: Yup.boolean().required(),
     representOutliers: Yup.boolean().required(),
     embeddingMethod: Yup.string().oneOf(Object.values(DocumentEmbeddingMethodEnum)).required(),
     clusteringConservativeness: Yup.number().positive().max(1).required(),
-    globalityConsideration: Yup.number().positive().nullable(),
+    globalityConsideration: Yup.number().positive().transform(nullIfNaN).nullable(),
+    superTopicSimilarity: Yup.number().min(0).max(1).required(),
+    topNWords: Yup.number().min(3).required(),
   }).when("type", {
     is: SchemaColumnTypeEnum.Textual,
     then: schema => schema.required(),
@@ -90,9 +97,13 @@ export const ProjectConfigColumnFormSchema = Yup.object({
 });
 
 export const ProjectConfigFormSchema = Yup.object({
-  projectId: FileNameSchema,
+  // No need for validation. BE should compute a file path using the hash of the project ID.
+  // This means that we don't have to make sure that project id is a valid file path.
+  // Same principle applies to column names
+  projectId: Yup.string().required(),
   source: Yup.object({
-    path: Yup.string().required().matches(/^[a-zA-Z0-9-_. :/\\]+$/, "Please provide a valid path"),
+    // Can't guarantee this though. But we have a check-dataset endpoint so... might be alright?
+    path: Yup.string().required(),
     type: Yup.string().oneOf(Object.values(DataSourceTypeEnum)).required(),
     sheetName: Yup.string().when("type", {
       is: DataSourceTypeEnum.Excel,
@@ -104,12 +115,8 @@ export const ProjectConfigFormSchema = Yup.object({
       then: schema => schema.required("Delimiter is required when the dataset type is CSV."),
       otherwise: schema => schema.strip(),
     }),
-    limit: Yup.number().nullable().when("type", {
-      is: DataSourceTypeEnum.CSV,
-      otherwise: schema => schema.strip(),
-    }),
   }).required(),
-  columns: Yup.array().required()
+  columns: Yup.array(ProjectConfigColumnFormSchema.required()).required()
 })
 
 export type ProjectConfigColumnFormType = Yup.InferType<typeof ProjectConfigColumnFormSchema>;
@@ -145,15 +152,17 @@ export function DefaultProjectSchemaColumnValues(name: string, type: SchemaColum
       embeddingMethod: DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2,
       clusteringConservativeness: 1,
       globalityConsideration: null,
+      superTopicSimilarity: 0.7,
+      topNWords: 50,
     } : undefined,
-    binCount: type === SchemaColumnTypeEnum.Continuous ? 3 : undefined,
+    binCount: type === SchemaColumnTypeEnum.Continuous ? 3 : null,
     bins: null,
-    categoryOrder: type === SchemaColumnTypeEnum.OrderedCategorical ? [] : undefined,
-    delimiter: type === SchemaColumnTypeEnum.MultiCategorical ? ',' : undefined,
-    isJson: type === SchemaColumnTypeEnum.MultiCategorical ? false : undefined,
+    categoryOrder: type === SchemaColumnTypeEnum.OrderedCategorical ? [] : null,
+    delimiter: type === SchemaColumnTypeEnum.MultiCategorical ? ',' : null,
+    isJson: type === SchemaColumnTypeEnum.MultiCategorical ? false : null,
     role: type === SchemaColumnTypeEnum.Geospatial ? (name.startsWith('long') || name.startsWith('lng') ? GeospatialRoleEnum.Longitude : GeospatialRoleEnum.Latitude) : undefined,
-    datetimeFormat: type === SchemaColumnTypeEnum.Temporal ? null : undefined,
-  } as ProjectConfigColumnFormType
+    datetimeFormat: null,
+  } as ProjectConfigColumnFormType;
 }
 
 export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectConfigFormType {
@@ -186,8 +195,12 @@ export function ProjectConfigFormType2Input(values: ProjectConfigFormType): Proj
       columns: values.columns.map(col => {
         return {
           ...col,
+          alias: col.alias ?? null,
           topicModeling: col.topicModeling ? {
             ...col.topicModeling,
+            maxTopicSize: col.topicModeling.maxTopicSize ?? null,
+            globalityConsideration: col.topicModeling.globalityConsideration ?? null,
+            maxTopics: col.topicModeling.maxTopics ?? null,
             nGramRange: [col.topicModeling.nGramRangeStart, col.topicModeling.nGramRangeEnd]
           } : undefined,
         }

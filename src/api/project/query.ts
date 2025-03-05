@@ -45,7 +45,7 @@ export const useGetProject: ApiQueryFunction<IdInput, ApiResult<ProjectModel>> =
 }
 
 
-export const useInferProjectDatasetColumn: ApiQueryFunction<
+export const useGetProjectDatasetColumnInference: ApiQueryFunction<
   ProjectCheckDatasetColumnInput,
   ApiResult<InferDatasetColumnModel>
 > = function (input, options) {

@@ -16,7 +16,7 @@ export class ProjectModel extends ProjectLiteModel {
 
 
 // Model - Infer Column
-class InferDatasetDescriptiveStatisticsModel {
+export class InferDatasetDescriptiveStatisticsModel {
   count: number;
   mean: number;
   median: number;

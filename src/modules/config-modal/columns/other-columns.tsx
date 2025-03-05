@@ -1,0 +1,89 @@
+import TextLink from '@/components/standard/button/link';
+import RHFField from '@/components/standard/fields';
+import { ProjectConfigColumnFormProps } from './utils';
+import Text from '@/components/standard/text';
+import { GeospatialRoleEnum } from '@/common/constants/enum';
+import FieldWatcher from '@/components/standard/fields/watcher';
+
+export function ProjectConfigColumnTemporalForm(
+  props: ProjectConfigColumnFormProps,
+) {
+  const { index } = props;
+
+  return (
+    <RHFField
+      type="text"
+      name={`columns.${index}.datetimeFormat`}
+      label="Datetime Format"
+      description={
+        <Text size="xs">
+          The datetime format used for the column. You can find the reference
+          for the format in here:
+          <TextLink href="https://strftime.org/">
+            https://strftime.org/
+          </TextLink>
+        </Text>
+      }
+    />
+  );
+}
+
+export function ProjectConfigColumnGeospatialForm(
+  props: ProjectConfigColumnFormProps,
+) {
+  const { index } = props;
+
+  return (
+    <RHFField
+      type="select"
+      name={`columns.${index}.role`}
+      label="Geospatial Orientation"
+      data={[
+        {
+          label: 'Latitude',
+          value: GeospatialRoleEnum.Latitude,
+        },
+        {
+          label: 'Latitude',
+          value: GeospatialRoleEnum.Latitude,
+        },
+      ]}
+      description="Does this column contain latitude values or longitude values? Note that the application requires both latitude and longitude columns to be present in the dataset to perform geospatial visualizations."
+    />
+  );
+}
+
+export function ProjectConfigColumnMulticategoricalForm(
+  props: ProjectConfigColumnFormProps,
+) {
+  const { index } = props;
+  const JSON_NAME = `columns.${index}.isJson`;
+  const DELIMITER_NAME = `columns.${index}.delimiter`;
+
+  return (
+    <>
+      <RHFField
+        type="switch"
+        name={JSON_NAME}
+        label="Using JSON?"
+        description="Does the rows of this column contain values encoded as JSON?"
+      />
+      <FieldWatcher names={[JSON_NAME]}>
+        {(values) => {
+          if (values[JSON_NAME]) {
+            return null;
+          }
+          return (
+            <RHFField
+              type="text"
+              name={DELIMITER_NAME}
+              label="Delimiter"
+              placeholder="e.g: commas, semicolons, spaces"
+              description="What characters (or strings of characters) are used to separate the categories?"
+            />
+          );
+        }}
+      </FieldWatcher>
+    </>
+  );
+}

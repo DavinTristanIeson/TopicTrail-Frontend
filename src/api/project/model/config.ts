@@ -55,16 +55,16 @@ export class TopicModelingConfigModel {
   minTopicSize: number;
 
   @Expose({ name: "max_topic_size" })
-  maxTopicSize: number;
+  maxTopicSize: number | null;
 
   @Expose({ name: "clustering_conservativeness" })
   clusteringConservativeness: number;
 
   @Expose({ name: "globality_consideration" })
-  globalityConsideration: number;
+  globalityConsideration: number | null;
 
   @Expose({ name: "max_topics" })
-  maxTopics: number;
+  maxTopics: number | null;
 
   @Expose({ name: "n_gram_range" })
   nGramRange: [number, number];
@@ -91,10 +91,10 @@ export class ProjectSchemaModel {
   alias: string | null;
 
   // Continuous
-  bins?: number[];
+  bins?: number[] | null;
 
   @Expose({ name: "bin_count" })
-  binCount?: number;
+  binCount?: number | null;
 
   // Ordered categorical
   @Expose({ name: "category_order" })

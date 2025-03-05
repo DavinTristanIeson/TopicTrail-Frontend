@@ -1,168 +1,92 @@
-import Colors from "@/common/constants/colors";
 import {
   NumberInput,
   NumberInputProps,
-  Select,
-  SelectProps,
   Switch,
   SwitchProps,
   TagsInput,
   TagsInputProps,
   TextInput,
   TextInputProps,
-} from "@mantine/core";
-import { DateTimePicker, DateTimePickerProps } from "@mantine/dates";
-import { useController } from "react-hook-form";
-import Text from "../text";
+  Select,
+  SelectProps,
+} from '@mantine/core';
+import {
+  IRHFField,
+  IRHFMantineAdaptable,
+  useRHFMantineAdapter,
+} from './adapter';
+import { PercentageInput } from '../inputs/wrapper';
 
-interface TextFieldProps extends TextInputProps {
-  name: string;
-}
+export type TextFieldProps = IRHFField<
+  TextInputProps & IRHFMantineAdaptable<TextInputProps>,
+  'text'
+>;
 
 export function TextField(props: TextFieldProps) {
-  const {
-    field,
-    fieldState: { error },
-    formState: { isSubmitting, disabled },
-  } = useController({
-    name: props.name,
-  });
-
-  return (
-    <TextInput
-      {...field}
-      error={error?.message}
-      disabled={isSubmitting || disabled}
-      {...props}
-    />
-  );
+  const { mergedProps } = useRHFMantineAdapter(props, {});
+  return <TextInput {...mergedProps} />;
 }
 
-interface DateTimeFieldProps extends DateTimePickerProps {
-  name: string;
-}
-
-export function DateTimeField(props: DateTimeFieldProps) {
-  const {
-    field,
-    fieldState: { error },
-    formState: { isSubmitting, disabled },
-  } = useController({
-    name: props.name,
-  });
-
-  return (
-    <DateTimePicker
-      {...field}
-      error={error?.message}
-      disabled={isSubmitting || disabled}
-      {...props}
-    />
-  );
-}
-
-interface NumberFieldProps extends NumberInputProps {
-  name: string;
-  percentage?: boolean;
-}
+export type NumberFieldProps = IRHFField<
+  NumberInputProps & IRHFMantineAdaptable<NumberInputProps>,
+  'number'
+>;
 
 export function NumberField(props: NumberFieldProps) {
-  const {
-    field,
-    fieldState: { error },
-    formState: { isSubmitting, disabled },
-  } = useController({
-    name: props.name,
-  });
+  const { mergedProps } = useRHFMantineAdapter(props, {});
+  return <NumberInput {...mergedProps} />;
+}
 
+export type PercentageFieldProps = IRHFField<
+  NumberInputProps & IRHFMantineAdaptable<NumberInputProps>,
+  'percentage'
+> & {
+  bounded?: boolean;
+};
+
+export function PercentageField(props: PercentageFieldProps) {
+  const { bounded } = props;
+  const { mergedProps } = useRHFMantineAdapter(props, {});
   return (
-    <NumberInput
-      {...field}
-      value={props.percentage ? field.value * 100 : field.value}
-      onChange={(e) => {
-        if (e === "" || typeof e === "string") {
-          field.onChange(null);
-        } else {
-          field.onChange(props.percentage ? e / 100 : e);
-        }
-      }}
-      decimalScale={props.percentage ? 4 : 0}
-      disabled={isSubmitting || disabled}
-      error={error?.message}
-      rightSection={
-        props.percentage ? <Text c={Colors.foregroundDull}>%</Text> : null
-      }
-      {...props}
+    <PercentageInput
+      {...mergedProps}
+      min={bounded ? 0 : undefined}
+      max={bounded ? 100 : undefined}
     />
   );
 }
 
-interface SwitchFieldProps extends SwitchProps {
-  name: string;
-}
+export type SwitchFieldProps = IRHFField<
+  SwitchProps & IRHFMantineAdaptable<SwitchProps>,
+  'switch'
+>;
 
 export function SwitchField(props: SwitchFieldProps) {
-  const {
-    field: { value, ...restField },
-    fieldState: { error },
-    formState: { disabled, isSubmitting },
-  } = useController({
-    name: props.name,
+  const { mergedProps } = useRHFMantineAdapter<SwitchFieldProps>(props, {
+    extractEventValue(e) {
+      return e.target.checked;
+    },
   });
-
-  return (
-    <Switch
-      checked={value}
-      {...restField}
-      error={error?.message}
-      disabled={isSubmitting || disabled}
-      {...props}
-    />
-  );
+  return <Switch {...mergedProps} />;
 }
 
-interface TagsFieldProps extends TagsInputProps {
-  name: string;
-}
+export type TagsFieldProps = IRHFField<
+  TagsInputProps & IRHFMantineAdaptable<TagsInputProps>,
+  'tags'
+>;
 
 export function TagsField(props: TagsFieldProps) {
-  const {
-    field,
-    fieldState: { error },
-    formState: { isSubmitting, disabled },
-  } = useController({
-    name: props.name,
-  });
+  const { mergedProps } = useRHFMantineAdapter(props, {});
 
-  return (
-    <TagsInput
-      {...field}
-      error={error?.message}
-      disabled={isSubmitting || disabled}
-      {...props}
-    />
-  );
+  return <TagsInput {...mergedProps} />;
 }
 
-interface SelectFieldProps extends SelectProps {
-  name: string;
-}
+export type SelectFieldProps = IRHFField<
+  SelectProps & IRHFMantineAdaptable<SelectProps>,
+  'select'
+>;
 
 export function SelectField(props: SelectFieldProps) {
-  const {
-    field,
-    fieldState: { error },
-    formState: { isSubmitting, disabled },
-  } = useController({
-    name: props.name,
-  });
-
-  return (
-    <Select
-      {...field}
-      error={error?.message}
-      disabled={isSubmitting || disabled}
-      {...props}
-    />
-  );
+  const { mergedProps } = useRHFMantineAdapter(props, {});
+  return <Select {...mergedProps} />;
 }

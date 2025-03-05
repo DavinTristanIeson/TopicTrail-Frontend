@@ -3,8 +3,10 @@ import { Accordion, Stack, Title, Flex, Button } from '@mantine/core';
 import { FloppyDisk, ArrowLeft } from '@phosphor-icons/react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
-import { ConfigureDataSourceForm } from './phase-1';
-import { ProjectIdForm } from './phase-2';
+import { ConfigureDataSourceForm } from './phase-2';
+import { ProjectIdForm } from './phase-1';
+import { ProjectConfigColumnFormItem } from '../columns/form-body';
+import React from 'react';
 
 function ProjectConfigColumnsFieldArray() {
   const { control } = useFormContext<ProjectConfigFormType>();
@@ -19,7 +21,7 @@ function ProjectConfigColumnsFieldArray() {
       {fields.map((field, index) => {
         return (
           <ProjectConfigColumnFormItem
-            parentName={`columns.${index}`}
+            index={index}
             key={field.__fieldId}
             accordionValue={field.__fieldId}
           />

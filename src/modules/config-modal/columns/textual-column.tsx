@@ -1,154 +1,23 @@
-import {
-  NumberField,
-  DateTimeField,
-  SwitchField,
-  TagsField,
-  TextField,
-} from '@/components/standard/fields/wrapper';
-import React from 'react';
-import { Divider, Group, Select, Stack, Switch, Tooltip } from '@mantine/core';
 import Colors from '@/common/constants/colors';
+import { DocumentEmbeddingMethodEnum } from '@/common/constants/enum';
+import { Select, Stack, Divider, Group } from '@mantine/core';
+import { useController } from 'react-hook-form';
 import Text from '@/components/standard/text';
-import TextLink from '@/components/standard/button/link';
-import {
-  DocumentEmbeddingMethodEnum,
-  SchemaColumnTypeEnum,
-} from '@/common/constants/enum';
-import { useController, useFormContext, useWatch } from 'react-hook-form';
-import { Info } from '@phosphor-icons/react';
-import { ProjectConfigFormType } from '../form-type';
-import { useInferProjectDatasetColumn } from '@/api/project';
-
-interface ProjectConfigColumnFormProps {
-  parentName: `columns.${number}`;
-  columnName: string;
-}
-
-function useGetDataSourceFormValues() {
-  const { control } = useFormContext<ProjectConfigFormType>();
-  return useWatch({
-    control,
-    name: 'source',
-  });
-}
-
-export function ProjectConfigColumnContinuousForm(
-  props: ProjectConfigColumnFormProps,
-) {
-  const { parentName, columnName } = props;
-  const source = useGetDataSourceFormValues();
-
-  const column = useInferProjectDatasetColumn({
-    column: columnName,
-    dtype: SchemaColumnTypeEnum.Continuous,
-    source,
-  });
-
-  const { setValue, control } = useFormContext<ProjectConfigFormType>();
-  const BIN_COUNT_NAME = `${parentName}.binCount` as const;
-  const BIN_NAME = `${parentName}.bins` as const;
-  const rawBinCountValue = useWatch({
-    name: BIN_COUNT_NAME,
-    control,
-  });
-  const isUsingBinCount = rawBinCountValue != null;
-  return (
-    <>
-      <Group>
-        <Switch
-          label={isUsingBinCount ? 'Bin Count' : 'Bins'}
-          description="Specify either a number of bins to split the continuous data into, or manually specify the edges of each bins."
-          checked={isUsingBinCount}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setValue(BIN_COUNT_NAME, 3);
-              setValue(BIN_NAME, null);
-            } else {
-              setValue(BIN_COUNT_NAME, null);
-              setValue(BIN_NAME, [0]);
-            }
-          }}
-        />
-        <Tooltip label="By splitting the continuous data into bins, you've effectively created another ordinal variable from the continuous data. This means that you can now use analysis methods for ordered categorical columns on the bins.">
-          <Info size={14} color={Colors.sentimentInfo} />
-        </Tooltip>
-      </Group>
-      {isUsingBinCount && (
-        <NumberField
-          name={`${parentName}.lowerBound`}
-          label="Lower Bound"
-          description="The lowest value that can appear in the column; any lower values will be set to this value."
-        />
-      )}
-      <NumberField
-        name={`${parentName}.upperBound`}
-        label="Upper Bound"
-        description="The highest value that can appear in the column; any higher values will be set to this value."
-      />
-      <ProjectConfigFillNaOption
-        parentName={parentName}
-        type={SchemaColumnTypeEnum.Continuous}
-      />
-    </>
-  );
-}
-
-export function ProjectConfigColumnTemporalForm(
-  props: ProjectConfigColumnFormProps,
-) {
-  const { parentName } = props;
-
-  return (
-    <>
-      <NumberField
-        name={`${parentName}.bins`}
-        label="Bins / Time Slots"
-        required
-        description="This value specifies how many partitions will be created from the range of date values. For example, with bins = 4, values from 1st January 2024 to 31st January 2024 can be partitioned into: Jan 1 to Jan 7, Jan 8 to Jan 15, Jan 16 to Jan 23, and Jan 24 to Jan 31. This will be useful when studying how the topics develop with time."
-      />
-      <DateTimeField
-        name={`${parentName}.minDate`}
-        label="Earliest Date"
-        description="The earliest value that can appear in the column; any earlier values will be set to this value."
-      />
-      <DateTimeField
-        name={`${parentName}.maxDate`}
-        label="Latest Date"
-        description="The latest value that can appear in the column; any later values will be set to this value."
-      />
-      <TextField
-        name={`${parentName}.datetimeFormat`}
-        label="Datetime Format"
-        description={
-          <Text size="xs">
-            The datetime format used for the column. You can find the reference
-            for the format in here:
-            <TextLink href="https://strftime.org/">
-              https://strftime.org/
-            </TextLink>
-          </Text>
-        }
-      />
-      <ProjectConfigFillNaOption
-        parentName={parentName}
-        type={SchemaColumnTypeEnum.Temporal}
-      />
-    </>
-  );
-}
+import RHFField from '@/components/standard/fields';
+import { ProjectConfigColumnFormProps } from './utils';
 
 function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
   const { field } = useController({
-    name: `${props.parentName}.topicModeling.embeddingMethod`,
+    name: `columns.${props.index}.topicModeling.embeddingMethod`,
   });
 
   const labels: Record<DocumentEmbeddingMethodEnum, string> = {
     [DocumentEmbeddingMethodEnum.Doc2Vec]:
       'Doc2Vec embeddings are fast compared to SBERT, but they need a lot of documents (preferably >5,000) to work well. Use this if you have many short documents.',
-    [DocumentEmbeddingMethodEnum.SBERT]:
+    [DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2]:
       'SBERT embeddings are more semantically accurate than Doc2Vec, but they take a long time to process on devices without GPUs. Use this if you only have a few short documents.',
-    [DocumentEmbeddingMethodEnum.TFIDF]:
-      'TF-IDF embeddings do not capture the semantic relationship between words so they may perform worse on short documents. Use this if your documents are long.',
+    [DocumentEmbeddingMethodEnum.LSA]:
+      'LSA embeddings do not capture the semantic relationship between words so they may perform worse on short documents. Use this if your documents are long.',
   };
   return (
     <Select
@@ -160,12 +29,12 @@ function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
           value: DocumentEmbeddingMethodEnum.Doc2Vec,
         },
         {
-          label: 'SBERT',
-          value: DocumentEmbeddingMethodEnum.SBERT,
+          label: 'SBERT: All-MiniLM-L6-v2',
+          value: DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2,
         },
         {
-          label: 'TF-IDF Vectorization',
-          value: DocumentEmbeddingMethodEnum.TFIDF,
+          label: 'LSA',
+          value: DocumentEmbeddingMethodEnum.LSA,
         },
       ]}
       allowDeselect={false}
@@ -173,7 +42,7 @@ function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
       required
       label="Document Embedding Method"
       description={`The method that is used to convert the documents into a numerical representation that the algorithm can understand. ${
-        labels[field.value as DocumentEmbeddingMethodEnum.Doc2Vec] ?? ''
+        labels[field.value as DocumentEmbeddingMethodEnum] ?? ''
       }`}
     />
   );
@@ -182,15 +51,16 @@ function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
 export function ProjectConfigColumnTextualForm(
   props: ProjectConfigColumnFormProps,
 ) {
-  const { parentName } = props;
-  const PREPROCESSING_NAME = `${parentName}.preprocessing` as const;
-  const TOPIC_MODELING_NAME = `${parentName}.topicModeling` as const;
+  const { index } = props;
+  const PREPROCESSING_NAME = `columns.${index}.preprocessing` as const;
+  const TOPIC_MODELING_NAME = `columns.${index}.topicModeling` as const;
 
   return (
     <Stack>
       <Text fw="bold">Preprocessing Configuration</Text>
       <Stack>
-        <TagsField
+        <RHFField
+          type="tags"
           label="Ignore Tokens"
           name={`${PREPROCESSING_NAME}.ignoreTokens`}
           description={
@@ -204,7 +74,8 @@ export function ProjectConfigColumnTextualForm(
             </Text>
           }
         />
-        <TagsField
+        <RHFField
+          type="tags"
           name={`${PREPROCESSING_NAME}.stopwords`}
           label="Stop Words"
           description={
@@ -217,45 +88,53 @@ export function ProjectConfigColumnTextualForm(
             </Text>
           }
         />
-        <SwitchField
+        <RHFField
           name={`${PREPROCESSING_NAME}.removeEmail`}
           label="Remove email?"
+          type="switch"
           description="Should all emails be removed from the column? Turn this off if emails are important."
         />
-        <SwitchField
+        <RHFField
           name={`${PREPROCESSING_NAME}.removeUrl`}
           label="Remove URL?"
+          type="switch"
           description="Should all URLs be removed from the column? Turn this off if URLs are important."
         />
-        <SwitchField
+        <RHFField
           name={`${PREPROCESSING_NAME}.removeNumber`}
           label="Remove number?"
+          type="switch"
           description="Should all numbers be removed? Turn this off if numbers are important."
         />
-        <NumberField
+        <RHFField
           name={`${PREPROCESSING_NAME}.minWordFrequency`}
           label="Min. Word Frequency"
+          type="number"
           description="Words with frequencies below this threshold will be removed from the documents. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
         />
-        <NumberField
+        <RHFField
+          type="percentage"
           name={`${PREPROCESSING_NAME}.maxWordFrequency`}
           label="Max. Word Frequency"
-          percentage
+          bounded
           description="Words with frequencies above this threshold will be removed from the documents. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
         />
-        <NumberField
+        <RHFField
           name={`${PREPROCESSING_NAME}.maxUniqueWords`}
           label="Max. Unique Words"
+          type="number"
           description="The maximum number of unique words that will be kept from the documents. Having too many unique words may take up a lot of memory in your device. Assume that 10M unique words takes up 1GB of RAM. You probably will not need to tune this value if your dataset is not very large."
         />
-        <NumberField
+        <RHFField
           name={`${PREPROCESSING_NAME}.minDocumentLength`}
           label="Min. Number of Words in a Document"
+          type="number"
           description="Documents with words less than this threshold will not be included in the topic modeling procedure as they provide too little information."
         />
-        <NumberField
+        <RHFField
           name={`${PREPROCESSING_NAME}.minWordLength`}
           label="Min. Number of Characters in a Word"
+          type="number"
           description={`Words with characters less than this threshold will be omitted as they do not provide enough information. Consider setting this to 2 if you have acronyms in your dataset, or include any important acronyms in the "Ignore Tokens" field`}
         />
       </Stack>
@@ -265,26 +144,23 @@ export function ProjectConfigColumnTextualForm(
       <Text fw="bold">Topic Modeling Configuration</Text>
       <Stack>
         <EmbeddingMethodSelectField {...props} />
-        <SwitchField
-          name={`${TOPIC_MODELING_NAME}.lowMemory`}
-          label="Low Memory"
-          description="Turn this mode on if you want to perform other tasks while waiting for the topic modeling procedure to finish."
-        />
-        <NumberField
+        <RHFField
+          type="number"
           name={`${TOPIC_MODELING_NAME}.minTopicSize`}
           label="Min. Topic Size"
           min={1}
           description="The minimal number of similar documents to be considered a topic."
           required
         />
-        <NumberField
+        <RHFField
+          type="percentage"
           name={`${TOPIC_MODELING_NAME}.maxTopicSize`}
           label="Max. Topic Size"
-          max={100}
-          percentage
+          bounded
           description="The maximum number of documents that are grouped into the same topic. A low value will make the algorithm discover more specific topics, while a high value encourages the model to find more generic, but potentially imbalanced topics. Note that this field is in percentages."
         />
-        <NumberField
+        <RHFField
+          type="number"
           name={`${TOPIC_MODELING_NAME}.maxTopics`}
           label="Max Topics"
           min={1}
@@ -292,13 +168,15 @@ export function ProjectConfigColumnTextualForm(
         />
         <Stack>
           <Group>
-            <NumberField
+            <RHFField
+              type="number"
               name={`${TOPIC_MODELING_NAME}.nGramRangeStart`}
               label="N-Gram Range Start"
               min={1}
               className="flex-1"
             />
-            <NumberField
+            <RHFField
+              type="number"
               name={`${TOPIC_MODELING_NAME}.nGramRangeEnd`}
               label="N-Gram Range End"
               min={1}
@@ -313,16 +191,59 @@ export function ProjectConfigColumnTextualForm(
             &quot;the door hinge&quot; will be excluded.
           </Text>
         </Stack>
-        <Group justify="space-between">
-          <SwitchField
+        <RHFField
+          type="percentage"
+          name={`${TOPIC_MODELING_NAME}.clusteringConservativeness`}
+          label="Clustering Conservativeness"
+          bounded
+          className="flex-1"
+          description="This controls the strictness of the topic modeling algorithm when clustering documents. A higher conservative clustering (near 100%) will produce more outliers but the topics can be more coherent as only documents that are really semantically close to each other are considered as a topic; while a lower conservative clustering (near 0%) will produce less outliers, but the topics might contain unrelated documents."
+        />
+        <RHFField
+          type="number"
+          name={`${TOPIC_MODELING_NAME}.globalityConsideration`}
+          label="Globality Consideration"
+          className="flex-1"
+          classNames={{
+            description: 'whitespace-pre-line',
+          }}
+          description={
+            'The number of documents that are considered at once when finding topics. A higher number of documents results in more generic topics, while a smaller number of documents results in more specific topics. Keep in mind that this number should not be too far apart from Min. Topic Size for optimal results.\nBy default, this value is set to Min. Topic Size.'
+          }
+        />
+        <RHFField
+          type="percentage"
+          bounded
+          name={`${TOPIC_MODELING_NAME}.superTopicSimilarity`}
+          label="Super Topic Similarity"
+          className="flex-1"
+          description="This controls the threshold that two or more topics can be merged into one super-topics."
+        />
+        <RHFField
+          type="number"
+          name={`${TOPIC_MODELING_NAME}.topNWords`}
+          label="Number of Topic Words"
+          className="flex-1"
+          description="The number of words that will be used to describe a topic. A higher number provides more context about the topic, but since some words might not be related to the topic, a high number of topic words may cause confusion rather than clarity."
+        />
+        <Group justify="space-between" wrap="wrap">
+          <RHFField
+            type="switch"
             label="No Outliers"
             description={`Should the model produce any outliers? If this is set to false, all documents will be assigned to one topic. Note that this option alone only affects the document-topic assignments. It doesn't affect the topic representations (and frequencies) if you don't enable "Represent Outliers".`}
             name={`${TOPIC_MODELING_NAME}.noOutliers`}
           />
-          <SwitchField
+          <RHFField
+            type="switch"
             label="Represent Outliers"
             description="Should the outliers be included in the topic representation? This is only enabled if No Outliers is set to true. Note that by enabling this option, you risk polluting the topic representations found by the model with irrelevant words."
             name={`${TOPIC_MODELING_NAME}.representOutliers`}
+          />
+          <RHFField
+            type="switch"
+            name={`${TOPIC_MODELING_NAME}.lowMemory`}
+            label="Low Memory"
+            description="Turn this mode on if you want to perform other tasks while waiting for the topic modeling procedure to finish."
           />
         </Group>
       </Stack>
