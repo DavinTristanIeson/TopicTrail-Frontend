@@ -1,5 +1,6 @@
 enum NavigationRoutes {
   Dashboard = '/',
+  ProjectCreate = '/projects/create',
   Project = '/projects/[id]',
   ProjectTable = '/projects/[id]/table',
   ProjectComparison = '/projects/[id]/comparison',

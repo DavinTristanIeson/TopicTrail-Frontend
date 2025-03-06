@@ -1,7 +1,7 @@
-import React from "react";
-import { useCombinedRefs } from "@/hooks/ref";
-import { AppShell, Burger, Group } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import React from 'react';
+import { useCombinedRefs } from '@/hooks/ref';
+import { AppShell, Burger, Group } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 interface AppLayoutProps {
   Sidebar?: React.ReactNode;
@@ -24,7 +24,7 @@ export default function AppLayout(props: AppLayoutProps) {
         Sidebar
           ? {
               width: 240,
-              breakpoint: "sm",
+              breakpoint: 'sm',
               collapsed: {
                 mobile: !opened,
                 desktop: !opened,

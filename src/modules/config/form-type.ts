@@ -1,4 +1,4 @@
-import { ProjectConfigModel } from '@/api/project/model';
+import { ProjectConfigModel, ProjectMutationInput } from '@/api/project/model';
 import { DataSourceTypeEnum, DocumentEmbeddingMethodEnum, DocumentPreprocessingMethodEnum, GeospatialRoleEnum, SchemaColumnTypeEnum } from '@/common/constants/enum';
 import * as Yup from 'yup';
 
@@ -29,7 +29,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     throw new Error("This field does not contain an array. This is most likely be a developer oversight.");
   }).min(1),
 
-  categoryOrder: Yup.array(Yup.string().required()).when("type", {
+  categoryOrder: Yup.array(Yup.string().required()).nullable().when("type", {
     is: SchemaColumnTypeEnum.OrderedCategorical,
     otherwise: schema => schema.strip()
   }),
@@ -187,7 +187,7 @@ export function ProjectConfigDefaultValues(data?: ProjectConfigModel): ProjectCo
   }
 }
 
-export function ProjectConfigFormType2Input(values: ProjectConfigFormType): ProjectConfigModel {
+export function ProjectConfigFormType2Input(values: ProjectConfigFormType): ProjectMutationInput {
   return {
     ...values,
     version: 1,
@@ -195,6 +195,7 @@ export function ProjectConfigFormType2Input(values: ProjectConfigFormType): Proj
       columns: values.columns.map(col => {
         return {
           ...col,
+          categoryOrder: col.categoryOrder ?? null,
           alias: col.alias ?? null,
           topicModeling: col.topicModeling ? {
             ...col.topicModeling,

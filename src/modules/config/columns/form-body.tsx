@@ -10,6 +10,7 @@ import { RHFMantineAdapter } from '@/components/standard/fields/adapter';
 import { ProjectColumnTypeSelectInput } from '@/modules/project/select-column-input';
 import RHFField from '@/components/standard/fields';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
+import { CanChangeColumnTypesContext } from './utils';
 
 interface ProjectConfigColumnFormItemProps {
   index: number;
@@ -46,6 +47,7 @@ export function ProjectConfigColumnFormItem(
 ) {
   const { index, accordionValue } = props;
   const parentName = `columns.${index}`;
+  const canChangeType = React.useContext(CanChangeColumnTypesContext);
   return (
     <Accordion.Item value={accordionValue}>
       <Accordion.Control>
@@ -57,6 +59,8 @@ export function ProjectConfigColumnFormItem(
             <RHFMantineAdapter
               props={{
                 name: `${parentName}.type`,
+                className: 'flex-1',
+                disabled: !canChangeType,
               }}
               config={{}}
             >
@@ -68,7 +72,7 @@ export function ProjectConfigColumnFormItem(
               type="text"
               description="The alias of the column that will be displayed in tables/graphs. Leave it blank if you don't want any aliases."
               required
-              w="47%"
+              className="flex-1"
             />
           </Group>
           <Divider />

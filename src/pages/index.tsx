@@ -1,26 +1,26 @@
 import { useGetProjects } from '@/api/project/query';
 import AppLayout from '@/components/layout/app';
-import { Title, TextInput, Stack, Loader } from '@mantine/core';
+import { Title, TextInput, Stack, Loader, Button } from '@mantine/core';
 import Text from '@/components/standard/text';
 import React from 'react';
 import { MagnifyingGlass, Plus } from '@phosphor-icons/react';
 import { useDebouncedState } from '@mantine/hooks';
-import ProjectConfigModal from '@/modules/config-modal';
 import {
   DisclosureTrigger,
   ParametrizedDisclosureTrigger,
 } from '@/hooks/disclosure';
 import Colors from '@/common/constants/colors';
 import AppHeader from '@/components/layout/header';
-import Button from '@/components/standard/button/base';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { DeleteProjectModal, ProjectListItem } from '@/modules/project/actions';
+import { useRouter } from 'next/router';
+import NavigationRoutes from '@/common/constants/routes';
 
 export default function Dashboard() {
   const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
   const query = useGetProjects();
+  const router = useRouter();
 
-  const createRemote = React.useRef<DisclosureTrigger | null>(null);
   const deleteRemote =
     React.useRef<ParametrizedDisclosureTrigger<string> | null>(null);
 
@@ -30,7 +30,6 @@ export default function Dashboard() {
 
   return (
     <AppLayout Header={<AppHeader />}>
-      <ProjectConfigModal ref={createRemote} />
       <DeleteProjectModal ref={deleteRemote} />
       <Stack w="100%" align="center">
         <Stack align="center" pt={64} maw={880} py={64}>
@@ -53,7 +52,7 @@ export default function Dashboard() {
               leftSection={<Plus size={16} />}
               fullWidth
               onClick={() => {
-                createRemote.current?.open();
+                router.push(NavigationRoutes.ProjectCreate);
               }}
             >
               Create New Project

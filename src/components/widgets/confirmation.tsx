@@ -1,11 +1,10 @@
-import { CheckIcon, Flex, Modal, Title } from "@mantine/core";
-import React from "react";
-import Text from "../standard/text";
-import Button from "../standard/button/base";
-import { TrashSimple, X } from "@phosphor-icons/react";
-import Colors from "@/common/constants/colors";
-import PromiseButton from "../standard/button/promise";
-import { DisclosureTrigger, useDisclosureTrigger } from "@/hooks/disclosure";
+import { Button, CheckIcon, Flex, Modal, Title } from '@mantine/core';
+import React from 'react';
+import Text from '../standard/text';
+import { TrashSimple, X } from '@phosphor-icons/react';
+import Colors from '@/common/constants/colors';
+import PromiseButton from '../standard/button/promise';
+import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 
 interface ConfirmationDialogProps {
   title?: React.ReactNode;
@@ -17,7 +16,7 @@ interface ConfirmationDialogProps {
 }
 
 const ConfirmationDialog = React.forwardRef<
-  DisclosureTrigger | undefined,
+  DisclosureTrigger | null,
   ConfirmationDialogProps
 >(function ConfirmationDialog(props, ref) {
   const [opened, { close }] = useDisclosureTrigger(ref);
@@ -28,7 +27,7 @@ const ConfirmationDialog = React.forwardRef<
       centered
       title={
         <Title order={3} fw="bold">
-          {props.title ?? "Confirmation"}
+          {props.title ?? 'Confirmation'}
         </Title>
       }
     >
@@ -37,12 +36,12 @@ const ConfirmationDialog = React.forwardRef<
         <PromiseButton
           variant="filled"
           leftSection={
-            props.dangerous ? props.icon ?? <TrashSimple /> : <CheckIcon />
+            props.dangerous ? (props.icon ?? <TrashSimple />) : <CheckIcon />
           }
           color={props.dangerous ? Colors.sentimentError : undefined}
           onClick={props.onConfirm}
         >
-          {props.positiveAction ?? "Confirm"}
+          {props.positiveAction ?? 'Confirm'}
         </PromiseButton>
         <Button variant="outline" leftSection={<X />} onClick={close}>
           Cancel

@@ -1,10 +1,16 @@
 import Colors from '@/common/constants/colors';
 import { DocumentEmbeddingMethodEnum } from '@/common/constants/enum';
-import { Select, Stack, Divider, Group } from '@mantine/core';
-import { useController } from 'react-hook-form';
+import { Select, Stack, Divider, Group, Spoiler } from '@mantine/core';
+import { useController, useFormContext } from 'react-hook-form';
 import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
-import { ProjectConfigColumnFormProps } from './utils';
+import {
+  ProjectConfigColumnFormProps,
+  useInferProjectDatasetColumn,
+} from './utils';
+import { DescriptiveStatisticsTable } from '@/modules/table/continuous/descriptive-statistics';
+import React from 'react';
+import { ProjectConfigFormType } from '../form-type';
 
 function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
   const { field } = useController({
@@ -48,15 +54,13 @@ function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
   );
 }
 
-export function ProjectConfigColumnTextualForm(
+function PreprocessingConfigurationFormBody(
   props: ProjectConfigColumnFormProps,
 ) {
   const { index } = props;
   const PREPROCESSING_NAME = `columns.${index}.preprocessing` as const;
-  const TOPIC_MODELING_NAME = `columns.${index}.topicModeling` as const;
-
   return (
-    <Stack>
+    <>
       <Text fw="bold">Preprocessing Configuration</Text>
       <Stack>
         <RHFField
@@ -138,9 +142,17 @@ export function ProjectConfigColumnTextualForm(
           description={`Words with characters less than this threshold will be omitted as they do not provide enough information. Consider setting this to 2 if you have acronyms in your dataset, or include any important acronyms in the "Ignore Tokens" field`}
         />
       </Stack>
+    </>
+  );
+}
 
-      <Divider />
-
+function TopicModelingConfigurationFormBody(
+  props: ProjectConfigColumnFormProps,
+) {
+  const { index } = props;
+  const TOPIC_MODELING_NAME = `columns.${index}.topicModeling` as const;
+  return (
+    <>
       <Text fw="bold">Topic Modeling Configuration</Text>
       <Stack>
         <EmbeddingMethodSelectField {...props} />
@@ -247,6 +259,63 @@ export function ProjectConfigColumnTextualForm(
           />
         </Group>
       </Stack>
+    </>
+  );
+}
+
+export function ProjectConfigColumnTextualForm(
+  props: ProjectConfigColumnFormProps,
+) {
+  const { index } = props;
+
+  const { data: column, loading } = useInferProjectDatasetColumn(index);
+  const parentName = `columns.${index}` as const;
+  const { setValue, getValues, getFieldState } =
+    useFormContext<ProjectConfigFormType>();
+
+  React.useEffect(() => {
+    if (!column || !column.descriptiveStatistics) return;
+    if (getFieldState(parentName).isTouched) {
+      return;
+    }
+    const currentValues = { ...getValues(parentName) };
+    currentValues.topicModeling.minTopicSize = Math.max(
+      Math.ceil(5 + column.descriptiveStatistics.count / 500),
+      30,
+    );
+    currentValues.preprocessing.minDf = Math.min(
+      2,
+      Math.max(10, column.descriptiveStatistics.count / 1000),
+    );
+    if (column.descriptiveStatistics.count >= 10000) {
+      currentValues.topicModeling.embeddingMethod =
+        DocumentEmbeddingMethodEnum.Doc2Vec;
+    } else {
+      currentValues.topicModeling.embeddingMethod =
+        DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2;
+    }
+    if (column.descriptiveStatistics.median >= 5000) {
+      currentValues.topicModeling.embeddingMethod =
+        DocumentEmbeddingMethodEnum.LSA;
+    }
+    setValue(parentName, currentValues);
+  }, [column, getFieldState, getValues, parentName, setValue]);
+
+  return (
+    <Stack>
+      <Spoiler
+        hideLabel={'Hide Descriptive Statistics'}
+        showLabel={'Show Descriptive Statistics'}
+        maxHeight={100}
+      >
+        <DescriptiveStatisticsTable
+          loading={loading}
+          {...column?.descriptiveStatistics}
+        />
+      </Spoiler>
+      <PreprocessingConfigurationFormBody {...props} />
+      <Divider />
+      <TopicModelingConfigurationFormBody {...props} />
     </Stack>
   );
 }

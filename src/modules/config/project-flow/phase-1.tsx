@@ -29,7 +29,7 @@ export function ProjectIdForm(props: ProjectIdFormProps) {
       label="Project Name"
       description="The name of the project should be unique."
       required
-      disabled={props.disabled}
+      readOnly={props.disabled}
     />
   );
 }

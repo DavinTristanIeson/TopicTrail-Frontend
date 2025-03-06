@@ -16,7 +16,7 @@ export class ProjectModel extends ProjectLiteModel {
 
 
 // Model - Infer Column
-export class InferDatasetDescriptiveStatisticsModel {
+export class DescriptiveStatisticsModel {
   count: number;
   mean: number;
   median: number;
@@ -40,13 +40,9 @@ export class InferDatasetColumnModel {
 
   categories: string[] | null;
 
-  @Expose({ name: "document_lengths" })
-  @Type(() => InferDatasetDescriptiveStatisticsModel)
-  documentLengths: InferDatasetDescriptiveStatisticsModel | null;
-
-  @Expose({ name: "document_lengths" })
-  @Type(() => InferDatasetDescriptiveStatisticsModel)
-  descriptiveStatistics: InferDatasetDescriptiveStatisticsModel | null;
+  @Expose({ name: "descriptive_statistics" })
+  @Type(() => DescriptiveStatisticsModel)
+  descriptiveStatistics: DescriptiveStatisticsModel | null;
 }
 
 export class ProjectCheckDatasetModel {

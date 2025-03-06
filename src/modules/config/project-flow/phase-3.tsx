@@ -53,13 +53,15 @@ export default function ProjectConfigFormBody(
         <SubmitButton leftSection={<FloppyDisk size={20} />}>
           Save Project
         </SubmitButton>
-        <Button
-          leftSection={<ArrowLeft size={20} />}
-          variant="outline"
-          onClick={props.onBack}
-        >
-          Change Dataset?
-        </Button>
+        {props.onBack && (
+          <Button
+            leftSection={<ArrowLeft size={20} />}
+            variant="outline"
+            onClick={props.onBack}
+          >
+            Change Dataset?
+          </Button>
+        )}
       </Flex>
     </Stack>
   );

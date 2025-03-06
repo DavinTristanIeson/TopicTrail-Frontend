@@ -81,7 +81,7 @@ export function ConfigureDataSourceForm(
           placeholder="path/to/dataset"
           description="Enter the absolute file path or relative file path (relative to the directory of the Wordsmith Project) to your dataset."
           required
-          disabled={props.disabled}
+          readOnly={props.disabled}
           w="100%"
         />
         <RHFField
@@ -104,7 +104,7 @@ export function ConfigureDataSourceForm(
           clearable={false}
           label="Dataset Type"
           description="We need to know the type of the dataset so that we can properly parse its contents."
-          disabled={props.disabled}
+          readOnly={props.disabled}
           w="100%"
         />
       </Flex>
@@ -173,8 +173,10 @@ export function ConfigureProjectFlow_CheckDataset(
           <Flex align="center" gap={16} py={8}>
             <WarningCircle size={24} />
             Note that once your dataset has been changed, any existing columns
-            will need to be re-configured. Perhaps you should create a new
-            project instead if you want to keep the column configurations.
+            will need to be re-configured. Furthermore, any cached objects like
+            document vectors and topic modeling results will have to be deleted.
+            This means that you will have to run the topic modeling procedure
+            again if you have already run it before.
           </Flex>
         </Alert>
       )}

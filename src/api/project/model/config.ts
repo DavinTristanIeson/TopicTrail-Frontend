@@ -98,7 +98,7 @@ export class ProjectSchemaModel {
 
   // Ordered categorical
   @Expose({ name: "category_order" })
-  categoryOrder?: string[];
+  categoryOrder?: string[] | null;
 
   // Temporal
   @Expose({ name: "datetime_format" })

@@ -1,10 +1,9 @@
 import React from 'react';
 import {
   Group,
-  Skeleton,
+  List,
   Spoiler,
   Switch,
-  Table,
   TagsInput,
   Tooltip,
 } from '@mantine/core';
@@ -12,7 +11,6 @@ import Colors from '@/common/constants/colors';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Info } from '@phosphor-icons/react';
 import { ProjectConfigFormType } from '../form-type';
-import { InferDatasetDescriptiveStatisticsModel } from '@/api/project';
 import {
   ProjectConfigColumnFormProps,
   useInferProjectDatasetColumn,
@@ -20,12 +18,17 @@ import {
 import RHFField from '@/components/standard/fields';
 import { useRHFMantineAdapter } from '@/components/standard/fields/adapter';
 import { TagsFieldProps } from '@/components/standard/fields/wrapper';
+import { DescriptiveStatisticsTable } from '@/modules/table/continuous/descriptive-statistics';
+import Text from '@/components/standard/text';
 
 function ProjectConfigColumnContinuousFormBinsInput(
   props: ProjectConfigColumnFormProps,
 ) {
   const NAME = `columns.${props.index}.bins`;
-  const { mergedProps } = useRHFMantineAdapter<TagsFieldProps>(
+  const {
+    mergedProps,
+    fieldProps: { value },
+  } = useRHFMantineAdapter<TagsFieldProps>(
     {
       name: NAME,
     },
@@ -39,92 +42,37 @@ function ProjectConfigColumnContinuousFormBinsInput(
     },
   );
 
-  return <TagsInput {...mergedProps} />;
-}
+  const binEdges = (value ?? []) as number[];
+  const bins = binEdges.reduce((acc, cur, index, arr) => {
+    const digitLength = Math.ceil(Math.log10(acc.length));
+    const binNumber = (acc.length + 1).toString().padStart(digitLength, '0');
+    if (index === 0) {
+      acc.push(`Bin ${binNumber}: (-inf, ${cur.toFixed(3)})`);
+    }
+    if (index === arr.length - 1) {
+      acc.push(`Bin ${binNumber}: (${cur.toFixed(3)}, inf)`);
+    }
+    const prev = acc[acc.length - 1] ?? undefined;
+    acc.push(`Bin ${binNumber}: (${prev}, ${cur.toFixed(3)})`);
+    return acc;
+  }, [] as string[]);
 
-interface ContinuousDataDescriptiveStatisticsProps
-  extends Partial<InferDatasetDescriptiveStatisticsModel> {
-  loading: boolean;
-}
-
-function ContinuousDataDescriptiveStatistics(
-  props: ContinuousDataDescriptiveStatisticsProps,
-) {
-  const tableValues = [
-    {
-      label: 'Count',
-      value: props.count,
-    },
-    {
-      label: 'Mean',
-      value: props.mean,
-    },
-    {
-      label: 'Standard Deviation',
-      value: props.std,
-    },
-    {
-      label: 'Minimum Value',
-      value: props.min,
-    },
-    {
-      label: '1st Quartile',
-      value: props.q1,
-    },
-    {
-      label: 'Median',
-      value: props.median,
-    },
-    {
-      label: '3rd Quartile',
-      value: props.q3,
-    },
-    {
-      label: 'Maximum Value',
-      value: props.max,
-    },
-    {
-      label: 'Inlier Range',
-      value: props.inlierRange,
-      description:
-        'This range contains all values that can be reasonably considered to be inliers. Values outside of this range will be counted as outliers.',
-    },
-    {
-      label: 'Outlier Count',
-      value: props.outlierCount,
-    },
-  ];
-  if (props.loading) {
-    return (
-      <div>
-        {Array.from({ length: 5 }, (_, index) => (
-          <Skeleton key={index} height={36} />
-        ))}
-      </div>
-    );
-  }
   return (
-    <Table>
-      <Table.Tr>
-        <Table.Th>Type</Table.Th>
-        <Table.Th>Value</Table.Th>
-      </Table.Tr>
-      {tableValues.map((row, index) => (
-        <Table.Tr key={index}>
-          <Table.Td>
-            <Group>
-              {row.label}
-              {row.description ? (
-                <Tooltip label={row.description}>
-                  <Info size={16} />
-                </Tooltip>
-              ) : undefined}
-            </Group>
-          </Table.Td>
-          <Table.Td>{row.value}</Table.Td>
-        </Table.Tr>
-      ))}
-    </Table>
+    <>
+      <TagsInput
+        {...mergedProps}
+        label="Bin Edges"
+        description="Specify the edges of the bins here. For example: if you want to define the bins to be 3 - 18, 18 - 65, and 65 - 99. Then the bin edges should be 3, 18, 65, and 99."
+      />
+      <Text>This will produce the following bins:</Text>
+      <Spoiler hideLabel={'Hide Bins'} showLabel={'Show Bins'}>
+        <List>
+          {bins.map((bin) => (
+            <List.Item key={bin}>{bin}</List.Item>
+          ))}
+        </List>
+      </Spoiler>
+    </>
   );
 }
 
@@ -168,7 +116,7 @@ export function ProjectConfigColumnContinuousForm(
         showLabel={'Show Descriptive Statistics'}
         maxHeight={100}
       >
-        <ContinuousDataDescriptiveStatistics
+        <DescriptiveStatisticsTable
           loading={loading}
           {...column?.descriptiveStatistics}
         />

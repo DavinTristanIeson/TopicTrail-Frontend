@@ -6,6 +6,7 @@ import {
   Stack,
   Flex,
   Title,
+  Button,
 } from '@mantine/core';
 import Text from '@/components/standard/text';
 import React from 'react';
@@ -14,7 +15,6 @@ import Colors from '@/common/constants/colors';
 import { ProjectLiteModel } from '@/api/project/model';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
-import Button from '@/components/standard/button/base';
 import { useDeleteProject } from '@/api/project';
 import { handleErrorFn } from '@/common/utils/error';
 import { showNotification } from '@mantine/notifications';
