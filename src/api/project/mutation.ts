@@ -13,6 +13,7 @@ import { ProjectQueryKeys } from './query';
 import { IdInput, UpdateInput } from '../common/model';
 import { ApiResult } from '@/common/api/model';
 import { QueryInvalidator } from '../common/utils';
+import { TopicQueryKeys } from '../topic/query';
 
 const ENDPOINT = 'projects';
 export const useCheckProjectId: ApiMutationFunction<

@@ -1,8 +1,14 @@
-import { DataSourceTypeEnum, DocumentEmbeddingMethodEnum, DocumentPreprocessingMethodEnum, GeospatialRoleEnum, SchemaColumnTypeEnum } from "@/common/constants/enum";
-import { Expose, Type } from "class-transformer";
+import {
+  DataSourceTypeEnum,
+  DocumentEmbeddingMethodEnum,
+  DocumentPreprocessingMethodEnum,
+  GeospatialRoleEnum,
+  SchemaColumnTypeEnum,
+} from '@/common/constants/enum';
+import { Expose, Type } from 'class-transformer';
 
 export class ProjectDataSourceModel {
-  path: string
+  path: string;
   type: DataSourceTypeEnum;
 
   // Excel-only
@@ -14,78 +20,78 @@ export class ProjectDataSourceModel {
 }
 
 export class TextPreprocessingConfigModel {
-  @Expose({ name: "pipeline_type" })
+  @Expose({ name: 'pipeline_type' })
   pipelineType: DocumentPreprocessingMethodEnum;
 
-  @Expose({ name: "ignore_tokens" })
+  @Expose({ name: 'ignore_tokens' })
   ignoreTokens: string[];
 
   stopwords: string[];
 
-  @Expose({ name: "remove_email" })
+  @Expose({ name: 'remove_email' })
   removeEmail: boolean;
 
-  @Expose({ name: "remove_url" })
+  @Expose({ name: 'remove_url' })
   removeUrl: boolean;
 
-  @Expose({ name: "remove_number" })
+  @Expose({ name: 'remove_number' })
   removeNumber: boolean;
 
-  @Expose({ name: "min_df" })
+  @Expose({ name: 'min_df' })
   minDf: number;
 
-  @Expose({ name: "max_df" })
+  @Expose({ name: 'max_df' })
   maxDf: number;
 
-  @Expose({ name: "max_unique_words" })
+  @Expose({ name: 'max_unique_words' })
   maxUniqueWords: number;
 
-  @Expose({ name: "min_document_length" })
+  @Expose({ name: 'min_document_length' })
   minDocumentLength: number;
 
-  @Expose({ name: "min_word_length" })
+  @Expose({ name: 'min_word_length' })
   minWordLength: number;
 }
 
 export class TopicModelingConfigModel {
-  @Expose({ name: "low_memory" })
+  @Expose({ name: 'low_memory' })
   lowMemory: boolean;
 
-  @Expose({ name: "min_topic_size" })
+  @Expose({ name: 'min_topic_size' })
   minTopicSize: number;
 
-  @Expose({ name: "max_topic_size" })
+  @Expose({ name: 'max_topic_size' })
   maxTopicSize: number | null;
 
-  @Expose({ name: "clustering_conservativeness" })
+  @Expose({ name: 'clustering_conservativeness' })
   clusteringConservativeness: number;
 
-  @Expose({ name: "globality_consideration" })
+  @Expose({ name: 'globality_consideration' })
   globalityConsideration: number | null;
 
-  @Expose({ name: "max_topics" })
+  @Expose({ name: 'max_topics' })
   maxTopics: number | null;
 
-  @Expose({ name: "n_gram_range" })
+  @Expose({ name: 'n_gram_range' })
   nGramRange: [number, number];
 
-  @Expose({ name: "embedding_method" })
+  @Expose({ name: 'embedding_method' })
   embeddingMethod: DocumentEmbeddingMethodEnum;
 
-  @Expose({ name: "super_topic_similarity" })
+  @Expose({ name: 'super_topic_similarity' })
   superTopicSimilarity: number;
 
-  @Expose({ name: "top_n_words" })
+  @Expose({ name: 'top_n_words' })
   topNWords: number;
 
-  @Expose({ name: "no_outliers" })
+  @Expose({ name: 'no_outliers' })
   noOutliers: boolean;
 
-  @Expose({ name: "represent_outliers" })
+  @Expose({ name: 'represent_outliers' })
   representOutliers: boolean;
 }
 
-export class ProjectSchemaModel {
+export class SchemaColumnModel {
   name: string;
   type: SchemaColumnTypeEnum;
   alias: string | null;
@@ -93,29 +99,29 @@ export class ProjectSchemaModel {
   // Continuous
   bins?: number[] | null;
 
-  @Expose({ name: "bin_count" })
+  @Expose({ name: 'bin_count' })
   binCount?: number | null;
 
   // Ordered categorical
-  @Expose({ name: "category_order" })
+  @Expose({ name: 'category_order' })
   categoryOrder?: string[] | null;
 
   // Temporal
-  @Expose({ name: "datetime_format" })
+  @Expose({ name: 'datetime_format' })
   datetimeFormat?: string | null;
 
   // Textual
   @Type(() => TextPreprocessingConfigModel)
   preprocessing?: TextPreprocessingConfigModel;
 
-  @Expose({ name: "topic_modeling" })
+  @Expose({ name: 'topic_modeling' })
   @Type(() => TopicModelingConfigModel)
   topicModeling?: TopicModelingConfigModel;
 
   // Multi categorical
   delimiter?: string;
 
-  @Expose({ name: "is_json" })
+  @Expose({ name: 'is_json' })
   isJson?: boolean;
 
   // Geospatial
@@ -123,20 +129,20 @@ export class ProjectSchemaModel {
 }
 
 export class ProjectSchemaManagerModel {
-  @Type(() => ProjectSchemaModel)
-  columns: ProjectSchemaModel[];
+  @Type(() => SchemaColumnModel)
+  columns: SchemaColumnModel[];
 }
 
 export class ProjectConfigModel {
   version: number;
 
-  @Expose({ name: "project_id" })
+  @Expose({ name: 'project_id' })
   projectId: string;
 
   @Type(() => ProjectDataSourceModel)
-  source: ProjectDataSourceModel
+  source: ProjectDataSourceModel;
 
-  @Expose({ name: "data_schema" })
+  @Expose({ name: 'data_schema' })
   @Type(() => ProjectSchemaManagerModel)
   dataSchema: ProjectSchemaManagerModel;
 }

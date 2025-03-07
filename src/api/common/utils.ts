@@ -6,23 +6,33 @@ export const StaleTimes = {
   Short: 1 * 60 * 1000,
 }
 
+
+function invalidatePotentiallyManyListKeys(listKey: string | string[]) {
+  if (Array.isArray(listKey)) {
+    for (const key of listKey) {
+      queryClient.invalidateQueries({
+        queryKey: [listKey]
+      });
+    }
+  } else {
+    queryClient.invalidateQueries({
+      queryKey: [listKey]
+    });
+  }
+}
 export const QueryInvalidator = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Create(listKey: string, detailKey?: string) {
+  Create(listKey: string | string[], detailKey?: string) {
     return {
       onSuccess() {
-        queryClient.invalidateQueries({
-          queryKey: [listKey]
-        });
+        invalidatePotentiallyManyListKeys(listKey);
       },
     };
   },
-  Update(listKey: string, detailKey: string) {
+  Update(listKey: string | string[], detailKey: string) {
     return {
       onSuccess(_: any, variables: any) {
-        queryClient.invalidateQueries({
-          queryKey: [listKey]
-        });
+        invalidatePotentiallyManyListKeys(listKey);
         if (variables.id) {
           queryClient.invalidateQueries({
             queryKey: [detailKey, variables.id]
@@ -35,12 +45,10 @@ export const QueryInvalidator = {
       },
     };
   },
-  Delete(listKey: string, detailKey: string) {
+  Delete(listKey: string | string[], detailKey: string) {
     return {
       onSuccess(_: any, variables: any) {
-        queryClient.invalidateQueries({
-          queryKey: [listKey]
-        });
+        invalidatePotentiallyManyListKeys(listKey);
         if (variables.id) {
           queryClient.removeQueries({
             queryKey: [detailKey, variables.id]

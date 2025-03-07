@@ -14,6 +14,10 @@ export const queryClient = new QueryClient({
     queries: {
       retry: false,
       refetchOnWindowFocus: false,
+      // Since our application is only controlled by the interface, we can safely assume these long stale/cache times as the interface controls when the state
+      // is mutated.
+      staleTime: 15 * 60 * 1000,
+      gcTime: 5 * 60 * 1000,
     },
     mutations: {
       retry: false,

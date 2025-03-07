@@ -1,20 +1,40 @@
-import { ApiQueryFunction } from "@/common/api/fetch-types";
-import { InferDatasetColumnModel, ProjectCheckDatasetColumnInput, ProjectLiteModel, ProjectModel } from "./model";
-import { IdInput } from "../common/model";
-import { useQuery } from "@tanstack/react-query";
-import { ApiFetch } from "@/common/api/fetch";
-import { StaleTimes } from "../common/utils";
-import { ApiResult, ExtendedApiResult } from "@/common/api/model";
+import { ApiQueryFunction } from '@/common/api/fetch-types';
+import {
+  InferDatasetColumnModel,
+  ProjectCheckDatasetColumnInput,
+  ProjectLiteModel,
+  ProjectModel,
+} from './model';
+import { IdInput } from '../common/model';
+import { useQuery } from '@tanstack/react-query';
+import { ApiFetch } from '@/common/api/fetch';
+import { StaleTimes } from '../common/utils';
+import { ApiResult, ExtendedApiResult } from '@/common/api/model';
 
 export const ProjectQueryKeys = {
-  listKey: "getProjects",
-  detailKey: "getProject",
-  inferColumnKey: 'inferProjectDatasetColumn'
+  listKey: 'getProjects',
+  detailKey: 'getProject',
+  inferColumnKey: 'inferProjectDatasetColumn',
+};
+
+const ENDPOINT = 'projects';
+
+export function ProjectQueryKey(
+  id: string,
+  marker: string,
+  additional?: any[],
+): string[] {
+  const key = [ProjectQueryKeys.detailKey, id, marker];
+  if (additional) {
+    key.push(...additional);
+  }
+  return key;
 }
 
-const ENDPOINT = "projects";
-
-export const useGetProjects: ApiQueryFunction<void, ExtendedApiResult<ProjectLiteModel[]>> = function (input, options) {
+export const useGetProjects: ApiQueryFunction<
+  void,
+  ExtendedApiResult<ProjectLiteModel[]>
+> = function (input, options) {
   return useQuery({
     queryKey: [ProjectQueryKeys.listKey],
     staleTime: StaleTimes.Long,
@@ -25,11 +45,14 @@ export const useGetProjects: ApiQueryFunction<void, ExtendedApiResult<ProjectLit
         classType: ProjectLiteModel,
         method: 'get',
       });
-    }
+    },
   });
-}
+};
 
-export const useGetProject: ApiQueryFunction<IdInput, ApiResult<ProjectModel>> = function (input, options) {
+export const useGetProject: ApiQueryFunction<
+  IdInput,
+  ApiResult<ProjectModel>
+> = function (input, options) {
   return useQuery({
     queryKey: [ProjectQueryKeys.detailKey, input.id],
     staleTime: StaleTimes.Long,
@@ -40,10 +63,9 @@ export const useGetProject: ApiQueryFunction<IdInput, ApiResult<ProjectModel>> =
         classType: ProjectModel,
         method: 'get',
       });
-    }
+    },
   });
-}
-
+};
 
 export const useGetProjectDatasetColumnInference: ApiQueryFunction<
   ProjectCheckDatasetColumnInput,
@@ -51,7 +73,12 @@ export const useGetProjectDatasetColumnInference: ApiQueryFunction<
 > = function (input, options) {
   return useQuery({
     staleTime: StaleTimes.Medium,
-    queryKey: [ProjectQueryKeys.inferColumnKey, input.source, input.column, input.dtype],
+    queryKey: [
+      ProjectQueryKeys.inferColumnKey,
+      input.source,
+      input.column,
+      input.dtype,
+    ],
     queryFn(input) {
       return ApiFetch({
         classType: InferDatasetColumnModel,

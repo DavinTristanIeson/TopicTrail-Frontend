@@ -1,4 +1,4 @@
-import { ProjectSchemaModel } from '@/api/project';
+import { SchemaColumnModel } from '@/api/project';
 import Colors from '@/common/constants/colors';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import Text from '@/components/standard/text';
@@ -13,7 +13,7 @@ import {
 import capitalize from 'lodash/capitalize';
 
 export interface ProjectColumnComboboxItem extends ComboboxItem {
-  data: ProjectSchemaModel;
+  data: SchemaColumnModel;
 }
 
 function ProjectColumnComboboxItemRenderer(
@@ -34,9 +34,9 @@ function ProjectColumnComboboxItemRenderer(
 }
 
 interface ProjectColumnSelectInputProps {
-  data: ProjectSchemaModel[];
+  data: SchemaColumnModel[];
   value: string | null;
-  onChange(column: ProjectSchemaModel | null): void;
+  onChange(column: SchemaColumnModel | null): void;
   selectProps?: Partial<SelectProps>;
 }
 
