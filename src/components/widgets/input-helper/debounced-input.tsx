@@ -1,5 +1,5 @@
+import { useDebouncedCallback } from '@mantine/hooks';
 import React from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 interface Props<T> {
   setValue: React.Dispatch<T>;
   value: T;

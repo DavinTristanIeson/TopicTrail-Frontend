@@ -38,20 +38,20 @@ export function handleFormSubmission<T extends (...args: any) => any>(fn: T, set
     try {
       const result = await fn(...args);
       return result;
-    } catch (e: any){
+    } catch (e: any) {
       console.error(e);
-      if (e.message){
+      if (e.message) {
         showNotification({
           message: e.message.toString(),
-          color: Colors.sentimentError,
+          color: "red",
         });
       } else {
         showNotification({
           message: "An error has occurred during the submission of this form.",
-          color: Colors.sentimentError,
+          color: "red",
         });
       }
-      if (e.errors){
+      if (e.errors) {
         formSetErrors(e.errors, setError);
       }
     }

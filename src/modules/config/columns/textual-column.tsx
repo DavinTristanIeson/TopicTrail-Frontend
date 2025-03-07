@@ -195,7 +195,7 @@ function TopicModelingConfigurationFormBody(
               className="flex-1"
             />
           </Group>
-          <Text size="sm" c={Colors.foregroundDull}>
+          <Text size="sm" c="gray">
             N-Gram Range specifies the length of the phrases that can be used as
             the topic representation. For example, n-gram range of length (1, 2)
             will allow phrases like &quot;door&quot; and &quot;door hinge&quot;

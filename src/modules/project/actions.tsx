@@ -46,7 +46,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
     >
       <div className="flex-1">
         <Text>{props.id}</Text>
-        <Text c={Colors.foregroundDull}>{`from ${props.path}`}</Text>
+        <Text c="gray">{`from ${props.path}`}</Text>
       </div>
       <Group gap={12}>
         <Eye size={24} color={Colors.foregroundPrimary} />
@@ -57,7 +57,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
             e.stopPropagation();
             e.preventDefault();
           }}
-          color={Colors.sentimentError}
+          color="red"
           size="lg"
         >
           <TrashSimple size={24} />
@@ -94,13 +94,13 @@ export const DeleteProjectModal = React.forwardRef<
                 {data}
               </Text>
               ?{' '}
-              <Text fw="bold" span c={Colors.sentimentError}>
+              <Text fw="bold" span c="red">
                 This action is irreversible!
               </Text>
             </Text>
             <Flex direction="row-reverse" gap={12}>
               <Button
-                color={Colors.sentimentError}
+                color="red"
                 leftSection={<TrashSimple />}
                 loading={isPending}
                 onClick={handleErrorFn(async () => {
@@ -110,7 +110,7 @@ export const DeleteProjectModal = React.forwardRef<
                   if (res.message) {
                     showNotification({
                       message: res.message,
-                      color: Colors.sentimentSuccess,
+                      color: 'green',
                     });
                   }
                   onAfterDelete?.();
@@ -121,7 +121,7 @@ export const DeleteProjectModal = React.forwardRef<
               </Button>
               <Button
                 variant="outline"
-                color={Colors.foregroundDull}
+                color="gray"
                 leftSection={<X />}
                 onClick={close}
               >

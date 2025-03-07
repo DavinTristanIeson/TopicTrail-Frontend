@@ -30,8 +30,8 @@ function ProjectConfigColumnTitle(props: ProjectConfigColumnFormItemProps) {
   return (
     <Group>
       {error && (
-        <Tooltip label={error} radius="sm" color={Colors.sentimentError}>
-          <Warning color={Colors.sentimentError} />
+        <Tooltip label={error} radius="sm" color="red">
+          <Warning color="red" />
         </Tooltip>
       )}
       <ProjectSchemaTypeIcon type={type} />

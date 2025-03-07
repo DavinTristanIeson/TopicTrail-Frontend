@@ -64,17 +64,17 @@ export function handleErrorFn<T extends (...args: any) => any>(fn: T): T {
     try {
       const result = await fn(...args);
       return result;
-    } catch (e: any){
+    } catch (e: any) {
       console.error(e);
-      if (e.message){
+      if (e.message) {
         showNotification({
           message: e.message.toString(),
-          color: Colors.sentimentError,
+          color: "red",
         });
       } else {
         showNotification({
           message: "An unexpected error has occurred.",
-          color: Colors.sentimentError,
+          color: "red",
         });
       }
     }

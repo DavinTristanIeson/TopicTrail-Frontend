@@ -38,7 +38,7 @@ const ConfirmationDialog = React.forwardRef<
           leftSection={
             props.dangerous ? (props.icon ?? <TrashSimple />) : <CheckIcon />
           }
-          color={props.dangerous ? Colors.sentimentError : undefined}
+          color={props.dangerous ? 'red' : undefined}
           onClick={props.onConfirm}
         >
           {props.positiveAction ?? 'Confirm'}

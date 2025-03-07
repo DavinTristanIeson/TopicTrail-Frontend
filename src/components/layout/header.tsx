@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import ConfirmationDialog from '../widgets/confirmation';
+import GlobalConfig from '@/common/constants/global';
 
 interface AppHeaderProps {
   back?: boolean;
@@ -40,7 +41,7 @@ export default function AppHeader(props: AppHeaderProps) {
             Go Back
           </Button>
         )}
-        <Title order={1}>{props.title ?? 'WORDSMITH'}</Title>
+        <Title order={1}>{props.title ?? GlobalConfig.AppName}</Title>
       </Group>
     </>
   );

@@ -6,7 +6,6 @@ import AppHeader from '@/components/layout/header';
 import { AppSidebarLinkRenderer } from '@/components/layout/sidebar';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { DisclosureTrigger } from '@/hooks/disclosure';
-import ProjectConfigModal from '@/modules/config-modal';
 import { Divider, Stack } from '@mantine/core';
 import {
   ArrowsLeftRight,
@@ -26,7 +25,6 @@ interface ProjectNavbarProps {
 function ProjectNavbar(props: ProjectNavbarProps) {
   const { config } = props;
   const id = useRouter().query.id as string;
-  const remote = React.useRef<DisclosureTrigger | null>(null);
   return (
     <Stack>
       <AppSidebarLinkRenderer
@@ -80,8 +78,11 @@ function ProjectNavbar(props: ProjectNavbarProps) {
             label: 'Reconfigure Project',
             icon: <Gear size={24} />,
             loading: !config,
-            onClick() {
-              remote.current?.open();
+            url: {
+              pathname: NavigationRoutes.ProjectConfiguration,
+              query: {
+                id,
+              },
             },
           },
           {
@@ -93,7 +94,6 @@ function ProjectNavbar(props: ProjectNavbarProps) {
           },
         ]}
       />
-      <ProjectConfigModal ref={remote} data={config} />
     </Stack>
   );
 }

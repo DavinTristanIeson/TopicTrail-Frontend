@@ -24,7 +24,7 @@ export function PercentageInput(props: NumberInputProps) {
       value={typeof controlledValue === 'number' ? controlledValue * 100 : ''}
       onChange={onChange}
       decimalScale={2}
-      rightSection={<Text c={Colors.foregroundDull}>%</Text>}
+      rightSection={<Text c="gray">%</Text>}
     />
   );
 }

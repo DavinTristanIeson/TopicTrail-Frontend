@@ -25,6 +25,7 @@ import {
 } from '../form-type';
 import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
+import GlobalConfig from '@/common/constants/global';
 
 // +---------------+
 interface ProjectConfigDataSourceFormProps {
@@ -79,7 +80,7 @@ export function ConfigureDataSourceForm(
           name="source.path"
           label="Dataset Path"
           placeholder="path/to/dataset"
-          description="Enter the absolute file path or relative file path (relative to the directory of the Wordsmith Project) to your dataset."
+          description={`Enter the absolute file path or relative file path (relative to the directory of the ${GlobalConfig.AppName}) to your dataset.`}
           required
           readOnly={props.disabled}
           w="100%"
@@ -132,7 +133,7 @@ export function ConfigureProjectFlow_CheckDataset(
       if (res.message) {
         showNotification({
           message: res.message,
-          color: Colors.sentimentSuccess,
+          color: 'green',
         });
       }
 
@@ -147,7 +148,7 @@ export function ConfigureProjectFlow_CheckDataset(
       console.error(e);
       if (e.message) {
         showNotification({
-          color: Colors.sentimentError,
+          color: 'red',
           message: e.message,
         });
       }
@@ -169,7 +170,7 @@ export function ConfigureProjectFlow_CheckDataset(
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
       </Text>
       {props.hasData && (
-        <Alert color={Colors.sentimentWarning}>
+        <Alert color="yellow">
           <Flex align="center" gap={16} py={8}>
             <WarningCircle size={24} />
             Note that once your dataset has been changed, any existing columns
@@ -182,14 +183,7 @@ export function ConfigureProjectFlow_CheckDataset(
       )}
       <LoadingOverlay visible={isPending} />
       <ConfigureDataSourceForm disabled={false} />
-      <Flex justify="space-between" w="100%">
-        <Button
-          leftSection={<ArrowLeft size={20} />}
-          variant="outline"
-          onClick={props.onBack}
-        >
-          Change Project Name?
-        </Button>
+      <Flex justify="space-between" direction="row-reverse" w="100%">
         <Button
           leftSection={<CheckCircle size={20} />}
           onClick={handleSubmit}
@@ -197,6 +191,15 @@ export function ConfigureProjectFlow_CheckDataset(
         >
           Verify Dataset
         </Button>
+        {props.onBack && (
+          <Button
+            leftSection={<ArrowLeft size={20} />}
+            variant="outline"
+            onClick={props.onBack}
+          >
+            Change Project Name?
+          </Button>
+        )}
       </Flex>
     </Stack>
   );

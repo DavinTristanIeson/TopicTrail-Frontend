@@ -12,6 +12,7 @@ import { useFormContext } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
 import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
+import GlobalConfig from '@/common/constants/global';
 
 interface ConfigureProjectFlow_CheckProjectIdProps {
   onContinue(): void;
@@ -51,7 +52,7 @@ export function ConfigureProjectFlow_CheckProjectId(
     if (res.message) {
       showNotification({
         message: res.message,
-        color: Colors.sentimentSuccess,
+        color: 'green',
       });
     }
     props.onContinue();
@@ -67,10 +68,10 @@ export function ConfigureProjectFlow_CheckProjectId(
       <Text wrap>
         First things first, please specify the name of your project. Note that
         your project can be found in the{' '}
-        <Text c={Colors.foregroundPrimary} span>
+        <Text c="brand" span>
           data
         </Text>{' '}
-        directory in the same directory as the Wordsmith Project.
+        directory in the same directory as {GlobalConfig.AppName}.
       </Text>
       <ProjectIdForm disabled={isPending} />
       <Flex direction="row-reverse" w="100%">

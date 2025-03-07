@@ -1,9 +1,12 @@
-import React from "react";
-import Button, { ButtonProps } from "./base";
+import { Button, ButtonProps, createPolymorphicComponent } from '@mantine/core';
+import React from 'react';
 
-export default function PromiseButton(props: ButtonProps) {
+const PromiseButton = React.forwardRef<
+  HTMLButtonElement,
+  ButtonProps & React.ComponentPropsWithoutRef<'button'>
+>(function PromiseButton(props, ref) {
   const [loading, setLoading] = React.useState(false);
-  const onClick: ButtonProps["onClick"] = (e) => {
+  const onClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     setLoading(true);
     try {
       props.onClick?.(e);
@@ -17,4 +20,5 @@ export default function PromiseButton(props: ButtonProps) {
   return (
     <Button {...props} loading={loading} onClick={props.onClick && onClick} />
   );
-}
+});
+export default PromiseButton;

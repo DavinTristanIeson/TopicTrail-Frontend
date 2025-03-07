@@ -1,50 +1,27 @@
-import {
-  useCreateProject,
-  useGetProject,
-  useUpdateProject,
-  useUpdateProjectColumns,
-} from '@/api/project';
-import Colors from '@/common/constants/colors';
+import { useUpdateProject, useUpdateProjectColumns } from '@/api/project';
 import NavigationRoutes from '@/common/constants/routes';
-import AppLayout from '@/components/layout/app';
-import AppHeader from '@/components/layout/header';
-import Text from '@/components/standard/text';
-import ConfirmationDialog from '@/components/widgets/confirmation';
-import {
-  DisclosureTrigger,
-  ParametrizedDisclosureTrigger,
-} from '@/hooks/disclosure';
+import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import ProjectConfigForm from '@/modules/config';
 import { DeleteProjectModal } from '@/modules/project/actions';
 import { ProjectContext } from '@/modules/project/context';
 import AppProjectLayout from '@/modules/project/layout';
-import {
-  Alert,
-  Button,
-  Divider,
-  Group,
-  Menu,
-  Popover,
-  Switch,
-  Tooltip,
-} from '@mantine/core';
+import { Button, Divider, Group, Menu, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import {
-  Info,
-  Lock,
-  LockOpen,
-  PencilSimple,
-  TrashSimple,
-} from '@phosphor-icons/react';
+import { Info, PencilSimple, TrashSimple, X } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-function UpdateProjectFull() {
+interface UpdateProjectFormProps {
+  editable: boolean;
+}
+
+function UpdateProjectFull(props: UpdateProjectFormProps) {
   const { mutateAsync: update } = useUpdateProject();
   const router = useRouter();
   return (
     <ProjectConfigForm
       data={undefined}
+      editable={props.editable}
       onSubmit={async (input) => {
         const res = await update({
           id: router.query.id as string,
@@ -53,7 +30,7 @@ function UpdateProjectFull() {
         if (res.message) {
           showNotification({
             message: res.message,
-            color: Colors.sentimentSuccess,
+            color: 'green',
           });
         }
         router.back();
@@ -62,12 +39,13 @@ function UpdateProjectFull() {
   );
 }
 
-function UpdateProjectLimited() {
+function UpdateProjectLimited(props: UpdateProjectFormProps) {
   const { mutateAsync: updateColumns } = useUpdateProjectColumns();
   const router = useRouter();
   return (
     <ProjectConfigForm
       data={undefined}
+      editable={props.editable}
       onSubmit={async (input) => {
         const res = await updateColumns({
           id: router.query.id as string,
@@ -76,7 +54,7 @@ function UpdateProjectLimited() {
         if (res.message) {
           showNotification({
             message: res.message,
-            color: Colors.sentimentSuccess,
+            color: 'green',
           });
         }
         router.back();
@@ -101,7 +79,7 @@ function UpdateProjectDeleteButton() {
       <Button
         variant="outline"
         leftSection={<TrashSimple />}
-        color={Colors.sentimentError}
+        color="red"
         onClick={() => {
           if (!project?.id) return;
           deleteRemote.current?.open(project.id);
@@ -138,14 +116,17 @@ function UpdateProjectEditButton(props: UpdateProjectEditButtonProps) {
         <Menu.Divider />
         <Menu.Label>
           Dangerous
-          <Tooltip label="This will cause cached objects such as document vectors and topic modeling results to be deleted; which means that you will have to run the topic modeling procedure again if you have already run it before.">
-            <Info color={Colors.sentimentError} />
+          <Tooltip
+            label="This will cause cached objects such as document vectors and topic modeling results to be deleted; which means that you will have to run the topic modeling procedure again if you have already run it before."
+            color="red"
+          >
+            <Info color="red" />
           </Tooltip>
         </Menu.Label>
         <Menu.Item
           onClick={() => {
             setEditable(true);
-            setColumnsOnly(true);
+            setColumnsOnly(false);
           }}
         >
           Change Dataset
@@ -155,8 +136,6 @@ function UpdateProjectEditButton(props: UpdateProjectEditButtonProps) {
   );
 }
 
-function UpdateProjectId
-
 function UpdateProjectPageContent() {
   const [columnsOnly, setColumnsOnly] = React.useState(false);
   const [editable, setEditable] = React.useState(false);
@@ -164,7 +143,7 @@ function UpdateProjectPageContent() {
   return (
     <>
       <Group justify="end">
-        {!editable && (
+        {!editable ? (
           <>
             <UpdateProjectEditButton
               onChangeProjectId={() => {}}
@@ -173,24 +152,26 @@ function UpdateProjectPageContent() {
             />
             <UpdateProjectDeleteButton />
           </>
+        ) : (
+          <Button
+            variant="outline"
+            color="red"
+            leftSection={<X />}
+            onClick={() => {
+              setColumnsOnly(true);
+              setEditable(false);
+            }}
+          >
+            Cancel
+          </Button>
         )}
       </Group>
-      {columnsOnly && (
-        <Alert
-          color={columnsOnly ? Colors.sentimentInfo : Colors.sentimentError}
-        >
-          <Group gap={4}>
-            {columnsOnly ? <Lock size={24} /> : <LockOpen size={24} />}
-            <Text>
-              {columnsOnly
-                ? 'Right now, you can only update the column configurations. Other fields such as column types, dataset, and project ID cannot be updated.'
-                : ''}
-            </Text>
-            <Switch checked={!columnsOnly} label="Update everything?" />
-          </Group>
-        </Alert>
-      )}
       <Divider />
+      {columnsOnly ? (
+        <UpdateProjectLimited editable={editable} />
+      ) : (
+        <UpdateProjectFull editable={editable} />
+      )}
     </>
   );
 }

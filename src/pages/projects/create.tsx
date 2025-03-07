@@ -16,12 +16,14 @@ export default function CreateProjectPage() {
     <AppLayout Header={<AppHeader title="Create New Project" />}>
       <ProjectConfigForm
         data={undefined}
+        editable
+        columnsOnly={false}
         onSubmit={async (input) => {
           const res = await create(input);
           if (res.message) {
             showNotification({
               message: res.message,
-              color: Colors.sentimentSuccess,
+              color: 'green',
             });
           }
           router.push(NavigationRoutes.Project, {

@@ -1,4 +1,3 @@
-import { useFormState } from 'components/elements/form';
 import React from 'react';
 import { useController } from 'react-hook-form';
 
@@ -59,10 +58,9 @@ interface OnBlurFieldProps<TValue> {
 }
 
 export function OnBlurField<TValue>(props: OnBlurFieldProps<TValue>) {
-  const { field, fieldState } = useController({
+  const { field, fieldState, formState } = useController({
     name: props.name,
   });
-  const { editable } = useFormState();
   return (
     <OnBlurInput
       value={field.value}
@@ -77,7 +75,7 @@ export function OnBlurField<TValue>(props: OnBlurFieldProps<TValue>) {
       {(renderProps) =>
         props.children({
           ...renderProps,
-          disabled: !editable,
+          disabled: formState.disabled,
           error: props.noError ? undefined : fieldState.error?.message,
         })
       }

@@ -7,15 +7,17 @@ import ProjectConfigFormBody from './phase-3';
 
 interface ProjectConfigPhaseSwitcherProps {
   data: ProjectConfigModel | undefined;
+  minPhase: number;
 }
 
 export default function ProjectConfigFormPhaseSwitcher(
   props: ProjectConfigPhaseSwitcherProps,
 ) {
-  const { data } = props;
-  const [phase, setPhase] = React.useState(data ? 2 : 0);
-  const onContinue = () => setPhase((phase) => phase + 1);
-  const onBack = () => setPhase((phase) => phase - 1);
+  const { data, minPhase } = props;
+  const [phase, setPhase] = React.useState(minPhase);
+  const maxPhase = 2;
+  const onContinue = () => setPhase((phase) => Math.min(phase + 1, maxPhase));
+  const onBack = () => setPhase((phase) => Math.max(phase - 1, maxPhase));
   return (
     <>
       <Stepper
@@ -23,10 +25,18 @@ export default function ProjectConfigFormPhaseSwitcher(
         onStepClick={setPhase}
         allowNextStepsSelect={false}
       >
-        <Stepper.Step label="Step 1/3" description="Choose a project ID">
+        <Stepper.Step
+          label="Step 1/3"
+          description="Choose a project ID"
+          allowStepSelect={false}
+        >
           <ConfigureProjectFlow_CheckProjectId onContinue={onContinue} />
         </Stepper.Step>
-        <Stepper.Step label="Step 2/3" description="Choose a dataset">
+        <Stepper.Step
+          label="Step 2/3"
+          description="Choose a dataset"
+          allowStepSelect={false}
+        >
           <ConfigureProjectFlow_CheckDataset
             hasData={!!data}
             onContinue={onContinue}
@@ -36,6 +46,7 @@ export default function ProjectConfigFormPhaseSwitcher(
         <Stepper.Step
           label="Step 3/3"
           description="Configure the schema of the dataset"
+          allowStepSelect={false}
         >
           <ProjectConfigFormBody onBack={onBack} />
         </Stepper.Step>

@@ -1,10 +1,10 @@
-import { handleErrorFn } from "@/common/utils/error";
-import Colors from "@/common/constants/colors";
-import { useRouter } from "next/router";
-import React from "react";
-import PromiseButton from "../standard/button/promise";
-import { Url } from "next/dist/shared/lib/router/router";
-import { Divider, Group, Stack } from "@mantine/core";
+import { handleErrorFn } from '@/common/utils/error';
+import Colors from '@/common/constants/colors';
+import { useRouter } from 'next/router';
+import React from 'react';
+import PromiseButton from '../standard/button/promise';
+import { Url } from 'next/dist/shared/lib/router/router';
+import { Divider, Group, Stack } from '@mantine/core';
 
 export interface AppNavigationLink {
   label: string;
@@ -27,19 +27,19 @@ export function AppSidebarLinkRenderer({ links }: AppSidebarLinkRendererProps) {
             key={link.label}
             variant="subtle"
             loading={link.loading}
-            color={Colors.foregroundPrimary}
+            color="brand"
             fullWidth
             onClick={
               link.onClick
                 ? handleErrorFn(link.onClick)
                 : link.url
-                ? () => {
-                    router.push(link.url!);
-                  }
-                : undefined
+                  ? () => {
+                      router.push(link.url!);
+                    }
+                  : undefined
             }
             classNames={{
-              inner: "justify-start",
+              inner: 'justify-start',
             }}
           >
             <Group justify="flex-start" w="100%">

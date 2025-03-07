@@ -23,6 +23,7 @@ interface ProjectConfigFormProps {
 export default function ProjectConfigForm(props: ProjectConfigFormProps) {
   const { data, onSubmit, columnsOnly, editable = true } = props;
   const resolver = yupResolver(ProjectConfigFormSchema);
+
   const form = useForm({
     mode: 'onChange',
     resolver,
@@ -35,13 +36,19 @@ export default function ProjectConfigForm(props: ProjectConfigFormProps) {
     await onSubmit?.(input);
   };
 
+  React.useEffect(() => {
+    if (!editable) {
+      form.reset();
+    }
+  }, [editable]);
+
   return (
     <FormWrapper form={form} onSubmit={handleSubmit}>
       <CanChangeColumnTypesContext.Provider value={!columnsOnly}>
-        {columnsOnly ? (
+        {!editable || columnsOnly ? (
           <ProjectConfigFormBody />
         ) : (
-          <ProjectConfigFormPhaseSwitcher data={data} />
+          <ProjectConfigFormPhaseSwitcher data={data} minPhase={data ? 1 : 0} />
         )}
       </CanChangeColumnTypesContext.Provider>
     </FormWrapper>
