@@ -11,6 +11,8 @@ import {
   Button,
   Modal,
   Group,
+  ActionIcon,
+  TextInput,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { CheckCircle, PencilSimple } from '@phosphor-icons/react';
@@ -27,17 +29,17 @@ import {
   ParametrizedDisclosureTrigger,
   useParametrizedDisclosureTrigger,
 } from '@/hooks/disclosure';
+import Colors from '@/common/constants/colors';
 
 interface ConfigureProjectFlow_CheckProjectIdProps {
   onContinue(): void;
 }
 
 const UpdateProjectIdForm = React.forwardRef<
-  ParametrizedDisclosureTrigger | null,
+  ParametrizedDisclosureTrigger<string> | null,
   object
->(function UpdateProjectIdForm(props) {
-  const { projectId } = props;
-  const { mutateAsync: updateProjectId } = client.useMutation(
+>(function UpdateProjectIdForm(props, ref) {
+  const { mutateAsync: updateProjectId, error } = client.useMutation(
     'patch',
     '/projects/{project_id}/update-project-id',
     {
@@ -46,27 +48,30 @@ const UpdateProjectIdForm = React.forwardRef<
       },
     },
   );
+  const [projectId, { close }] = useParametrizedDisclosureTrigger<string>(ref);
   const [newProjectId, setNewProjectId] = React.useState(projectId);
-  const [projectId, { close }] = useParametrizedDisclosureTrigger<string>();
+  React.useEffect(() => {
+    setNewProjectId(projectId);
+  }, [projectId]);
   return (
-    <Modal
-      opened={false}
-      onClose={function (): void {
-        throw new Error('Function not implemented.');
-      }}
-    >
+    <Modal opened={!!projectId} onClose={close} title="Update Project Name">
       <Modal.Header>
         <Group justify="end">
           <Button
-            disabled={newProjectId.length === 0 || newProjectId === projectId}
+            disabled={
+              !newProjectId ||
+              newProjectId.length === 0 ||
+              newProjectId === projectId
+            }
             onClick={() => {
+              if (!newProjectId || !projectId) return;
               updateProjectId({
                 body: {
                   project_id: newProjectId,
                 },
                 params: {
                   path: {
-                    project_id: projectId,
+                    project_id: projectId!,
                   },
                 },
               });
@@ -76,7 +81,15 @@ const UpdateProjectIdForm = React.forwardRef<
           </Button>
         </Group>
       </Modal.Header>
-      <Modal.Body></Modal.Body>
+      <Modal.Body>
+        <TextInput
+          value={newProjectId}
+          onChange={(e) => setNewProjectId(e.target.value)}
+          error={error}
+          label="New Project Name"
+          description="The name of the project should be a valid and unique file name."
+        />
+      </Modal.Body>
     </Modal>
   );
 });
@@ -87,17 +100,34 @@ interface ProjectIdFormProps {
 }
 
 export function ProjectIdForm(props: ProjectIdFormProps) {
+  const { projectId, disabled } = props;
+  const {
+    formState: { disabled: formDisabled },
+  } = useFormContext();
+  const projectIdRemote =
+    React.useRef<ParametrizedDisclosureTrigger<string> | null>(null);
   return (
     <>
+      <UpdateProjectIdForm ref={projectIdRemote} />
       <RHFField
         type="text"
         name="project_id"
         label="Project Name"
-        description="The name of the project should be unique."
+        description="The name of the project should be a valid and unique file name."
         required
-        readOnly={props.disabled}
+        readOnly={disabled || formDisabled}
         rightSection={
-          props.projectId && props.disabled ? <PencilSimple size={16} /> : null
+          projectId && (disabled || formDisabled) ? (
+            <ActionIcon
+              variant="subtle"
+              color={Colors.sentimentInfo}
+              onClick={() => {
+                projectIdRemote.current?.open(projectId);
+              }}
+            >
+              <PencilSimple size={16} />
+            </ActionIcon>
+          ) : null
         }
       />
     </>
