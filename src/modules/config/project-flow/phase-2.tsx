@@ -1,12 +1,11 @@
 // +---------------+
 // | CHECK DATASET |
 
-import {
-  ProjectCheckDatasetModel,
-  useCheckProjectDataset,
-} from '@/api/project';
 import Colors from '@/common/constants/colors';
-import { DataSourceTypeEnum } from '@/common/constants/enum';
+import {
+  DataSourceTypeEnum,
+  SchemaColumnTypeEnum,
+} from '@/common/constants/enum';
 import { formSetErrors } from '@/common/utils/form';
 import {
   Flex,
@@ -26,6 +25,9 @@ import {
 import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
 import GlobalConfig from '@/common/constants/global';
+import { client } from '@/common/api/client';
+import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
+import { ProjectInferDatasetModel } from '@/api/project';
 
 // +---------------+
 interface ProjectConfigDataSourceFormProps {
@@ -115,7 +117,7 @@ export function ConfigureDataSourceForm(
 }
 
 interface ConfigureProjectFlow_CheckDatasetProps {
-  onContinue(values: ProjectCheckDatasetModel): void;
+  onContinue(values: ProjectInferDatasetModel): void;
   onBack(): void;
   hasData: boolean;
 }
@@ -123,13 +125,18 @@ interface ConfigureProjectFlow_CheckDatasetProps {
 export function ConfigureProjectFlow_CheckDataset(
   props: ConfigureProjectFlow_CheckDatasetProps,
 ) {
-  const { mutateAsync: check, isPending } = useCheckProjectDataset();
+  const { mutateAsync: check, isPending } = client.useMutation(
+    'post',
+    '/projects/check-dataset',
+  );
   const { getValues, setError, setValue } =
     useFormContext<ProjectConfigFormType>();
   const handleSubmit = async () => {
     const values = getValues();
     try {
-      const res = await check(values.source);
+      const res = await check({
+        body: transformDataSourceFormType2DataSourceInput(values.source),
+      });
       if (res.message) {
         showNotification({
           message: res.message,
@@ -140,7 +147,10 @@ export function ConfigureProjectFlow_CheckDataset(
       setValue(
         'columns',
         res.data.columns.map((column) => {
-          return DefaultProjectSchemaColumnValues(column.name, column.type);
+          return DefaultProjectSchemaColumnValues(
+            column.name,
+            column.type as SchemaColumnTypeEnum,
+          );
         }),
       );
       props.onContinue(res.data);

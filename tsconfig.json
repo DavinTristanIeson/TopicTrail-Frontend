@@ -15,6 +15,7 @@
     "incremental": true,
     "experimentalDecorators": true,
     "target": "ES6",
+    "noUncheckedIndexedAccess": true,
     "plugins": [
       {
         "name": "next"

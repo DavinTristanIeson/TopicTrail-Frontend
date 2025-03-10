@@ -1,5 +1,4 @@
 import { ProjectConfigModel } from '@/api/project';
-import { useGetProject } from '@/api/project/query';
 import NavigationRoutes from '@/common/constants/routes';
 import AppLayout from '@/components/layout/app';
 import AppHeader from '@/components/layout/header';
@@ -17,6 +16,7 @@ import {
 import { useRouter } from 'next/router';
 import React from 'react';
 import { ProjectContext } from './context';
+import { client } from '@/common/api/client';
 
 interface ProjectNavbarProps {
   config?: ProjectConfigModel;
@@ -104,9 +104,15 @@ interface AppProjectLayoutProps {
 
 export default function AppProjectLayout(props: AppProjectLayoutProps) {
   const id = useRouter().query.id as string;
-  const query = useGetProject(
+  const query = client.useQuery(
+    'get',
+    '/projects/{project_id}',
     {
-      id,
+      params: {
+        path: {
+          project_id: id,
+        },
+      },
     },
     {
       enabled: !!id,

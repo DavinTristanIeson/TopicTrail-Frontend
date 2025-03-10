@@ -45,13 +45,13 @@ export function DescriptiveStatisticsTable(
     },
     {
       label: 'Inlier Range',
-      value: props.inlierRange,
+      value: props.inlier_range,
       description:
         'This range contains all values that can be reasonably considered to be inliers. Values outside of this range will be counted as outliers.',
     },
     {
       label: 'Outlier Count',
-      value: props.outlierCount,
+      value: props.outlier_count,
     },
   ];
   if (props.loading) {

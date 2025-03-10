@@ -9,7 +9,6 @@ export enum SchemaColumnTypeEnum {
   Textual = 'textual',
   Unique = 'unique',
   Geospatial = 'geospatial',
-  Image = 'image',
   Topic = 'topic',
 }
 

@@ -7,14 +7,13 @@ import ProjectConfigFormBody from './phase-3';
 
 interface ProjectConfigPhaseSwitcherProps {
   data: ProjectConfigModel | undefined;
-  minPhase: number;
 }
 
 export default function ProjectConfigFormPhaseSwitcher(
   props: ProjectConfigPhaseSwitcherProps,
 ) {
-  const { data, minPhase } = props;
-  const [phase, setPhase] = React.useState(minPhase);
+  const { data } = props;
+  const [phase, setPhase] = React.useState(0);
   const maxPhase = 2;
   const onContinue = () => setPhase((phase) => Math.min(phase + 1, maxPhase));
   const onBack = () => setPhase((phase) => Math.max(phase - 1, maxPhase));

@@ -2,7 +2,6 @@ import {
   Button,
   Drawer,
   Group,
-  Modal,
   Paper,
   Skeleton,
   Switch,
@@ -156,7 +155,7 @@ export function ProjectConfigColumnOrderedCategoricalForm(
   props: ProjectConfigColumnFormProps,
 ) {
   const { index } = props;
-  const categoriesName = `columns.${index}.categoryOrder` as const;
+  const categoriesName = `columns.${index}.category_order` as const;
   const { control, setValue } = useFormContext<ProjectConfigFormType>();
   const categories = useWatch({
     name: categoriesName,

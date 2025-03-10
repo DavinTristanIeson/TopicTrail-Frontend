@@ -15,7 +15,7 @@ export default function FieldWatcher(props: FieldWatcherProps) {
 
   const fields: Record<string, any> = {};
   for (let i = 0; i < props.names.length; i++) {
-    fields[props.names[i]] = values[i];
+    fields[props.names[i]!] = values[i];
   }
 
   return <>{props.children?.(fields)}</>;

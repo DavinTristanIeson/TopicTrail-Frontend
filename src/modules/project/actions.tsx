@@ -10,22 +10,23 @@ import {
 } from '@mantine/core';
 import Text from '@/components/standard/text';
 import React from 'react';
-import { Eye, TrashSimple, X } from '@phosphor-icons/react';
+import { Eye, PencilSimple, TrashSimple, X } from '@phosphor-icons/react';
 import Colors from '@/common/constants/colors';
-import { ProjectLiteModel } from '@/api/project/model';
+import {
+  invalidateProjectDependencyQueries,
+  ProjectLiteModel,
+} from '@/api/project';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
-import { useDeleteProject } from '@/api/project';
 import { handleErrorFn } from '@/common/utils/error';
 import { showNotification } from '@mantine/notifications';
 import {
   ParametrizedDisclosureTrigger,
   useParametrizedDisclosureTrigger,
 } from '@/hooks/disclosure';
+import { client } from '@/common/api/client';
 
-interface ProjectListItemProps extends ProjectLiteModel {
-  onDelete(id: string): void;
-}
+interface ProjectListItemProps extends ProjectLiteModel {}
 
 export function ProjectListItem(props: ProjectListItemProps) {
   const router = useRouter();
@@ -53,14 +54,18 @@ export function ProjectListItem(props: ProjectListItemProps) {
         <ActionIcon
           variant="subtle"
           onClick={(e) => {
-            props.onDelete(props.id);
             e.stopPropagation();
             e.preventDefault();
+            router.push({
+              pathname: NavigationRoutes.ProjectConfiguration,
+              query: {
+                id: props.id,
+              },
+            });
           }}
-          color="red"
           size="lg"
         >
-          <TrashSimple size={24} />
+          <PencilSimple size={24} />
         </ActionIcon>
       </Group>
     </Paper>
@@ -76,7 +81,15 @@ export const DeleteProjectModal = React.forwardRef<
   DeleteProjectModalProps
 >(function DeleteProjectModal(props, ref) {
   const { onAfterDelete } = props;
-  const { mutateAsync, isPending } = useDeleteProject();
+  const { mutateAsync, isPending } = client.useMutation(
+    'delete',
+    '/projects/{project_id}',
+    {
+      onSuccess(data, variables, context) {
+        invalidateProjectDependencyQueries();
+      },
+    },
+  );
   const [data, { close }] = useParametrizedDisclosureTrigger(ref);
   return (
     <Modal
@@ -105,7 +118,11 @@ export const DeleteProjectModal = React.forwardRef<
                 loading={isPending}
                 onClick={handleErrorFn(async () => {
                   const res = await mutateAsync({
-                    id: data,
+                    params: {
+                      path: {
+                        project_id: data,
+                      },
+                    },
                   });
                   if (res.message) {
                     showNotification({

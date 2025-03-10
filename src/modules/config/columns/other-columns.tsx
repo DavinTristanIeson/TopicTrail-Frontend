@@ -1,9 +1,9 @@
 import TextLink from '@/components/standard/button/link';
 import RHFField from '@/components/standard/fields';
-import { ProjectConfigColumnFormProps } from './utils';
 import Text from '@/components/standard/text';
 import { GeospatialRoleEnum } from '@/common/constants/enum';
 import FieldWatcher from '@/components/standard/fields/watcher';
+import { ProjectConfigColumnFormProps } from './utils';
 
 export function ProjectConfigColumnTemporalForm(
   props: ProjectConfigColumnFormProps,
@@ -13,7 +13,7 @@ export function ProjectConfigColumnTemporalForm(
   return (
     <RHFField
       type="text"
-      name={`columns.${index}.datetimeFormat`}
+      name={`columns.${index}.datetime_format`}
       label="Datetime Format"
       description={
         <Text size="xs">
@@ -57,7 +57,7 @@ export function ProjectConfigColumnMulticategoricalForm(
   props: ProjectConfigColumnFormProps,
 ) {
   const { index } = props;
-  const JSON_NAME = `columns.${index}.isJson`;
+  const JSON_NAME = `columns.${index}.is_json`;
   const DELIMITER_NAME = `columns.${index}.delimiter`;
 
   return (

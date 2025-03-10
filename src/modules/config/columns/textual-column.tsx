@@ -66,7 +66,7 @@ function PreprocessingConfigurationFormBody(
         <RHFField
           type="tags"
           label="Ignore Tokens"
-          name={`${PREPROCESSING_NAME}.ignoreTokens`}
+          name={`${PREPROCESSING_NAME}.ignore_tokens`}
           description={
             <Text size="xs">
               The words that should be
@@ -93,50 +93,50 @@ function PreprocessingConfigurationFormBody(
           }
         />
         <RHFField
-          name={`${PREPROCESSING_NAME}.removeEmail`}
+          name={`${PREPROCESSING_NAME}.remove_email`}
           label="Remove email?"
           type="switch"
           description="Should all emails be removed from the column? Turn this off if emails are important."
         />
         <RHFField
-          name={`${PREPROCESSING_NAME}.removeUrl`}
+          name={`${PREPROCESSING_NAME}.remove_url`}
           label="Remove URL?"
           type="switch"
           description="Should all URLs be removed from the column? Turn this off if URLs are important."
         />
         <RHFField
-          name={`${PREPROCESSING_NAME}.removeNumber`}
+          name={`${PREPROCESSING_NAME}.remove_number`}
           label="Remove number?"
           type="switch"
           description="Should all numbers be removed? Turn this off if numbers are important."
         />
         <RHFField
-          name={`${PREPROCESSING_NAME}.minWordFrequency`}
+          name={`${PREPROCESSING_NAME}.min_df`}
           label="Min. Word Frequency"
           type="number"
           description="Words with frequencies below this threshold will be removed from the documents. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
         />
         <RHFField
           type="percentage"
-          name={`${PREPROCESSING_NAME}.maxWordFrequency`}
+          name={`${PREPROCESSING_NAME}.max_df`}
           label="Max. Word Frequency"
           bounded
           description="Words with frequencies above this threshold will be removed from the documents. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
         />
         <RHFField
-          name={`${PREPROCESSING_NAME}.maxUniqueWords`}
+          name={`${PREPROCESSING_NAME}.max_unique_words`}
           label="Max. Unique Words"
           type="number"
           description="The maximum number of unique words that will be kept from the documents. Having too many unique words may take up a lot of memory in your device. Assume that 10M unique words takes up 1GB of RAM. You probably will not need to tune this value if your dataset is not very large."
         />
         <RHFField
-          name={`${PREPROCESSING_NAME}.minDocumentLength`}
+          name={`${PREPROCESSING_NAME}.min_document_length`}
           label="Min. Number of Words in a Document"
           type="number"
           description="Documents with words less than this threshold will not be included in the topic modeling procedure as they provide too little information."
         />
         <RHFField
-          name={`${PREPROCESSING_NAME}.minWordLength`}
+          name={`${PREPROCESSING_NAME}.min_word_length`}
           label="Min. Number of Characters in a Word"
           type="number"
           description={`Words with characters less than this threshold will be omitted as they do not provide enough information. Consider setting this to 2 if you have acronyms in your dataset, or include any important acronyms in the "Ignore Tokens" field`}
@@ -150,7 +150,7 @@ function TopicModelingConfigurationFormBody(
   props: ProjectConfigColumnFormProps,
 ) {
   const { index } = props;
-  const TOPIC_MODELING_NAME = `columns.${index}.topicModeling` as const;
+  const TOPIC_MODELING_NAME = `columns.${index}.topic_modeling` as const;
   return (
     <>
       <Text fw="bold">Topic Modeling Configuration</Text>
@@ -158,7 +158,7 @@ function TopicModelingConfigurationFormBody(
         <EmbeddingMethodSelectField {...props} />
         <RHFField
           type="number"
-          name={`${TOPIC_MODELING_NAME}.minTopicSize`}
+          name={`${TOPIC_MODELING_NAME}.min_topic_size`}
           label="Min. Topic Size"
           min={1}
           description="The minimal number of similar documents to be considered a topic."
@@ -166,14 +166,14 @@ function TopicModelingConfigurationFormBody(
         />
         <RHFField
           type="percentage"
-          name={`${TOPIC_MODELING_NAME}.maxTopicSize`}
+          name={`${TOPIC_MODELING_NAME}.max_topic_size`}
           label="Max. Topic Size"
           bounded
           description="The maximum number of documents that are grouped into the same topic. A low value will make the algorithm discover more specific topics, while a high value encourages the model to find more generic, but potentially imbalanced topics. Note that this field is in percentages."
         />
         <RHFField
           type="number"
-          name={`${TOPIC_MODELING_NAME}.maxTopics`}
+          name={`${TOPIC_MODELING_NAME}.max_topics`}
           label="Max Topics"
           min={1}
           description="The maximum number of topics that can be discovered by the model. If the model discovers more topics than this threshold, then the smaller topics will be merged iteratively into a bigger topic."
@@ -182,14 +182,14 @@ function TopicModelingConfigurationFormBody(
           <Group>
             <RHFField
               type="number"
-              name={`${TOPIC_MODELING_NAME}.nGramRangeStart`}
+              name={`${TOPIC_MODELING_NAME}.n_gram_range_start`}
               label="N-Gram Range Start"
               min={1}
               className="flex-1"
             />
             <RHFField
               type="number"
-              name={`${TOPIC_MODELING_NAME}.nGramRangeEnd`}
+              name={`${TOPIC_MODELING_NAME}.n_gram_range_end`}
               label="N-Gram Range End"
               min={1}
               className="flex-1"
@@ -205,7 +205,7 @@ function TopicModelingConfigurationFormBody(
         </Stack>
         <RHFField
           type="percentage"
-          name={`${TOPIC_MODELING_NAME}.clusteringConservativeness`}
+          name={`${TOPIC_MODELING_NAME}.clustering_conservativeness`}
           label="Clustering Conservativeness"
           bounded
           className="flex-1"
@@ -213,7 +213,7 @@ function TopicModelingConfigurationFormBody(
         />
         <RHFField
           type="number"
-          name={`${TOPIC_MODELING_NAME}.globalityConsideration`}
+          name={`${TOPIC_MODELING_NAME}.globality_consideration`}
           label="Globality Consideration"
           className="flex-1"
           classNames={{
@@ -224,16 +224,8 @@ function TopicModelingConfigurationFormBody(
           }
         />
         <RHFField
-          type="percentage"
-          bounded
-          name={`${TOPIC_MODELING_NAME}.superTopicSimilarity`}
-          label="Super Topic Similarity"
-          className="flex-1"
-          description="This controls the threshold that two or more topics can be merged into one super-topics."
-        />
-        <RHFField
           type="number"
-          name={`${TOPIC_MODELING_NAME}.topNWords`}
+          name={`${TOPIC_MODELING_NAME}.top_n_words`}
           label="Number of Topic Words"
           className="flex-1"
           description="The number of words that will be used to describe a topic. A higher number provides more context about the topic, but since some words might not be related to the topic, a high number of topic words may cause confusion rather than clarity."
@@ -243,19 +235,13 @@ function TopicModelingConfigurationFormBody(
             type="switch"
             label="No Outliers"
             description={`Should the model produce any outliers? If this is set to false, all documents will be assigned to one topic. Note that this option alone only affects the document-topic assignments. It doesn't affect the topic representations (and frequencies) if you don't enable "Represent Outliers".`}
-            name={`${TOPIC_MODELING_NAME}.noOutliers`}
+            name={`${TOPIC_MODELING_NAME}.no_outliers`}
           />
           <RHFField
             type="switch"
             label="Represent Outliers"
             description="Should the outliers be included in the topic representation? This is only enabled if No Outliers is set to true. Note that by enabling this option, you risk polluting the topic representations found by the model with irrelevant words."
-            name={`${TOPIC_MODELING_NAME}.representOutliers`}
-          />
-          <RHFField
-            type="switch"
-            name={`${TOPIC_MODELING_NAME}.lowMemory`}
-            label="Low Memory"
-            description="Turn this mode on if you want to perform other tasks while waiting for the topic modeling procedure to finish."
+            name={`${TOPIC_MODELING_NAME}.represent_outliers`}
           />
         </Group>
       </Stack>
@@ -274,28 +260,28 @@ export function ProjectConfigColumnTextualForm(
     useFormContext<ProjectConfigFormType>();
 
   React.useEffect(() => {
-    if (!column || !column.descriptiveStatistics) return;
+    if (!column || !column.descriptive_statistics) return;
     if (getFieldState(parentName).isTouched) {
       return;
     }
     const currentValues = { ...getValues(parentName) };
-    currentValues.topicModeling.minTopicSize = Math.max(
-      Math.ceil(5 + column.descriptiveStatistics.count / 500),
+    currentValues.topic_modeling.min_topic_size = Math.max(
+      Math.ceil(5 + column.descriptive_statistics.count / 500),
       30,
     );
-    currentValues.preprocessing.minDf = Math.min(
+    currentValues.preprocessing.min_df = Math.min(
       2,
-      Math.max(10, column.descriptiveStatistics.count / 1000),
+      Math.max(10, column.descriptive_statistics.count / 1000),
     );
-    if (column.descriptiveStatistics.count >= 10000) {
-      currentValues.topicModeling.embeddingMethod =
+    if (column.descriptive_statistics.count >= 10000) {
+      currentValues.topic_modeling.embedding_method =
         DocumentEmbeddingMethodEnum.Doc2Vec;
     } else {
-      currentValues.topicModeling.embeddingMethod =
+      currentValues.topic_modeling.embedding_method =
         DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2;
     }
-    if (column.descriptiveStatistics.median >= 5000) {
-      currentValues.topicModeling.embeddingMethod =
+    if (column.descriptive_statistics.median >= 5000) {
+      currentValues.topic_modeling.embedding_method =
         DocumentEmbeddingMethodEnum.LSA;
     }
     setValue(parentName, currentValues);
@@ -310,7 +296,7 @@ export function ProjectConfigColumnTextualForm(
       >
         <DescriptiveStatisticsTable
           loading={loading}
-          {...column?.descriptiveStatistics}
+          {...column?.descriptive_statistics}
         />
       </Spoiler>
       <PreprocessingConfigurationFormBody {...props} />

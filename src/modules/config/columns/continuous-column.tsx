@@ -83,7 +83,7 @@ export function ProjectConfigColumnContinuousForm(
   const { data: column, loading } = useInferProjectDatasetColumn(index);
   const { setValue, control } = useFormContext<ProjectConfigFormType>();
 
-  const BIN_COUNT_NAME = `columns.${index}.binCount` as const;
+  const BIN_COUNT_NAME = `columns.${index}.bin_count` as const;
   const BIN_NAME = `columns.${index}.bins` as const;
   const rawBinCountValue = useWatch({
     name: BIN_COUNT_NAME,
@@ -118,7 +118,7 @@ export function ProjectConfigColumnContinuousForm(
       >
         <DescriptiveStatisticsTable
           loading={loading}
-          {...column?.descriptiveStatistics}
+          {...column?.descriptive_statistics}
         />
       </Spoiler>
       {isUsingBinCount && <RHFField name="binCount" type="number" min={2} />}

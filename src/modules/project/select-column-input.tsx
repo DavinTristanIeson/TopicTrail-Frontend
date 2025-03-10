@@ -23,7 +23,9 @@ function ProjectColumnComboboxItemRenderer(
   return (
     <>
       <Group>
-        <ProjectSchemaTypeIcon type={option.data.type} />
+        <ProjectSchemaTypeIcon
+          type={option.data.type as SchemaColumnTypeEnum}
+        />
         <Text>{option.label}</Text>
       </Group>
       <Text size="sm" c={Colors.foregroundDull}>
@@ -123,12 +125,12 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
           },
           {
             value: SchemaColumnTypeEnum.MultiCategorical,
-            label: 'Temporal',
-            description: '',
+            label: 'Multi-Categorical',
+            description: 'TODO',
           },
           {
             value: SchemaColumnTypeEnum.Geospatial,
-            label: 'Temporal',
+            label: 'Geospatial',
             description: 'TODO',
           },
           {

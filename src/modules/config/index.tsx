@@ -7,11 +7,10 @@ import {
   ProjectConfigFormType2Input,
 } from './form-type';
 import { useForm } from 'react-hook-form';
-import { ProjectConfigModel, ProjectMutationInput } from '@/api/project/model';
 import FormWrapper from '@/components/utility/form/wrapper';
 import ProjectConfigFormPhaseSwitcher from './project-flow';
 import ProjectConfigFormBody from './project-flow/phase-3';
-import { CanChangeColumnTypesContext } from './columns/utils';
+import { ProjectConfigModel, ProjectMutationInput } from '@/api/project';
 
 interface ProjectConfigFormProps {
   data?: ProjectConfigModel;
@@ -44,13 +43,11 @@ export default function ProjectConfigForm(props: ProjectConfigFormProps) {
 
   return (
     <FormWrapper form={form} onSubmit={handleSubmit}>
-      <CanChangeColumnTypesContext.Provider value={!columnsOnly}>
-        {!editable || columnsOnly ? (
-          <ProjectConfigFormBody />
-        ) : (
-          <ProjectConfigFormPhaseSwitcher data={data} minPhase={data ? 1 : 0} />
-        )}
-      </CanChangeColumnTypesContext.Provider>
+      {!editable || columnsOnly ? (
+        <ProjectConfigFormBody />
+      ) : (
+        <ProjectConfigFormPhaseSwitcher data={data} />
+      )}
     </FormWrapper>
   );
 }

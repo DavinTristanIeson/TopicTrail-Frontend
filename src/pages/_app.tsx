@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';

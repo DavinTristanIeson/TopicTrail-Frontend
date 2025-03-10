@@ -1,12 +1,12 @@
-import { UseQueryResult } from "@tanstack/react-query";
-import { ApiError } from "@/common/api/model";
-import { mapObject } from "@/common/utils/iterable";
-import Script, { ScriptProps } from "next/script";
-import React from "react";
+import { UseQueryResult } from '@tanstack/react-query';
+import { ApiError } from '@/common/api/model';
+import Script, { ScriptProps } from 'next/script';
+import React from 'react';
 
-import { MaybeFC, MaybeFCType } from "@/components/utility/maybe";
-import ErrorViewComponent from "../layout/error-view-component";
-import { LoadingOverlay } from "@mantine/core";
+import { MaybeFC, MaybeFCType } from '@/components/utility/maybe';
+import ErrorViewComponent from '../layout/error-view-component';
+import { LoadingOverlay } from '@mantine/core';
+import transform from 'lodash/transform';
 
 interface FetchWrapperSharedProps {
   loadingComponent?: React.ReactNode;
@@ -23,7 +23,7 @@ export interface WrapperProps extends FetchWrapperSharedProps {
 export interface UseQueryWrapperProps<T extends object>
   extends FetchWrapperSharedProps {
   isLoading?: boolean;
-  query: UseQueryResult<T, ApiError>;
+  query: UseQueryResult<T, any>;
   children: MaybeFCType<T>;
 }
 
@@ -31,7 +31,7 @@ export interface JointQueryWrapperProps<T extends Record<string, any>>
   extends FetchWrapperSharedProps {
   isLoading?: boolean;
   queries: {
-    [key in keyof T]: UseQueryResult<T[key], ApiError>;
+    [key in keyof T]: UseQueryResult<T[key], any>;
   };
   children: MaybeFCType<T>;
 }
@@ -53,7 +53,7 @@ export default function FetchWrapperComponent(props: WrapperProps) {
       return errorComponent;
     }
 
-    const errorMessage = Object.prototype.hasOwnProperty.call(error, "message")
+    const errorMessage = Object.prototype.hasOwnProperty.call(error, 'message')
       ? (error as ApiError).message
       : undefined;
 
@@ -64,7 +64,7 @@ export default function FetchWrapperComponent(props: WrapperProps) {
 }
 
 export function UseQueryWrapperComponent<T extends object>(
-  props: UseQueryWrapperProps<T>
+  props: UseQueryWrapperProps<T>,
 ): React.ReactElement {
   const { query, children, isLoading, errorComponent, ...rest } = props;
 
@@ -84,16 +84,18 @@ export function UseQueryWrapperComponent<T extends object>(
 }
 
 export function JointQueryWrapperComponent<T extends Record<string, any>>(
-  props: JointQueryWrapperProps<T>
+  props: JointQueryWrapperProps<T>,
 ): React.ReactElement {
   const { queries, children, isLoading, errorComponent, ...rest } = props;
 
   const queryArray = Object.values(queries);
   const error = queryArray.find((query) => query.error)?.error;
   const loading = queryArray.some((query) => query.isLoading);
-  const data = mapObject(
-    queries as Record<string, UseQueryResult<any, ApiError>>,
-    (key, value) => [key, value.data]
+  const data = transform(
+    queries as Record<string, UseQueryResult<any, any>>,
+    (result: Record<string, UseQueryResult<any, any>['data']>, value, key) => {
+      result[key] = value.data;
+    },
   ) as T;
   return (
     <FetchWrapperComponent
@@ -113,12 +115,12 @@ export function JointQueryWrapperComponent<T extends Record<string, any>>(
 interface ScriptLoaderWrapperComponentProps extends FetchWrapperSharedProps {
   src: string;
   id: string;
-  scriptProps?: Omit<ScriptProps, "src" | "id" | "children">;
+  scriptProps?: Omit<ScriptProps, 'src' | 'id' | 'children'>;
   children?: React.ReactNode | (() => React.ReactNode);
 }
 
 export function ScriptLoaderWrapperComponent(
-  props: ScriptLoaderWrapperComponentProps
+  props: ScriptLoaderWrapperComponentProps,
 ) {
   const { src, id, scriptProps, children, ...fetchWrapperProps } = props;
   const [loading, setLoading] = React.useState(false);
@@ -131,7 +133,7 @@ export function ScriptLoaderWrapperComponent(
         error={error}
       >
         {!loading && error == null
-          ? typeof children === "function"
+          ? typeof children === 'function'
             ? children()
             : children
           : null}

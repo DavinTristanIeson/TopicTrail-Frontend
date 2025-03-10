@@ -1,24 +1,21 @@
-import { useGetProjects } from '@/api/project/query';
 import AppLayout from '@/components/layout/app';
 import { Title, TextInput, Stack, Loader, Button } from '@mantine/core';
 import Text from '@/components/standard/text';
 import React from 'react';
 import { MagnifyingGlass, Plus } from '@phosphor-icons/react';
 import { useDebouncedState } from '@mantine/hooks';
-import {
-  DisclosureTrigger,
-  ParametrizedDisclosureTrigger,
-} from '@/hooks/disclosure';
+import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import Colors from '@/common/constants/colors';
 import AppHeader from '@/components/layout/header';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { DeleteProjectModal, ProjectListItem } from '@/modules/project/actions';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
+import { client } from '@/common/api/client';
 
 export default function Dashboard() {
   const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
-  const query = useGetProjects();
+  const query = client.useQuery('get', '/projects/');
   const router = useRouter();
 
   const deleteRemote =
@@ -69,11 +66,7 @@ export default function Dashboard() {
               return (
                 <ul className="flex flex-col gap-2 w-full">
                   {projects.map((project) => (
-                    <ProjectListItem
-                      key={project.id}
-                      {...project}
-                      onDelete={onDelete}
-                    />
+                    <ProjectListItem key={project.id} {...project} />
                   ))}
                 </ul>
               );

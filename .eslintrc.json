@@ -9,6 +9,7 @@
     "react/jsx-key": "warn",
     "@typescript-eslint/no-namespace": "off",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "eslint-plugin-import/no-duplicates": "warn"
   }
 }
