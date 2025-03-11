@@ -15,14 +15,13 @@ import {
   TextInput,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { CheckCircle, PencilSimple } from '@phosphor-icons/react';
+import { CheckCircle, PencilSimple, X } from '@phosphor-icons/react';
 import { useFormContext } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
 import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
 import GlobalConfig from '@/common/constants/global';
 import { client } from '@/common/api/client';
-import FormWrapper from '@/components/utility/form/wrapper';
 import { invalidateProjectDependencyQueries } from '@/api/project';
 import React from 'react';
 import {
@@ -63,6 +62,7 @@ const UpdateProjectIdForm = React.forwardRef<
               newProjectId.length === 0 ||
               newProjectId === projectId
             }
+            leftSection={<CheckCircle size={16} />}
             onClick={() => {
               if (!newProjectId || !projectId) return;
               updateProjectId({
@@ -77,7 +77,10 @@ const UpdateProjectIdForm = React.forwardRef<
               });
             }}
           >
-            Save
+            Change Project Name
+          </Button>
+          <Button onClick={close} leftSection={<X size={16} />}>
+            Cancel
           </Button>
         </Group>
       </Modal.Header>
@@ -85,7 +88,7 @@ const UpdateProjectIdForm = React.forwardRef<
         <TextInput
           value={newProjectId}
           onChange={(e) => setNewProjectId(e.target.value)}
-          error={error}
+          error={error?.message}
           label="New Project Name"
           description="The name of the project should be a valid and unique file name."
         />

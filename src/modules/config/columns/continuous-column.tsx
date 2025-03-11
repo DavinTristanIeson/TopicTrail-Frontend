@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Group,
   List,
   Spoiler,
@@ -46,14 +47,19 @@ function ProjectConfigColumnContinuousFormBinsInput(
   const bins = binEdges.reduce((acc, cur, index, arr) => {
     const digitLength = Math.ceil(Math.log10(acc.length));
     const binNumber = (acc.length + 1).toString().padStart(digitLength, '0');
-    if (index === 0) {
-      acc.push(`Bin ${binNumber}: (-inf, ${cur.toFixed(3)})`);
+    const isFirst = index === 0;
+    const isLast = index === arr.length - 1;
+    if (isFirst) {
+      acc.push(`Bin ${binNumber}: (-inf, ${cur})`);
     }
-    if (index === arr.length - 1) {
-      acc.push(`Bin ${binNumber}: (${cur.toFixed(3)}, inf)`);
+    if (isLast) {
+      acc.push(`Bin ${binNumber}: (${cur}, inf)`);
     }
-    const prev = acc[acc.length - 1] ?? undefined;
-    acc.push(`Bin ${binNumber}: (${prev}, ${cur.toFixed(3)})`);
+    if (isFirst || isLast) {
+      return acc;
+    }
+    const prev = arr[index - 1]!;
+    acc.push(`Bin ${binNumber}: (${prev}, ${cur})`);
     return acc;
   }, [] as string[]);
 
@@ -61,17 +67,26 @@ function ProjectConfigColumnContinuousFormBinsInput(
     <>
       <TagsInput
         {...mergedProps}
+        value={mergedProps.value?.map?.((val: any) => val.toString())}
         label="Bin Edges"
         description="Specify the edges of the bins here. For example: if you want to define the bins to be 3 - 18, 18 - 65, and 65 - 99. Then the bin edges should be 3, 18, 65, and 99."
       />
-      <Text>This will produce the following bins:</Text>
-      <Spoiler hideLabel={'Hide Bins'} showLabel={'Show Bins'}>
-        <List>
-          {bins.map((bin) => (
-            <List.Item key={bin}>{bin}</List.Item>
-          ))}
-        </List>
-      </Spoiler>
+      {bins.length === 0 ? (
+        <Text size="sm" c="red">
+          At least one bin edge is required to create bins.
+        </Text>
+      ) : (
+        <Spoiler hideLabel={'Hide Bins'} showLabel={'Show Bins'}>
+          <List>
+            <Text size="sm">This will produce the following bins:</Text>
+            {bins.map((bin) => (
+              <List.Item key={bin}>
+                <Text size="sm">{bin}</Text>
+              </List.Item>
+            ))}
+          </List>
+        </Spoiler>
+      )}
     </>
   );
 }
@@ -92,36 +107,48 @@ export function ProjectConfigColumnContinuousForm(
   const isUsingBinCount = rawBinCountValue != null;
   return (
     <>
-      <Group>
-        <Switch
-          label={isUsingBinCount ? 'Bin Count' : 'Bins'}
-          description="Specify either a number of bins to split the continuous data into, or manually specify the edges of each bins."
-          checked={isUsingBinCount}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setValue(BIN_COUNT_NAME, 3);
-              setValue(BIN_NAME, null);
-            } else {
-              setValue(BIN_COUNT_NAME, null);
-              setValue(BIN_NAME, [0]);
-            }
-          }}
-        />
-        <Tooltip label="By splitting the continuous data into bins, you've effectively created another ordinal variable from the continuous data. This means that you can now use analysis methods for ordered categorical columns on the bins.">
-          <Info size={14} color={Colors.sentimentInfo} />
-        </Tooltip>
-      </Group>
+      <Switch
+        label={isUsingBinCount ? 'Bin Count' : 'Bins'}
+        description="Specify either a number of bins to split the continuous data into, or manually specify the edges of each bins."
+        checked={isUsingBinCount}
+        onChange={(e) => {
+          if (e.target.checked) {
+            setValue(BIN_COUNT_NAME, 3);
+            setValue(BIN_NAME, null);
+          } else {
+            setValue(BIN_COUNT_NAME, null);
+            setValue(BIN_NAME, [0]);
+          }
+        }}
+      />
+      <Alert color="blue" icon={<Info size={20} />} title="Why bins?">
+        By splitting the continuous data into bins, you've effectively created
+        another ordinal variable from the continuous data. This means that you
+        can now use analysis methods for ordered categorical columns on the
+        bins.
+      </Alert>
       <Spoiler
         hideLabel={'Hide Descriptive Statistics'}
         showLabel={'Show Descriptive Statistics'}
         maxHeight={100}
       >
+        <Text fw="bold" ta="center">
+          Descriptive Statistics of this Column
+        </Text>
         <DescriptiveStatisticsTable
           loading={loading}
           {...column?.descriptive_statistics}
         />
       </Spoiler>
-      {isUsingBinCount && <RHFField name="binCount" type="number" min={2} />}
+      {isUsingBinCount && (
+        <RHFField
+          name="bin_count"
+          type="number"
+          min={2}
+          label="Bin Count"
+          required
+        />
+      )}
       {!isUsingBinCount && (
         <ProjectConfigColumnContinuousFormBinsInput {...props} />
       )}

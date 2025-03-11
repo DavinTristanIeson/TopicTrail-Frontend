@@ -127,6 +127,7 @@ const ReorderCategoryOrderDrawer = React.forwardRef<
       opened={opened}
       onClose={close}
       size="lg"
+      position="right"
       title="Reorder Categories"
     >
       <Group justify="end" gap={8}>
@@ -186,11 +187,12 @@ export function ProjectConfigColumnOrderedCategoricalForm(
       />
       {categories && (
         <>
-          <Group>
+          <Group align="end">
             <TagsInput
               value={categories}
               label="Categories"
               className="flex-1"
+              readOnly
             />
             <Button onClick={() => drawerRemote.current?.open()}>
               Reorder

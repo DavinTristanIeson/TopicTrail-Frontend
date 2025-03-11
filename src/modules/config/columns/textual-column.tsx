@@ -213,7 +213,7 @@ function TopicModelingConfigurationFormBody(
         />
         <RHFField
           type="number"
-          name={`${TOPIC_MODELING_NAME}.globality_consideration`}
+          name={`${TOPIC_MODELING_NAME}.reference_document_count`}
           label="Globality Consideration"
           className="flex-1"
           classNames={{
@@ -294,6 +294,9 @@ export function ProjectConfigColumnTextualForm(
         showLabel={'Show Descriptive Statistics'}
         maxHeight={100}
       >
+        <Text fw="bold" ta="center">
+          Descriptive Statistics (of Document Lengths)
+        </Text>
         <DescriptiveStatisticsTable
           loading={loading}
           {...column?.descriptive_statistics}

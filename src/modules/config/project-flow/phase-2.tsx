@@ -52,7 +52,7 @@ function ProjectConfigDataSourceFormFieldSwitcher(
         placeholder=","
         description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
         required
-        w="100%"
+        w="49%"
       />
     );
   }
@@ -65,6 +65,7 @@ function ProjectConfigDataSourceFormFieldSwitcher(
         description="The sheet that contains the data to be analyzed."
         readOnly={props.disabled}
         required
+        w="49%"
       />
     );
   }
@@ -119,7 +120,6 @@ export function ConfigureDataSourceForm(
 interface ConfigureProjectFlow_CheckDatasetProps {
   onContinue(values: ProjectInferDatasetModel): void;
   onBack(): void;
-  hasData: boolean;
 }
 
 export function ConfigureProjectFlow_CheckDataset(
@@ -179,18 +179,6 @@ export function ConfigureProjectFlow_CheckDataset(
         C:/Users/User/path/to/dataset) so that we can access the dataset. Please
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
       </Text>
-      {props.hasData && (
-        <Alert color="yellow">
-          <Flex align="center" gap={16} py={8}>
-            <WarningCircle size={24} />
-            Note that once your dataset has been changed, any existing columns
-            will need to be re-configured. Furthermore, any cached objects like
-            document vectors and topic modeling results will have to be deleted.
-            This means that you will have to run the topic modeling procedure
-            again if you have already run it before.
-          </Flex>
-        </Alert>
-      )}
       <LoadingOverlay visible={isPending} />
       <ConfigureDataSourceForm disabled={false} />
       <Flex justify="space-between" direction="row-reverse" w="100%">

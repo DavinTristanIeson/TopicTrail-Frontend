@@ -1,4 +1,5 @@
 import { DescriptiveStatisticsModel } from '@/api/project';
+import Colors from '@/common/constants/colors';
 import { Skeleton, Table, Group, Tooltip } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 
@@ -56,8 +57,8 @@ export function DescriptiveStatisticsTable(
   ];
   if (props.loading) {
     return (
-      <div>
-        {Array.from({ length: 5 }, (_, index) => (
+      <div className="grid grid-cols-2 gap-1">
+        {Array.from({ length: 10 }, (_, index) => (
           <Skeleton key={index} height={36} />
         ))}
       </div>
@@ -76,7 +77,7 @@ export function DescriptiveStatisticsTable(
               {row.label}
               {row.description ? (
                 <Tooltip label={row.description}>
-                  <Info size={16} />
+                  <Info size={16} color={Colors.sentimentInfo} />
                 </Tooltip>
               ) : undefined}
             </Group>

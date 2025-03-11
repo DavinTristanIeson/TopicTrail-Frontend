@@ -9,6 +9,7 @@ import {
   Group,
   Select,
   SelectProps,
+  Stack,
 } from '@mantine/core';
 import capitalize from 'lodash/capitalize';
 
@@ -77,13 +78,13 @@ function ProjectColumnTypeComboboxItemRenderer(
 ) {
   const { option } = combobox;
   return (
-    <>
+    <Stack>
       <Group>
         <ProjectSchemaTypeIcon type={option.value} />
         <Text>{option.label}</Text>
       </Group>
       <Text>{option.description}</Text>
-    </>
+    </Stack>
   );
 }
 

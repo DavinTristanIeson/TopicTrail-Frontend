@@ -20,7 +20,7 @@ function nullIfEmpty(value: any): any | null {
 
 export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
-  alias: Yup.string().nullable().required(),
+  alias: Yup.string().transform(nullIfEmpty).nullable(),
   type: Yup.string().oneOf(Object.values(SchemaColumnTypeEnum)).required(),
 
   bin_count: Yup.number()
@@ -34,19 +34,23 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   bins: Yup.array(Yup.number().required())
     .transform(nullIfEmpty)
     .nullable()
-    .when('type', {
-      is: SchemaColumnTypeEnum.Continuous,
-      otherwise: (schema) => schema.strip(),
-    })
     .transform((value) => {
       if (Array.isArray(value)) {
         return value.sort((a, b) => a - b);
+      } else {
+        return value;
       }
-      throw new Error(
-        'This field does not contain an array. This is most likely be a developer oversight.',
-      );
     })
-    .min(1),
+    .when('type', {
+      is: SchemaColumnTypeEnum.Continuous,
+      then: (schema) =>
+        schema.when('bin_count', {
+          is: null,
+          then: (schema) => schema.min(1),
+          otherwise: (schema) => schema.strip(),
+        }),
+      otherwise: (schema) => schema.strip(),
+    }),
 
   category_order: Yup.array(Yup.string().required())
     .nullable()
@@ -124,7 +128,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       .oneOf(Object.values(DocumentEmbeddingMethodEnum))
       .required(),
     clustering_conservativeness: Yup.number().positive().max(1).required(),
-    globality_consideration: Yup.number()
+    reference_document_count: Yup.number()
       .positive()
       .transform(nullIfNaN)
       .nullable(),
@@ -176,7 +180,7 @@ export function DefaultProjectSchemaColumnValues(
   return {
     name,
     type,
-    alias: name,
+    alias: null,
     preprocessing:
       type === SchemaColumnTypeEnum.Textual
         ? {
@@ -205,7 +209,7 @@ export function DefaultProjectSchemaColumnValues(
             represent_outliers: false,
             embedding_method: DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2,
             clustering_conservativeness: 1,
-            globality_consideration: null,
+            reference_document_count: null,
             top_n_words: 50,
           }
         : undefined,
@@ -335,8 +339,8 @@ export function ProjectConfigFormType2Input(
               topic_modeling: {
                 ...col.topic_modeling!,
                 max_topic_size: col.topic_modeling.max_topic_size ?? null,
-                globality_consideration:
-                  col.topic_modeling.globality_consideration ?? null,
+                reference_document_count:
+                  col.topic_modeling.reference_document_count ?? null,
                 max_topics: col.topic_modeling.max_topics ?? null,
                 n_gram_range: [
                   col.topic_modeling.n_gram_range_start,

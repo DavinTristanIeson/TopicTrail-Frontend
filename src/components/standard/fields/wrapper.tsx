@@ -87,6 +87,10 @@ export type SelectFieldProps = IRHFField<
 >;
 
 export function SelectField(props: SelectFieldProps) {
-  const { mergedProps } = useRHFMantineAdapter(props, {});
+  const { mergedProps } = useRHFMantineAdapter(props, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
   return <Select {...mergedProps} />;
 }
