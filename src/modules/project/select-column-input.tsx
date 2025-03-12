@@ -1,6 +1,8 @@
 import { SchemaColumnModel } from '@/api/project';
 import Colors from '@/common/constants/colors';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { useRHFMantineAdapter } from '@/components/standard/fields/adapter';
+import { SelectFieldProps } from '@/components/standard/fields/wrapper';
 import Text from '@/components/standard/text';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import {
@@ -12,6 +14,7 @@ import {
   Stack,
 } from '@mantine/core';
 import capitalize from 'lodash/capitalize';
+import { useFormContext } from 'react-hook-form';
 
 export interface ProjectColumnComboboxItem extends ComboboxItem {
   data: SchemaColumnModel;
@@ -146,4 +149,13 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
       }
     />
   );
+}
+
+export function ProjectColumnTypeSelectField(props: SelectFieldProps) {
+  const { mergedProps } = useRHFMantineAdapter(props, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
+  return <ProjectColumnTypeSelectInput {...mergedProps} />;
 }

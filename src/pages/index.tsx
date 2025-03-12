@@ -4,7 +4,6 @@ import Text from '@/components/standard/text';
 import React from 'react';
 import { MagnifyingGlass, Plus } from '@phosphor-icons/react';
 import { useDebouncedState } from '@mantine/hooks';
-import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import Colors from '@/common/constants/colors';
 import AppHeader from '@/components/layout/header';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
@@ -18,16 +17,8 @@ export default function Dashboard() {
   const query = client.useQuery('get', '/projects/');
   const router = useRouter();
 
-  const deleteRemote =
-    React.useRef<ParametrizedDisclosureTrigger<string> | null>(null);
-
-  const onDelete = React.useCallback((id: string) => {
-    deleteRemote.current?.open(id);
-  }, []);
-
   return (
     <AppLayout Header={<AppHeader />}>
-      <DeleteProjectModal ref={deleteRemote} />
       <Stack w="100%" align="center">
         <Stack align="center" pt={64} maw={880} py={64}>
           <Title order={2}>Choose a Project!</Title>
@@ -65,7 +56,12 @@ export default function Dashboard() {
                   ? data.data
                   : data.data.filter((project) => {
                       const meta = project.config.metadata;
-                      return meta.name.includes(q) || !!meta.tags?.includes(q);
+                      return (
+                        meta.name.toLowerCase().includes(q.toLowerCase()) ||
+                        !!meta.tags?.find(
+                          (tag) => tag.toLowerCase() === q.toLowerCase(),
+                        )
+                      );
                     });
               return (
                 <ul className="flex flex-col gap-2 w-full">

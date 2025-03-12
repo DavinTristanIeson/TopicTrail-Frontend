@@ -35,23 +35,19 @@ import RHFField from '@/components/standard/fields';
 import GlobalConfig from '@/common/constants/global';
 import { client } from '@/common/api/client';
 import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
-import { ProjectInferDatasetModel } from '@/api/project';
 import fromPairs from 'lodash/fromPairs';
 import React from 'react';
-import {
-  DisclosureTrigger,
-  ParametrizedDisclosureTrigger,
-  useDisclosureTrigger,
-  useParametrizedDisclosureTrigger,
-} from '@/hooks/disclosure';
+import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
+import { FormEditableContext } from '@/components/standard/fields/context';
 
 interface ConfigureDataSourceFormProps {
-  disabled?: boolean;
+  disabled: boolean;
 }
 
 function ProjectConfigDataSourceFormFieldSwitcher(
   props: ConfigureDataSourceFormProps,
 ) {
+  const { disabled } = props;
   const { control } = useFormContext<ProjectConfigFormType>();
   const type = useWatch({
     name: 'source.type',
@@ -68,7 +64,7 @@ function ProjectConfigDataSourceFormFieldSwitcher(
         description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
         required
         w="49%"
-        disabled={props.disabled}
+        disabled={disabled}
       />
     );
   }
@@ -81,7 +77,7 @@ function ProjectConfigDataSourceFormFieldSwitcher(
         description="The sheet that contains the data to be analyzed."
         required
         w="49%"
-        disabled={props.disabled}
+        disabled={disabled}
       />
     );
   }
@@ -89,6 +85,7 @@ function ProjectConfigDataSourceFormFieldSwitcher(
 }
 
 export function ConfigureDataSourceForm(props: ConfigureDataSourceFormProps) {
+  const { disabled } = props;
   return (
     <>
       <Flex gap={24}>
@@ -100,9 +97,9 @@ export function ConfigureDataSourceForm(props: ConfigureDataSourceFormProps) {
           description={`Enter the absolute file path or relative file path (relative to the directory of the ${GlobalConfig.AppName}) to your dataset.`}
           required
           w="100%"
-          disabled={props.disabled}
+          disabled={disabled}
         />
-        <RHFField
+        {/* <RHFField
           type="select"
           name="source.type"
           data={[
@@ -123,8 +120,8 @@ export function ConfigureDataSourceForm(props: ConfigureDataSourceFormProps) {
           label="Dataset Type"
           description="We need to know the type of the dataset so that we can properly parse its contents."
           w="100%"
-          disabled={props.disabled}
-        />
+          disabled={disabled}
+        /> */}
       </Flex>
       <ProjectConfigDataSourceFormFieldSwitcher {...props} />
     </>
@@ -200,7 +197,7 @@ const ConfigureProjectFlowUpdateModal = React.forwardRef<
     <Modal title="Change Dataset" size="lg" opened={opened} onClose={close}>
       <LoadingOverlay visible={isPending} />
       <Stack>
-        <ConfigureDataSourceForm />
+        <ConfigureDataSourceForm disabled={false} />
         <Flex justify="space-between" direction="row-reverse" w="100%">
           <Button
             leftSection={<CheckCircle size={20} />}
@@ -232,11 +229,14 @@ interface ConfigureProjectFlow_CheckDatasetProps {
 export function ConfigureProjectFlow_CheckDataset(
   props: ConfigureProjectFlow_CheckDatasetProps,
 ) {
+  const { hasData, onBack, onContinue } = props;
   const { isPending, onSubmit } = useConfigureDataSourceSubmitBehavior();
   const updateModalRemote = React.useRef<DisclosureTrigger | null>(null);
+  const { editable } = React.useContext(FormEditableContext);
+  const canUpdateDataset = !!hasData && editable;
   return (
     <Stack className="relative">
-      {props.hasData && (
+      {canUpdateDataset && (
         <ConfigureProjectFlowUpdateModal ref={updateModalRemote} />
       )}
       <Title order={2}>2/3: Where&apos;s the location of your dataset?</Title>
@@ -247,7 +247,7 @@ export function ConfigureProjectFlow_CheckDataset(
         note that the dataset should be of type CSV, PARQUET, or EXCEL.
       </Text>
       <LoadingOverlay visible={isPending} />
-      {props.hasData && (
+      {canUpdateDataset && (
         <Alert color="red" icon={<Warning size={20} />}>
           <Stack>
             <Text inherit>
@@ -268,9 +268,9 @@ export function ConfigureProjectFlow_CheckDataset(
           </Stack>
         </Alert>
       )}
-      <ConfigureDataSourceForm disabled />
+      <ConfigureDataSourceForm disabled={canUpdateDataset} />
       <Flex justify="space-between" direction="row-reverse" w="100%">
-        {props.hasData ? (
+        {hasData ? (
           <Button
             rightSection={<ArrowRight size={20} />}
             onClick={props.onContinue}
@@ -282,18 +282,18 @@ export function ConfigureProjectFlow_CheckDataset(
             leftSection={<CheckCircle size={20} />}
             onClick={async () => {
               await onSubmit();
-              props.onContinue();
+              onContinue();
             }}
             loading={isPending}
           >
             Verify Dataset
           </Button>
         )}
-        {props.onBack && (
+        {onBack && (
           <Button
             leftSection={<ArrowLeft size={20} />}
             variant="outline"
-            onClick={props.onBack}
+            onClick={onBack}
           >
             Change Project Name?
           </Button>

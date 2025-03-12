@@ -3,6 +3,8 @@ import { ProjectConfigFormType } from '../form-type';
 import { client } from '@/common/api/client';
 import { DataSourceTypeEnum } from '@/common/constants/enum';
 import { ProjectCheckDatasetInput } from '@/api/project';
+import { FormEditableContext } from '@/components/standard/fields/context';
+import React from 'react';
 
 export function transformDataSourceFormType2DataSourceInput(
   source: ProjectConfigFormType['source'],
@@ -35,21 +37,19 @@ export function useInferProjectDatasetColumn(index: number) {
     name: ['source', `columns.${index}.name`, `columns.${index}.type`],
   });
 
-  const {
-    formState: { disabled },
-  } = useFormContext();
+  const { editable } = React.useContext(FormEditableContext);
   const { data: column, isFetching } = client.useQuery(
     'post',
     '/projects/check-dataset-column',
     {
       body: {
         column: name,
-        dtype: type,
+        dtype: type!,
         source: transformDataSourceFormType2DataSourceInput(source),
       },
     },
     {
-      enabled: !disabled,
+      enabled: editable && !!type && !!source,
     },
   );
   return { data: column?.data, loading: isFetching };

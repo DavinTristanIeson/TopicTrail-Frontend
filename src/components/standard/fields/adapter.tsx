@@ -2,6 +2,7 @@ import { getAnyError } from '@/common/utils/error';
 import { ReplaceKeys } from '@/common/utils/types';
 import React, { RefCallback } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
+import { FormEditableContext } from './context';
 
 interface IRHFMantineAdaptableGenericConstraint {
   value?: any;
@@ -43,7 +44,7 @@ interface RHFMantineAdapterReturn {
   name: string;
   value: any;
   onChange(value: any): void;
-  disabled: boolean;
+  readOnly: boolean;
   required: boolean;
   error: string | undefined;
   ref: RefCallback<any> | undefined;
@@ -74,26 +75,26 @@ export function useRHFMantineAdapter<
   } = props;
   const { extractEventValue, withNestedError } = config;
   const restProps = unusedProps as T;
-  const { control } = useFormContext<any>();
+  const { control, getValues } = useFormContext<any>();
   const {
     field: { onChange, value, ref, disabled: fieldDisabled },
     fieldState: { error: fieldStateError },
-    formState: { disabled: formDisabled, isSubmitting: formIsSubmitting },
-  } = useController({ name, control });
-
-  const disabled =
-    !!controlledDisabled || !!fieldDisabled || formDisabled || formIsSubmitting;
+    formState: { isSubmitting: formIsSubmitting },
+  } = useController({ name, control, shouldUnregister: false });
+  const { editable } = React.useContext(FormEditableContext);
+  const readOnly =
+    !!controlledDisabled || !!fieldDisabled || !editable || formIsSubmitting;
   const error = noError
     ? undefined
     : withNestedError
       ? getAnyError(fieldStateError)?.message
       : fieldStateError?.message;
-  if ('placeholder' in restProps && disabled) {
+  if ('placeholder' in restProps && readOnly) {
     restProps.placeholder = undefined;
   }
 
   const fieldProps: RHFMantineAdapterReturn = {
-    disabled,
+    readOnly,
     onChange(e) {
       onChange(extractEventValue ? extractEventValue(e) : e?.target?.value);
       controlledOnChange?.(e);
@@ -101,7 +102,7 @@ export function useRHFMantineAdapter<
     value: controlledValue ?? value,
     error,
     name,
-    required: !disabled ? !!required : false,
+    required: !readOnly ? !!required : false,
     ref,
   };
 

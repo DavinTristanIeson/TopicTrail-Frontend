@@ -8,20 +8,20 @@ import {
 } from './form-type';
 import { useForm } from 'react-hook-form';
 import FormWrapper from '@/components/utility/form/wrapper';
-import ProjectConfigFormPhaseSwitcher from './project-flow';
-import ConfigureProjectFlow_ConfigureColumns from './project-flow/phase-3';
-import { ProjectConfigModel, CreateProjectInput } from '@/api/project';
+import { ProjectConfigModel, ProjectMutationInput } from '@/api/project';
+import { FormEditableContext } from '@/components/standard/fields/context';
 
 interface ProjectConfigFormProps {
   data?: ProjectConfigModel;
-  onSubmit(result: CreateProjectInput): void;
-  editable?: boolean;
+  onSubmit(result: ProjectMutationInput): void;
   children?: React.ReactNode;
 }
 
 export default function ProjectConfigForm(props: ProjectConfigFormProps) {
-  const { data, onSubmit, children, editable = true } = props;
+  const { data, onSubmit, children } = props;
   const resolver = yupResolver(ProjectConfigFormSchema);
+
+  const { editable } = React.useContext(FormEditableContext);
 
   const defaultValues = React.useMemo(
     () => ProjectConfigDefaultValues(data),
@@ -30,8 +30,8 @@ export default function ProjectConfigForm(props: ProjectConfigFormProps) {
   const form = useForm({
     mode: 'onChange',
     resolver,
-    disabled: !editable,
     defaultValues,
+    shouldUnregister: false,
   });
 
   const handleSubmit = async (values: ProjectConfigFormType) => {
@@ -40,9 +40,7 @@ export default function ProjectConfigForm(props: ProjectConfigFormProps) {
   };
 
   React.useEffect(() => {
-    if (!editable) {
-      form.reset(defaultValues);
-    }
+    form.reset(defaultValues);
   }, [editable]);
 
   return (

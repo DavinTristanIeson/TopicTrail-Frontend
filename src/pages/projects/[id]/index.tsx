@@ -6,7 +6,8 @@ export default function ProjectRedirect() {
   const router = useRouter();
   const queryId = router.query.id as string;
   React.useEffect(() => {
-    router.replace(NavigationRoutes.ProjectTopics, {
+    router.replace({
+      pathname: NavigationRoutes.ProjectTopics,
       query: {
         id: queryId,
       },

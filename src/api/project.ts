@@ -43,7 +43,8 @@ export type SchemaColumnModel =
   | TopicSchemaColumnModel
   | UniqueSchemaColumnModel;
 
-export type CreateProjectInput = components['schemas']['CreateProjectSchema'];
+export type ProjectMutationInput =
+  components['schemas']['ProjectMutationSchema'];
 export type ProjectCheckDatasetInput =
   components['schemas']['CheckDatasetSchema'];
 

@@ -12,15 +12,9 @@ import {
   Tabs,
   Group,
   Tooltip,
-  ScrollArea,
 } from '@mantine/core';
 import { ArrowLeft, Warning } from '@phosphor-icons/react';
-import {
-  useFormContext,
-  useFieldArray,
-  useWatch,
-  useFormState,
-} from 'react-hook-form';
+import { useFormContext, useFieldArray, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
 import { ProjectConfigColumnFormItem } from '../columns/form-body';
 import React from 'react';
@@ -29,7 +23,6 @@ import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
 import Text from '@/components/standard/text';
 import { useWatchFieldError } from '@/components/standard/fields/watcher';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
-import { getAnyError } from '@/common/utils/error';
 
 interface ProjectConfigColumnTitleProps {
   index: number;
@@ -73,7 +66,7 @@ function ProjectConfigColumnsFieldArray() {
   );
 
   return (
-    <Tabs value={value} onChange={setValue} keepMounted={false}>
+    <Tabs value={value} onChange={setValue}>
       <Tabs.List>
         {fields.map((field, index) => (
           <Tabs.Tab key={field.__fieldId} value={field.__fieldId}>

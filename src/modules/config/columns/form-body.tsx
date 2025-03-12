@@ -1,15 +1,8 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
-import { Accordion, Divider, Group, Stack, Tooltip } from '@mantine/core';
+import { Divider, Group, Stack } from '@mantine/core';
 import React from 'react';
-import Text from '@/components/standard/text';
-import { Warning } from '@phosphor-icons/react';
-import { useWatchFieldError } from '@/components/standard/fields/watcher';
-import Colors from '@/common/constants/colors';
-import { RHFMantineAdapter } from '@/components/standard/fields/adapter';
-import { ProjectColumnTypeSelectInput } from '@/modules/project/select-column-input';
 import RHFField from '@/components/standard/fields';
-import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { ProjectConfigColumnContinuousForm } from './continuous-column';
 import { ProjectConfigColumnOrderedCategoricalForm } from './ordered-categorical-column';
@@ -19,7 +12,7 @@ import {
   ProjectConfigColumnTemporalForm,
 } from './other-columns';
 import { ProjectConfigColumnTextualForm } from './textual-column';
-import { SelectFieldProps } from '@/components/standard/fields/wrapper';
+import { ProjectColumnTypeSelectField } from '@/modules/project/select-column-input';
 
 interface ProjectConfigColumnFormItemProps {
   index: number;
@@ -86,20 +79,11 @@ export function ProjectConfigColumnFormItem(
   return (
     <Stack className="pt-5">
       <Group align="center">
-        <RHFMantineAdapter<SelectFieldProps>
-          props={{
-            name: `${parentName}.type`,
-            type: 'select',
-            className: 'flex-1',
-          }}
-          config={{
-            extractEventValue(e) {
-              return e;
-            },
-          }}
-        >
-          {ProjectColumnTypeSelectInput}
-        </RHFMantineAdapter>
+        <ProjectColumnTypeSelectField
+          name={`${parentName}.type`}
+          type="select"
+          className="flex-1"
+        />
         <RHFField
           name={`${parentName}.alias`}
           label="Alias"

@@ -5,7 +5,8 @@ import { ConfigureProjectFlow_CheckDataset } from './phase-2';
 import ConfigureProjectFlow_ConfigureColumns from './phase-3';
 import { useFormContext } from 'react-hook-form';
 import { getAnyError } from '@/common/utils/error';
-import { Warning } from '@phosphor-icons/react';
+import { Lock, Warning } from '@phosphor-icons/react';
+import { FormEditableContext } from '@/components/standard/fields/context';
 
 interface ProjectConfigFormPhaseSwitcherProps {
   hasData?: boolean;
@@ -36,7 +37,8 @@ function ErrorAlert() {
 export default function ProjectConfigFormPhaseSwitcher(
   props: ProjectConfigFormPhaseSwitcherProps,
 ) {
-  const [phase, setPhase] = React.useState(0);
+  const { hasData } = props;
+  const [phase, setPhase] = React.useState(hasData ? 2 : 0);
   const maxPhase = 2;
   const [accessiblePhase, setAccessiblePhase] = React.useState(
     props.hasData ? maxPhase : 0,
@@ -46,6 +48,7 @@ export default function ProjectConfigFormPhaseSwitcher(
     setAccessiblePhase((phase) => Math.min(phase + 1, maxPhase));
   };
   const onBack = () => setPhase((phase) => Math.min(phase - 1, maxPhase));
+  const { editable } = React.useContext(FormEditableContext);
   return (
     <>
       <Stepper active={phase} onStepClick={setPhase}>
@@ -66,6 +69,13 @@ export default function ProjectConfigFormPhaseSwitcher(
         />
       </Stepper>
       <ErrorAlert />
+      {!editable && (
+        <Alert icon={<Lock size={20} />} title="View-Only" color="yellow">
+          You're currently viewing the configuration of this project. If you
+          want to make any changes, press the "Edit" button at the top right
+          corner.
+        </Alert>
+      )}
       <div className="flex flex-col items-center pt-5">
         <div className="max-w-5xl px-3">
           {phase === 0 ? (

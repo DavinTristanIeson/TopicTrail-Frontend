@@ -9,7 +9,6 @@ import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
 import GlobalConfig from '@/common/constants/global';
 import React from 'react';
-import get from 'lodash/get';
 import { ProjectConfigFormType } from '../form-type';
 
 interface ConfigureProjectFlow_CheckProjectIdProps {

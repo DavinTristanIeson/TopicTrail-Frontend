@@ -14,7 +14,7 @@ import { ProjectConfigFormType } from '../form-type';
 
 function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
   const { field } = useController({
-    name: `columns.${props.index}.topicModeling.embeddingMethod`,
+    name: `columns.${props.index}.topic_modeling.embeddingMethod`,
   });
 
   const labels: Record<DocumentEmbeddingMethodEnum, string> = {

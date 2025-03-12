@@ -21,6 +21,7 @@ import { useRHFMantineAdapter } from '@/components/standard/fields/adapter';
 import { TagsFieldProps } from '@/components/standard/fields/wrapper';
 import { DescriptiveStatisticsTable } from '@/modules/table/continuous/descriptive-statistics';
 import Text from '@/components/standard/text';
+import { FormEditableContext } from '@/components/standard/fields/context';
 
 function ProjectConfigColumnContinuousFormBinsInput(
   props: ProjectConfigColumnFormProps,
@@ -98,6 +99,8 @@ export function ProjectConfigColumnContinuousForm(
   const { data: column, loading } = useInferProjectDatasetColumn(index);
   const { setValue, control } = useFormContext<ProjectConfigFormType>();
 
+  const { editable } = React.useContext(FormEditableContext);
+
   const BIN_COUNT_NAME = `columns.${index}.bin_count` as const;
   const BIN_NAME = `columns.${index}.bins` as const;
   const rawBinCountValue = useWatch({
@@ -111,6 +114,7 @@ export function ProjectConfigColumnContinuousForm(
         label={isUsingBinCount ? 'Bin Count' : 'Bins'}
         description="Specify either a number of bins to split the continuous data into, or manually specify the edges of each bins."
         checked={isUsingBinCount}
+        disabled={!editable}
         onChange={(e) => {
           if (e.target.checked) {
             setValue(BIN_COUNT_NAME, 3);

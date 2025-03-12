@@ -1,8 +1,7 @@
 import {
   invalidateProjectDependencyQueries,
   ProjectConfigModel,
-  ProjectModel,
-  CreateProjectInput,
+  ProjectMutationInput,
 } from '@/api/project';
 import { client } from '@/common/api/client';
 import NavigationRoutes from '@/common/constants/routes';
@@ -11,16 +10,13 @@ import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import ProjectConfigForm from '@/modules/config/form';
 import { DeleteProjectModal } from '@/modules/project/actions';
 import { ProjectContext } from '@/modules/project/context';
-import AppProjectLayout from '@/modules/project/layout';
-import { Button, Divider, Group, Stack } from '@mantine/core';
+import { Button, Group, Stack } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { PencilSimple, TrashSimple, X } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { ProjectIdForm } from './project-flow/phase-1';
-import { ConfigureDataSourceForm } from './project-flow/phase-2';
-import { ConfigureColumnsForm } from './project-flow/phase-3';
 import ProjectConfigFormPhaseSwitcher from './project-flow';
+import { FormEditableContext } from '@/components/standard/fields/context';
 
 function UpdateProjectDeleteButton() {
   const deleteRemote =
@@ -90,13 +86,12 @@ function UpdateProjectFormButtons(props: UpdateProjectFormButtonsProps) {
 
 interface ProjectConfigUpdateFormProps {
   data: ProjectConfigModel;
-  onSubmit(data: ProjectModel): void;
 }
 
 export default function ProjectConfigUpdateForm(
   props: ProjectConfigUpdateFormProps,
 ) {
-  const { data, onSubmit: onAfterSubmit } = props;
+  const { data } = props;
   const [editable, setEditable] = React.useState(false);
   const router = useRouter();
   const projectId = router.query.id as string;
@@ -109,7 +104,7 @@ export default function ProjectConfigUpdateForm(
       },
     },
   );
-  const onSubmit = async (input: CreateProjectInput) => {
+  const onSubmit = async (input: ProjectMutationInput) => {
     const res = await update({
       params: {
         path: {
@@ -124,17 +119,23 @@ export default function ProjectConfigUpdateForm(
         color: 'green',
       });
     }
-    onAfterSubmit(res.data);
+    router.back();
   };
+
+  const editableProviderValue = React.useMemo(() => {
+    return { editable, setEditable };
+  }, [editable]);
   return (
-    <ProjectConfigForm onSubmit={onSubmit} editable={editable} data={data}>
-      <Stack>
-        <UpdateProjectFormButtons
-          editable={editable}
-          setEditable={setEditable}
-        />
-        <ProjectConfigFormPhaseSwitcher hasData />
-      </Stack>
-    </ProjectConfigForm>
+    <FormEditableContext.Provider value={editableProviderValue}>
+      <ProjectConfigForm onSubmit={onSubmit} data={data}>
+        <Stack>
+          <UpdateProjectFormButtons
+            editable={editable}
+            setEditable={setEditable}
+          />
+          <ProjectConfigFormPhaseSwitcher hasData />
+        </Stack>
+      </ProjectConfigForm>
+    </FormEditableContext.Provider>
   );
 }

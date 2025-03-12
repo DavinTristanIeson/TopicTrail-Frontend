@@ -1,5 +1,5 @@
 import { components } from '@/api/openapi';
-import { ProjectConfigModel, CreateProjectInput } from '@/api/project';
+import { ProjectConfigModel, ProjectMutationInput } from '@/api/project';
 import {
   DataSourceTypeEnum,
   DocumentEmbeddingMethodEnum,
@@ -295,7 +295,7 @@ export function ProjectConfigDefaultValues(
 
 export function ProjectConfigFormType2Input(
   values: ProjectConfigFormType,
-): CreateProjectInput {
+): ProjectMutationInput {
   return {
     source: transformDataSourceFormType2DataSourceInput(values.source),
     metadata: {
