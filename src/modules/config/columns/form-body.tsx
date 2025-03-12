@@ -19,11 +19,10 @@ import {
   ProjectConfigColumnTemporalForm,
 } from './other-columns';
 import { ProjectConfigColumnTextualForm } from './textual-column';
+import { SelectFieldProps } from '@/components/standard/fields/wrapper';
 
 interface ProjectConfigColumnFormItemProps {
   index: number;
-  accordionValue: string;
-  opened: boolean;
 }
 
 function ProjectConfigColumnFormSwitcher(
@@ -31,9 +30,10 @@ function ProjectConfigColumnFormSwitcher(
 ) {
   const { index } = props;
   let component: React.ReactNode = undefined;
-  const { control } = useFormContext<ProjectConfigFormType>();
+  const { control, getValues } = useFormContext<ProjectConfigFormType>();
+  const name = `columns.${props.index}.type` as const;
   const type = useWatch({
-    name: `columns.${props.index}.type`,
+    name,
     control,
   });
   switch (type) {
@@ -78,71 +78,38 @@ function ProjectConfigColumnFormSwitcher(
   }
 }
 
-function ProjectConfigColumnTitle(props: ProjectConfigColumnFormItemProps) {
-  const { index } = props;
-  const { control } = useFormContext<ProjectConfigFormType>();
-
-  const parentName = `columns.${index}` as const;
-  const [name, type] = useWatch({
-    name: [`${parentName}.name`, `${parentName}.type`],
-    control,
-  });
-  const error = useWatchFieldError(parentName);
-  return (
-    <Group>
-      {error && (
-        <Tooltip label={error} radius="sm" color="red">
-          <Warning color="red" />
-        </Tooltip>
-      )}
-      <ProjectSchemaTypeIcon type={type} />
-      <Text fw="bold" size="md">
-        {name}
-      </Text>
-    </Group>
-  );
-}
-
 export function ProjectConfigColumnFormItem(
   props: ProjectConfigColumnFormItemProps,
 ) {
-  const { index, accordionValue, opened } = props;
+  const { index } = props;
   const parentName = `columns.${index}`;
   return (
-    <Accordion.Item value={accordionValue}>
-      <Accordion.Control>
-        <ProjectConfigColumnTitle {...props} />
-      </Accordion.Control>
-      <Accordion.Panel>
-        {opened && (
-          <Stack>
-            <Group align="center">
-              <RHFMantineAdapter
-                props={{
-                  name: `${parentName}.type`,
-                  className: 'flex-1',
-                }}
-                config={{
-                  extractEventValue(e) {
-                    return e;
-                  },
-                }}
-              >
-                {ProjectColumnTypeSelectInput}
-              </RHFMantineAdapter>
-              <RHFField
-                name={`${parentName}.alias`}
-                label="Alias"
-                type="text"
-                description="The alias of the column that will be displayed in tables/graphs. Leave it blank if you don't want any aliases."
-                required
-                className="flex-1"
-              />
-            </Group>
-            <ProjectConfigColumnFormSwitcher {...props} />
-          </Stack>
-        )}
-      </Accordion.Panel>
-    </Accordion.Item>
+    <Stack className="pt-5">
+      <Group align="center">
+        <RHFMantineAdapter<SelectFieldProps>
+          props={{
+            name: `${parentName}.type`,
+            type: 'select',
+            className: 'flex-1',
+          }}
+          config={{
+            extractEventValue(e) {
+              return e;
+            },
+          }}
+        >
+          {ProjectColumnTypeSelectInput}
+        </RHFMantineAdapter>
+        <RHFField
+          name={`${parentName}.alias`}
+          label="Alias"
+          type="text"
+          description="The alias of the column that will be displayed in tables/graphs. Leave it blank if you don't want any aliases."
+          required
+          className="flex-1"
+        />
+      </Group>
+      <ProjectConfigColumnFormSwitcher {...props} />
+    </Stack>
   );
 }

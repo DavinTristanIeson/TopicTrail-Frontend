@@ -1,56 +1,83 @@
-import { ProjectConfigModel } from '@/api/project';
-import { Stepper } from '@mantine/core';
+import { Alert, Stepper } from '@mantine/core';
 import React from 'react';
 import { ConfigureProjectFlow_CheckProjectId } from './phase-1';
 import { ConfigureProjectFlow_CheckDataset } from './phase-2';
-import ProjectConfigFormBody from './phase-3';
+import ConfigureProjectFlow_ConfigureColumns from './phase-3';
+import { useFormContext } from 'react-hook-form';
+import { getAnyError } from '@/common/utils/error';
+import { Warning } from '@phosphor-icons/react';
 
-interface ProjectConfigPhaseSwitcherProps {
-  data: ProjectConfigModel | undefined;
+interface ProjectConfigFormPhaseSwitcherProps {
+  hasData?: boolean;
+}
+
+function ErrorAlert() {
+  const {
+    formState: { errors },
+  } = useFormContext();
+  const anyError = getAnyError(errors);
+
+  if (!anyError) {
+    return null;
+  }
+  return (
+    <Alert
+      title="There's an error in the form!"
+      icon={<Warning size={18} />}
+      color="red"
+    >
+      {anyError?.message}
+      <br />
+      You will not be allowed to submit the form until all errors are resolved.
+    </Alert>
+  );
 }
 
 export default function ProjectConfigFormPhaseSwitcher(
-  props: ProjectConfigPhaseSwitcherProps,
+  props: ProjectConfigFormPhaseSwitcherProps,
 ) {
-  const { data } = props;
   const [phase, setPhase] = React.useState(0);
   const maxPhase = 2;
-  const onContinue = () => setPhase((phase) => Math.min(phase + 1, maxPhase));
+  const [accessiblePhase, setAccessiblePhase] = React.useState(
+    props.hasData ? maxPhase : 0,
+  );
+  const onContinue = () => {
+    setPhase((phase) => Math.min(phase + 1, maxPhase));
+    setAccessiblePhase((phase) => Math.min(phase + 1, maxPhase));
+  };
   const onBack = () => setPhase((phase) => Math.min(phase - 1, maxPhase));
   return (
     <>
-      <Stepper
-        active={phase}
-        onStepClick={setPhase}
-        allowNextStepsSelect={false}
-      >
+      <Stepper active={phase} onStepClick={setPhase}>
         <Stepper.Step
           label="Step 1/3"
           description="Choose a project name"
-          allowStepSelect={false}
+          allowStepSelect
         />
         <Stepper.Step
           label="Step 2/3"
           description="Choose a dataset"
-          allowStepSelect={false}
+          allowStepSelect={accessiblePhase >= 1}
         />
         <Stepper.Step
           label="Step 3/3"
           description="Configure the schema of the dataset"
-          allowStepSelect={false}
+          allowStepSelect={accessiblePhase >= 2}
         />
       </Stepper>
+      <ErrorAlert />
       <div className="flex flex-col items-center pt-5">
-        <div className="max-w-5xl">
+        <div className="max-w-5xl px-3">
           {phase === 0 ? (
             <ConfigureProjectFlow_CheckProjectId onContinue={onContinue} />
           ) : phase === 1 ? (
             <ConfigureProjectFlow_CheckDataset
               onContinue={onContinue}
               onBack={onBack}
+              hasData={props.hasData}
             />
           ) : (
-            <ProjectConfigFormBody onBack={onBack} />
+            <ConfigureProjectFlow_ConfigureColumns onBack={onBack} />
           )}
         </div>
       </div>

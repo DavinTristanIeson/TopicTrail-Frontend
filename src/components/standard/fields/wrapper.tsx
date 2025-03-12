@@ -9,6 +9,8 @@ import {
   TextInputProps,
   Select,
   SelectProps,
+  Textarea,
+  TextareaProps,
 } from '@mantine/core';
 import {
   IRHFField,
@@ -45,8 +47,8 @@ export type PercentageFieldProps = IRHFField<
 };
 
 export function PercentageField(props: PercentageFieldProps) {
-  const { bounded } = props;
-  const { mergedProps } = useRHFMantineAdapter(props, {});
+  const { bounded, ...restProps } = props;
+  const { mergedProps } = useRHFMantineAdapter(restProps, {});
   return (
     <PercentageInput
       {...mergedProps}
@@ -76,7 +78,11 @@ export type TagsFieldProps = IRHFField<
 >;
 
 export function TagsField(props: TagsFieldProps) {
-  const { mergedProps } = useRHFMantineAdapter(props, {});
+  const { mergedProps } = useRHFMantineAdapter<TagsFieldProps>(props, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
 
   return <TagsInput {...mergedProps} />;
 }
@@ -93,4 +99,14 @@ export function SelectField(props: SelectFieldProps) {
     },
   });
   return <Select {...mergedProps} />;
+}
+
+export type TextareaFieldProps = IRHFField<
+  TextareaProps & IRHFMantineAdaptable<TextareaProps>,
+  'textarea'
+>;
+
+export function TextareaField(props: TextareaFieldProps) {
+  const { mergedProps } = useRHFMantineAdapter(props, {});
+  return <Textarea {...mergedProps} />;
 }

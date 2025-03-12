@@ -1,28 +1,65 @@
 import SubmitButton from '@/components/standard/button/submit';
 import {
-  Accordion,
   Stack,
   Title,
   Flex,
   Button,
   Table,
   Skeleton,
-  Divider,
   Alert,
-  ScrollArea,
   TableScrollContainer,
   Spoiler,
+  Tabs,
+  Group,
+  Tooltip,
+  ScrollArea,
 } from '@mantine/core';
-import { FloppyDisk, ArrowLeft, Warning } from '@phosphor-icons/react';
-import { useFormContext, useFieldArray, useWatch } from 'react-hook-form';
+import { ArrowLeft, Warning } from '@phosphor-icons/react';
+import {
+  useFormContext,
+  useFieldArray,
+  useWatch,
+  useFormState,
+} from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
-import { ConfigureDataSourceForm } from './phase-2';
-import { ProjectIdForm } from './phase-1';
 import { ProjectConfigColumnFormItem } from '../columns/form-body';
 import React from 'react';
 import { client } from '@/common/api/client';
 import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
 import Text from '@/components/standard/text';
+import { useWatchFieldError } from '@/components/standard/fields/watcher';
+import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
+import { getAnyError } from '@/common/utils/error';
+
+interface ProjectConfigColumnTitleProps {
+  index: number;
+  name: string;
+}
+
+function ProjectConfigColumnTitle(props: ProjectConfigColumnTitleProps) {
+  const { index, name } = props;
+  const { control } = useFormContext<ProjectConfigFormType>();
+
+  const parentName = `columns.${index}` as const;
+  const type = useWatch({
+    name: `${parentName}.type`,
+    control,
+  });
+  const error = useWatchFieldError(parentName);
+  return (
+    <Group>
+      {error && (
+        <Tooltip label={error} radius="sm" color="red">
+          <Warning color="red" />
+        </Tooltip>
+      )}
+      {type && <ProjectSchemaTypeIcon type={type} />}
+      <Text fw="bold" size="md">
+        {name}
+      </Text>
+    </Group>
+  );
+}
 
 function ProjectConfigColumnsFieldArray() {
   const { control } = useFormContext<ProjectConfigFormType>();
@@ -31,21 +68,29 @@ function ProjectConfigColumnsFieldArray() {
     control,
     keyName: '__fieldId',
   });
-  const [value, setValue] = React.useState<string | null>(null);
+  const [value, setValue] = React.useState<string | null>(
+    fields[0]?.__fieldId ?? null,
+  );
 
   return (
-    <Accordion value={value} onChange={setValue}>
+    <Tabs value={value} onChange={setValue} keepMounted={false}>
+      <Tabs.List>
+        {fields.map((field, index) => (
+          <Tabs.Tab key={field.__fieldId} value={field.__fieldId}>
+            <ProjectConfigColumnTitle name={field.name} index={index} />
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
       {fields.map((field, index) => {
         return (
-          <ProjectConfigColumnFormItem
-            index={index}
-            key={field.__fieldId}
-            accordionValue={field.__fieldId}
-            opened={field.__fieldId === value}
-          />
+          <Tabs.Panel key={field.__fieldId} value={field.__fieldId}>
+            {field.__fieldId === value && (
+              <ProjectConfigColumnFormItem index={index} />
+            )}
+          </Tabs.Panel>
         );
       })}
-    </Accordion>
+    </Tabs>
   );
 }
 
@@ -64,7 +109,7 @@ function ProjectConfigPreviewTable() {
   });
   if (isFetching) {
     return (
-      <div className="grid grid-cols-5">
+      <div className="grid grid-cols-5 gap-1">
         {Array.from({ length: 15 }, (_, i) => (
           <Skeleton height={32} key={i} />
         ))}
@@ -95,10 +140,10 @@ function ProjectConfigPreviewTable() {
               <Table.Th key={col}>{col}</Table.Th>
             ))}
           </Table.Tr>
-          {data.preview_rows.map((row) => (
-            <Table.Tr>
+          {data.preview_rows.map((row, idx) => (
+            <Table.Tr key={idx}>
               {data.dataset_columns.map((col) => (
-                <Table.Td>{row[col]}</Table.Td>
+                <Table.Td key={col}>{row[col]}</Table.Td>
               ))}
             </Table.Tr>
           ))}
@@ -113,27 +158,45 @@ function ProjectConfigPreviewTable() {
   );
 }
 
+export function ConfigureColumnsForm() {
+  return (
+    <>
+      <Stack className="pt-5">
+        <Title order={4} ta="center">
+          Dataset Preview
+        </Title>
+        <ProjectConfigPreviewTable />
+      </Stack>
+      <Stack>
+        <Title order={4} ta="center">
+          Column Configuration
+        </Title>
+        <ProjectConfigColumnsFieldArray />
+      </Stack>
+    </>
+  );
+}
+
 interface ProjectConfigFormBodyProps {
   onBack?(): void;
 }
 
-export default function ProjectConfigFormBody(
+export default function ConfigureProjectFlow_ConfigureColumns(
   props: ProjectConfigFormBodyProps,
 ) {
   return (
     <Stack>
       <Title order={2}>3/3: Project Configuration</Title>
-      <ProjectIdForm disabled />
-      <ConfigureDataSourceForm disabled />
-
-      <ProjectConfigPreviewTable />
-
-      <ProjectConfigColumnsFieldArray />
-
+      <Text>
+        Finally, configure the schema of your dataset. The types will determine
+        the analysis methods that will be used for each column. Please note that
+        the application assumes that the columns of the dataset will never
+        change; which means you will not be allowed to change the columns after
+        creating a new project. Make sure that unnecessary columns have already
+        been removed from your dataset.
+      </Text>
       <Flex justify="space-between" direction="row-reverse" align="center">
-        <SubmitButton leftSection={<FloppyDisk size={20} />}>
-          Save Project
-        </SubmitButton>
+        <SubmitButton>Create Project</SubmitButton>
         {props.onBack && (
           <Button
             leftSection={<ArrowLeft size={20} />}
@@ -144,6 +207,7 @@ export default function ProjectConfigFormBody(
           </Button>
         )}
       </Flex>
+      <ConfigureColumnsForm />
     </Stack>
   );
 }

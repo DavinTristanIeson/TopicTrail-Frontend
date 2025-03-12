@@ -8,6 +8,7 @@ import { DisclosureTrigger } from '@/hooks/disclosure';
 import { Divider, Stack } from '@mantine/core';
 import {
   ArrowsLeftRight,
+  DoorOpen,
   FileMagnifyingGlass,
   Gear,
   GitDiff,
@@ -17,6 +18,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { ProjectContext } from './context';
 import { client } from '@/common/api/client';
+import ConfirmationDialog from '@/components/widgets/confirmation';
 
 interface ProjectNavbarProps {
   config?: ProjectConfigModel;
@@ -25,15 +27,37 @@ interface ProjectNavbarProps {
 function ProjectNavbar(props: ProjectNavbarProps) {
   const { config } = props;
   const id = useRouter().query.id as string;
+  const router = useRouter();
+  const confirmRemote = React.useRef<DisclosureTrigger | null>(null);
   return (
     <Stack>
+      <ConfirmationDialog
+        message="Are you sure you want to go back? This will abort the project creation process and all of the values you inputted will be lost."
+        onConfirm={async () => {
+          router.back();
+        }}
+        positiveAction="Go Back"
+        ref={confirmRemote}
+      />
+      <AppSidebarLinkRenderer
+        links={[
+          {
+            label: 'Go Back',
+            icon: <DoorOpen size={24} />,
+            onClick() {
+              confirmRemote.current?.open();
+            },
+          },
+        ]}
+      />
+      <Divider />
       <AppSidebarLinkRenderer
         links={[
           {
             label: 'Topics',
             icon: <FileMagnifyingGlass size={24} />,
             url: {
-              pathname: NavigationRoutes.Project,
+              pathname: NavigationRoutes.ProjectTopics,
               query: {
                 id,
               },
@@ -75,7 +99,7 @@ function ProjectNavbar(props: ProjectNavbarProps) {
       <AppSidebarLinkRenderer
         links={[
           {
-            label: 'Reconfigure Project',
+            label: 'Configuration',
             icon: <Gear size={24} />,
             loading: !config,
             url: {
@@ -83,13 +107,6 @@ function ProjectNavbar(props: ProjectNavbarProps) {
               query: {
                 id,
               },
-            },
-          },
-          {
-            label: 'Help',
-            icon: <Gear size={24} />,
-            url: {
-              pathname: NavigationRoutes.Help,
             },
           },
         ]}
@@ -103,6 +120,7 @@ interface AppProjectLayoutProps {
 }
 
 export default function AppProjectLayout(props: AppProjectLayoutProps) {
+  const { children } = props;
   const id = useRouter().query.id as string;
   const query = client.useQuery(
     'get',
@@ -120,12 +138,12 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
   );
   return (
     <AppLayout
-      Header={<AppHeader back title={id} />}
+      Header={<AppHeader title={query.data?.data.config.metadata.name} />}
       Sidebar={<ProjectNavbar config={query.data?.data.config} />}
     >
       <UseQueryWrapperComponent query={query}>
         <ProjectContext.Provider value={query.data?.data}>
-          {props.children}
+          {children}
         </ProjectContext.Provider>
       </UseQueryWrapperComponent>
     </AppLayout>

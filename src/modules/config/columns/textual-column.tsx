@@ -182,14 +182,14 @@ function TopicModelingConfigurationFormBody(
           <Group>
             <RHFField
               type="number"
-              name={`${TOPIC_MODELING_NAME}.n_gram_range_start`}
+              name={`${TOPIC_MODELING_NAME}.n_gram_range[0]`}
               label="N-Gram Range Start"
               min={1}
               className="flex-1"
             />
             <RHFField
               type="number"
-              name={`${TOPIC_MODELING_NAME}.n_gram_range_end`}
+              name={`${TOPIC_MODELING_NAME}.n_gram_range[1]`}
               label="N-Gram Range End"
               min={1}
               className="flex-1"

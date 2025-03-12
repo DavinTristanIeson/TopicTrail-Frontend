@@ -2,9 +2,9 @@ import { queryClient } from '@/common/api/query-client';
 import { components } from './openapi';
 import { Query } from '@tanstack/react-query';
 
-export type ProjectLiteModel = components['schemas']['ProjectLiteResource'];
 export type ProjectModel = components['schemas']['ProjectResource'];
-export type ProjectConfigModel = components['schemas']['Config-Output'];
+export type ProjectMetadataModel = components['schemas']['ProjectMetadata'];
+export type ProjectConfigModel = components['schemas']['Config'];
 export type ProjectDataSourceModel =
   | components['schemas']['ExcelDataSource']
   | components['schemas']['CSVDataSource'];
@@ -43,7 +43,7 @@ export type SchemaColumnModel =
   | TopicSchemaColumnModel
   | UniqueSchemaColumnModel;
 
-export type ProjectMutationInput = components['schemas']['Config-Input'];
+export type CreateProjectInput = components['schemas']['CreateProjectSchema'];
 export type ProjectCheckDatasetInput =
   components['schemas']['CheckDatasetSchema'];
 
@@ -61,12 +61,12 @@ function projectDependencyPredicate(query: Query): boolean {
   return mentionsProjectId;
 }
 
-export function invalidateProjectDependencyQueries() {
+export function invalidateProjectDependencyQueries(projectId: string) {
   queryClient.invalidateQueries({
     predicate: projectDependencyPredicate,
   });
 }
-export function removeProjectDependencyQueries() {
+export function removeProjectDependencyQueries(projectId: string) {
   queryClient.removeQueries({
     predicate: projectDependencyPredicate,
   });

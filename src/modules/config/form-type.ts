@@ -1,5 +1,5 @@
 import { components } from '@/api/openapi';
-import { ProjectConfigModel, ProjectMutationInput } from '@/api/project';
+import { ProjectConfigModel, CreateProjectInput } from '@/api/project';
 import {
   DataSourceTypeEnum,
   DocumentEmbeddingMethodEnum,
@@ -18,10 +18,20 @@ function nullIfEmpty(value: any): any | null {
   return value || null;
 }
 
+function nullIfEmptyArray(value: any): any | null {
+  if (!value || value?.length === 0) {
+    return null;
+  }
+  return value;
+}
+
 export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
   alias: Yup.string().transform(nullIfEmpty).nullable(),
-  type: Yup.string().oneOf(Object.values(SchemaColumnTypeEnum)).required(),
+  type: Yup.string()
+    .oneOf(Object.values(SchemaColumnTypeEnum))
+    .transform(nullIfEmptyArray)
+    .nullable(),
 
   bin_count: Yup.number()
     .positive()
@@ -32,7 +42,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       otherwise: (schema) => schema.strip(),
     }),
   bins: Yup.array(Yup.number().required())
-    .transform(nullIfEmpty)
+    .transform(nullIfEmptyArray)
     .nullable()
     .transform((value) => {
       if (Array.isArray(value)) {
@@ -46,7 +56,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       then: (schema) =>
         schema.when('bin_count', {
           is: null,
-          then: (schema) => schema.min(1),
+          then: (schema) => schema.min(1).required(),
           otherwise: (schema) => schema.strip(),
         }),
       otherwise: (schema) => schema.strip(),
@@ -67,12 +77,11 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       otherwise: (schema) => schema.strip(),
     }),
 
-  is_json: Yup.boolean()
-    .required()
-    .when('type', {
-      is: SchemaColumnTypeEnum.MultiCategorical,
-      otherwise: (schema) => schema.strip(),
-    }),
+  is_json: Yup.boolean().when('type', {
+    is: SchemaColumnTypeEnum.MultiCategorical,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.strip(),
+  }),
 
   delimiter: Yup.string().when('type', {
     is: SchemaColumnTypeEnum.MultiCategorical,
@@ -115,13 +124,14 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     max_topic_size: Yup.number()
       .transform(nullIfNaN)
       .nullable()
-      .moreThan(Yup.ref('minTopicSize')),
+      .when({
+        is: null,
+        otherwise: (schema) => schema.moreThan(Yup.ref('min_topic_size')),
+      }),
     max_topics: Yup.number().transform(nullIfNaN).nullable().positive(),
-    n_gram_range_start: Yup.number().positive().required(),
-    n_gram_range_end: Yup.number()
-      .positive()
+    n_gram_range: Yup.array(Yup.number().positive().required())
       .required()
-      .moreThan(Yup.ref('nGramRangeStart')),
+      .length(2),
     no_outliers: Yup.boolean().required(),
     represent_outliers: Yup.boolean().required(),
     embedding_method: Yup.string()
@@ -140,11 +150,14 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   }),
 });
 
+export const ProjectConfigMetadataSchema = Yup.object({
+  name: Yup.string().required(),
+  description: Yup.string().nullable().transform(nullIfEmpty),
+  tags: Yup.array(Yup.string().required()).required(),
+});
+
 export const ProjectConfigFormSchema = Yup.object({
-  // No need for validation. BE should compute a file path using the hash of the project ID.
-  // This means that we don't have to make sure that project id is a valid file path.
-  // Same principle applies to column names
-  project_id: Yup.string().required(),
+  metadata: ProjectConfigMetadataSchema,
   source: Yup.object({
     // Can't guarantee this though. But we have a check-dataset endpoint so... might be alright?
     path: Yup.string().required(),
@@ -201,10 +214,9 @@ export function DefaultProjectSchemaColumnValues(
       type === SchemaColumnTypeEnum.Textual
         ? {
             max_topics: null,
-            max_topic_size: 1 / 5,
+            max_topic_size: null,
             min_topic_size: 15,
-            n_gram_range_end: 2,
-            n_gram_range_start: 1,
+            n_gram_range: [1, 2],
             no_outliers: false,
             represent_outliers: false,
             embedding_method: DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2,
@@ -236,13 +248,13 @@ export function ProjectConfigDefaultValues(
     columns:
       data?.data_schema.columns.map((col) => {
         return {
-          bin_count: 'bin_count' in col ? col.bin_count : 3,
+          bin_count: 'bin_count' in col ? col.bin_count : null,
           bins: 'bins' in col ? col.bins : null,
           datetime_format:
             'datetime_format' in col ? col.datetime_format : null,
           name: col.name,
           alias: col.alias,
-          is_json: 'is_json' in col ? col.is_json : false,
+          is_json: 'is_json' in col ? col.is_json : null,
           preprocessing:
             'preprocessing' in col
               ? {
@@ -251,19 +263,21 @@ export function ProjectConfigDefaultValues(
               : undefined,
           type: col.type,
           category_order: 'category_order' in col ? col.category_order : null,
-          delimiter: 'delimiter' in col ? col.delimiter : ',',
-          role: 'role' in col ? col.role : GeospatialRoleEnum.Latitude,
+          delimiter: 'delimiter' in col ? col.delimiter : null,
+          role: 'role' in col ? col.role : null,
           topic_modeling:
             'topic_modeling' in col
               ? {
                   ...col.topic_modeling,
-                  n_gram_range_start: col.topic_modeling.n_gram_range[0],
-                  n_gram_range_end: col.topic_modeling.n_gram_range[1],
                 }
               : undefined,
         } as ProjectConfigColumnFormType;
       }) ?? [],
-    project_id: data?.project_id ?? '',
+    metadata: {
+      name: data?.metadata.name ?? '',
+      description: data?.metadata.description ?? null,
+      tags: data?.metadata.tags ?? [],
+    },
     source: {
       path: data?.source?.path ?? '',
       type: data?.source?.type ?? (undefined as any),
@@ -281,11 +295,14 @@ export function ProjectConfigDefaultValues(
 
 export function ProjectConfigFormType2Input(
   values: ProjectConfigFormType,
-): ProjectMutationInput {
+): CreateProjectInput {
   return {
     source: transformDataSourceFormType2DataSourceInput(values.source),
-    version: 1,
-    project_id: values.project_id,
+    metadata: {
+      name: values.metadata.name,
+      tags: values.metadata.tags ?? [],
+      description: values.metadata.description ?? null,
+    },
     data_schema: {
       columns: values.columns.map((col) => {
         const basicColumn = {
@@ -342,10 +359,6 @@ export function ProjectConfigFormType2Input(
                 reference_document_count:
                   col.topic_modeling.reference_document_count ?? null,
                 max_topics: col.topic_modeling.max_topics ?? null,
-                n_gram_range: [
-                  col.topic_modeling.n_gram_range_start,
-                  col.topic_modeling.n_gram_range_end,
-                ],
               },
               preprocessing: col.preprocessing!,
             } as components['schemas']['TextualSchemaColumn-Input'];
@@ -361,6 +374,6 @@ export function ProjectConfigFormType2Input(
             } as components['schemas']['UniqueSchemaColumn-Input'];
         }
       }),
-    },
+    } as components['schemas']['SchemaManager-Input'],
   };
 }

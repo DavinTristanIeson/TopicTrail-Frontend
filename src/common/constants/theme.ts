@@ -3,6 +3,7 @@ import {
   Drawer,
   InputWrapper,
   LoadingOverlay,
+  Modal,
   Paper,
   ScrollArea,
 } from '@mantine/core';
@@ -71,6 +72,14 @@ const mantineTheme = createTheme({
       defaultProps: {
         position: 'right',
         size: 'lg',
+      },
+    }),
+    Modal: Modal.extend({
+      classNames: {
+        title: 'font-bold',
+      },
+      defaultProps: {
+        centered: true,
       },
     }),
   },

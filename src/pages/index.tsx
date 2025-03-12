@@ -60,9 +60,13 @@ export default function Dashboard() {
             loadingComponent={<Loader type="dots" size={48} />}
           >
             {(data) => {
-              const projects = data.data.filter((project) =>
-                q == null ? true : project.id.includes(q),
-              );
+              const projects =
+                q == null
+                  ? data.data
+                  : data.data.filter((project) => {
+                      const meta = project.config.metadata;
+                      return meta.name.includes(q) || !!meta.tags?.includes(q);
+                    });
               return (
                 <ul className="flex flex-col gap-2 w-full">
                   {projects.map((project) => (

@@ -4,23 +4,6 @@
  */
 
 export interface paths {
-    "/projects/check-project-id": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Check Project Id */
-        post: operations["post__check_project_id_projects_check_project_id_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/projects/check-dataset": {
         parameters: {
             query?: never;
@@ -107,23 +90,6 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/projects/{project_id}/update-project-id": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update  Project Id */
-        patch: operations["update__project_id_projects__project_id__update_project_id_patch"];
         trace?: never;
     };
     "/enums": {
@@ -416,10 +382,10 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[list[ProjectLiteResource]] */
-        ApiResult_list_ProjectLiteResource__: {
+        /** ApiResult[list[ProjectResource]] */
+        ApiResult_list_ProjectResource__: {
             /** Data */
-            data: components["schemas"]["ProjectLiteResource"][];
+            data: components["schemas"]["ProjectResource"][];
             /** Message */
             message: string | null;
         };
@@ -482,11 +448,6 @@ export interface components {
         };
         /** CheckDatasetSchema */
         CheckDatasetSchema: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
-        /** CheckProjectIdSchema */
-        CheckProjectIdSchema: {
-            /** Project Id */
-            project_id: string;
-        };
         /** ComparisonGroupWordsSchema */
         ComparisonGroupWordsSchema: {
             /** Groups */
@@ -506,7 +467,7 @@ export interface components {
             exclude_overlapping_rows: boolean;
         };
         /** Config */
-        "Config-Input": {
+        Config: {
             /**
              * Version
              * @default 1
@@ -514,19 +475,7 @@ export interface components {
             version: number;
             /** Project Id */
             project_id: string;
-            /** Source */
-            source: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
-            data_schema: components["schemas"]["SchemaManager-Input"];
-        };
-        /** Config */
-        "Config-Output": {
-            /**
-             * Version
-             * @default 1
-             */
-            version: number;
-            /** Project Id */
-            project_id: string;
+            metadata: components["schemas"]["ProjectMetadata"];
             /** Source */
             source: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
             data_schema: components["schemas"]["SchemaManager-Output"];
@@ -975,12 +924,21 @@ export interface components {
              */
             type: "parquet";
         };
-        /** ProjectLiteResource */
-        ProjectLiteResource: {
-            /** Id */
-            id: string;
-            /** Path */
-            path: string;
+        /** ProjectMetadata */
+        ProjectMetadata: {
+            /** Name */
+            name: string;
+            /** Description */
+            description: string | null;
+            /** Tags */
+            tags: string[];
+        };
+        /** ProjectMutationSchema */
+        ProjectMutationSchema: {
+            metadata: components["schemas"]["ProjectMetadata"];
+            /** Source */
+            source: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
+            data_schema: components["schemas"]["SchemaManager-Input"];
         };
         /** ProjectResource */
         ProjectResource: {
@@ -988,7 +946,7 @@ export interface components {
             id: string;
             /** Path */
             path: string;
-            config: components["schemas"]["Config-Output"];
+            config: components["schemas"]["Config"];
         };
         /**
          * SchemaColumnTypeEnum
@@ -1136,11 +1094,8 @@ export interface components {
              * @default 15
              */
             min_topic_size: number;
-            /**
-             * Max Topic Size
-             * @default 0.2
-             */
-            max_topic_size: number;
+            /** Max Topic Size */
+            max_topic_size?: number | null;
             /**
              * Clustering Conservativeness
              * @default 1
@@ -1237,15 +1192,6 @@ export interface components {
              */
             type: "unique";
         };
-        /** UpdateProjectIdSchema */
-        UpdateProjectIdSchema: {
-            /** Project Id */
-            project_id: string;
-        };
-        /** UpdateProjectSchema */
-        UpdateProjectSchema: {
-            data_schema: components["schemas"]["SchemaManager-Input"];
-        };
         /** _BaseCompoundTableFilter */
         _BaseCompoundTableFilter: Record<string, never>;
         /** _BaseTableFilter */
@@ -1264,75 +1210,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    post__check_project_id_projects_check_project_id_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CheckProjectIdSchema"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
     post__check_dataset_projects_check_dataset_post: {
         parameters: {
             query?: never;
@@ -1555,7 +1432,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_list_ProjectLiteResource__"];
+                    "application/json": components["schemas"]["ApiResult_list_ProjectResource__"];
                 };
             };
             /** @description Bad Request */
@@ -1614,7 +1491,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Config-Input"];
+                "application/json": components["schemas"]["ProjectMutationSchema"];
             };
         };
         responses: {
@@ -1752,7 +1629,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateProjectSchema"];
+                "application/json": components["schemas"]["ProjectMutationSchema"];
             };
         };
         responses: {
@@ -1822,77 +1699,6 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    update__project_id_projects__project_id__update_project_id_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateProjectIdSchema"];
-            };
-        };
         responses: {
             /** @description Successful Response */
             200: {

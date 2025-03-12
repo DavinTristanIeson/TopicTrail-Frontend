@@ -9,6 +9,8 @@ import {
   SwitchFieldProps,
   TagsField,
   TagsFieldProps,
+  TextareaField,
+  TextareaFieldProps,
   TextField,
   TextFieldProps,
 } from './wrapper';
@@ -19,7 +21,8 @@ type RHFFieldProps =
   | PercentageFieldProps
   | TagsFieldProps
   | SelectFieldProps
-  | SwitchFieldProps;
+  | SwitchFieldProps
+  | TextareaFieldProps;
 
 export default function RHFField(props: RHFFieldProps) {
   switch (props.type) {
@@ -35,5 +38,7 @@ export default function RHFField(props: RHFFieldProps) {
       return <SwitchField {...props} />;
     case 'select':
       return <SelectField {...props} />;
+    case 'textarea':
+      return <TextareaField {...props} />;
   }
 }
