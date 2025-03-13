@@ -8,6 +8,9 @@ import { showNotification } from '@mantine/notifications';
 import { Button, Group, Stack } from '@mantine/core';
 import { X } from '@phosphor-icons/react';
 import NavigationRoutes from '@/common/constants/routes';
+import { DisclosureTrigger } from '@/hooks/disclosure';
+import React from 'react';
+import ConfirmationDialog from '@/components/widgets/confirmation';
 
 export default function ProjectConfigCreateForm() {
   const { mutateAsync: create } = client.useMutation('post', '/projects/', {
@@ -35,23 +38,35 @@ export default function ProjectConfigCreateForm() {
       },
     });
   };
+
+  const confirmRemote = React.useRef<DisclosureTrigger | null>(null);
   return (
-    <ProjectConfigForm onSubmit={onSubmit}>
-      <Stack>
-        <Group justify="end">
-          <Button
-            leftSection={<X size={20} />}
-            color="red"
-            variant="outline"
-            onClick={() => {
-              router.back();
-            }}
-          >
-            Cancel
-          </Button>
-        </Group>
-        <ProjectConfigFormPhaseSwitcher />
-      </Stack>
-    </ProjectConfigForm>
+    <>
+      <ConfirmationDialog
+        message="Are you sure you want to go back? This will abort the project creation process and all of the values you inputted will be lost."
+        onConfirm={async () => {
+          router.back();
+        }}
+        positiveAction="Go Back"
+        ref={confirmRemote}
+      />
+      <ProjectConfigForm onSubmit={onSubmit}>
+        <Stack>
+          <Group justify="end">
+            <Button
+              leftSection={<X size={20} />}
+              color="red"
+              variant="outline"
+              onClick={() => {
+                confirmRemote.current?.open();
+              }}
+            >
+              Cancel
+            </Button>
+          </Group>
+          <ProjectConfigFormPhaseSwitcher />
+        </Stack>
+      </ProjectConfigForm>
+    </>
   );
 }

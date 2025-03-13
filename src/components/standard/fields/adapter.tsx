@@ -45,6 +45,7 @@ interface RHFMantineAdapterReturn {
   value: any;
   onChange(value: any): void;
   readOnly: boolean;
+  disabled: boolean;
   required: boolean;
   error: string | undefined;
   ref: RefCallback<any> | undefined;
@@ -67,6 +68,7 @@ export function useRHFMantineAdapter<
   const {
     name,
     disabled: controlledDisabled,
+    readOnly: controlledReadonly,
     onChange: controlledOnChange,
     noError,
     required,
@@ -75,7 +77,7 @@ export function useRHFMantineAdapter<
   } = props;
   const { extractEventValue, withNestedError } = config;
   const restProps = unusedProps as T;
-  const { control, getValues } = useFormContext<any>();
+  const { control } = useFormContext<any>();
   const {
     field: { onChange, value, ref, disabled: fieldDisabled },
     fieldState: { error: fieldStateError },
@@ -83,18 +85,20 @@ export function useRHFMantineAdapter<
   } = useController({ name, control, shouldUnregister: false });
   const { editable } = React.useContext(FormEditableContext);
   const readOnly =
-    !!controlledDisabled || !!fieldDisabled || !editable || formIsSubmitting;
+    !!controlledReadonly || !!fieldDisabled || !editable || formIsSubmitting;
+  const disabled = controlledDisabled ?? false;
   const error = noError
     ? undefined
     : withNestedError
       ? getAnyError(fieldStateError)?.message
       : fieldStateError?.message;
-  if ('placeholder' in restProps && readOnly) {
+  if ('placeholder' in restProps && (readOnly || disabled)) {
     restProps.placeholder = undefined;
   }
 
   const fieldProps: RHFMantineAdapterReturn = {
     readOnly,
+    disabled,
     onChange(e) {
       onChange(extractEventValue ? extractEventValue(e) : e?.target?.value);
       controlledOnChange?.(e);
@@ -102,7 +106,7 @@ export function useRHFMantineAdapter<
     value: controlledValue ?? value,
     error,
     name,
-    required: !readOnly ? !!required : false,
+    required: !readOnly && !disabled ? !!required : false,
     ref,
   };
 

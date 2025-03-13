@@ -44,8 +44,10 @@ export default function ProjectConfigForm(props: ProjectConfigFormProps) {
   }, [editable]);
 
   return (
-    <FormWrapper form={form} onSubmit={handleSubmit}>
-      {children}
-    </FormWrapper>
+    <div className="px-3 pt-3">
+      <FormWrapper form={form} onSubmit={handleSubmit}>
+        {children}
+      </FormWrapper>
+    </div>
   );
 }

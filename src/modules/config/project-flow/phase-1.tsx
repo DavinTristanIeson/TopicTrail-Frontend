@@ -15,7 +15,7 @@ interface ConfigureProjectFlow_CheckProjectIdProps {
   onContinue(): void;
 }
 
-export function ProjectIdForm() {
+export function ProjectConfigMetadataFormBody() {
   return (
     <Stack className="max-w-xl">
       <RHFField
@@ -60,7 +60,7 @@ export function ConfigureProjectFlow_CheckProjectId(
         </Text>{' '}
         directory in the same directory as {GlobalConfig.AppName}.
       </Text>
-      <ProjectIdForm />
+      <ProjectConfigMetadataFormBody />
       <Flex direction="row-reverse" w="100%">
         <Tooltip
           disabled={!isError}

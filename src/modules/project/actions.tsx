@@ -38,7 +38,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
       <div>
         <Group justify="between">
           <div className="flex-1">
-            <Text>{metadata.name}</Text>
+            <Text fw="500">{metadata.name}</Text>
             <Text
               c="gray"
               className="text-wrap"
@@ -84,7 +84,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
           </Group>
         </Group>
         {!!metadata.description && (
-          <Text size="sm" className="pt-2">
+          <Text size="sm" className="pt-2 whitespace-pre-wrap">
             {metadata.description}
           </Text>
         )}

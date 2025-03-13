@@ -1,5 +1,4 @@
 import { UseQueryResult } from '@tanstack/react-query';
-import { ApiError } from '@/common/api/model';
 import Script, { ScriptProps } from 'next/script';
 import React from 'react';
 
@@ -7,6 +6,7 @@ import { MaybeFC, MaybeFCType } from '@/components/utility/maybe';
 import ErrorViewComponent from '../layout/error-view-component';
 import { LoadingOverlay } from '@mantine/core';
 import transform from 'lodash/transform';
+import { ApiError } from '@/api/common';
 
 interface FetchWrapperSharedProps {
   loadingComponent?: React.ReactNode;

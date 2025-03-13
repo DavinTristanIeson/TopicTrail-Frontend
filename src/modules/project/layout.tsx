@@ -5,13 +5,15 @@ import AppHeader from '@/components/layout/header';
 import { AppSidebarLinkRenderer } from '@/components/layout/sidebar';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { DisclosureTrigger } from '@/hooks/disclosure';
-import { Divider, Stack } from '@mantine/core';
+import { Divider, ScrollArea, Stack } from '@mantine/core';
 import {
   ArrowsLeftRight,
   DoorOpen,
   FileMagnifyingGlass,
   Gear,
   GitDiff,
+  House,
+  HouseSimple,
   Table,
 } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
@@ -31,21 +33,13 @@ function ProjectNavbar(props: ProjectNavbarProps) {
   const confirmRemote = React.useRef<DisclosureTrigger | null>(null);
   return (
     <Stack>
-      <ConfirmationDialog
-        message="Are you sure you want to go back? This will abort the project creation process and all of the values you inputted will be lost."
-        onConfirm={async () => {
-          router.back();
-        }}
-        positiveAction="Go Back"
-        ref={confirmRemote}
-      />
       <AppSidebarLinkRenderer
         links={[
           {
-            label: 'Go Back',
-            icon: <DoorOpen size={24} />,
-            onClick() {
-              confirmRemote.current?.open();
+            label: 'Home',
+            icon: <House size={24} />,
+            url: {
+              pathname: NavigationRoutes.Home,
             },
           },
         ]}

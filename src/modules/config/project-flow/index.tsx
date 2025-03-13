@@ -84,10 +84,13 @@ export default function ProjectConfigFormPhaseSwitcher(
             <ConfigureProjectFlow_CheckDataset
               onContinue={onContinue}
               onBack={onBack}
-              hasData={props.hasData}
+              hasData={hasData}
             />
           ) : (
-            <ConfigureProjectFlow_ConfigureColumns onBack={onBack} />
+            <ConfigureProjectFlow_ConfigureColumns
+              onBack={onBack}
+              hasData={hasData}
+            />
           )}
         </div>
       </div>

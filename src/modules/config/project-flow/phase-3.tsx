@@ -166,17 +166,20 @@ export function ConfigureColumnsForm() {
         </Title>
         <ProjectConfigColumnsFieldArray />
       </Stack>
+      <div style={{ height: 160 }} />
     </>
   );
 }
 
 interface ProjectConfigFormBodyProps {
   onBack?(): void;
+  hasData?: boolean;
 }
 
 export default function ConfigureProjectFlow_ConfigureColumns(
   props: ProjectConfigFormBodyProps,
 ) {
+  const { hasData } = props;
   return (
     <Stack>
       <Title order={2}>3/3: Project Configuration</Title>
@@ -189,7 +192,9 @@ export default function ConfigureProjectFlow_ConfigureColumns(
         been removed from your dataset.
       </Text>
       <Flex justify="space-between" direction="row-reverse" align="center">
-        <SubmitButton>Create Project</SubmitButton>
+        <SubmitButton>
+          {hasData ? 'Save Project' : 'Create Project'}
+        </SubmitButton>
         {props.onBack && (
           <Button
             leftSection={<ArrowLeft size={20} />}

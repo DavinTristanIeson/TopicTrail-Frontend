@@ -154,36 +154,47 @@ export const ProjectConfigMetadataSchema = Yup.object({
   name: Yup.string().required(),
   description: Yup.string().nullable().transform(nullIfEmpty),
   tags: Yup.array(Yup.string().required()).required(),
-});
+}).required();
+
+export const ProjectConfigDataSourceFormSchema = Yup.object({
+  path: Yup.string().required(),
+  type: Yup.string().oneOf(Object.values(DataSourceTypeEnum)).required(),
+  sheet_name: Yup.string()
+    .transform(nullIfEmpty)
+    .nullable()
+    .when('type', {
+      is: DataSourceTypeEnum.Excel,
+      otherwise: (schema) => schema.strip(),
+    }),
+  delimiter: Yup.string().when('type', {
+    is: DataSourceTypeEnum.CSV,
+    then: (schema) =>
+      schema.required('Delimiter is required when the dataset type is CSV.'),
+    otherwise: (schema) => schema.strip(),
+  }),
+}).required();
 
 export const ProjectConfigFormSchema = Yup.object({
   metadata: ProjectConfigMetadataSchema,
-  source: Yup.object({
-    // Can't guarantee this though. But we have a check-dataset endpoint so... might be alright?
-    path: Yup.string().required(),
-    type: Yup.string().oneOf(Object.values(DataSourceTypeEnum)).required(),
-    sheet_name: Yup.string()
-      .transform(nullIfEmpty)
-      .nullable()
-      .when('type', {
-        is: DataSourceTypeEnum.Excel,
-        otherwise: (schema) => schema.strip(),
-      }),
-    delimiter: Yup.string().when('type', {
-      is: DataSourceTypeEnum.CSV,
-      then: (schema) =>
-        schema.required('Delimiter is required when the dataset type is CSV.'),
-      otherwise: (schema) => schema.strip(),
-    }),
-  }).required(),
+  source: ProjectConfigDataSourceFormSchema,
   columns: Yup.array(ProjectConfigColumnFormSchema.required()).required(),
 });
 
 export type ProjectConfigColumnFormType = Yup.InferType<
   typeof ProjectConfigColumnFormSchema
 >;
+export type ProjectConfigDataSourceFormType = Yup.InferType<
+  typeof ProjectConfigDataSourceFormSchema
+>;
 export type ProjectConfigFormType = Yup.InferType<
   typeof ProjectConfigFormSchema
+>;
+
+export const ProjectConfigDataSourceUpdateModalFormSchema = Yup.object({
+  source: ProjectConfigDataSourceFormSchema,
+});
+export type ProjectConfigDataSourceUpdateModalFormType = Yup.InferType<
+  typeof ProjectConfigDataSourceUpdateModalFormSchema
 >;
 
 export function DefaultProjectSchemaColumnValues(

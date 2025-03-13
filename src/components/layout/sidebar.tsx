@@ -13,7 +13,7 @@ export interface AppNavigationLink {
   onClick?(): void;
   url?: {
     pathname: NavigationRoutes;
-    query: Record<string, string[] | string>;
+    query?: Record<string, string[] | string>;
   };
   loading?: boolean;
   active?: boolean;

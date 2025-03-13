@@ -28,7 +28,7 @@ function UpdateProjectDeleteButton() {
       <DeleteProjectModal
         ref={deleteRemote}
         onAfterDelete={() => {
-          router.replace(NavigationRoutes.Dashboard);
+          router.replace(NavigationRoutes.Home);
         }}
       />
       <Button
@@ -67,7 +67,6 @@ function UpdateProjectFormButtons(props: UpdateProjectFormButtonsProps) {
         </>
       ) : (
         <>
-          <SubmitButton>Save Project</SubmitButton>
           <Button
             variant="outline"
             color="red"
@@ -119,7 +118,12 @@ export default function ProjectConfigUpdateForm(
         color: 'green',
       });
     }
-    router.back();
+    router.replace({
+      pathname: NavigationRoutes.ProjectTopics,
+      query: {
+        id: projectId,
+      },
+    });
   };
 
   const editableProviderValue = React.useMemo(() => {
