@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  Alert,
-  Group,
-  List,
-  Spoiler,
-  Switch,
-  TagsInput,
-  Tooltip,
-} from '@mantine/core';
-import Colors from '@/common/constants/colors';
+import { Alert, List, Spoiler, Switch, TagsInput, Text } from '@mantine/core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Info } from '@phosphor-icons/react';
 import { ProjectConfigFormType } from '../form-type';
@@ -20,7 +11,6 @@ import RHFField from '@/components/standard/fields';
 import { useRHFMantineAdapter } from '@/components/standard/fields/adapter';
 import { TagsFieldProps } from '@/components/standard/fields/wrapper';
 import { DescriptiveStatisticsTable } from '@/modules/table/continuous/descriptive-statistics';
-import Text from '@/components/standard/text';
 import { FormEditableContext } from '@/components/standard/fields/context';
 
 function ProjectConfigColumnContinuousFormBinsInput(

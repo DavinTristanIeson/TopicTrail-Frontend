@@ -2,10 +2,9 @@
 // | CHECK PROJECT ID |
 // +------------------+
 
-import { Stack, Title, Flex, Button, Tooltip } from '@mantine/core';
+import { Stack, Title, Flex, Button, Tooltip, Text } from '@mantine/core';
 import { ArrowRight } from '@phosphor-icons/react';
 import { useFormState } from 'react-hook-form';
-import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
 import GlobalConfig from '@/common/constants/global';
 import React from 'react';
@@ -52,7 +51,7 @@ export function ConfigureProjectFlow_CheckProjectId(
   return (
     <Stack className="relative">
       <Title order={2}>1/3: What&apos;s the name of your project?</Title>
-      <Text wrap>
+      <Text className="break-words text-wrap">
         First things first, please specify the name of your project. Note that
         your project can be found in the{' '}
         <Text c="brand" span>

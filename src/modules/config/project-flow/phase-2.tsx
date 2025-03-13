@@ -8,6 +8,7 @@ import {
   LoadingOverlay,
   Button,
   Alert,
+  Text,
 } from '@mantine/core';
 import {
   ArrowLeft,
@@ -16,7 +17,6 @@ import {
   LockOpen,
   Warning,
 } from '@phosphor-icons/react';
-import Text from '@/components/standard/text';
 import React from 'react';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import { FormEditableContext } from '@/components/standard/fields/context';

@@ -3,7 +3,6 @@ import Colors from '@/common/constants/colors';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { useRHFMantineAdapter } from '@/components/standard/fields/adapter';
 import { SelectFieldProps } from '@/components/standard/fields/wrapper';
-import Text from '@/components/standard/text';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import {
   ComboboxItem,
@@ -12,6 +11,7 @@ import {
   Select,
   SelectProps,
   Stack,
+  Text,
 } from '@mantine/core';
 import capitalize from 'lodash/capitalize';
 import { useFormContext } from 'react-hook-form';

@@ -5,12 +5,10 @@ import {
   Modal,
   Stack,
   Flex,
-  Title,
   Button,
   Badge,
-  Spoiler,
+  Text,
 } from '@mantine/core';
-import Text from '@/components/standard/text';
 import React from 'react';
 import { Eye, PencilSimple, TrashSimple, X } from '@phosphor-icons/react';
 import Colors from '@/common/constants/colors';

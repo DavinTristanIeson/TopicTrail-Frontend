@@ -1,5 +1,4 @@
-import { Box, Button, Flex, Title } from '@mantine/core';
-import Text from '@/components/standard/text/base';
+import { Box, Button, Flex, Title, Text } from '@mantine/core';
 import Colors from '@/common/constants/colors';
 import { ArrowClockwise } from '@phosphor-icons/react';
 

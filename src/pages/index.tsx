@@ -1,13 +1,12 @@
 import AppLayout from '@/components/layout/app';
-import { Title, TextInput, Stack, Loader, Button } from '@mantine/core';
-import Text from '@/components/standard/text';
+import { Title, TextInput, Stack, Loader, Button, Text } from '@mantine/core';
 import React from 'react';
 import { MagnifyingGlass, Plus } from '@phosphor-icons/react';
 import { useDebouncedState } from '@mantine/hooks';
 import Colors from '@/common/constants/colors';
 import AppHeader from '@/components/layout/header';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
-import { DeleteProjectModal, ProjectListItem } from '@/modules/project/actions';
+import { ProjectListItem } from '@/modules/project/actions';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { client } from '@/common/api/client';
@@ -22,7 +21,7 @@ export default function Dashboard() {
       <Stack w="100%" align="center">
         <Stack align="center" pt={64} maw={880} py={64}>
           <Title order={2}>Choose a Project!</Title>
-          <Text wrap ta="center">
+          <Text className="text-wrap break-words" ta="center">
             Looks like you haven&apos;t opened any projects yet. Pick a project
             from below or create a new project to get started.
           </Text>

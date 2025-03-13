@@ -1,5 +1,5 @@
-import Text, { TextProps } from "@/components/standard/text/base";
-import React from "react";
+import { Text, TextProps } from '@mantine/core';
+import React from 'react';
 
 interface MaybeTextProps extends TextProps {
   children: React.ReactNode;
@@ -26,8 +26,8 @@ interface OptionalWrapperProps<TProps extends object> {
 /** Uses the \<Text\>-related props only if children is a string/number */
 export function MaybeText(props: MaybeTextProps) {
   if (
-    typeof props.children === "string" ||
-    typeof props.children === "number"
+    typeof props.children === 'string' ||
+    typeof props.children === 'number'
   ) {
     return <Text {...props} />;
   }
@@ -36,9 +36,9 @@ export function MaybeText(props: MaybeTextProps) {
 
 export function MaybeFC<T extends object>(props: MaybeFCProps<T>) {
   if (
-    typeof props.children === "function" ||
+    typeof props.children === 'function' ||
     /* Type of react element can be {$$typeof: ..., render() {}} */
-    "render" in (props.children as any)
+    'render' in (props.children as any)
   ) {
     const Children = props.children as any;
     return <Children {...props.props} />;
@@ -52,7 +52,7 @@ export function MaybeFC<T extends object>(props: MaybeFCProps<T>) {
 }
 
 export function OptionalWrapper<TProps extends object>(
-  props: OptionalWrapperProps<TProps>
+  props: OptionalWrapperProps<TProps>,
 ) {
   const { Wrapper, wrapperProps, children } = props;
   if (Wrapper) {
@@ -66,7 +66,7 @@ export function callMaybeFunction<TParams extends unknown[], TReturn>(
   maybeFn: TReturn | ((...args: TParams) => TReturn),
   ...args: TParams
 ): TReturn {
-  if (typeof maybeFn === "function") {
+  if (typeof maybeFn === 'function') {
     return (maybeFn as any)(...args);
   } else {
     return maybeFn;

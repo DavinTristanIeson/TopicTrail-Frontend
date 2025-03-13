@@ -1,8 +1,6 @@
-import Colors from '@/common/constants/colors';
 import { DocumentEmbeddingMethodEnum } from '@/common/constants/enum';
-import { Select, Stack, Divider, Group, Spoiler } from '@mantine/core';
+import { Text, Select, Stack, Divider, Group, Spoiler } from '@mantine/core';
 import { useController, useFormContext } from 'react-hook-form';
-import Text from '@/components/standard/text';
 import RHFField from '@/components/standard/fields';
 import {
   ProjectConfigColumnFormProps,

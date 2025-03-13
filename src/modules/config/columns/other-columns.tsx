@@ -1,9 +1,9 @@
 import TextLink from '@/components/standard/button/link';
 import RHFField from '@/components/standard/fields';
-import Text from '@/components/standard/text';
 import { GeospatialRoleEnum } from '@/common/constants/enum';
 import FieldWatcher from '@/components/standard/fields/watcher';
 import { ProjectConfigColumnFormProps } from './utils';
+import { Text } from '@mantine/core';
 
 export function ProjectConfigColumnTemporalForm(
   props: ProjectConfigColumnFormProps,

@@ -12,6 +12,7 @@ import {
   Tabs,
   Group,
   Tooltip,
+  Text,
 } from '@mantine/core';
 import { ArrowLeft, Warning } from '@phosphor-icons/react';
 import { useFormContext, useFieldArray, useWatch } from 'react-hook-form';
@@ -20,7 +21,6 @@ import { ProjectConfigColumnFormItem } from '../columns/form-body';
 import React from 'react';
 import { client } from '@/common/api/client';
 import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
-import Text from '@/components/standard/text';
 import { useWatchFieldError } from '@/components/standard/fields/watcher';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 

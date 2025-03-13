@@ -1,6 +1,4 @@
-import Colors from '@/common/constants/colors';
-import { NumberInput, NumberInputProps } from '@mantine/core';
-import Text from '../text';
+import { NumberInput, NumberInputProps, Text } from '@mantine/core';
 import React from 'react';
 
 export function PercentageInput(props: NumberInputProps) {
