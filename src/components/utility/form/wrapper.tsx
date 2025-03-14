@@ -1,13 +1,13 @@
-import { handleFormSubmission } from "@/common/utils/form";
-import { classNames } from "@/common/utils/styles";
-import { LoadingOverlay } from "@mantine/core";
-import React from "react";
+import { handleFormSubmission } from '@/common/utils/form';
+import { classNames } from '@/common/utils/styles';
+import { LoadingOverlay } from '@mantine/core';
+import React from 'react';
 import {
   FieldValues,
   Form,
   FormProvider,
   UseFormReturn,
-} from "react-hook-form";
+} from 'react-hook-form';
 
 interface FormWrapperProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -18,11 +18,11 @@ interface FormWrapperProps<T extends FieldValues> {
 }
 
 export default function FormWrapper<T extends FieldValues>(
-  props: FormWrapperProps<T>
+  props: FormWrapperProps<T>,
 ) {
   const handleSubmit = props.form.handleSubmit(
     handleFormSubmission(props.onSubmit, props.form.setError),
-    console.error
+    console.error,
   );
 
   const {
@@ -33,7 +33,7 @@ export default function FormWrapper<T extends FieldValues>(
       <Form
         control={props.form.control}
         onSubmit={handleSubmit as any}
-        className={classNames("relative", props.className)}
+        className={classNames('relative', props.className)}
         style={props.style}
       >
         <LoadingOverlay visible={isSubmitting} />

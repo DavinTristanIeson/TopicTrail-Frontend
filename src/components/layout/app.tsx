@@ -16,7 +16,6 @@ export default function AppLayout(props: AppLayoutProps) {
 
   return (
     <AppShell
-      padding="md"
       header={{
         height: 60,
       }}

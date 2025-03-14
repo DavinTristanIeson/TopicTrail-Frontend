@@ -1,10 +1,9 @@
-import { Loader, Paper, Stack } from "@mantine/core";
-import dynamic from "next/dynamic";
-import React, { Suspense } from "react";
-import Text from "@/components/standard/text";
-import { PlotParams } from "react-plotly.js";
+import { Text, Loader, Paper, Stack } from '@mantine/core';
+import dynamic from 'next/dynamic';
+import React, { Suspense } from 'react';
+import { PlotParams } from 'react-plotly.js';
 
-const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
+const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 interface PlotRendererProps {
   plot: string;
@@ -34,7 +33,7 @@ export default function PlotRenderer(props: PlotRendererProps) {
           ...plotParams.layout,
           width,
           height,
-          dragmode: "pan",
+          dragmode: 'pan',
         }}
         config={{
           scrollZoom: true,

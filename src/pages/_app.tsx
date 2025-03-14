@@ -1,8 +1,10 @@
-import 'reflect-metadata';
+import '@/styles/globals.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
-import '@/styles/globals.css';
+import 'gridstack/dist/gridstack.min.css';
+import 'gridstack/dist/gridstack-extra.min.css';
+
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { QueryClientProvider } from '@tanstack/react-query';

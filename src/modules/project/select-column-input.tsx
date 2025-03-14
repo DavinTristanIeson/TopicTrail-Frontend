@@ -1,7 +1,8 @@
-import { ProjectSchemaModel } from '@/api/project';
+import { SchemaColumnModel } from '@/api/project';
 import Colors from '@/common/constants/colors';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
-import Text from '@/components/standard/text';
+import { useRHFMantineAdapter } from '@/components/standard/fields/adapter';
+import { SelectFieldProps } from '@/components/standard/fields/wrapper';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import {
   ComboboxItem,
@@ -9,11 +10,14 @@ import {
   Group,
   Select,
   SelectProps,
+  Stack,
+  Text,
 } from '@mantine/core';
 import capitalize from 'lodash/capitalize';
+import { useFormContext } from 'react-hook-form';
 
 export interface ProjectColumnComboboxItem extends ComboboxItem {
-  data: ProjectSchemaModel;
+  data: SchemaColumnModel;
 }
 
 function ProjectColumnComboboxItemRenderer(
@@ -23,10 +27,12 @@ function ProjectColumnComboboxItemRenderer(
   return (
     <>
       <Group>
-        <ProjectSchemaTypeIcon type={option.data.type} />
+        <ProjectSchemaTypeIcon
+          type={option.data.type as SchemaColumnTypeEnum}
+        />
         <Text>{option.label}</Text>
       </Group>
-      <Text size="sm" c={Colors.foregroundDull}>
+      <Text size="sm" c="gray">
         {capitalize(option.data.type)}
       </Text>
     </>
@@ -34,9 +40,9 @@ function ProjectColumnComboboxItemRenderer(
 }
 
 interface ProjectColumnSelectInputProps {
-  data: ProjectSchemaModel[];
+  data: SchemaColumnModel[];
   value: string | null;
-  onChange(column: ProjectSchemaModel | null): void;
+  onChange(column: SchemaColumnModel | null): void;
   selectProps?: Partial<SelectProps>;
 }
 
@@ -75,13 +81,13 @@ function ProjectColumnTypeComboboxItemRenderer(
 ) {
   const { option } = combobox;
   return (
-    <>
+    <Stack>
       <Group>
         <ProjectSchemaTypeIcon type={option.value} />
         <Text>{option.label}</Text>
       </Group>
       <Text>{option.description}</Text>
-    </>
+    </Stack>
   );
 }
 
@@ -123,12 +129,12 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
           },
           {
             value: SchemaColumnTypeEnum.MultiCategorical,
-            label: 'Temporal',
-            description: '',
+            label: 'Multi-Categorical',
+            description: 'TODO',
           },
           {
             value: SchemaColumnTypeEnum.Geospatial,
-            label: 'Temporal',
+            label: 'Geospatial',
             description: 'TODO',
           },
           {
@@ -143,4 +149,13 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
       }
     />
   );
+}
+
+export function ProjectColumnTypeSelectField(props: SelectFieldProps) {
+  const { mergedProps } = useRHFMantineAdapter(props, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
+  return <ProjectColumnTypeSelectInput {...mergedProps} />;
 }

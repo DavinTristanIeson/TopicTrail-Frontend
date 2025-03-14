@@ -1,3 +1,4 @@
+import { FormEditableContext } from '@/components/standard/fields/context';
 import React from 'react';
 import { useController } from 'react-hook-form';
 
@@ -58,9 +59,10 @@ interface OnBlurFieldProps<TValue> {
 }
 
 export function OnBlurField<TValue>(props: OnBlurFieldProps<TValue>) {
-  const { field, fieldState, formState } = useController({
+  const { field, fieldState } = useController({
     name: props.name,
   });
+  const { editable } = React.useContext(FormEditableContext);
   return (
     <OnBlurInput
       value={field.value}
@@ -75,7 +77,7 @@ export function OnBlurField<TValue>(props: OnBlurFieldProps<TValue>) {
       {(renderProps) =>
         props.children({
           ...renderProps,
-          disabled: formState.disabled,
+          disabled: !editable,
           error: props.noError ? undefined : fieldState.error?.message,
         })
       }

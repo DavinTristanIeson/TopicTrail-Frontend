@@ -2,11 +2,11 @@ import {
   Button,
   Drawer,
   Group,
-  Modal,
   Paper,
   Skeleton,
   Switch,
   TagsInput,
+  Text,
 } from '@mantine/core';
 import {
   ProjectConfigColumnFormProps,
@@ -15,49 +15,9 @@ import {
 import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-
-interface CategoryItemComponentProps {
-  category: string;
-}
-
-function CategoryItemComponent(props: CategoryItemComponentProps) {
-  return <Paper>{props.category}</Paper>;
-}
-
-function SortableCategoryItemComponent(props: CategoryItemComponentProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.category });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <CategoryItemComponent {...props} />
-    </div>
-  );
-}
+import { useManyRefs } from '@/hooks/ref';
+import { useControlledGridstack } from '@/hooks/gridstack';
 
 interface ReorderCategoryOrderModalBodyProps {
   categories: string[];
@@ -68,52 +28,62 @@ function ReorderCategoryOrderDndContext(props: {
   setCategories: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const { categories, setCategories } = props;
-  const [activeId, setActiveId] = React.useState<string | null>(null);
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-  const onDragEnd = React.useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
-    if (active.id === over?.id || !over) return;
-    setCategories((items) => {
-      const oldIndex = items.indexOf(active.id as string);
-      const newIndex = items.indexOf(over.id as string);
-      return arrayMove(items, oldIndex, newIndex);
+
+  const { id, grid, gridElements } = useControlledGridstack({
+    gridItems: categories,
+    options: {
+      column: 1,
+      margin: 4,
+      maxRow: categories.length,
+      cellHeight: 80,
+      disableResize: true,
+      removable: false,
+      alwaysShowResizeHandle: false,
+      float: true,
+    },
+  });
+  React.useLayoutEffect(() => {
+    if (!grid.current) return;
+    const currentGrid = grid.current;
+    currentGrid.on('change', (event, items) => {
+      const gridItems = currentGrid.getGridItems();
+      const parsedGridItems = gridItems.map((item) => {
+        return {
+          order: parseInt(item.getAttribute('gs-y')!, 10),
+          id: item.getAttribute('gs-id')!,
+        };
+      });
+
+      parsedGridItems.sort((a, b) => a.order - b.order);
+      const newCategories = parsedGridItems.map((gridItem) => gridItem.id);
+      setCategories(newCategories);
     });
-    setActiveId(null);
-  }, []);
+    return () => {
+      currentGrid.off('change');
+    };
+  }, [setCategories]);
 
-  const onDragStart = React.useCallback((event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  }, []);
-
-  const resetDrag = React.useCallback(() => {
-    setActiveId(null);
-  }, []);
   return (
-    <DndContext
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragAbort={resetDrag}
-      onDragCancel={resetDrag}
-      sensors={sensors}
-      collisionDetection={closestCenter}
-    >
-      <SortableContext
-        items={categories}
-        strategy={verticalListSortingStrategy}
-      >
-        {categories.map((category) => (
-          <SortableCategoryItemComponent category={category} />
-        ))}
-      </SortableContext>
-      <DragOverlay>
-        {activeId ? <CategoryItemComponent category={activeId} /> : null}
-      </DragOverlay>
-    </DndContext>
+    <div id={id} className="grid-stack">
+      {categories.map((category, index) => (
+        <div
+          className="grid-stack-item"
+          key={category}
+          ref={gridElements.current![category]}
+        >
+          <Paper
+            className="p-3 select-none grid-stack-item-content flex items-center flex-row"
+            style={{ display: 'flex' }}
+          >
+            <div className="rounded bg-primary">{index + 1}</div>
+            <Text ta="center" className="flex-1">
+              {category}
+            </Text>
+            <div></div>
+          </Paper>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -122,12 +92,20 @@ const ReorderCategoryOrderDrawer = React.forwardRef<
   ReorderCategoryOrderModalBodyProps
 >((props, ref) => {
   const [opened, { close }] = useDisclosureTrigger(ref);
-  const [categories, setCategories] = React.useState(props.categories);
+  const { categories: formCategories, setCategories: setFormCategories } =
+    props;
+  const [localCategories, setLocalCategories] = React.useState(formCategories);
+
+  React.useEffect(() => {
+    setLocalCategories(formCategories);
+  }, [formCategories]);
+
   return (
     <Drawer
       opened={opened}
       onClose={close}
       size="lg"
+      position="right"
       title="Reorder Categories"
     >
       <Group justify="end" gap={8}>
@@ -137,7 +115,7 @@ const ReorderCategoryOrderDrawer = React.forwardRef<
         <Button
           variant="default"
           onClick={() => {
-            props.setCategories(categories);
+            setFormCategories(localCategories);
             close();
           }}
         >
@@ -145,8 +123,8 @@ const ReorderCategoryOrderDrawer = React.forwardRef<
         </Button>
       </Group>
       <ReorderCategoryOrderDndContext
-        categories={categories}
-        setCategories={setCategories}
+        categories={localCategories}
+        setCategories={setLocalCategories}
       />
     </Drawer>
   );
@@ -156,7 +134,7 @@ export function ProjectConfigColumnOrderedCategoricalForm(
   props: ProjectConfigColumnFormProps,
 ) {
   const { index } = props;
-  const categoriesName = `columns.${index}.categoryOrder` as const;
+  const categoriesName = `columns.${index}.category_order` as const;
   const { control, setValue } = useFormContext<ProjectConfigFormType>();
   const categories = useWatch({
     name: categoriesName,
@@ -187,11 +165,12 @@ export function ProjectConfigColumnOrderedCategoricalForm(
       />
       {categories && (
         <>
-          <Group>
+          <Group align="end">
             <TagsInput
               value={categories}
               label="Categories"
               className="flex-1"
+              readOnly
             />
             <Button onClick={() => drawerRemote.current?.open()}>
               Reorder

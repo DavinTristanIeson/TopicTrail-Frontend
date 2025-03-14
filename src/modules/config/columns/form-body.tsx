@@ -1,83 +1,104 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
-import { Accordion, Divider, Group, Stack, Tooltip } from '@mantine/core';
+import { Divider, Group, Stack } from '@mantine/core';
 import React from 'react';
-import Text from '@/components/standard/text';
-import { Warning } from '@phosphor-icons/react';
-import { useWatchFieldError } from '@/components/standard/fields/watcher';
-import Colors from '@/common/constants/colors';
-import { RHFMantineAdapter } from '@/components/standard/fields/adapter';
-import { ProjectColumnTypeSelectInput } from '@/modules/project/select-column-input';
 import RHFField from '@/components/standard/fields';
-import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
-import { CanChangeColumnTypesContext } from './utils';
+import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { ProjectConfigColumnContinuousForm } from './continuous-column';
+import { ProjectConfigColumnOrderedCategoricalForm } from './ordered-categorical-column';
+import {
+  ProjectConfigColumnGeospatialForm,
+  ProjectConfigColumnMulticategoricalForm,
+  ProjectConfigColumnTemporalForm,
+} from './other-columns';
+import { ProjectConfigColumnTextualForm } from './textual-column';
+import { ProjectColumnTypeSelectField } from '@/modules/project/select-column-input';
 
 interface ProjectConfigColumnFormItemProps {
   index: number;
-  accordionValue: string;
 }
 
-function ProjectConfigColumnTitle(props: ProjectConfigColumnFormItemProps) {
+function ProjectConfigColumnFormSwitcher(
+  props: ProjectConfigColumnFormItemProps,
+) {
   const { index } = props;
-  const { control } = useFormContext<ProjectConfigFormType>();
-
-  const parentName = `columns.${index}` as const;
-  const [name, type] = useWatch({
-    name: [`${parentName}.name`, `${parentName}.type`],
+  let component: React.ReactNode = undefined;
+  const { control, getValues } = useFormContext<ProjectConfigFormType>();
+  const name = `columns.${props.index}.type` as const;
+  const type = useWatch({
+    name,
     control,
   });
-  const error = useWatchFieldError(parentName);
-  return (
-    <Group>
-      {error && (
-        <Tooltip label={error} radius="sm" color="red">
-          <Warning color="red" />
-        </Tooltip>
-      )}
-      <ProjectSchemaTypeIcon type={type} />
-      <Text fw="bold" size="md">
-        {name}
-      </Text>
-    </Group>
-  );
+  switch (type) {
+    case SchemaColumnTypeEnum.Continuous: {
+      component = <ProjectConfigColumnContinuousForm index={index} />;
+      break;
+    }
+    case SchemaColumnTypeEnum.OrderedCategorical: {
+      component = <ProjectConfigColumnOrderedCategoricalForm index={index} />;
+      break;
+    }
+    case SchemaColumnTypeEnum.Geospatial: {
+      component = <ProjectConfigColumnGeospatialForm index={index} />;
+      break;
+    }
+    case SchemaColumnTypeEnum.MultiCategorical: {
+      component = <ProjectConfigColumnMulticategoricalForm index={index} />;
+      break;
+    }
+    case SchemaColumnTypeEnum.Temporal: {
+      component = <ProjectConfigColumnTemporalForm index={index} />;
+      break;
+    }
+    case SchemaColumnTypeEnum.Textual: {
+      component = <ProjectConfigColumnTextualForm index={index} />;
+      break;
+    }
+    default: {
+      component = undefined;
+      break;
+    }
+  }
+  if (component) {
+    return (
+      <>
+        <Divider />
+        {component}
+      </>
+    );
+  } else {
+    return component;
+  }
 }
 
 export function ProjectConfigColumnFormItem(
   props: ProjectConfigColumnFormItemProps,
 ) {
-  const { index, accordionValue } = props;
+  const { index } = props;
   const parentName = `columns.${index}`;
-  const canChangeType = React.useContext(CanChangeColumnTypesContext);
   return (
-    <Accordion.Item value={accordionValue}>
-      <Accordion.Control>
-        <ProjectConfigColumnTitle {...props} />
-      </Accordion.Control>
-      <Accordion.Panel>
-        <Stack>
-          <Group align="center">
-            <RHFMantineAdapter
-              props={{
-                name: `${parentName}.type`,
-                className: 'flex-1',
-                disabled: !canChangeType,
-              }}
-              config={{}}
-            >
-              {ProjectColumnTypeSelectInput}
-            </RHFMantineAdapter>
-            <RHFField
-              name={`${parentName}.alias`}
-              label="Alias"
-              type="text"
-              description="The alias of the column that will be displayed in tables/graphs. Leave it blank if you don't want any aliases."
-              required
-              className="flex-1"
-            />
-          </Group>
-          <Divider />
-        </Stack>
-      </Accordion.Panel>
-    </Accordion.Item>
+    <Stack className="pt-5">
+      <Group align="start">
+        <ProjectColumnTypeSelectField
+          name={`${parentName}.type`}
+          type="select"
+          className="flex-1"
+          required
+        />
+        <RHFField
+          name={`${parentName}.alias`}
+          label="Alias"
+          type="text"
+          description="The alias of the column that will be displayed in tables/graphs. Leave it blank if you don't want any aliases."
+        />
+      </Group>
+      <RHFField
+        name={`${parentName}.description`}
+        label="Description"
+        type="textarea"
+        description="A sentence or two to describe the purpose of this column. Leave it blank if you don't want any descriptions."
+      />
+      <ProjectConfigColumnFormSwitcher {...props} />
+    </Stack>
   );
 }

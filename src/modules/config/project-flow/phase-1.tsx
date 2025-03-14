@@ -2,70 +2,56 @@
 // | CHECK PROJECT ID |
 // +------------------+
 
-import { useCheckProjectId } from '@/api/project';
-import Colors from '@/common/constants/colors';
-import { handleFormSubmission } from '@/common/utils/form';
-import { Stack, LoadingOverlay, Title, Flex, Button } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import { CheckCircle } from '@phosphor-icons/react';
-import { useFormContext } from 'react-hook-form';
-import { ProjectConfigFormType } from '../form-type';
-import Text from '@/components/standard/text';
+import { Stack, Title, Flex, Button, Tooltip, Text } from '@mantine/core';
+import { ArrowRight } from '@phosphor-icons/react';
+import { useFormState } from 'react-hook-form';
 import RHFField from '@/components/standard/fields';
 import GlobalConfig from '@/common/constants/global';
+import React from 'react';
+import { ProjectConfigFormType } from '../form-type';
 
 interface ConfigureProjectFlow_CheckProjectIdProps {
   onContinue(): void;
 }
 
-interface ProjectIdFormProps {
-  disabled?: boolean;
-}
-
-export function ProjectIdForm(props: ProjectIdFormProps) {
+export function ProjectConfigMetadataFormBody() {
   return (
-    <RHFField
-      type="text"
-      name="projectId"
-      label="Project Name"
-      description="The name of the project should be unique."
-      required
-      readOnly={props.disabled}
-    />
+    <Stack className="max-w-xl">
+      <RHFField
+        type="text"
+        name="metadata.name"
+        label="Project Name"
+        description={`The name of the project. Note that the project name will be different from the name of the project folder in the "data" folder.`}
+        required
+      />
+      <RHFField
+        type="tags"
+        name="metadata.tags"
+        label="Project Tags"
+        description="Tags or keywords that will be used to help classify this project."
+      />
+      <RHFField
+        type="textarea"
+        name="metadata.description"
+        label="Project Description"
+        rows={4}
+      />
+    </Stack>
   );
 }
 
 export function ConfigureProjectFlow_CheckProjectId(
   props: ConfigureProjectFlow_CheckProjectIdProps,
 ) {
-  const { mutateAsync: check, isPending } = useCheckProjectId();
-  const {
-    getValues,
-    setError,
-    formState: { errors },
-  } = useFormContext<ProjectConfigFormType>();
-  const handleSubmit = handleFormSubmission(async () => {
-    const values = getValues();
-    const res = await check({
-      projectId: values.projectId,
-    });
-    if (res.message) {
-      showNotification({
-        message: res.message,
-        color: 'green',
-      });
-    }
-    props.onContinue();
-  }, setError);
-
+  const { onContinue } = props;
+  const { errors } = useFormState<ProjectConfigFormType>({
+    name: 'metadata.name',
+  });
+  const isError = !!errors.metadata;
   return (
     <Stack className="relative">
-      <LoadingOverlay
-        visible={isPending}
-        overlayProps={{ radius: 'sm', blur: 2 }}
-      />
       <Title order={2}>1/3: What&apos;s the name of your project?</Title>
-      <Text wrap>
+      <Text className="break-words text-wrap">
         First things first, please specify the name of your project. Note that
         your project can be found in the{' '}
         <Text c="brand" span>
@@ -73,16 +59,21 @@ export function ConfigureProjectFlow_CheckProjectId(
         </Text>{' '}
         directory in the same directory as {GlobalConfig.AppName}.
       </Text>
-      <ProjectIdForm disabled={isPending} />
+      <ProjectConfigMetadataFormBody />
       <Flex direction="row-reverse" w="100%">
-        <Button
-          leftSection={<CheckCircle size={20} />}
-          onClick={handleSubmit}
-          disabled={!!errors.projectId}
-          loading={isPending}
+        <Tooltip
+          disabled={!isError}
+          color="red"
+          label="There are still errors in the form."
         >
-          Check Project Name
-        </Button>
+          <Button
+            rightSection={<ArrowRight size={20} />}
+            onClick={onContinue}
+            disabled={isError}
+          >
+            Next
+          </Button>
+        </Tooltip>
       </Flex>
     </Stack>
   );

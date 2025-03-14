@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
 export function useCombinedRefs(
   ...refs: (React.MutableRefObject<any> | ((ref: any) => void))[]
@@ -9,7 +9,7 @@ export function useCombinedRefs(
     refs.forEach((ref) => {
       if (!ref) return;
 
-      if (typeof ref === "function") {
+      if (typeof ref === 'function') {
         ref(targetRef.current);
       } else {
         ref.current = targetRef.current;
@@ -32,4 +32,15 @@ export function useSyncRefsToSource<T>(
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+}
+
+export type ManyRef<T> = Record<string, React.RefObject<T>>;
+export function useManyRefs<T = any>(
+  ids: (string | number)[],
+): React.MutableRefObject<ManyRef<T>> {
+  const manyRefs = React.useRef<ManyRef<T>>({});
+  for (const id of ids) {
+    manyRefs.current[id] = manyRefs.current[id] ?? React.createRef();
+  }
+  return manyRefs;
 }

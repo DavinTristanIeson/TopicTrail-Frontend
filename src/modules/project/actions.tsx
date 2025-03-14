@@ -5,64 +5,89 @@ import {
   Modal,
   Stack,
   Flex,
-  Title,
   Button,
+  Badge,
+  Text,
 } from '@mantine/core';
-import Text from '@/components/standard/text';
 import React from 'react';
-import { Eye, TrashSimple, X } from '@phosphor-icons/react';
+import { Eye, PencilSimple, TrashSimple, X } from '@phosphor-icons/react';
 import Colors from '@/common/constants/colors';
-import { ProjectLiteModel } from '@/api/project/model';
+import {
+  invalidateProjectDependencyQueries,
+  ProjectModel,
+} from '@/api/project';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
-import { useDeleteProject } from '@/api/project';
 import { handleErrorFn } from '@/common/utils/error';
 import { showNotification } from '@mantine/notifications';
 import {
   ParametrizedDisclosureTrigger,
   useParametrizedDisclosureTrigger,
 } from '@/hooks/disclosure';
+import { client } from '@/common/api/client';
 
-interface ProjectListItemProps extends ProjectLiteModel {
-  onDelete(id: string): void;
-}
+interface ProjectListItemProps extends ProjectModel {}
 
 export function ProjectListItem(props: ProjectListItemProps) {
   const router = useRouter();
+  const metadata = props.config.metadata;
   return (
-    <Paper
-      shadow="xs"
-      w="100%"
-      p="md"
-      className="flex justify-between align-start hover:bg-gray-50 cursor-pointer"
-      onClick={() => {
-        router.push({
-          pathname: NavigationRoutes.Project,
-          query: {
-            id: props.id,
-          },
-        });
-      }}
-    >
-      <div className="flex-1">
-        <Text>{props.id}</Text>
-        <Text c="gray">{`from ${props.path}`}</Text>
+    <Paper shadow="xs" p="md" className="w-full">
+      <div>
+        <Group justify="between">
+          <div className="flex-1">
+            <Text fw="500">{metadata.name}</Text>
+            <Text
+              c="gray"
+              className="text-wrap"
+              size="sm"
+            >{`from ${props.path}`}</Text>
+            <Group wrap="wrap" gap={4} className="pt-2">
+              {metadata.tags?.map((tag) => (
+                <Badge color="brand" variant="light" radius="sm">
+                  {tag}
+                </Badge>
+              ))}
+            </Group>
+          </div>
+          <Group gap={12}>
+            <ActionIcon
+              variant="subtle"
+              size="lg"
+              color="brand"
+              onClick={() => {
+                router.push({
+                  pathname: NavigationRoutes.Project,
+                  query: {
+                    id: props.id,
+                  },
+                });
+              }}
+            >
+              <Eye size={24} />
+            </ActionIcon>
+            <ActionIcon
+              variant="subtle"
+              onClick={(e) => {
+                router.push({
+                  pathname: NavigationRoutes.ProjectConfiguration,
+                  query: {
+                    id: props.id,
+                  },
+                });
+              }}
+              size="lg"
+            >
+              <PencilSimple size={24} />
+            </ActionIcon>
+          </Group>
+        </Group>
+        {!!metadata.description && (
+          <Text size="sm" className="pt-2 whitespace-pre-wrap">
+            {metadata.description}
+          </Text>
+        )}
       </div>
-      <Group gap={12}>
-        <Eye size={24} color={Colors.foregroundPrimary} />
-        <ActionIcon
-          variant="subtle"
-          onClick={(e) => {
-            props.onDelete(props.id);
-            e.stopPropagation();
-            e.preventDefault();
-          }}
-          color="red"
-          size="lg"
-        >
-          <TrashSimple size={24} />
-        </ActionIcon>
-      </Group>
     </Paper>
   );
 }
@@ -76,60 +101,65 @@ export const DeleteProjectModal = React.forwardRef<
   DeleteProjectModalProps
 >(function DeleteProjectModal(props, ref) {
   const { onAfterDelete } = props;
-  const { mutateAsync, isPending } = useDeleteProject();
-  const [data, { close }] = useParametrizedDisclosureTrigger(ref);
+  const [projectId, { close }] = useParametrizedDisclosureTrigger(ref);
+  const { mutateAsync, isPending } = client.useMutation(
+    'delete',
+    '/projects/{project_id}',
+    {
+      onSuccess(data, variables, context) {
+        invalidateProjectDependencyQueries(variables.params.path.project_id);
+      },
+    },
+  );
   return (
-    <Modal
-      opened={!!data}
-      onClose={close}
-      title={<Title order={2}>Delete Project</Title>}
-      centered
-    >
-      {data && (
-        <Modal.Body>
-          <Stack gap={32}>
-            <Text>
-              Are you sure you want to delete{' '}
-              <Text fw="bold" span>
-                {data}
-              </Text>
-              ?{' '}
-              <Text fw="bold" span c="red">
-                This action is irreversible!
-              </Text>
+    <Modal opened={!!projectId} onClose={close} title="Delete Project" centered>
+      {projectId && (
+        <Stack gap={32}>
+          <Text>
+            Are you sure you want to delete{' '}
+            <Text fw="bold" span>
+              {projectId}
             </Text>
-            <Flex direction="row-reverse" gap={12}>
-              <Button
-                color="red"
-                leftSection={<TrashSimple />}
-                loading={isPending}
-                onClick={handleErrorFn(async () => {
-                  const res = await mutateAsync({
-                    id: data,
+            ?{' '}
+            <Text fw="bold" span c="red">
+              This action is irreversible!
+            </Text>
+          </Text>
+          <Flex direction="row-reverse" gap={12}>
+            <Button
+              color="red"
+              leftSection={<TrashSimple />}
+              loading={isPending}
+              onClick={handleErrorFn(async () => {
+                const res = await mutateAsync({
+                  params: {
+                    path: {
+                      project_id: projectId,
+                    },
+                  },
+                });
+                if (res.message) {
+                  showNotification({
+                    message: res.message,
+                    color: 'green',
                   });
-                  if (res.message) {
-                    showNotification({
-                      message: res.message,
-                      color: 'green',
-                    });
-                  }
-                  onAfterDelete?.();
-                  close();
-                })}
-              >
-                Delete Project
-              </Button>
-              <Button
-                variant="outline"
-                color="gray"
-                leftSection={<X />}
-                onClick={close}
-              >
-                Cancel
-              </Button>
-            </Flex>
-          </Stack>
-        </Modal.Body>
+                }
+                onAfterDelete?.();
+                close();
+              })}
+            >
+              Delete Project
+            </Button>
+            <Button
+              variant="outline"
+              color="gray"
+              leftSection={<X />}
+              onClick={close}
+            >
+              Cancel
+            </Button>
+          </Flex>
+        </Stack>
       )}
     </Modal>
   );
