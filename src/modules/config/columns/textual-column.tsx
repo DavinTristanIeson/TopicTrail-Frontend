@@ -177,7 +177,7 @@ function TopicModelingConfigurationFormBody(
           description="The maximum number of topics that can be discovered by the model. If the model discovers more topics than this threshold, then the smaller topics will be merged iteratively into a bigger topic."
         />
         <Stack>
-          <Group>
+          <Group align="start">
             <RHFField
               type="number"
               name={`${TOPIC_MODELING_NAME}.n_gram_range[0]`}

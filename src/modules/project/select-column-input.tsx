@@ -32,7 +32,7 @@ function ProjectColumnComboboxItemRenderer(
         />
         <Text>{option.label}</Text>
       </Group>
-      <Text size="sm" c={Colors.foregroundDull}>
+      <Text size="sm" c="gray">
         {capitalize(option.data.type)}
       </Text>
     </>

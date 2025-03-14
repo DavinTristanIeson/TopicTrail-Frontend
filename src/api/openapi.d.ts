@@ -410,6 +410,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -427,6 +429,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -486,6 +490,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -510,6 +516,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -605,6 +613,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -623,6 +633,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -773,6 +785,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -800,6 +814,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Delimiter
              * @default ,
@@ -871,6 +887,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -890,6 +908,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -981,6 +1001,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -1000,6 +1022,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1060,6 +1084,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -1079,6 +1105,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1140,6 +1168,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -1157,6 +1187,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1169,6 +1201,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * Internal
              * @default false
@@ -1186,6 +1220,8 @@ export interface components {
             name: string;
             /** Alias */
             alias?: string | null;
+            /** Description */
+            description?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}

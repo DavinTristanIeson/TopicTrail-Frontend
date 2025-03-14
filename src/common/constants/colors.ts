@@ -3,6 +3,7 @@ const Colors = {
   textInverse: 'white',
 
   foregroundPrimary: '#6672af',
+  brand: '#6672af',
   foregroundDull: 'grey',
 
   backgroundPrimary: '#424e88',

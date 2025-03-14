@@ -78,21 +78,26 @@ export function ProjectConfigColumnFormItem(
   const parentName = `columns.${index}`;
   return (
     <Stack className="pt-5">
-      <Group align="center">
+      <Group align="start">
         <ProjectColumnTypeSelectField
           name={`${parentName}.type`}
           type="select"
           className="flex-1"
+          required
         />
         <RHFField
           name={`${parentName}.alias`}
           label="Alias"
           type="text"
           description="The alias of the column that will be displayed in tables/graphs. Leave it blank if you don't want any aliases."
-          required
-          className="flex-1"
         />
       </Group>
+      <RHFField
+        name={`${parentName}.description`}
+        label="Description"
+        type="textarea"
+        description="A sentence or two to describe the purpose of this column. Leave it blank if you don't want any descriptions."
+      />
       <ProjectConfigColumnFormSwitcher {...props} />
     </Stack>
   );

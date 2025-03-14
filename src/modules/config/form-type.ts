@@ -28,6 +28,7 @@ function nullIfEmptyArray(value: any): any | null {
 export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
   alias: Yup.string().transform(nullIfEmpty).nullable(),
+  description: Yup.string().transform(nullIfEmpty).nullable(),
   type: Yup.string()
     .oneOf(Object.values(SchemaColumnTypeEnum))
     .transform(nullIfEmptyArray)
@@ -205,6 +206,7 @@ export function DefaultProjectSchemaColumnValues(
     name,
     type,
     alias: null,
+    description: null,
     preprocessing:
       type === SchemaColumnTypeEnum.Textual
         ? {
@@ -265,6 +267,7 @@ export function ProjectConfigDefaultValues(
             'datetime_format' in col ? col.datetime_format : null,
           name: col.name,
           alias: col.alias,
+          description: col.description,
           is_json: 'is_json' in col ? col.is_json : null,
           preprocessing:
             'preprocessing' in col
@@ -319,6 +322,7 @@ export function ProjectConfigFormType2Input(
         const basicColumn = {
           alias: col.alias ?? null,
           name: col.name,
+          description: col.description,
           internal: false,
         };
         const type = col.type;

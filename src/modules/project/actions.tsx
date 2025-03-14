@@ -54,6 +54,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
             <ActionIcon
               variant="subtle"
               size="lg"
+              color="brand"
               onClick={() => {
                 router.push({
                   pathname: NavigationRoutes.Project,
@@ -63,7 +64,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
                 });
               }}
             >
-              <Eye size={24} color={Colors.foregroundPrimary} />
+              <Eye size={24} />
             </ActionIcon>
             <ActionIcon
               variant="subtle"
