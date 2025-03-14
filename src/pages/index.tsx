@@ -28,15 +28,13 @@ export default function Dashboard() {
           <Stack align="center" gap={8} w="100%">
             <TextInput
               onChange={(e) => setQ(e.target.value)}
-              leftSection={
-                <MagnifyingGlass size={16} color={Colors.foregroundDull} />
-              }
+              leftSection={<MagnifyingGlass color={Colors.foregroundDull} />}
               placeholder="Search Project"
               w="100%"
             />
             <Text size="sm">alternatively, you can </Text>
             <Button
-              leftSection={<Plus size={16} />}
+              leftSection={<Plus />}
               fullWidth
               onClick={() => {
                 router.push(NavigationRoutes.ProjectCreate);

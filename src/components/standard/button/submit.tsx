@@ -14,7 +14,7 @@ export default function SubmitButton(props: ButtonProps) {
       disabled={!isError}
     >
       <Button
-        leftSection={<FloppyDisk size={20} />}
+        leftSection={<FloppyDisk />}
         {...props}
         type="submit"
         loading={isSubmitting}

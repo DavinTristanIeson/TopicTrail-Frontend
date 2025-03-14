@@ -58,7 +58,7 @@ function UpdateProjectFormButtons(props: UpdateProjectFormButtonsProps) {
       {!editable ? (
         <>
           <Button
-            leftSection={<PencilSimple size={16} />}
+            leftSection={<PencilSimple />}
             onClick={() => setEditable(true)}
           >
             Edit

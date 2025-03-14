@@ -1,6 +1,7 @@
 import {
   createTheme,
   Drawer,
+  DrawerHeader,
   InputWrapper,
   LoadingOverlay,
   Modal,
@@ -72,6 +73,11 @@ const mantineTheme = createTheme({
       defaultProps: {
         position: 'right',
         size: 'lg',
+      },
+    }),
+    DrawerHeader: DrawerHeader.extend({
+      defaultProps: {
+        px: 0,
       },
     }),
     Modal: Modal.extend({

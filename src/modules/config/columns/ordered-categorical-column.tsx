@@ -17,7 +17,10 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { useManyRefs } from '@/hooks/ref';
-import { useControlledGridstack } from '@/hooks/gridstack';
+import {
+  useControlledGridstack,
+  useSortableGridStack,
+} from '@/hooks/gridstack';
 
 interface ReorderCategoryOrderModalBodyProps {
   categories: string[];
@@ -42,26 +45,10 @@ function ReorderCategoryOrderDndContext(props: {
       float: true,
     },
   });
-  React.useLayoutEffect(() => {
-    if (!grid.current) return;
-    const currentGrid = grid.current;
-    currentGrid.on('change', (event, items) => {
-      const gridItems = currentGrid.getGridItems();
-      const parsedGridItems = gridItems.map((item) => {
-        return {
-          order: parseInt(item.getAttribute('gs-y')!, 10),
-          id: item.getAttribute('gs-id')!,
-        };
-      });
-
-      parsedGridItems.sort((a, b) => a.order - b.order);
-      const newCategories = parsedGridItems.map((gridItem) => gridItem.id);
-      setCategories(newCategories);
-    });
-    return () => {
-      currentGrid.off('change');
-    };
-  }, [setCategories]);
+  useSortableGridStack({
+    grid,
+    onSort: setCategories,
+  });
 
   return (
     <div id={id} className="grid-stack">
@@ -106,6 +93,8 @@ const ReorderCategoryOrderDrawer = React.forwardRef<
       onClose={close}
       size="lg"
       position="right"
+      closeOnClickOutside={false}
+      closeOnEscape={false}
       title="Reorder Categories"
     >
       <Group justify="end" gap={8}>

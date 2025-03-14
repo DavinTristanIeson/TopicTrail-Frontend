@@ -31,7 +31,7 @@ export default function ErrorViewComponent(props: ErrorViewComponentProps) {
           variant="filled"
           onClick={refetch}
           color={'red'}
-          leftSection={<ArrowClockwise size={20} />}
+          leftSection={<ArrowClockwise />}
         >
           Refresh
         </Button>

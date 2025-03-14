@@ -62,7 +62,7 @@ export function ConfigureProjectFlow_CheckDataset(
               dataset, your pre-existing column configurations will be deleted.
             </Text>
             <Button
-              leftSection={<LockOpen size={20} />}
+              leftSection={<LockOpen />}
               variant="outline"
               color="red"
               onClick={() => updateModalRemote.current?.open()}

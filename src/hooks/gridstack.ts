@@ -36,3 +36,32 @@ export function useControlledGridstack(props: UseControlledGridStackProps) {
     gridElements: gridElementsRef,
   };
 }
+
+interface UseSortableGridStackProps {
+  grid: React.MutableRefObject<GridStack | undefined>;
+  onSort(sortedValues: string[]): void;
+}
+
+export function useSortableGridStack(props: UseSortableGridStackProps) {
+  const { grid, onSort } = props;
+  React.useLayoutEffect(() => {
+    if (!grid.current) return;
+    const currentGrid = grid.current;
+    currentGrid.on('change', (event, items) => {
+      const gridItems = currentGrid.getGridItems();
+      const parsedGridItems = gridItems.map((item) => {
+        return {
+          order: parseInt(item.getAttribute('gs-y')!, 10),
+          id: item.getAttribute('gs-id')!,
+        };
+      });
+
+      parsedGridItems.sort((a, b) => a.order - b.order);
+      const newIds = parsedGridItems.map((gridItem) => gridItem.id);
+      onSort(newIds);
+    });
+    return () => {
+      currentGrid.off('change');
+    };
+  }, [onSort]);
+}
