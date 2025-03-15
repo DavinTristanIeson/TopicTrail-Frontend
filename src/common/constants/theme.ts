@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   createTheme,
   Drawer,
   DrawerHeader,
@@ -64,6 +65,11 @@ const mantineTheme = createTheme({
         inputWrapperOrder: ['label', 'input', 'description', 'error'],
       },
     }),
+    ActionIcon: ActionIcon.extend({
+      defaultProps: {
+        variant: 'subtle',
+      },
+    }),
     ScrollArea: ScrollArea.extend({
       defaultProps: {
         scrollbarSize: 8,
@@ -73,11 +79,6 @@ const mantineTheme = createTheme({
       defaultProps: {
         position: 'right',
         size: 'lg',
-      },
-    }),
-    DrawerHeader: DrawerHeader.extend({
-      defaultProps: {
-        px: 0,
       },
     }),
     Modal: Modal.extend({

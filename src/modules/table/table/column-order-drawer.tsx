@@ -22,29 +22,29 @@ import {
   Warning,
   X,
 } from '@phosphor-icons/react';
+import { uniqBy } from 'lodash';
 import React from 'react';
 
-export interface TableColumnOrderState {
+export interface TableColumnState {
   name: string;
   visible: boolean;
 }
 
-interface TableColumnsOrderSortableContextProps {
-  columnOrders: TableColumnOrderState[];
-  setColumnOrders: React.Dispatch<
-    React.SetStateAction<TableColumnOrderState[]>
-  >;
+interface TableColumnStatesSortableContextProps {
+  columnStates: TableColumnState[];
+  setColumnStates: React.Dispatch<React.SetStateAction<TableColumnState[]>>;
 }
-function TableColumnsOrderSortableContext(
-  props: TableColumnsOrderSortableContextProps,
+function TableColumnStatesSortableContext(
+  props: TableColumnStatesSortableContextProps,
 ) {
-  const { columnOrders, setColumnOrders } = props;
+  const { columnStates: columnStates, setColumnStates: setColumnStates } =
+    props;
   const { id, grid, gridElements } = useControlledGridstack({
-    gridItems: columnOrders.map((column) => column.name),
+    gridItems: columnStates.map((column) => column.name),
     options: {
       column: 1,
       margin: 4,
-      maxRow: columnOrders.length,
+      maxRow: columnStates.length,
       cellHeight: 80,
       disableResize: true,
       removable: false,
@@ -54,7 +54,7 @@ function TableColumnsOrderSortableContext(
   });
 
   const onSort = React.useCallback((ids: string[]) => {
-    setColumnOrders((prev) => {
+    setColumnStates((prev) => {
       const next: typeof prev = [];
       for (const id of ids) {
         const associatedColumnState = prev.find((col) => col.name === id);
@@ -71,62 +71,71 @@ function TableColumnsOrderSortableContext(
 
   return (
     <div id={id} className="grid-stack">
-      {columnOrders.map((columnOrder, index) => (
-        <div
-          className="grid-stack-item"
-          key={columnOrder.name}
-          ref={gridElements.current![columnOrder.name]}
-        >
-          <Paper
-            className="p-3 select-none grid-stack-item-content flex items-center flex-row"
-            style={{ display: 'flex' }}
+      {columnStates.map((columnState, index) => {
+        const visible = columnState.visible;
+        return (
+          <div
+            className="grid-stack-item"
+            key={columnState.name}
+            ref={gridElements.current![columnState.name]}
           >
-            <div className="rounded bg-primary">{index + 1}</div>
-            <Text ta="center" className="flex-1">
-              {columnOrder.name}
-            </Text>
-            <ActionIcon
-              variant="subtle"
-              onClick={() => {
-                setColumnOrders((columnOrder) => {
-                  if (!columnOrder[index]) return columnOrder;
-                  const next = columnOrder.slice();
-                  next[index]!.visible = !next[index]!.visible;
-                  return next;
-                });
-              }}
+            <Paper
+              className="p-3 select-none grid-stack-item-content flex items-center flex-row"
+              style={{ display: 'flex' }}
             >
-              {columnOrder.visible ? <Eye size={24} /> : <EyeSlash size={24} />}
-            </ActionIcon>
-          </Paper>
-        </div>
-      ))}
+              <div className="rounded bg-primary">{index + 1}</div>
+              <Text ta="center" className="flex-1">
+                {columnState.name}
+              </Text>
+              <ActionIcon
+                variant="subtle"
+                size={32}
+                color={visible ? 'green' : 'gray'}
+                onClick={(e) => {
+                  setColumnStates((columnState) => {
+                    if (!columnState[index]) return columnState;
+                    const next = columnState.slice();
+                    next[index] = {
+                      ...next[index]!,
+                      visible: !visible,
+                    };
+                    console.log(JSON.stringify(next[index]));
+                    return next;
+                  });
+                }}
+              >
+                {visible ? <Eye size={24} /> : <EyeSlash size={24} />}
+              </ActionIcon>
+            </Paper>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-interface TableColumnsOrderDrawerProps {
-  columnOrders: TableColumnOrderState[] | null;
-  setColumnOrders: React.Dispatch<
-    React.SetStateAction<TableColumnOrderState[] | null>
+interface TableColumnStatesDrawerProps {
+  columnStates: TableColumnState[] | null;
+  setColumnStates: React.Dispatch<
+    React.SetStateAction<TableColumnState[] | null>
   >;
   columns: SchemaColumnModel[];
 }
-const TableColumnsOrderDrawer = React.forwardRef<
+const TableColumnStatesDrawer = React.forwardRef<
   DisclosureTrigger | null,
-  TableColumnsOrderDrawerProps
->(function TableColumnsSortDrawer(props, ref) {
+  TableColumnStatesDrawerProps
+>(function TableColumnStatesDrawer(props, ref) {
   const [opened, { close }] = useDisclosureTrigger(ref);
   const {
-    columnOrders: appliedColumnOrders,
-    setColumnOrders: setAppliedColumnOrders,
+    columnStates: appliedColumnStates,
+    setColumnStates: setAppliedColumnStates,
     columns,
   } = props;
-  const [columnOrders, setColumnOrders] = React.useState<
-    TableColumnOrderState[]
-  >([]);
-  const defaultColumnOrders = React.useMemo(() => {
-    return columns.map<TableColumnOrderState>((column) => {
+  const [columnStates, setColumnStates] = React.useState<TableColumnState[]>(
+    [],
+  );
+  const defaultColumnStates = React.useMemo(() => {
+    return columns.map<TableColumnState>((column) => {
       return {
         name: column.name,
         visible: true,
@@ -135,20 +144,22 @@ const TableColumnsOrderDrawer = React.forwardRef<
   }, [columns]);
 
   React.useEffect(() => {
-    const resolvedColumnOrders = defaultColumnOrders
-      .concat(appliedColumnOrders ?? [])
-      .filter((column) => {
-        const isPartOfColumns = !!defaultColumnOrders.find(
-          (col) => col.name === column.name,
-        );
-        return isPartOfColumns;
-      });
-    setColumnOrders(resolvedColumnOrders);
-  }, [columns, appliedColumnOrders, opened]);
+    const combinedColumnStates = (appliedColumnStates ?? []).concat(
+      defaultColumnStates ?? [],
+    );
+    const uniqueColumnStates = uniqBy(combinedColumnStates, (x) => x.name);
+    const resolvedColumnStates = uniqueColumnStates.filter((column) => {
+      const isPartOfColumns = !!defaultColumnStates.find(
+        (col) => col.name === column.name,
+      );
+      return isPartOfColumns;
+    });
+    setColumnStates(resolvedColumnStates);
+  }, [columns, appliedColumnStates, opened]);
 
   return (
     <Drawer
-      title="Sort Columns"
+      title="Column States"
       opened={opened}
       onClose={close}
       position="right"
@@ -162,7 +173,7 @@ const TableColumnsOrderDrawer = React.forwardRef<
             variant="outline"
             leftSection={<Warning />}
             onClick={() => {
-              setColumnOrders(defaultColumnOrders);
+              setColumnStates(defaultColumnStates);
             }}
           >
             Reset
@@ -179,10 +190,11 @@ const TableColumnsOrderDrawer = React.forwardRef<
           <Button
             leftSection={<ArrowsLeftRight />}
             onClick={() => {
-              setAppliedColumnOrders(columnOrders);
+              setAppliedColumnStates(columnStates);
+              close();
             }}
           >
-            Apply Changes
+            Apply
           </Button>
         </Group>
       </Drawer.Header>
@@ -191,12 +203,12 @@ const TableColumnsOrderDrawer = React.forwardRef<
         each other, or even hide columns that are not necessary for the needs of
         your analysis to lessen the mental burden.
       </Alert>
-      <TableColumnsOrderSortableContext
-        columnOrders={columnOrders}
-        setColumnOrders={setColumnOrders}
+      <TableColumnStatesSortableContext
+        columnStates={columnStates}
+        setColumnStates={setColumnStates}
       />
     </Drawer>
   );
 });
 
-export default TableColumnsOrderDrawer;
+export default TableColumnStatesDrawer;

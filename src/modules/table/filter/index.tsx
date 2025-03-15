@@ -68,7 +68,7 @@ const TableFilterDrawer = React.forwardRef<
                 setAppliedFilter(filter);
               }}
             >
-              Apply Filter
+              Apply
             </Button>
           </Group>
         </Drawer.Header>

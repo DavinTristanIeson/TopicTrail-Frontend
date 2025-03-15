@@ -17,6 +17,7 @@ import {
   Stack,
   Select,
   Button,
+  Loader,
 } from '@mantine/core';
 import { Eye, Funnel, Warning } from '@phosphor-icons/react';
 import React from 'react';
@@ -24,12 +25,12 @@ import TableFilterDrawer from '../filter';
 import pick from 'lodash/pick';
 import TableRendererComponent from './renderer';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
-import TableColumnsOrderDrawer, {
-  TableColumnOrderState,
+import TableColumnStatesDrawer, {
+  TableColumnState,
 } from './column-order-drawer';
 
 interface TablePreprocessorProps {
-  columnOrders: TableColumnOrderState[] | null;
+  columnStates: TableColumnState[] | null;
   result: TablePaginationApiResult;
   sort: TableSortModel | null;
   setSort: React.Dispatch<React.SetStateAction<TableSortModel | null>>;
@@ -37,15 +38,15 @@ interface TablePreprocessorProps {
 }
 
 function TablePreprocessor(props: TablePreprocessorProps) {
-  const { result, columnOrders: columnOrders, sort, setSort, Bottom } = props;
+  const { result, columnStates: columnStates, sort, setSort, Bottom } = props;
   const { data, columns } = React.useMemo(() => {
-    if (!columnOrders) {
+    if (!columnStates) {
       return {
         data: result.data,
         columns: result.columns,
       };
     }
-    const columns = columnOrders
+    const columns = columnStates
       .filter((column) => column.visible)
       .map((column) => result.columns.find((col) => col.name === column.name)!)
       .filter(Boolean);
@@ -89,24 +90,24 @@ function TablePaginator(props: TablePaginatorProps) {
   const { meta, page, limit, setPage, setLimit } = props;
 
   return (
-    <Group justify="space-between">
+    <Group justify="space-between" align="end">
       <Text c="gray">{`Showing ${page * limit + 1} - ${Math.min(meta.total, (page + 1) * limit)} out of ${meta.total} rows`}</Text>
+      <Pagination
+        total={meta.pages}
+        value={page + 1}
+        onChange={(page) => setPage(page - 1)}
+        hideWithOnePage
+      />
       <Group>
-        <Group>
-          <Text c="gray">Rows per Page</Text>
-          <Select
-            value={limit.toString()}
-            onChange={(value) => setLimit(value == null ? 25 : parseInt(value))}
-            allowDeselect={false}
-            data={[15, 25, 50, 100].map(String)}
-          />
-        </Group>
-        <Pagination
-          total={meta.pages}
-          value={page}
-          onChange={setPage}
-          withPages={false}
-          hideWithOnePage
+        <Text c="gray" size="sm">
+          Rows per page
+        </Text>
+        <Select
+          value={limit.toString()}
+          onChange={(value) => setLimit(value == null ? 25 : parseInt(value))}
+          allowDeselect={false}
+          data={[15, 25, 50, 100].map(String)}
+          maw={80}
         />
       </Group>
     </Group>
@@ -119,8 +120,8 @@ export default function TableQueryComponent() {
   const [page, setPage] = React.useState(0);
   const [sort, setSort] = React.useState<TableSortModel | null>(null);
   const [filter, setFilter] = React.useState<TableFilterModel | null>(null);
-  const [columnOrder, setColumnOrder] = React.useState<
-    TableColumnOrderState[] | null
+  const [columnStates, setColumnStates] = React.useState<
+    TableColumnState[] | null
   >(null);
   const query = client.useQuery(
     'post',
@@ -143,7 +144,7 @@ export default function TableQueryComponent() {
     },
   );
   const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
-  const tableColumnOrderRemote = React.useRef<DisclosureTrigger | null>(null);
+  const tableColumnStatesRemote = React.useRef<DisclosureTrigger | null>(null);
 
   if (!project) {
     return null;
@@ -155,23 +156,23 @@ export default function TableQueryComponent() {
         filter={filter}
         setFilter={setFilter}
       />
-      <TableColumnsOrderDrawer
-        columnOrders={columnOrder}
+      <TableColumnStatesDrawer
+        columnStates={columnStates}
         columns={query.data?.columns ?? []}
-        setColumnOrders={setColumnOrder}
-        ref={tableColumnOrderRemote}
+        setColumnStates={setColumnStates}
+        ref={tableColumnStatesRemote}
       />
       <Group justify="end" className="pb-3">
-        <Indicator disabled={!columnOrder} color="red">
+        <Indicator disabled={!columnStates} color="red" zIndex={2}>
           <Button
             variant="outline"
-            onClick={() => tableColumnOrderRemote.current?.open()}
+            onClick={() => tableColumnStatesRemote.current?.open()}
             leftSection={<Eye />}
           >
-            Sort Columns
+            Column States
           </Button>
         </Indicator>
-        <Indicator disabled={!filter} color="red">
+        <Indicator disabled={!filter} color="red" zIndex={2}>
           <Button
             variant="outline"
             onClick={() => {
@@ -183,10 +184,17 @@ export default function TableQueryComponent() {
           </Button>
         </Indicator>
       </Group>
-      <UseQueryWrapperComponent query={query}>
+      <UseQueryWrapperComponent
+        query={query}
+        loadingComponent={
+          <div className="min-h-3xl flex items-center justify-center">
+            <Loader type="dots" size={48} />
+          </div>
+        }
+      >
         {(data) => (
           <TablePreprocessor
-            columnOrders={columnOrder}
+            columnStates={columnStates}
             result={data}
             setSort={setSort}
             sort={sort}

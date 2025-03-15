@@ -12,7 +12,9 @@ interface TableRendererComponentProps {
 export default function TableRendererComponent(
   props: TableRendererComponentProps,
 ) {
-  console.log(props.data);
+  for (const row of props.data) {
+    console.log(JSON.stringify(row));
+  }
   // TODO: Hansen
   return <></>;
 }

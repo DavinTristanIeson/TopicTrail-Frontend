@@ -1,15 +1,16 @@
 import React, { useId } from 'react';
 import { useManyRefs } from './ref';
-import { GridStack, GridStackOptions } from 'gridstack';
+import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
 
 interface UseControlledGridStackProps {
   gridItems: string[];
   options: GridStackOptions;
+  makeWidget?(gridItemId: string, element: HTMLDivElement): GridStackWidget;
 }
 
 export function useControlledGridstack(props: UseControlledGridStackProps) {
   // From https://gridstackjs.com/demo/react-hooks.html
-  const { gridItems, options } = props;
+  const { gridItems, options, makeWidget } = props;
   const id = useId();
   const gridRef = React.useRef<GridStack>();
   const gridElementsRef = useManyRefs<HTMLDivElement>(gridItems);
@@ -23,9 +24,14 @@ export function useControlledGridstack(props: UseControlledGridStackProps) {
     for (const itemId of gridItems) {
       const element = gridElementsRef.current[itemId];
       if (!element?.current) continue;
-      grid.makeWidget(element.current, {
-        id: itemId,
-      });
+      grid.makeWidget(
+        element.current,
+        makeWidget
+          ? makeWidget(itemId, element.current)
+          : {
+              id: itemId,
+            },
+      );
     }
     grid.batchUpdate(false);
   });
