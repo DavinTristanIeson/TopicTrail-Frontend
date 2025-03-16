@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, List, Spoiler, Switch, TagsInput, Text } from '@mantine/core';
+import { Alert, List, Spoiler, Switch, Text } from '@mantine/core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Info } from '@phosphor-icons/react';
 import { ProjectConfigFormType } from '../form-type';
@@ -8,33 +8,19 @@ import {
   useInferProjectDatasetColumn,
 } from './utils';
 import RHFField from '@/components/standard/fields';
-import { useRHFMantineAdapter } from '@/components/standard/fields/adapter';
-import { TagsFieldProps } from '@/components/standard/fields/wrapper';
 import { DescriptiveStatisticsTable } from '@/modules/table/continuous/descriptive-statistics';
 import { FormEditableContext } from '@/components/standard/fields/context';
 
-function ProjectConfigColumnContinuousFormBinsInput(
+function ProjectConfigColumnContinuousFormBinsPreview(
   props: ProjectConfigColumnFormProps,
 ) {
-  const NAME = `columns.${props.index}.bins`;
-  const {
-    mergedProps,
-    fieldProps: { value },
-  } = useRHFMantineAdapter<TagsFieldProps>(
-    {
-      name: NAME,
-    },
-    {
-      extractEventValue(tags) {
-        return tags
-          .map((tag) => parseInt(tag, 10))
-          .filter((tag) => !isNaN(tag))
-          .sort((a, b) => a - b);
-      },
-    },
-  );
-
-  const binEdges = (value ?? []) as number[];
+  const { index } = props;
+  const { control } = useFormContext<ProjectConfigFormType>();
+  const binEdges =
+    useWatch({
+      name: `columns.${index}.bins`,
+      control,
+    }) ?? [];
   const bins = binEdges.reduce((acc, cur, index, arr) => {
     const digitLength = Math.ceil(Math.log10(acc.length));
     const binNumber = (acc.length + 1).toString().padStart(digitLength, '0');
@@ -53,15 +39,8 @@ function ProjectConfigColumnContinuousFormBinsInput(
     acc.push(`Bin ${binNumber}: (${prev}, ${cur})`);
     return acc;
   }, [] as string[]);
-
   return (
     <>
-      <TagsInput
-        {...mergedProps}
-        value={mergedProps.value?.map?.((val: any) => val.toString())}
-        label="Bin Edges"
-        description="Specify the edges of the bins here. For example: if you want to define the bins to be 3 - 18, 18 - 65, and 65 - 99. Then the bin edges should be 3, 18, 65, and 99."
-      />
       {bins.length === 0 ? (
         <Text size="sm" c="red">
           At least one bin edge is required to create bins.
@@ -78,6 +57,24 @@ function ProjectConfigColumnContinuousFormBinsInput(
           </List>
         </Spoiler>
       )}
+    </>
+  );
+}
+
+function ProjectConfigColumnContinuousFormBinsInput(
+  props: ProjectConfigColumnFormProps,
+) {
+  const NAME = `columns.${props.index}.bins`;
+
+  return (
+    <>
+      <RHFField
+        type="multiple-number"
+        name={NAME}
+        label="Bin Edges"
+        description="Specify the edges of the bins here. For example: if you want to define the bins to be 3 - 18, 18 - 65, and 65 - 99. Then the bin edges should be 3, 18, 65, and 99."
+      />
+      <ProjectConfigColumnContinuousFormBinsPreview {...props} />
     </>
   );
 }

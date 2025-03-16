@@ -11,7 +11,6 @@ import {
 } from '@mantine/core';
 import React from 'react';
 import { Eye, PencilSimple, TrashSimple, X } from '@phosphor-icons/react';
-import Colors from '@/common/constants/colors';
 import {
   invalidateProjectDependencyQueries,
   ProjectModel,

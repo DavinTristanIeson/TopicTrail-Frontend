@@ -35,7 +35,10 @@ export default function ProjectConfigForm(props: ProjectConfigFormProps) {
   });
 
   const handleSubmit = async (values: ProjectConfigFormType) => {
-    const input = ProjectConfigFormType2Input(values);
+    const formValues = ProjectConfigFormSchema.cast(values, {
+      stripUnknown: true,
+    });
+    const input = ProjectConfigFormType2Input(formValues);
     await onSubmit?.(input);
   };
 

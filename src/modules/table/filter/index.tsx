@@ -1,25 +1,41 @@
 import { TableFilterModel } from '@/api/table';
+import { TableFilterTypeEnum } from '@/common/constants/enum';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { Button, Drawer, Group, Paper } from '@mantine/core';
 import { Warning, X } from '@phosphor-icons/react';
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import { TableFilterFormType } from './form-type';
+import SubmitButton from '@/components/standard/button/submit';
+import TableFilterComponent from './components';
 
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
   setFilter: React.Dispatch<React.SetStateAction<TableFilterModel | null>>;
 }
 
+const defaultTableFilterFormValues: TableFilterFormType = {
+  type: TableFilterTypeEnum.And,
+  operands: [],
+};
 const TableFilterDrawer = React.forwardRef<
   DisclosureTrigger | null,
   TableFilterDrawerProps
 >(function TableFilterDrawer(props, ref) {
   const { filter: appliedFilter, setFilter: setAppliedFilter } = props;
   const [opened, { close }] = useDisclosureTrigger(ref);
-  const [filter, setFilter] = React.useState(appliedFilter);
+
+  const form = useForm({
+    mode: 'onChange',
+    defaultValues:
+      (appliedFilter as TableFilterFormType | undefined) ??
+      defaultTableFilterFormValues,
+  });
+  const { reset } = form;
   // Sync applied filter with local filter
   React.useEffect(() => {
-    setFilter(appliedFilter);
+    reset();
   }, [appliedFilter, opened]);
 
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -33,7 +49,7 @@ const TableFilterDrawer = React.forwardRef<
         dangerous
         positiveAction="Reset"
         onConfirm={async () => {
-          setAppliedFilter(null);
+          reset(defaultTableFilterFormValues);
           close();
         }}
       />
@@ -63,16 +79,10 @@ const TableFilterDrawer = React.forwardRef<
             >
               Cancel
             </Button>
-            <Button
-              onClick={() => {
-                setAppliedFilter(filter);
-              }}
-            >
-              Apply
-            </Button>
+            <SubmitButton>Apply</SubmitButton>
           </Group>
         </Drawer.Header>
-        {/* Table filter stuff goes here */}
+        <TableFilterComponent name="" />
       </Drawer>
     </>
   );

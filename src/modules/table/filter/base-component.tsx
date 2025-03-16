@@ -1,25 +1,27 @@
-import { TableFilterModel } from '@/api/table';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { ActionIcon, Button, Group, Paper } from '@mantine/core';
 import { Plus, TrashSimple } from '@phosphor-icons/react';
 import React from 'react';
 import { useFieldArray } from 'react-hook-form';
+import { TableFilterTypeSelectField } from './select-filter-type';
 
-interface TableFilterScaffold {
+export interface TableFilterComponentProps {
+  name: string;
   onDelete?(): void;
+}
+
+interface TableFilterScaffoldProps {
+  name: string;
+  onDelete: (() => void) | undefined;
   children?: React.ReactNode;
 }
 
-export interface TableFilterComponentProps {
-  parentName: string;
-  onDelete?(): void;
-}
-
-export function TableFilterScaffold(props: TableFilterScaffold) {
-  const { onDelete } = props;
+export function TableFilterScaffold(props: TableFilterScaffoldProps) {
+  const { onDelete, name: name } = props;
   const project = React.useContext(ProjectContext);
   if (!project) return null;
+  const targetName = name ? `${name}.target` : 'target';
   return (
     <Paper className="p-2">
       <Group justify="end">
@@ -30,37 +32,42 @@ export function TableFilterScaffold(props: TableFilterScaffold) {
         )}
       </Group>
       <ProjectColumnSelectField
-        name="target"
+        name={targetName}
         data={project.config.data_schema.columns}
-        type="select"
+      />
+      <TableFilterTypeSelectField
+        name={name ? `${name}.type` : 'type'}
+        targetName={targetName}
       />
       {props.children}
     </Paper>
   );
 }
 
-interface CompoundTableFilterComponentProps extends TableFilterComponentProps {
+interface CompoundTableFilterComponentProps {
+  name: string;
   renderer(props: TableFilterComponentProps): React.ReactNode;
 }
 
 export function CompoundTableFilterComponent(
   props: CompoundTableFilterComponentProps,
 ) {
-  const { onDelete, parentName, renderer: Renderer } = props;
+  const { name, renderer: Renderer } = props;
+  const parentName = name ? `${name}.operands` : 'operands';
   const { fields, remove } = useFieldArray({
     name: parentName,
   });
   return (
-    <TableFilterScaffold onDelete={props.onDelete}>
+    <>
       {fields.map((field, index) => (
         <Renderer
-          parentName={`${parentName}.operands.${index}`}
+          name={`${parentName}.${index}`}
           onDelete={() => remove(index)}
         />
       ))}
       <Button fullWidth leftSection={<Plus />}>
         Add Operand
       </Button>
-    </TableFilterScaffold>
+    </>
   );
 }

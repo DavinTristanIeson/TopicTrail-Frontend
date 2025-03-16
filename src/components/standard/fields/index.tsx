@@ -1,4 +1,12 @@
 import {
+  MultipleDateTimeField,
+  MultipleDateTimeFieldProps,
+  MultipleNumberField,
+  MultipleNumberFieldProps,
+} from './multiple';
+import {
+  DateTimeField,
+  DateTimeFieldProps,
   NumberField,
   NumberFieldProps,
   PercentageField,
@@ -22,7 +30,10 @@ type RHFFieldProps =
   | TagsFieldProps
   | SelectFieldProps
   | SwitchFieldProps
-  | TextareaFieldProps;
+  | TextareaFieldProps
+  | DateTimeFieldProps
+  | MultipleNumberFieldProps
+  | MultipleDateTimeFieldProps;
 
 export default function RHFField(props: RHFFieldProps) {
   switch (props.type) {
@@ -40,5 +51,11 @@ export default function RHFField(props: RHFFieldProps) {
       return <SelectField {...props} />;
     case 'textarea':
       return <TextareaField {...props} />;
+    case 'datetime':
+      return <DateTimeField {...props} />;
+    case 'multiple-number':
+      return <MultipleNumberField {...props} />;
+    case 'multiple-datetime':
+      return <MultipleDateTimeField {...props} />;
   }
 }

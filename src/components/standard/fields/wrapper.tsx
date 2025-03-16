@@ -12,6 +12,8 @@ import {
   Textarea,
   TextareaProps,
 } from '@mantine/core';
+import { DateTimePicker, DateTimePickerProps } from '@mantine/dates';
+
 import {
   IRHFField,
   IRHFMantineAdaptable,
@@ -109,4 +111,18 @@ export type TextareaFieldProps = IRHFField<
 export function TextareaField(props: TextareaFieldProps) {
   const { mergedProps } = useRHFMantineAdapter(props, {});
   return <Textarea {...mergedProps} />;
+}
+
+export type DateTimeFieldProps = IRHFField<
+  DateTimePickerProps & IRHFMantineAdaptable<DateTimePickerProps>,
+  'datetime'
+>;
+
+export function DateTimeField(props: DateTimeFieldProps) {
+  const { mergedProps } = useRHFMantineAdapter<DateTimeFieldProps>(props, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
+  return <DateTimePicker {...mergedProps} />;
 }

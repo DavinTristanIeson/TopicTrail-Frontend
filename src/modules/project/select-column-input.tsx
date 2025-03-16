@@ -75,11 +75,9 @@ export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
   );
 }
 
-type ProjectColumnSelectFieldProps = IRHFField<
-  ProjectColumnSelectInputProps &
-    IRHFMantineAdaptable<ProjectColumnSelectInputProps>,
-  'select'
->;
+type ProjectColumnSelectFieldProps = ProjectColumnSelectInputProps &
+  IRHFMantineAdaptable<ProjectColumnSelectInputProps>;
+
 export function ProjectColumnSelectField(props: ProjectColumnSelectFieldProps) {
   const { mergedProps } = useRHFMantineAdapter<ProjectColumnSelectInputProps>(
     props,
