@@ -5,10 +5,14 @@ import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { Button, Drawer, Group, Paper } from '@mantine/core';
 import { Warning, X } from '@phosphor-icons/react';
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import { TableFilterFormType } from './form-type';
+import { Form, useForm, useFormContext } from 'react-hook-form';
+import { tableFilterFormSchema, TableFilterFormType } from './form-type';
 import SubmitButton from '@/components/standard/button/submit';
 import TableFilterComponent from './components';
+import FormWrapper from '@/components/utility/form/wrapper';
+import { client } from '@/common/api/client';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ProjectContext } from '@/modules/project/context';
 
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
@@ -19,26 +23,16 @@ const defaultTableFilterFormValues: TableFilterFormType = {
   type: TableFilterTypeEnum.And,
   operands: [],
 };
-const TableFilterDrawer = React.forwardRef<
-  DisclosureTrigger | null,
-  TableFilterDrawerProps
->(function TableFilterDrawer(props, ref) {
-  const { filter: appliedFilter, setFilter: setAppliedFilter } = props;
-  const [opened, { close }] = useDisclosureTrigger(ref);
 
-  const form = useForm({
-    mode: 'onChange',
-    defaultValues:
-      (appliedFilter as TableFilterFormType | undefined) ??
-      defaultTableFilterFormValues,
-  });
-  const { reset } = form;
-  // Sync applied filter with local filter
-  React.useEffect(() => {
-    reset();
-  }, [appliedFilter, opened]);
+interface TableFilterDrawerComponentProps {
+  setFilter: React.Dispatch<React.SetStateAction<TableFilterModel | null>>;
+  close(): void;
+}
 
+function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
+  const { reset } = useFormContext<TableFilterFormType>();
+  const { setFilter, close } = props;
 
   return (
     <>
@@ -50,41 +44,100 @@ const TableFilterDrawer = React.forwardRef<
         positiveAction="Reset"
         onConfirm={async () => {
           reset(defaultTableFilterFormValues);
+          setFilter(null);
           close();
         }}
       />
-      <Drawer
-        opened={opened}
-        onClose={close}
-        closeOnClickOutside={false}
-        closeOnEscape={false}
-      >
-        <Drawer.Header>
-          <Group className="py-3 w-full">
-            <Button
-              color="red"
-              leftSection={<Warning />}
-              onClick={() => {
-                confirmResetRemote.current?.open();
-              }}
-            >
-              Reset
-            </Button>
-            <div className="flex-1" />
-            <Button
-              onClick={close}
-              color="red"
-              variant="outline"
-              leftSection={<X />}
-            >
-              Cancel
-            </Button>
-            <SubmitButton>Apply</SubmitButton>
-          </Group>
-        </Drawer.Header>
-        <TableFilterComponent name="" />
-      </Drawer>
+      <Drawer.Header>
+        <Group className="py-3 w-full">
+          <Button
+            color="red"
+            leftSection={<Warning />}
+            onClick={() => {
+              confirmResetRemote.current?.open();
+            }}
+          >
+            Reset
+          </Button>
+          <div className="flex-1" />
+          <Button
+            onClick={close}
+            color="red"
+            variant="outline"
+            leftSection={<X />}
+          >
+            Cancel
+          </Button>
+          <SubmitButton>Apply</SubmitButton>
+        </Group>
+      </Drawer.Header>
+      <TableFilterComponent name="" />
     </>
+  );
+}
+
+const TableFilterDrawer = React.forwardRef<
+  DisclosureTrigger | null,
+  TableFilterDrawerProps
+>(function TableFilterDrawer(props, ref) {
+  const { filter: appliedFilter, setFilter: setAppliedFilter } = props;
+  const [opened, { close }] = useDisclosureTrigger(ref);
+
+  const form = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(tableFilterFormSchema),
+    defaultValues:
+      (appliedFilter as TableFilterFormType | undefined) ??
+      defaultTableFilterFormValues,
+  });
+  const { reset } = form;
+  // Sync applied filter with local filter
+  React.useEffect(() => {
+    reset();
+  }, [appliedFilter, opened]);
+
+  const { mutateAsync: checkFilter } = client.useMutation(
+    'post',
+    '/table/{project_id}/check-filter',
+  );
+  const project = React.useContext(ProjectContext);
+  const onSubmit = React.useCallback(
+    async (formValues: TableFilterFormType) => {
+      if (!project) return;
+      const payload = tableFilterFormSchema.cast(formValues, {
+        stripUnknown: true,
+      }) as TableFilterFormType;
+      const res = await checkFilter({
+        body: payload as TableFilterModel,
+        params: {
+          path: {
+            project_id: project.id,
+          },
+        },
+      });
+      setAppliedFilter(res.data);
+    },
+    [],
+  );
+
+  if (!project) {
+    return null;
+  }
+
+  return (
+    <Drawer
+      opened={opened}
+      onClose={close}
+      closeOnClickOutside={false}
+      closeOnEscape={false}
+    >
+      <FormWrapper form={form} onSubmit={onSubmit}>
+        <TableFilterDrawerComponent
+          close={close}
+          setFilter={setAppliedFilter}
+        />
+      </FormWrapper>
+    </Drawer>
   );
 });
 

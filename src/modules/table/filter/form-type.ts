@@ -22,8 +22,8 @@ const tableFilterFormSchemaBuilder = {
         TableFilterTypeEnum.Not,
       ].includes(value);
     },
-    then: (schema) => schema.required(),
-    otherwise: (schema) => schema.strip(),
+    then: (schema) => schema.strip(),
+    otherwise: (schema) => schema.required(),
   }),
   value: yupNullableMixed.when('type', {
     is: isAmong([
@@ -65,7 +65,7 @@ const tableFilterFormSchemaBuilder = {
     otherwise: (schema) => schema.strip(),
   });
 
-const tableFilterFormSchema = Yup.object(tableFilterFormSchemaBuilder);
+export const tableFilterFormSchema = Yup.object(tableFilterFormSchemaBuilder);
 
 export type TableFilterFormType = Yup.InferType<
   typeof tableFilterFormSchema

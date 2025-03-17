@@ -1,6 +1,7 @@
 import { SchemaColumnModel } from '@/api/project';
 import { TableSortModel } from '@/api/table';
 import React from 'react';
+import { Text } from '@mantine/core';
 
 interface TableRendererComponentProps {
   columns: SchemaColumnModel[];
@@ -12,9 +13,13 @@ interface TableRendererComponentProps {
 export default function TableRendererComponent(
   props: TableRendererComponentProps,
 ) {
-  for (const row of props.data) {
-    console.log(JSON.stringify(row));
-  }
+  const { columns, data, sort, setSort } = props;
   // TODO: Hansen
-  return <></>;
+  return (
+    <>
+      {data.map((row) => (
+        <Text>{JSON.stringify(row)}</Text>
+      ))}
+    </>
+  );
 }

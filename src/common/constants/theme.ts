@@ -57,7 +57,7 @@ const mantineTheme = createTheme({
     }),
     Paper: Paper.extend({
       defaultProps: {
-        shadow: 'sm',
+        shadow: 'xs',
       },
     }),
     InputWrapper: InputWrapper.extend({

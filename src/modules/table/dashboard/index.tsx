@@ -4,7 +4,7 @@ import AddTableVisualizationDialog from './add-visualization-dialog';
 import React from 'react';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import { useControlledGridstack } from '@/hooks/gridstack';
-import { GridStackWidget } from 'gridstack';
+import { type GridStackWidget } from 'gridstack';
 import DashboardGridItem from './grid-item';
 
 function DashboardGridstackRenderer() {

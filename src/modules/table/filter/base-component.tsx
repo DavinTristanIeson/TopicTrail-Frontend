@@ -1,10 +1,15 @@
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
-import { ActionIcon, Button, Group, Paper } from '@mantine/core';
+import { ActionIcon, Button, Group, Paper, Stack, Switch } from '@mantine/core';
 import { Plus, TrashSimple } from '@phosphor-icons/react';
 import React from 'react';
-import { useFieldArray } from 'react-hook-form';
-import { TableFilterTypeSelectField } from './select-filter-type';
+import { useFieldArray, useWatch } from 'react-hook-form';
+import {
+  COMPOUND_FILTER_TYPES,
+  CompoundTableFilterTypeSelectField,
+  TableFilterTypeSelectField,
+} from './select-filter-type';
+import { TableFilterTypeEnum } from '@/common/constants/enum';
 
 export interface TableFilterComponentProps {
   name: string;
@@ -20,26 +25,42 @@ interface TableFilterScaffoldProps {
 export function TableFilterScaffold(props: TableFilterScaffoldProps) {
   const { onDelete, name: name } = props;
   const project = React.useContext(ProjectContext);
-  if (!project) return null;
   const targetName = name ? `${name}.target` : 'target';
+  const typeName = name ? `${name}.type` : 'type';
+
+  const type = useWatch({ name: typeName }) as TableFilterTypeEnum;
+  const target = useWatch({ name: targetName }) as string;
+
+  if (!project) return null;
   return (
     <Paper className="p-2">
-      <Group justify="end">
+      <Stack>
         {onDelete && (
-          <ActionIcon size={32} color="red" variant="subtle">
-            <TrashSimple size={24} />
-          </ActionIcon>
+          <Group justify="end">
+            <ActionIcon size={32} color="red" variant="subtle">
+              <TrashSimple size={24} />
+            </ActionIcon>
+          </Group>
         )}
-      </Group>
-      <ProjectColumnSelectField
-        name={targetName}
-        data={project.config.data_schema.columns}
-      />
-      <TableFilterTypeSelectField
-        name={name ? `${name}.type` : 'type'}
-        targetName={targetName}
-      />
-      {props.children}
+        {COMPOUND_FILTER_TYPES.includes(type) ? null : (
+          <ProjectColumnSelectField
+            name={targetName}
+            data={project.config.data_schema.columns}
+            label="Target"
+            required
+          />
+        )}
+        {COMPOUND_FILTER_TYPES.includes(type) || !target ? (
+          <CompoundTableFilterTypeSelectField name={typeName} label="Type" />
+        ) : (
+          <TableFilterTypeSelectField
+            name={typeName}
+            targetName={targetName}
+            label="Type"
+          />
+        )}
+        {props.children}
+      </Stack>
     </Paper>
   );
 }
@@ -54,7 +75,7 @@ export function CompoundTableFilterComponent(
 ) {
   const { name, renderer: Renderer } = props;
   const parentName = name ? `${name}.operands` : 'operands';
-  const { fields, remove } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     name: parentName,
   });
   return (
@@ -65,7 +86,16 @@ export function CompoundTableFilterComponent(
           onDelete={() => remove(index)}
         />
       ))}
-      <Button fullWidth leftSection={<Plus />}>
+      <Button
+        fullWidth
+        leftSection={<Plus />}
+        onClick={() => {
+          append({
+            type: '',
+            target: '',
+          });
+        }}
+      >
         Add Operand
       </Button>
     </>

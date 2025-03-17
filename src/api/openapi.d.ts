@@ -160,6 +160,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/check-filter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Check Filter */
+        post: operations["post__check_filter_table__project_id__check_filter_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/": {
         parameters: {
             query?: never;
@@ -367,6 +384,13 @@ export interface components {
             message: string;
             /** Errors */
             errors?: Record<string, never> | null;
+        };
+        /** ApiResult[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
+        ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
+            /** Data */
+            data: components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            /** Message */
+            message: string | null;
         };
         /** ApiResult[CheckDatasetResource] */
         ApiResult_CheckDatasetResource_: {
@@ -2208,6 +2232,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__check_filter_table__project_id__check_filter_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
                 };
             };
             /** @description Bad Request */
