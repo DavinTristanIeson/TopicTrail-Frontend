@@ -8,7 +8,7 @@ import {
   useInferProjectDatasetColumn,
 } from './utils';
 import RHFField from '@/components/standard/fields';
-import { DescriptiveStatisticsTable } from '@/modules/table/continuous/descriptive-statistics';
+import { DescriptiveStatisticsTable } from '@/modules/visualization/continuous/descriptive-statistics';
 import { FormEditableContext } from '@/components/standard/fields/context';
 
 function ProjectConfigColumnContinuousFormBinsPreview(

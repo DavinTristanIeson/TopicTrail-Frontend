@@ -8,7 +8,7 @@ import {
   COMPOUND_FILTER_TYPES,
   CompoundTableFilterTypeSelectField,
   TableFilterTypeSelectField,
-} from './select-filter-type';
+} from '@/modules/filter/select/select-filter-type';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 
 export interface TableFilterComponentProps {

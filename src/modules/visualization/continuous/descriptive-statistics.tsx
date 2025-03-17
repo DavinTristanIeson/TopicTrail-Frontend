@@ -1,4 +1,4 @@
-import { DescriptiveStatisticsModel } from '@/api/project';
+import { DescriptiveStatisticsModel } from '@/api/table';
 import Colors from '@/common/constants/colors';
 import { Skeleton, Table, Group, Tooltip } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';

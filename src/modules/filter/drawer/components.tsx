@@ -15,7 +15,7 @@ import { useProjectColumnField } from '@/modules/project/columns';
 import {
   TableUniqueValueSelectField,
   TableUniqueValuesMultiSelectField,
-} from '../categorical/select-unique-values';
+} from '@/modules/filter/select/select-unique-values';
 
 function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
   const { name: name } = props;

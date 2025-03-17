@@ -9,7 +9,6 @@ import { DisclosureTrigger } from '@/hooks/disclosure';
 import { ProjectContext } from '@/modules/project/context';
 import {
   Text,
-  ActionIcon,
   Alert,
   Group,
   Indicator,
@@ -21,13 +20,13 @@ import {
 } from '@mantine/core';
 import { Eye, Funnel, Warning } from '@phosphor-icons/react';
 import React from 'react';
-import TableFilterDrawer from '../filter';
+import TableFilterDrawer from '@/modules/filter/drawer';
 import pick from 'lodash/pick';
 import TableRendererComponent from './renderer';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import TableColumnStatesDrawer, {
   TableColumnState,
-} from './column-states-drawer';
+} from './actions/column-states-drawer';
 
 interface TablePreprocessorProps {
   columnStates: TableColumnState[] | null;

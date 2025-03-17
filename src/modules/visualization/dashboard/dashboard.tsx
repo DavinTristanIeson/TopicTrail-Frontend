@@ -1,13 +1,9 @@
-import { Button, Group, Paper } from '@mantine/core';
-import { Plus } from '@phosphor-icons/react';
-import AddTableVisualizationDialog from './add-visualization-dialog';
-import React from 'react';
-import { DisclosureTrigger } from '@/hooks/disclosure';
 import { useControlledGridstack } from '@/hooks/gridstack';
-import { type GridStackWidget } from 'gridstack';
+import { GridStackWidget } from 'gridstack';
+import React from 'react';
 import DashboardGridItem from './grid-item';
 
-function DashboardGridstackRenderer() {
+export default function GridstackDashboard() {
   const ids = React.useMemo(() => {
     return Array.from({ length: 10 }, (_, index) =>
       Math.random().toString(16).substring(2),
@@ -41,25 +37,5 @@ function DashboardGridstackRenderer() {
         ))}
       </div>
     </div>
-  );
-}
-
-export default function TableDashboard() {
-  const addTableDialogRemote = React.useRef<DisclosureTrigger | null>(null);
-  return (
-    <>
-      <AddTableVisualizationDialog ref={addTableDialogRemote} />
-      <Group justify="end" className="pb-3">
-        <Button
-          leftSection={<Plus />}
-          onClick={() => {
-            addTableDialogRemote.current?.open();
-          }}
-        >
-          Add Visualization
-        </Button>
-      </Group>
-      <DashboardGridstackRenderer />
-    </>
   );
 }

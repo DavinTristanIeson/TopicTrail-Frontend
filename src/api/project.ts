@@ -10,8 +10,6 @@ export type ProjectDataSourceModel =
   | components['schemas']['CSVDataSource'];
 export type ProjectInferDatasetModel =
   components['schemas']['CheckDatasetResource'];
-export type DescriptiveStatisticsModel =
-  components['schemas']['InferDatasetDescriptiveStatisticsResource'];
 
 export type CategoricalSchemaColumnModel =
   components['schemas']['CategoricalSchemaColumn-Output'];

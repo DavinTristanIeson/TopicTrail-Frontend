@@ -1,6 +1,6 @@
+import DashboardManager from '@/modules/visualization/dashboard';
 import AppProjectLayout from '@/modules/project/layout';
-import TableDashboard from '@/modules/table/dashboard';
-import TableQueryComponent from '@/modules/table/table';
+import TableQueryComponent from '@/modules/table';
 import { Divider } from '@mantine/core';
 import React from 'react';
 
@@ -12,7 +12,7 @@ export default function TablePage() {
           <TableQueryComponent />
         </div>
         <Divider className="my-5" />
-        <TableDashboard />
+        <DashboardManager />
       </div>
     </AppProjectLayout>
   );

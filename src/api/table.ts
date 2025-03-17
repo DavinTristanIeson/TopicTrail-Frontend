@@ -45,3 +45,6 @@ export type TableSortModel = components['schemas']['TableSort'];
 export type PaginationMetaModel = components['schemas']['PaginationMeta'];
 export type TablePaginationApiResult =
   components['schemas']['TablePaginationApiResult_dict_str__Any__'];
+
+export type DescriptiveStatisticsModel =
+  components['schemas']['DescriptiveStatisticsResource'];
