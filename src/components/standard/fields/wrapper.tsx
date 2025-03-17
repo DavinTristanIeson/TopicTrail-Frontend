@@ -37,7 +37,11 @@ export type NumberFieldProps = IRHFField<
 >;
 
 export function NumberField(props: NumberFieldProps) {
-  const { mergedProps } = useRHFMantineAdapter(props, {});
+  const { mergedProps } = useRHFMantineAdapter(props, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
   return <NumberInput {...mergedProps} />;
 }
 

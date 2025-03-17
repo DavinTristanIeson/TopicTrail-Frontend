@@ -51,11 +51,10 @@ interface ProjectColumnSelectInputProps
 }
 
 export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
-  const { onChange, data, value, ...selectProps } = props;
+  const { onChange, data, ...selectProps } = props;
   return (
     <Select
       {...selectProps}
-      value={value}
       renderOption={
         ProjectColumnComboboxItemRenderer as SelectProps['renderOption']
       }
@@ -69,7 +68,6 @@ export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
       onChange={(value) => {
         onChange?.(value ? (data.find((x) => x.name === value) ?? null) : null);
       }}
-      allowDeselect={false}
       placeholder="Pick a column"
     />
   );
@@ -83,7 +81,7 @@ export function ProjectColumnSelectField(props: ProjectColumnSelectFieldProps) {
     props,
     {
       extractEventValue(e) {
-        return e?.name;
+        return e?.name ?? '';
       },
     },
   );

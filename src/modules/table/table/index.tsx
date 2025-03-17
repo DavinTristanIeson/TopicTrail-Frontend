@@ -27,7 +27,7 @@ import TableRendererComponent from './renderer';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import TableColumnStatesDrawer, {
   TableColumnState,
-} from './column-order-drawer';
+} from './column-states-drawer';
 
 interface TablePreprocessorProps {
   columnStates: TableColumnState[] | null;
@@ -61,7 +61,15 @@ function TablePreprocessor(props: TablePreprocessorProps) {
         Oops, there doesn't seem to be any columns in your dataset. Either this
         is because our local copy of the dataset file has been corrupted in some
         way, or because you accidentally hid every single available column in
-        the "Sort Columns" drawer.
+        the "Column States" drawer.
+      </Alert>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <Alert icon={<Warning size={20} />} title="No Rows?" color="red">
+        Oops, there doesn't seem to be any rows in this sub-dataset. Your filter
+        may be too strict. Consider changing the filter in the "Filter" drawer.
       </Alert>
     );
   }
@@ -91,7 +99,7 @@ function TablePaginator(props: TablePaginatorProps) {
 
   return (
     <Group justify="space-between" align="end">
-      <Text c="gray">{`Showing ${page * limit + 1} - ${Math.min(meta.total, (page + 1) * limit)} out of ${meta.total} rows`}</Text>
+      <Text c="gray">{`Showing ${meta.total <= 0 ? 0 : page * limit + 1} - ${Math.min(meta.total, (page + 1) * limit)} out of ${meta.total} rows`}</Text>
       <Pagination
         total={meta.pages}
         value={page + 1}

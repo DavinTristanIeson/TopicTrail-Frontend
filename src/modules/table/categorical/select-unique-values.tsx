@@ -1,6 +1,5 @@
 import { client } from '@/common/api/client';
 import {
-  IRHFField,
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
@@ -11,6 +10,7 @@ import {
   Select,
   SelectProps,
 } from '@mantine/core';
+import { uniq } from 'lodash';
 
 interface UseTableUniqueValueSelectPropsProps {
   column: string;
@@ -51,7 +51,7 @@ function useTableUniqueValueSelectProps(
   return {
     data: uniqueValues?.map(String) ?? [],
     disabled: controlledDisabled ?? isLoading,
-    rightSection: isFetching ? <Loader /> : undefined,
+    rightSection: isFetching ? <Loader size={14} /> : undefined,
     error: controlledError ?? error?.message ?? noValueError,
   };
 }
@@ -62,9 +62,10 @@ interface TableUniqueValueSelectProps
 
 export function TableUniqueValueSelect(props: TableUniqueValueSelectProps) {
   const selectProps = useTableUniqueValueSelectProps(props);
-  const data = props.value
-    ? [props.value, ...selectProps.data]
-    : selectProps.data;
+  const data = selectProps.data;
+  if (props.value && !data.includes(props.value)) {
+    data.push(props.value);
+  }
   return <Select {...props} {...selectProps} data={data} />;
 }
 
@@ -93,7 +94,7 @@ export function TableUniqueValueMultiSelect(
 ) {
   const selectProps = useTableUniqueValueSelectProps(props);
   const data = props.value
-    ? [...props.value, ...selectProps.data]
+    ? uniq([...props.value, ...selectProps.data])
     : selectProps.data;
   return <MultiSelect {...props} {...selectProps} data={data} />;
 }

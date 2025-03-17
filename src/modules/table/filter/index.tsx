@@ -2,10 +2,10 @@ import { TableFilterModel } from '@/api/table';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-import { Button, Drawer, Group, Paper } from '@mantine/core';
+import { Button, Drawer, Group } from '@mantine/core';
 import { Warning, X } from '@phosphor-icons/react';
 import React from 'react';
-import { Form, useForm, useFormContext } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import { tableFilterFormSchema, TableFilterFormType } from './form-type';
 import SubmitButton from '@/components/standard/button/submit';
 import TableFilterComponent from './components';
@@ -13,6 +13,8 @@ import FormWrapper from '@/components/utility/form/wrapper';
 import { client } from '@/common/api/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ProjectContext } from '@/modules/project/context';
+import { ErrorAlert } from '@/components/standard/fields/watcher';
+import { showNotification } from '@mantine/notifications';
 
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
@@ -83,18 +85,23 @@ const TableFilterDrawer = React.forwardRef<
   const { filter: appliedFilter, setFilter: setAppliedFilter } = props;
   const [opened, { close }] = useDisclosureTrigger(ref);
 
+  const defaultValues = React.useMemo(() => {
+    return (
+      (appliedFilter as TableFilterFormType | undefined) ??
+      defaultTableFilterFormValues
+    );
+  }, [appliedFilter]);
+
   const form = useForm({
     mode: 'onChange',
     resolver: yupResolver(tableFilterFormSchema),
-    defaultValues:
-      (appliedFilter as TableFilterFormType | undefined) ??
-      defaultTableFilterFormValues,
+    defaultValues,
   });
   const { reset } = form;
   // Sync applied filter with local filter
   React.useEffect(() => {
-    reset();
-  }, [appliedFilter, opened]);
+    reset(defaultValues);
+  }, [appliedFilter, defaultValues, opened, reset]);
 
   const { mutateAsync: checkFilter } = client.useMutation(
     'post',
@@ -116,8 +123,13 @@ const TableFilterDrawer = React.forwardRef<
         },
       });
       setAppliedFilter(res.data);
+      close();
+      showNotification({
+        message: 'Filter has been applied successfully',
+        color: 'green',
+      });
     },
-    [],
+    [checkFilter, close, project, setAppliedFilter],
   );
 
   if (!project) {
@@ -132,6 +144,7 @@ const TableFilterDrawer = React.forwardRef<
       closeOnEscape={false}
     >
       <FormWrapper form={form} onSubmit={onSubmit}>
+        <ErrorAlert />
         <TableFilterDrawerComponent
           close={close}
           setFilter={setAppliedFilter}

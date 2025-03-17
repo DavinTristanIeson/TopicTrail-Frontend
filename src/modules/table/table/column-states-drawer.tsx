@@ -22,7 +22,7 @@ import {
   Warning,
   X,
 } from '@phosphor-icons/react';
-import { uniqBy } from 'lodash';
+import { isEqual, uniqBy } from 'lodash';
 import React from 'react';
 
 export interface TableColumnState {
@@ -99,7 +99,6 @@ function TableColumnStatesSortableContext(
                       ...next[index]!,
                       visible: !visible,
                     };
-                    console.log(JSON.stringify(next[index]));
                     return next;
                   });
                 }}
@@ -170,10 +169,10 @@ const TableColumnStatesDrawer = React.forwardRef<
         <Group className="py-3 w-full">
           <Button
             color="red"
-            variant="outline"
             leftSection={<Warning />}
             onClick={() => {
-              setColumnStates(defaultColumnStates);
+              setAppliedColumnStates(null);
+              close();
             }}
           >
             Reset
@@ -190,7 +189,11 @@ const TableColumnStatesDrawer = React.forwardRef<
           <Button
             leftSection={<ArrowsLeftRight />}
             onClick={() => {
-              setAppliedColumnStates(columnStates);
+              if (isEqual(columnStates, defaultColumnStates)) {
+                setAppliedColumnStates(null);
+              } else {
+                setAppliedColumnStates(columnStates);
+              }
               close();
             }}
           >

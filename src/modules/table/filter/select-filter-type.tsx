@@ -185,7 +185,6 @@ export function TableFilterTypeSelectInput(
       renderOption={
         TableFilterTypeComboboxItemRenderer as SelectProps['renderOption']
       }
-      allowDeselect={false}
       placeholder="Pick a filter type"
     />
   );
@@ -228,17 +227,15 @@ interface CompoundTableFilterTypeSelectInputProps
 export function CompoundTableFilterTypeSelectInput(
   props: CompoundTableFilterTypeSelectInputProps,
 ) {
-  const { onChange, ...selectProps } = props;
   return (
     <Select
-      {...selectProps}
+      {...props}
       data={COMPOUND_FILTER_TYPES.map((value) => {
         return FILTER_COMBOBOXES[value];
       })}
       renderOption={
         TableFilterTypeComboboxItemRenderer as SelectProps['renderOption']
       }
-      allowDeselect={false}
       placeholder="Pick a filter type"
     />
   );

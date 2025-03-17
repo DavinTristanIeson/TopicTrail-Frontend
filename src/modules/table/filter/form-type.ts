@@ -60,7 +60,7 @@ const tableFilterFormSchemaBuilder = {
 (tableFilterFormSchemaBuilder as any).operand = yupNullableArray
   .of(Yup.lazy(() => Yup.object(tableFilterFormSchemaBuilder)))
   .when('type', {
-    is: isAmong([TableFilterTypeEnum.And, TableFilterTypeEnum.Or]),
+    is: TableFilterTypeEnum.Not,
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   });

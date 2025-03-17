@@ -3,7 +3,7 @@ import { ProjectColumnSelectField } from '@/modules/project/select-column-input'
 import { ActionIcon, Button, Group, Paper, Stack, Switch } from '@mantine/core';
 import { Plus, TrashSimple } from '@phosphor-icons/react';
 import React from 'react';
-import { useFieldArray, useWatch } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import {
   COMPOUND_FILTER_TYPES,
   CompoundTableFilterTypeSelectField,
@@ -25,6 +25,7 @@ interface TableFilterScaffoldProps {
 export function TableFilterScaffold(props: TableFilterScaffoldProps) {
   const { onDelete, name: name } = props;
   const project = React.useContext(ProjectContext);
+  const { setValue, clearErrors } = useFormContext();
   const targetName = name ? `${name}.target` : 'target';
   const typeName = name ? `${name}.type` : 'type';
 
@@ -37,7 +38,12 @@ export function TableFilterScaffold(props: TableFilterScaffoldProps) {
       <Stack>
         {onDelete && (
           <Group justify="end">
-            <ActionIcon size={32} color="red" variant="subtle">
+            <ActionIcon
+              size={32}
+              color="red"
+              variant="subtle"
+              onClick={onDelete}
+            >
               <TrashSimple size={24} />
             </ActionIcon>
           </Group>
@@ -48,15 +54,48 @@ export function TableFilterScaffold(props: TableFilterScaffoldProps) {
             data={project.config.data_schema.columns}
             label="Target"
             required
+            onChange={() => {
+              setValue(typeName, '', {
+                shouldDirty: true,
+                shouldTouch: true,
+              });
+            }}
+            allowDeselect
+            clearable
           />
         )}
         {COMPOUND_FILTER_TYPES.includes(type) || !target ? (
-          <CompoundTableFilterTypeSelectField name={typeName} label="Type" />
+          <CompoundTableFilterTypeSelectField
+            name={typeName}
+            label="Type"
+            required
+            // RERENDER DAMMIT
+            key={`${type}-${target}`}
+            onChange={(e) => {
+              setValue(
+                name,
+                { target, type: e },
+                { shouldTouch: true, shouldDirty: true },
+              );
+              clearErrors(name);
+            }}
+          />
         ) : (
           <TableFilterTypeSelectField
             name={typeName}
             targetName={targetName}
             label="Type"
+            // RERENDER DAMMIT
+            key={`${type}-${target}`}
+            required
+            onChange={(e) => {
+              setValue(
+                name,
+                { target, type: e },
+                { shouldTouch: true, shouldDirty: true },
+              );
+              clearErrors(name);
+            }}
           />
         )}
         {props.children}

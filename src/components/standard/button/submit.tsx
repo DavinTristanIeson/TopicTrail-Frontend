@@ -1,12 +1,13 @@
 import { useFormContext } from 'react-hook-form';
 import { Button, ButtonProps, Tooltip } from '@mantine/core';
 import { FloppyDisk } from '@phosphor-icons/react';
+import { isEmpty } from 'lodash';
 
 export default function SubmitButton(props: ButtonProps) {
   const {
-    formState: { isSubmitting, isDirty, isValid },
+    formState: { isSubmitting, isDirty, errors },
   } = useFormContext();
-  const isError = !isValid && isDirty;
+  const isError = !isEmpty(errors) && isDirty;
   return (
     <Tooltip
       label="There are unresolved errors in the form."
