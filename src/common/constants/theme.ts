@@ -82,11 +82,9 @@ const mantineTheme = createTheme({
       },
     }),
     Modal: Modal.extend({
-      classNames: {
-        title: 'font-bold',
-      },
       defaultProps: {
         centered: true,
+        size: 'lg',
       },
     }),
   },

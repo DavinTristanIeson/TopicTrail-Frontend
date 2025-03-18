@@ -6,7 +6,10 @@ import {
 import { client } from '@/common/api/client';
 import NavigationRoutes from '@/common/constants/routes';
 import SubmitButton from '@/components/standard/button/submit';
-import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
+import {
+  DisclosureTrigger,
+  ParametrizedDisclosureTrigger,
+} from '@/hooks/disclosure';
 import ProjectConfigForm from '@/modules/config/form';
 import { DeleteProjectModal } from '@/modules/project/actions';
 import { ProjectContext } from '@/modules/project/context';
@@ -19,13 +22,15 @@ import ProjectConfigFormPhaseSwitcher from './project-flow';
 import { FormEditableContext } from '@/components/standard/fields/context';
 
 function UpdateProjectDeleteButton() {
-  const deleteRemote =
-    React.useRef<ParametrizedDisclosureTrigger<string> | null>(null);
+  const deleteRemote = React.useRef<DisclosureTrigger | null>(null);
   const router = useRouter();
   const project = React.useContext(ProjectContext);
+  if (!project) return null;
   return (
     <>
       <DeleteProjectModal
+        projectId={project.id}
+        projectName={project.config.metadata.name}
         ref={deleteRemote}
         onAfterDelete={() => {
           router.replace(NavigationRoutes.Home);
@@ -37,7 +42,7 @@ function UpdateProjectDeleteButton() {
         color="red"
         onClick={() => {
           if (!project?.id) return;
-          deleteRemote.current?.open(project.id);
+          deleteRemote.current?.open();
         }}
       >
         Delete Project
