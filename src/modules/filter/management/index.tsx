@@ -1,52 +1,45 @@
-import {
-  ParametrizedDisclosureTrigger,
-  useParametrizedDisclosureTrigger,
-} from '@/hooks/disclosure';
-import { Alert, Modal } from '@mantine/core';
-import { Info } from '@phosphor-icons/react';
+import { Alert, Button, Collapse, Divider, Paper, Stack } from '@mantine/core';
+import { CaretDown, CaretRight, Faders, Info } from '@phosphor-icons/react';
 import React from 'react';
 import {
+  FilterManagementActionComponentProps,
   LoadFilterActionComponent,
   SaveFilterActionComponent,
 } from './actions';
-import { TableFilterModel } from '@/api/table';
+import { useDisclosure } from '@mantine/hooks';
 
-interface TableFilterManagementModalProps {
-  setFilter(filter: TableFilterModel): void;
-}
-
-const TableFilterManagementModal = React.forwardRef<
-  ParametrizedDisclosureTrigger<TableFilterModel> | null,
-  TableFilterManagementModalProps
->(function TableFilterManagementModal(props, ref) {
-  const { setFilter } = props;
-  const [filter, { close }] = useParametrizedDisclosureTrigger(ref);
+export default function TableFilterManagementModal(
+  props: FilterManagementActionComponentProps,
+) {
+  const [opened, { toggle }] = useDisclosure(true);
   return (
-    <Modal title="Manage Filters" onClose={close} opened={!!filter}>
-      <Alert
-        color="blue"
-        icon={<Info size={20} />}
-        title="What is the purpose of this menu?"
-      >
-        If there are filters that are often used in your analysis, you can
-        create a named filter so that you can load it easily later.
-      </Alert>
-      {filter && (
-        <>
-          <SaveFilterActionComponent
-            filter={filter}
-            setFilter={setFilter}
-            onClose={close}
-          />
-          <LoadFilterActionComponent
-            filter={filter}
-            setFilter={setFilter}
-            onClose={close}
-          />
-        </>
-      )}
-    </Modal>
+    <div className="pb-3">
+      <Paper className="p-2">
+        <Button
+          onClick={toggle}
+          fullWidth
+          leftSection={<Faders />}
+          rightSection={opened ? <CaretDown /> : <CaretRight />}
+          variant="subtle"
+        >
+          Manage Filters
+        </Button>
+        <Collapse in={opened}>
+          <Divider className="my-3" />
+          <Stack>
+            <Alert
+              color="blue"
+              icon={<Info size={20} />}
+              title="What is the purpose of this menu?"
+            >
+              If there are filters that are often used in your analysis, you can
+              create a named filter so that you can load it easily later.
+            </Alert>
+            <SaveFilterActionComponent {...props} />
+            <LoadFilterActionComponent {...props} />
+          </Stack>
+        </Collapse>
+      </Paper>
+    </div>
   );
-});
-
-export default TableFilterManagementModal;
+}

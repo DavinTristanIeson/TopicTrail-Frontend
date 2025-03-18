@@ -3,7 +3,13 @@ import { Group, Button } from '@mantine/core';
 import { Plus } from '@phosphor-icons/react';
 import React from 'react';
 import AddTableVisualizationDialog from './add-visualization-dialog';
-import GridstackDashboard from './dashboard';
+import dynamic from 'next/dynamic';
+import { GridSkeleton } from '@/components/visual/loading';
+
+const GridstackDashboard = dynamic(() => import('./dashboard'), {
+  ssr: false,
+  loading: GridSkeleton,
+});
 
 export default function DashboardManager() {
   const addTableDialogRemote = React.useRef<DisclosureTrigger | null>(null);

@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useId } from 'react';
 import { useManyRefs } from './ref';
 import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';

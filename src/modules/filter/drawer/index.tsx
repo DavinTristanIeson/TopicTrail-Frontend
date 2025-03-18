@@ -19,7 +19,7 @@ import { ProjectContext } from '@/modules/project/context';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 import { showNotification } from '@mantine/notifications';
 import { useCheckFilterValidity } from '../management/hooks';
-import TableFilterManagementModal from '../management';
+import TableFilterManagementSection from '../management';
 
 function useValidateFilter() {
   const checkFilter = useCheckFilterValidity();
@@ -49,19 +49,17 @@ interface TableFilterDrawerComponentProps {
 
 function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
-  const filterManagerRemote =
-    React.useRef<ParametrizedDisclosureTrigger<TableFilterModel> | null>(null);
   const { reset, getValues } = useFormContext<TableFilterFormType>();
   const { setFilter, close } = props;
 
+  const getFilter = React.useCallback(() => {
+    return tableFilterFormSchema.cast(getValues(), {
+      stripUnknown: true,
+    }) as TableFilterModel;
+  }, []);
+
   return (
     <>
-      <TableFilterManagementModal
-        ref={filterManagerRemote}
-        setFilter={(filter) => {
-          reset(filter as TableFilterFormType);
-        }}
-      />
       <ConfirmationDialog
         ref={confirmResetRemote}
         title="Reset Filter"
@@ -85,17 +83,6 @@ function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
           >
             Reset
           </Button>
-          <Button
-            color="red"
-            leftSection={<Faders />}
-            onClick={() => {
-              filterManagerRemote.current?.open(
-                getValues() as TableFilterModel,
-              );
-            }}
-          >
-            Manage Filters
-          </Button>
           <div className="flex-1" />
           <Button
             onClick={close}
@@ -108,6 +95,13 @@ function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
           <SubmitButton>Apply</SubmitButton>
         </Group>
       </Drawer.Header>
+      <TableFilterManagementSection
+        getFilter={getFilter}
+        setFilter={(filter) => {
+          setFilter(filter);
+          close();
+        }}
+      />
       <TableFilterComponent name="" />
     </>
   );

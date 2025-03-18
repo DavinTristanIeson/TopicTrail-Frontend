@@ -6,67 +6,83 @@ import { Download, FloppyDisk, TrashSimple } from '@phosphor-icons/react';
 
 import React from 'react';
 import { useCheckFilterValidity, useLocallySavedFilters } from './hooks';
+import PromiseButton from '@/components/standard/button/promise';
 import { showNotification } from '@mantine/notifications';
+import { handleErrorFn } from '@/common/utils/error';
+import { isEmpty } from 'lodash';
 
-interface FilterManagementActionComponentProps {
-  onClose(): void;
-  filter: TableFilterModel;
+export interface FilterManagementActionComponentProps {
+  getFilter(): TableFilterModel;
   setFilter(filter: TableFilterModel): void;
 }
 
 export function SaveFilterActionComponent(
   props: FilterManagementActionComponentProps,
 ) {
-  const { onClose, filter } = props;
+  const { getFilter } = props;
   const [filterName, setFilterName] = React.useState('');
   const [savedFilters, setSavedFilters] = useLocallySavedFilters();
 
+  const validateFilter = useCheckFilterValidity();
+
   let error: string | undefined = undefined;
-  if (filterName.length === 0) {
-    error = 'Filter name is required.';
-  } else if (Object.prototype.hasOwnProperty.call(savedFilters, filterName)) {
+  if (Object.prototype.hasOwnProperty.call(savedFilters, filterName)) {
     error = 'There already exists a filter with that name.';
   }
 
   return (
-    <Group>
-      <TextInput
-        value={filterName}
-        onChange={(e) => setFilterName(e.target.value)}
-        label="Filter Name"
-        error={filterName.length === 0 ? '.' : undefined}
-      />
-      <Button
-        onClick={async () => {
-          setSavedFilters((prev) => {
-            return {
-              ...prev,
-              [filterName]: filter,
-            };
-          });
-          onClose();
-        }}
-        disabled={!!error}
-        leftSection={<FloppyDisk />}
-      >
-        Save
-      </Button>
-    </Group>
+    <TextInput
+      value={filterName}
+      onChange={(e) => setFilterName(e.target.value)}
+      label="Filter Name"
+      error={error}
+      description={`Specify the name of the current filter, and then click the "Save" button to save the filter. Saved filters can be loaded whenever you like.`}
+      inputContainer={(children) => {
+        return (
+          <Group align="start">
+            {children}
+            <PromiseButton
+              onClick={handleErrorFn(async () => {
+                const filter = await validateFilter(getFilter());
+                setSavedFilters((prev) => {
+                  return {
+                    ...prev,
+                    [filterName]: filter,
+                  };
+                });
+                showNotification({
+                  message: `Filter "${filterName}" has been successfully saved! You can now load this filter from the "Load a filter" section whenever you like.`,
+                  color: 'green',
+                });
+                setFilterName('');
+              })}
+              disabled={!!error || filterName.length === 0}
+              leftSection={<FloppyDisk />}
+            >
+              Save
+            </PromiseButton>
+          </Group>
+        );
+      }}
+    />
   );
 }
 
 export function LoadFilterActionComponent(
   props: FilterManagementActionComponentProps,
 ) {
-  const { onClose, setFilter } = props;
+  const { setFilter } = props;
   const [savedFilters, setSavedFilters] = useLocallySavedFilters();
-  const [selectedFilterName, setSelectedFilter] = React.useState<string | null>(
-    null,
-  );
+  const [selectedFilterName, setSelectedFilterName] = React.useState<
+    string | null
+  >(null);
   const selectedFilter = selectedFilterName
     ? savedFilters[selectedFilterName]
     : undefined;
   const confirmDeleteFilter = React.useRef<DisclosureTrigger | null>(null);
+  if (isEmpty(savedFilters)) {
+    return null;
+  }
   return (
     <>
       {selectedFilterName && (
@@ -81,40 +97,46 @@ export function LoadFilterActionComponent(
               delete next[selectedFilterName];
               return next;
             });
+            setSelectedFilterName(null);
           }}
         />
       )}
-      <Group gap="sm">
-        <Select
-          value={selectedFilterName}
-          data={Object.keys(savedFilters)}
-          onChange={setSelectedFilter}
-          label="Load a filter"
-          className="flex-1"
-        />
-        <Button
-          leftSection={<Download />}
-          disabled={!selectedFilter}
-          onClick={() => {
-            if (!selectedFilter) return;
-            setFilter(selectedFilter);
-            onClose();
-          }}
-        >
-          Save
-        </Button>
-        <Button
-          color="red"
-          variant="outline"
-          leftSection={<TrashSimple />}
-          onClick={() => {
-            confirmDeleteFilter.current?.open();
-          }}
-          disabled={!selectedFilter}
-        >
-          Delete
-        </Button>
-      </Group>
+      <Select
+        value={selectedFilterName}
+        data={Object.keys(savedFilters)}
+        onChange={setSelectedFilterName}
+        label="Load a filter"
+        className="flex-1"
+        description={`Pick a filter to perform an action on. You can either apply the selected filter by pressing the "Apply" button or delete the filter by pressing the "Delete" button.`}
+        inputContainer={(children) => {
+          return (
+            <Group align="start">
+              {children}
+              <Button
+                leftSection={<Download />}
+                disabled={!selectedFilter}
+                onClick={() => {
+                  if (!selectedFilter) return;
+                  setFilter(selectedFilter);
+                }}
+              >
+                Apply
+              </Button>
+              <Button
+                color="red"
+                variant="outline"
+                leftSection={<TrashSimple />}
+                onClick={() => {
+                  confirmDeleteFilter.current?.open();
+                }}
+                disabled={!selectedFilter}
+              >
+                Delete
+              </Button>
+            </Group>
+          );
+        }}
+      />
     </>
   );
 }
