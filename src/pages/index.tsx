@@ -1,23 +1,63 @@
 import AppLayout from '@/components/layout/app';
 import { Title, TextInput, Stack, Loader, Button, Text } from '@mantine/core';
 import React from 'react';
-import { MagnifyingGlass, Plus } from '@phosphor-icons/react';
+import { MagnifyingGlass, Plus, Upload } from '@phosphor-icons/react';
 import { useDebouncedState } from '@mantine/hooks';
 import Colors from '@/common/constants/colors';
 import AppHeader from '@/components/layout/header';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
-import { ProjectListItem } from '@/modules/project/actions';
+import { ImportProjectModal, ProjectListItem } from '@/modules/project/actions';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { client } from '@/common/api/client';
+import { DisclosureTrigger } from '@/hooks/disclosure';
+
+interface ProjectsListRendererProps {
+  q: string | undefined;
+}
+
+function ProjectsListRenderer(props: ProjectsListRendererProps) {
+  const { q } = props;
+  const query = client.useQuery('get', '/projects/');
+  return (
+    <UseQueryWrapperComponent
+      query={query}
+      loadingComponent={<Loader type="dots" size={48} />}
+    >
+      {(data) => {
+        const projects =
+          q == null
+            ? data.data
+            : data.data.filter((project) => {
+                const meta = project.config.metadata;
+                return (
+                  meta.name.toLowerCase().includes(q.toLowerCase()) ||
+                  !!meta.tags?.find(
+                    (tag) => tag.toLowerCase() === q.toLowerCase(),
+                  )
+                );
+              });
+        return (
+          <ul className="flex flex-col gap-2 w-full">
+            {projects.map((project) => (
+              <ProjectListItem key={project.id} {...project} />
+            ))}
+          </ul>
+        );
+      }}
+    </UseQueryWrapperComponent>
+  );
+}
 
 export default function Dashboard() {
   const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
-  const query = client.useQuery('get', '/projects/');
+
   const router = useRouter();
+  const importProjectRemote = React.useRef<DisclosureTrigger | null>(null);
 
   return (
     <AppLayout Header={<AppHeader />}>
+      <ImportProjectModal ref={importProjectRemote} />
       <Stack w="100%" align="center">
         <Stack align="center" pt={64} maw={880} py={64}>
           <Title order={2}>Choose a Project!</Title>
@@ -28,15 +68,13 @@ export default function Dashboard() {
           <Stack align="center" gap={8} w="100%">
             <TextInput
               onChange={(e) => setQ(e.target.value)}
-              leftSection={
-                <MagnifyingGlass size={16} color={Colors.foregroundDull} />
-              }
+              leftSection={<MagnifyingGlass color={Colors.foregroundDull} />}
               placeholder="Search Project"
               w="100%"
             />
             <Text size="sm">alternatively, you can </Text>
             <Button
-              leftSection={<Plus size={16} />}
+              leftSection={<Plus />}
               fullWidth
               onClick={() => {
                 router.push(NavigationRoutes.ProjectCreate);
@@ -44,33 +82,19 @@ export default function Dashboard() {
             >
               Create New Project
             </Button>
+            <Text size="sm">or</Text>
+            <Button
+              leftSection={<Upload />}
+              variant="outline"
+              fullWidth
+              onClick={() => {
+                importProjectRemote.current?.open();
+              }}
+            >
+              Import a Project
+            </Button>
           </Stack>
-          <UseQueryWrapperComponent
-            query={query}
-            loadingComponent={<Loader type="dots" size={48} />}
-          >
-            {(data) => {
-              const projects =
-                q == null
-                  ? data.data
-                  : data.data.filter((project) => {
-                      const meta = project.config.metadata;
-                      return (
-                        meta.name.toLowerCase().includes(q.toLowerCase()) ||
-                        !!meta.tags?.find(
-                          (tag) => tag.toLowerCase() === q.toLowerCase(),
-                        )
-                      );
-                    });
-              return (
-                <ul className="flex flex-col gap-2 w-full">
-                  {projects.map((project) => (
-                    <ProjectListItem key={project.id} {...project} />
-                  ))}
-                </ul>
-              );
-            }}
-          </UseQueryWrapperComponent>
+          <ProjectsListRenderer q={q} />
         </Stack>
       </Stack>
     </AppLayout>

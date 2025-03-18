@@ -24,11 +24,7 @@ const ConfirmationDialog = React.forwardRef<
       opened={opened}
       onClose={close}
       centered
-      title={
-        <Title order={3} fw="bold">
-          {props.title ?? 'Confirmation'}
-        </Title>
-      }
+      title={props.title ?? 'Confirmation'}
     >
       <Text pb={16}>{props.message}</Text>
       <Flex direction="row-reverse" gap={8}>

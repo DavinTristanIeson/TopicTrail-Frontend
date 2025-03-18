@@ -160,6 +160,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/check-filter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Check Filter */
+        post: operations["post__check_filter_table__project_id__check_filter_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/": {
         parameters: {
             query?: never;
@@ -171,23 +188,6 @@ export interface paths {
         put?: never;
         /** Post  Get Table */
         post: operations["post__get_table_table__project_id___post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/table/{project_id}/column/values": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Get Table Column */
-        post: operations["post__get_table_column_table__project_id__column_values_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -228,6 +228,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/column/values": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Table Column */
+        post: operations["post__get_table_column_table__project_id__column_values_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/column/geographical": {
         parameters: {
             query?: never;
@@ -239,6 +256,23 @@ export interface paths {
         put?: never;
         /** Post  Get Table Column  Geographical */
         post: operations["post__get_table_column__geographical_table__project_id__column_geographical_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/table/{project_id}/column/descriptive-statistics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Table Column  Descriptive Statistics */
+        post: operations["post__get_table_column__descriptive_statistics_table__project_id__column_descriptive_statistics_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -351,6 +385,13 @@ export interface components {
             /** Errors */
             errors?: Record<string, never> | null;
         };
+        /** ApiResult[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
+        ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
+            /** Data */
+            data: components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[CheckDatasetResource] */
         ApiResult_CheckDatasetResource_: {
             data: components["schemas"]["CheckDatasetResource"];
@@ -379,6 +420,54 @@ export interface components {
         /** ApiResult[ProjectResource] */
         ApiResult_ProjectResource_: {
             data: components["schemas"]["ProjectResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableColumnCountsResource] */
+        ApiResult_TableColumnCountsResource_: {
+            data: components["schemas"]["TableColumnCountsResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableColumnFrequencyDistributionResource] */
+        ApiResult_TableColumnFrequencyDistributionResource_: {
+            data: components["schemas"]["TableColumnFrequencyDistributionResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableColumnGeographicalPointsResource] */
+        ApiResult_TableColumnGeographicalPointsResource_: {
+            data: components["schemas"]["TableColumnGeographicalPointsResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableColumnValuesResource] */
+        ApiResult_TableColumnValuesResource_: {
+            data: components["schemas"]["TableColumnValuesResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableComparisonResult] */
+        ApiResult_TableComparisonResult_: {
+            data: components["schemas"]["TableComparisonResult"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableDescriptiveStatisticsResource] */
+        ApiResult_TableDescriptiveStatisticsResource_: {
+            data: components["schemas"]["TableDescriptiveStatisticsResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableTopicsResource] */
+        ApiResult_TableTopicsResource_: {
+            data: components["schemas"]["TableTopicsResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableWordsResource] */
+        ApiResult_TableWordsResource_: {
+            data: components["schemas"]["TableWordsResource"];
             /** Message */
             message: string | null;
         };
@@ -540,6 +629,32 @@ export interface components {
             /** Total Rows */
             total_rows: number;
         };
+        /** DescriptiveStatisticsResource */
+        DescriptiveStatisticsResource: {
+            /** Count */
+            count: number;
+            /** Mean */
+            mean: number;
+            /** Median */
+            median: number;
+            /** Std */
+            std: number;
+            /** Min */
+            min: number;
+            /** Q1 */
+            q1: number;
+            /** Q3 */
+            q3: number;
+            /** Max */
+            max: number;
+            /** Inlier Range */
+            inlier_range: [
+                number,
+                number
+            ];
+            /** Outlier Count */
+            outlier_count: number;
+        };
         /**
          * DocumentEmbeddingMethodEnum
          * @enum {string}
@@ -556,6 +671,13 @@ export interface components {
          * @enum {string}
          */
         EffectSizeMethodEnum: "auto" | "mean-difference" | "median-difference" | "cohen-d" | "rank-biserial-correlation" | "cramer-v";
+        /** EffectSizeResult */
+        EffectSizeResult: {
+            /** Type */
+            type: string;
+            /** Value */
+            value: number;
+        };
         /** EmptyTableFilter */
         EmptyTableFilter: {
             /** Target */
@@ -715,33 +837,7 @@ export interface components {
             count: number;
             /** Categories */
             categories: string[] | null;
-            descriptive_statistics: components["schemas"]["InferDatasetDescriptiveStatisticsResource"] | null;
-        };
-        /** InferDatasetDescriptiveStatisticsResource */
-        InferDatasetDescriptiveStatisticsResource: {
-            /** Count */
-            count: number;
-            /** Mean */
-            mean: number;
-            /** Median */
-            median: number;
-            /** Std */
-            std: number;
-            /** Min */
-            min: number;
-            /** Q1 */
-            q1: number;
-            /** Q3 */
-            q3: number;
-            /** Max */
-            max: number;
-            /** Inlier Range */
-            inlier_range: [
-                number,
-                number
-            ];
-            /** Outlier Count */
-            outlier_count: number;
+            descriptive_statistics: components["schemas"]["DescriptiveStatisticsResource"] | null;
         };
         /** IsOneOfTableFilter */
         IsOneOfTableFilter: {
@@ -918,6 +1014,13 @@ export interface components {
             /** Category Order */
             category_order?: string[] | null;
         };
+        /** PaginationMeta */
+        PaginationMeta: {
+            /** Pages */
+            pages: number;
+            /** Total */
+            total: number;
+        };
         /** PaginationParams */
         PaginationParams: {
             /**
@@ -983,17 +1086,125 @@ export interface components {
             /** Columns */
             columns: (components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"])[];
         };
+        /** SignificanceResult */
+        SignificanceResult: {
+            /** Type */
+            type: string;
+            /** Statistic */
+            statistic: number;
+            /** P Value */
+            p_value: number;
+        };
         /**
          * StatisticTestMethodEnum
          * @enum {string}
          */
         StatisticTestMethodEnum: "auto" | "t" | "mann-whitney-u" | "chi-squared";
+        /** TableColumnCountsResource */
+        TableColumnCountsResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            /** Total */
+            total: number;
+            /** Valid */
+            valid: number;
+            /** Invalid */
+            invalid: number;
+            /** Outlier */
+            outlier: number | null;
+        };
+        /** TableColumnFrequencyDistributionResource */
+        TableColumnFrequencyDistributionResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            /** Values */
+            values: string[];
+            /** Frequencies */
+            frequencies: number[];
+        };
+        /** TableColumnGeographicalPointsResource */
+        TableColumnGeographicalPointsResource: {
+            /** Latitude Column */
+            latitude_column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            /** Longitude Column */
+            longitude_column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            /** Latitude */
+            latitude: number[];
+            /** Longitude */
+            longitude: number[];
+            /** Sizes */
+            sizes: number[];
+        };
+        /** TableColumnValuesResource */
+        TableColumnValuesResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            /** Values */
+            values: unknown[];
+        };
+        /** TableComparisonGroupInfo */
+        TableComparisonGroupInfo: {
+            /** Name */
+            name: string;
+            /** Sample Size */
+            sample_size: number;
+            /** Invalid Size */
+            invalid_size: number;
+        };
+        /** TableComparisonResult */
+        TableComparisonResult: {
+            /** Warnings */
+            warnings: string[];
+            /** Groups */
+            groups: components["schemas"]["TableComparisonGroupInfo"][];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** TableDescriptiveStatisticsResource */
+        TableDescriptiveStatisticsResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            statistics: components["schemas"]["DescriptiveStatisticsResource"];
+        };
+        /** TablePaginationApiResult[dict[str, Any]] */
+        TablePaginationApiResult_dict_str__Any__: {
+            /** Data */
+            data: Record<string, never>[];
+            /** Message */
+            message: string | null;
+            /** Columns */
+            columns: (components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"])[];
+            meta: components["schemas"]["PaginationMeta"];
+        };
         /** TableSort */
         TableSort: {
             /** Name */
             name: string;
             /** Asc */
             asc: boolean;
+        };
+        /** TableTopicsResource */
+        TableTopicsResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            /** Topics */
+            topics: components["schemas"]["Topic"][];
+        };
+        /** TableWordItemResource */
+        TableWordItemResource: {
+            /** Group */
+            group: number;
+            /** Word */
+            word: string;
+            /** Size */
+            size: number;
+        };
+        /** TableWordsResource */
+        TableWordsResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            /** Words */
+            words: components["schemas"]["TableWordItemResource"][];
         };
         /** TemporalSchemaColumn */
         "TemporalSchemaColumn-Input": {
@@ -1114,6 +1325,20 @@ export interface components {
             type: "textual";
             preprocessing: components["schemas"]["TextPreprocessingConfig"];
             topic_modeling: components["schemas"]["TopicModelingConfig"];
+        };
+        /** Topic */
+        Topic: {
+            /** Id */
+            id: number;
+            /** Words */
+            words: [
+                string,
+                number
+            ][];
+            /** Label */
+            label: string | null;
+            /** Frequency */
+            frequency: number;
         };
         /** TopicModelingConfig */
         TopicModelingConfig: {
@@ -2056,7 +2281,7 @@ export interface operations {
             };
         };
     };
-    post__get_table_table__project_id___post: {
+    post__check_filter_table__project_id__check_filter_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -2067,7 +2292,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PaginationParams"];
+                "application/json": components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
             };
         };
         responses: {
@@ -2077,7 +2302,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
                 };
             };
             /** @description Bad Request */
@@ -2127,7 +2352,7 @@ export interface operations {
             };
         };
     };
-    post__get_table_column_table__project_id__column_values_post: {
+    post__get_table_table__project_id___post: {
         parameters: {
             query?: never;
             header?: never;
@@ -2138,7 +2363,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["GetTableColumnSchema"];
+                "application/json": components["schemas"]["PaginationParams"];
             };
         };
         responses: {
@@ -2148,7 +2373,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["TablePaginationApiResult_dict_str__Any__"];
                 };
             };
             /** @description Bad Request */
@@ -2219,7 +2444,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableColumnFrequencyDistributionResource_"];
                 };
             };
             /** @description Bad Request */
@@ -2290,7 +2515,78 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableColumnCountsResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__get_table_column_table__project_id__column_values_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetTableColumnSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TableColumnValuesResource_"];
                 };
             };
             /** @description Bad Request */
@@ -2361,7 +2657,78 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableColumnGeographicalPointsResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__get_table_column__descriptive_statistics_table__project_id__column_descriptive_statistics_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetTableColumnSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TableDescriptiveStatisticsResource_"];
                 };
             };
             /** @description Bad Request */
@@ -2432,7 +2799,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableColumnValuesResource_"];
                 };
             };
             /** @description Bad Request */
@@ -2503,7 +2870,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableWordsResource_"];
                 };
             };
             /** @description Bad Request */
@@ -2574,7 +2941,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
                 };
             };
             /** @description Bad Request */
@@ -2645,7 +3012,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableComparisonResult_"];
                 };
             };
             /** @description Bad Request */
@@ -2716,7 +3083,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
                 };
             };
             /** @description Bad Request */

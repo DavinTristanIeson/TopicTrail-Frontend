@@ -6,7 +6,7 @@ import {
   ProjectConfigColumnFormProps,
   useInferProjectDatasetColumn,
 } from './utils';
-import { DescriptiveStatisticsTable } from '@/modules/table/continuous/descriptive-statistics';
+import { DescriptiveStatisticsTable } from '@/modules/visualization/continuous/descriptive-statistics';
 import React from 'react';
 import { ProjectConfigFormType } from '../form-type';
 

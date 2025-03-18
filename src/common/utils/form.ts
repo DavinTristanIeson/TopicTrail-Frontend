@@ -31,9 +31,12 @@ export function formSetErrors(
       }
     }
   });
-};
+}
 
-export function handleFormSubmission<T extends (...args: any) => any>(fn: T, setError: UseFormReturn<any>["setError"]) {
+export function handleFormSubmission<T extends (...args: any) => any>(
+  fn: T,
+  setError: UseFormReturn<any>['setError'],
+) {
   return (async (...args: any[]) => {
     try {
       const result = await fn(...args);
@@ -43,17 +46,50 @@ export function handleFormSubmission<T extends (...args: any) => any>(fn: T, set
       if (e.message) {
         showNotification({
           message: e.message.toString(),
-          color: "red",
+          color: 'red',
         });
       } else {
         showNotification({
-          message: "An error has occurred during the submission of this form.",
-          color: "red",
+          message: 'An error has occurred during the submission of this form.',
+          color: 'red',
         });
       }
       if (e.errors) {
         formSetErrors(e.errors, setError);
       }
     }
-  }) as any
+  }) as any;
 }
+
+import * as Yup from 'yup';
+
+function nullIfNaN(value: number): number | null {
+  return value === Number(value) ? value : null;
+}
+
+function nullIfFalsey(value: any): any | null {
+  return value || null;
+}
+
+function nullIfMixedNumber(value: any): any | null {
+  if ((typeof value === 'number' && isNaN(value)) || !value) {
+    return null;
+  }
+  return value;
+}
+
+function nullIfEmptyArray(value: any): any | null {
+  if (!value || value?.length === 0) {
+    return null;
+  }
+  return value;
+}
+
+export const yupNullableNumber = Yup.number().transform(nullIfNaN).nullable();
+export const yupNullableString = Yup.string()
+  .transform(nullIfFalsey)
+  .nullable();
+export const yupNullableMixed = Yup.mixed().transform(nullIfFalsey).nullable();
+export const yupNullableArray = Yup.array()
+  .transform(nullIfEmptyArray)
+  .nullable();

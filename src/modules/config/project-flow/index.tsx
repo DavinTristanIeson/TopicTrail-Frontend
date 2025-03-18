@@ -7,31 +7,10 @@ import { useFormContext } from 'react-hook-form';
 import { getAnyError } from '@/common/utils/error';
 import { Lock, Warning } from '@phosphor-icons/react';
 import { FormEditableContext } from '@/components/standard/fields/context';
+import { ErrorAlert } from '@/components/standard/fields/watcher';
 
 interface ProjectConfigFormPhaseSwitcherProps {
   hasData?: boolean;
-}
-
-function ErrorAlert() {
-  const {
-    formState: { errors },
-  } = useFormContext();
-  const anyError = getAnyError(errors);
-
-  if (!anyError) {
-    return null;
-  }
-  return (
-    <Alert
-      title="There's an error in the form!"
-      icon={<Warning size={18} />}
-      color="red"
-    >
-      {anyError?.message}
-      <br />
-      You will not be allowed to submit the form until all errors are resolved.
-    </Alert>
-  );
 }
 
 export default function ProjectConfigFormPhaseSwitcher(

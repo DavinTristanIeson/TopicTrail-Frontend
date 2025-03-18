@@ -39,7 +39,7 @@ export const ProjectConfigDataSourceUpdateModal = React.forwardRef<
           <ProjectConfigDataSourceFormBody disabled={false} />
           <Flex justify="space-between" direction="row-reverse" w="100%">
             <Button
-              leftSection={<CheckCircle size={20} />}
+              leftSection={<CheckCircle />}
               onClick={onSubmit}
               type="button"
               loading={isPending}
@@ -47,7 +47,7 @@ export const ProjectConfigDataSourceUpdateModal = React.forwardRef<
               Verify Dataset
             </Button>
             <Button
-              leftSection={<X size={20} />}
+              leftSection={<X />}
               variant="outline"
               color="red"
               onClick={close}

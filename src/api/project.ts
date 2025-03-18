@@ -1,6 +1,7 @@
 import { queryClient } from '@/common/api/query-client';
 import { components } from './openapi';
 import { Query } from '@tanstack/react-query';
+import { client } from '@/common/api/client';
 
 export type ProjectModel = components['schemas']['ProjectResource'];
 export type ProjectMetadataModel = components['schemas']['ProjectMetadata'];
@@ -10,8 +11,6 @@ export type ProjectDataSourceModel =
   | components['schemas']['CSVDataSource'];
 export type ProjectInferDatasetModel =
   components['schemas']['CheckDatasetResource'];
-export type DescriptiveStatisticsModel =
-  components['schemas']['InferDatasetDescriptiveStatisticsResource'];
 
 export type CategoricalSchemaColumnModel =
   components['schemas']['CategoricalSchemaColumn-Output'];
@@ -66,9 +65,15 @@ export function invalidateProjectDependencyQueries(projectId: string) {
   queryClient.invalidateQueries({
     predicate: projectDependencyPredicate,
   });
+  queryClient.invalidateQueries({
+    queryKey: client.queryOptions('get', '/projects/').queryKey,
+  });
 }
 export function removeProjectDependencyQueries(projectId: string) {
   queryClient.removeQueries({
     predicate: projectDependencyPredicate,
+  });
+  queryClient.invalidateQueries({
+    queryKey: client.queryOptions('get', '/projects/').queryKey,
   });
 }

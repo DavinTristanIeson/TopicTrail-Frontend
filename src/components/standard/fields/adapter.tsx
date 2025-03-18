@@ -1,7 +1,7 @@
 import { getAnyError } from '@/common/utils/error';
 import { ReplaceKeys } from '@/common/utils/types';
 import React, { RefCallback } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { FormEditableContext } from './context';
 
 interface IRHFMantineAdaptableGenericConstraint {
@@ -82,7 +82,7 @@ export function useRHFMantineAdapter<
     field: { onChange, value, ref, disabled: fieldDisabled },
     fieldState: { error: fieldStateError },
     formState: { isSubmitting: formIsSubmitting },
-  } = useController({ name, control, shouldUnregister: false });
+  } = useController({ name, control });
   const { editable } = React.useContext(FormEditableContext);
   const readOnly =
     !!controlledReadonly || !!fieldDisabled || !editable || formIsSubmitting;

@@ -9,92 +9,64 @@ import {
 } from '@/common/constants/enum';
 import * as Yup from 'yup';
 import { transformDataSourceFormType2DataSourceInput } from './columns/utils';
-
-function nullIfNaN(value: number): number | null {
-  return value === Number(value) ? value : null;
-}
-
-function nullIfEmpty(value: any): any | null {
-  return value || null;
-}
-
-function nullIfEmptyArray(value: any): any | null {
-  if (!value || value?.length === 0) {
-    return null;
-  }
-  return value;
-}
+import {
+  yupNullableArray,
+  yupNullableNumber,
+  yupNullableString,
+} from '@/common/utils/form';
 
 export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
-  alias: Yup.string().transform(nullIfEmpty).nullable(),
-  description: Yup.string().transform(nullIfEmpty).nullable(),
-  type: Yup.string()
-    .oneOf(Object.values(SchemaColumnTypeEnum))
-    .transform(nullIfEmptyArray)
-    .nullable(),
+  alias: yupNullableString,
+  description: yupNullableString,
+  type: yupNullableString.oneOf(Object.values(SchemaColumnTypeEnum)),
+  bin_count: yupNullableNumber.positive().when('type', {
+    is: SchemaColumnTypeEnum.Continuous,
+    then: (schema) =>
+      schema.when('bins', {
+        is: null,
+        then: (schema) => schema.required(),
+        otherwise: (schema) => schema.strip(),
+      }),
+    otherwise: (schema) => schema.strip(),
+  }),
+  bins: yupNullableArray.of(Yup.number().required()).when('type', {
+    is: SchemaColumnTypeEnum.Continuous,
+    otherwise: (schema) => schema.strip(),
+  }),
 
-  bin_count: Yup.number()
-    .positive()
-    .transform(nullIfNaN)
-    .nullable()
-    .when('type', {
-      is: SchemaColumnTypeEnum.Continuous,
-      otherwise: (schema) => schema.strip(),
-    }),
-  bins: Yup.array(Yup.number().required())
-    .transform(nullIfEmptyArray)
-    .nullable()
-    .transform((value) => {
-      if (Array.isArray(value)) {
-        return value.sort((a, b) => a - b);
-      } else {
-        return value;
-      }
-    })
-    .when('type', {
-      is: SchemaColumnTypeEnum.Continuous,
-      then: (schema) =>
-        schema.when('bin_count', {
-          is: null,
-          then: (schema) => schema.min(1).required(),
-          otherwise: (schema) => schema.strip(),
-        }),
-      otherwise: (schema) => schema.strip(),
-    }),
-
-  category_order: Yup.array(Yup.string().required())
-    .nullable()
-    .when('type', {
-      is: SchemaColumnTypeEnum.OrderedCategorical,
-      otherwise: (schema) => schema.strip(),
-    }),
-
-  datetime_format: Yup.string()
-    .transform(nullIfEmpty)
-    .nullable()
-    .when('type', {
-      is: SchemaColumnTypeEnum.Temporal,
-      otherwise: (schema) => schema.strip(),
-    }),
-
-  is_json: Yup.boolean().when('type', {
-    is: SchemaColumnTypeEnum.MultiCategorical,
+  category_order: yupNullableArray.of(Yup.string().required()).when('type', {
+    is: SchemaColumnTypeEnum.OrderedCategorical,
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   }),
 
-  delimiter: Yup.string().when('type', {
+  datetime_format: yupNullableString.when('type', {
+    is: SchemaColumnTypeEnum.Temporal,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.strip(),
+  }),
+
+  is_json: Yup.boolean()
+    .nullable()
+    .when('type', {
+      is: SchemaColumnTypeEnum.MultiCategorical,
+      then: (schema) => schema.required(),
+      otherwise: (schema) => schema.strip(),
+    }),
+
+  delimiter: yupNullableString.when('type', {
     is: SchemaColumnTypeEnum.MultiCategorical,
     then: (schema) =>
       schema.when('isJson', {
-        is: true,
+        is: false,
         then: (schema) => schema.required(),
+        otherwise: (schema) => schema.strip(),
       }),
     otherwise: (schema) => schema.strip(),
   }),
 
-  role: Yup.string()
+  role: yupNullableString
     .oneOf(Object.values(GeospatialRoleEnum))
     .when('type', {
       is: SchemaColumnTypeEnum.Geospatial,
@@ -122,14 +94,11 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   }),
   topic_modeling: Yup.object({
     min_topic_size: Yup.number().positive().required(),
-    max_topic_size: Yup.number()
-      .transform(nullIfNaN)
-      .nullable()
-      .when({
-        is: null,
-        otherwise: (schema) => schema.moreThan(Yup.ref('min_topic_size')),
-      }),
-    max_topics: Yup.number().transform(nullIfNaN).nullable().positive(),
+    max_topic_size: yupNullableNumber.when({
+      is: null,
+      otherwise: (schema) => schema.moreThan(Yup.ref('min_topic_size')),
+    }),
+    max_topics: yupNullableNumber.positive(),
     n_gram_range: Yup.array(Yup.number().positive().required())
       .required()
       .length(2),
@@ -139,10 +108,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       .oneOf(Object.values(DocumentEmbeddingMethodEnum))
       .required(),
     clustering_conservativeness: Yup.number().positive().max(1).required(),
-    reference_document_count: Yup.number()
-      .positive()
-      .transform(nullIfNaN)
-      .nullable(),
+    reference_document_count: yupNullableNumber.positive(),
     top_n_words: Yup.number().min(3).required(),
   }).when('type', {
     is: SchemaColumnTypeEnum.Textual,
@@ -153,20 +119,17 @@ export const ProjectConfigColumnFormSchema = Yup.object({
 
 export const ProjectConfigMetadataSchema = Yup.object({
   name: Yup.string().required(),
-  description: Yup.string().nullable().transform(nullIfEmpty),
+  description: yupNullableString,
   tags: Yup.array(Yup.string().required()).required(),
 }).required();
 
 export const ProjectConfigDataSourceFormSchema = Yup.object({
   path: Yup.string().required(),
   type: Yup.string().oneOf(Object.values(DataSourceTypeEnum)).required(),
-  sheet_name: Yup.string()
-    .transform(nullIfEmpty)
-    .nullable()
-    .when('type', {
-      is: DataSourceTypeEnum.Excel,
-      otherwise: (schema) => schema.strip(),
-    }),
+  sheet_name: yupNullableString.when('type', {
+    is: DataSourceTypeEnum.Excel,
+    otherwise: (schema) => schema.strip(),
+  }),
   delimiter: Yup.string().when('type', {
     is: DataSourceTypeEnum.CSV,
     then: (schema) =>

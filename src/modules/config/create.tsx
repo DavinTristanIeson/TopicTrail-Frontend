@@ -54,7 +54,7 @@ export default function ProjectConfigCreateForm() {
         <Stack>
           <Group justify="end">
             <Button
-              leftSection={<X size={20} />}
+              leftSection={<X />}
               color="red"
               variant="outline"
               onClick={() => {

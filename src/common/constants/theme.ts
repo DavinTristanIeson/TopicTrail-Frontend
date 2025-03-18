@@ -1,6 +1,8 @@
 import {
+  ActionIcon,
   createTheme,
   Drawer,
+  DrawerHeader,
   InputWrapper,
   LoadingOverlay,
   Modal,
@@ -55,12 +57,17 @@ const mantineTheme = createTheme({
     }),
     Paper: Paper.extend({
       defaultProps: {
-        shadow: 'sm',
+        shadow: 'xs',
       },
     }),
     InputWrapper: InputWrapper.extend({
       defaultProps: {
         inputWrapperOrder: ['label', 'input', 'description', 'error'],
+      },
+    }),
+    ActionIcon: ActionIcon.extend({
+      defaultProps: {
+        variant: 'subtle',
       },
     }),
     ScrollArea: ScrollArea.extend({
@@ -75,11 +82,9 @@ const mantineTheme = createTheme({
       },
     }),
     Modal: Modal.extend({
-      classNames: {
-        title: 'font-bold',
-      },
       defaultProps: {
         centered: true,
+        size: 'lg',
       },
     }),
   },

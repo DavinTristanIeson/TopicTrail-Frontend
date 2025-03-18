@@ -67,7 +67,7 @@ export function ConfigureProjectFlow_CheckProjectId(
           label="There are still errors in the form."
         >
           <Button
-            rightSection={<ArrowRight size={20} />}
+            rightSection={<ArrowRight />}
             onClick={onContinue}
             disabled={isError}
           >
