@@ -3,10 +3,10 @@ import { classNames } from '@/common/utils/styles';
 import { LoadingOverlay } from '@mantine/core';
 import React from 'react';
 import {
-  FieldValues,
   Form,
   FormProvider,
-  UseFormReturn,
+  type FieldValues,
+  type UseFormReturn,
 } from 'react-hook-form';
 
 interface FormWrapperProps<T extends FieldValues> {

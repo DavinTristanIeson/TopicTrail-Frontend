@@ -1,6 +1,10 @@
 import React, { useId } from 'react';
 import { useManyRefs } from './ref';
-import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
+import {
+  GridStack,
+  type GridStackOptions,
+  type GridStackWidget,
+} from 'gridstack';
 
 interface UseControlledGridStackProps {
   gridItems: string[];
@@ -53,7 +57,7 @@ export function useSortableGridStack(props: UseSortableGridStackProps) {
   React.useLayoutEffect(() => {
     if (!grid.current) return;
     const currentGrid = grid.current;
-    currentGrid.on('change', (event, items) => {
+    currentGrid.on('change', () => {
       const gridItems = currentGrid.getGridItems();
       const parsedGridItems = gridItems.map((item) => {
         return {
@@ -69,5 +73,5 @@ export function useSortableGridStack(props: UseSortableGridStackProps) {
     return () => {
       currentGrid.off('change');
     };
-  }, [onSort]);
+  }, [grid, onSort]);
 }

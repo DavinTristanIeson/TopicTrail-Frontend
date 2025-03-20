@@ -6,7 +6,7 @@ import { useWatch } from 'react-hook-form';
 export function useProjectColumn(
   columnName: string,
 ): SchemaColumnModel | undefined {
-  const project = React.useContext(ProjectContext)!;
+  const project = React.useContext(ProjectContext);
   return project.config.data_schema.columns.find(
     (column) => column.name === columnName,
   );

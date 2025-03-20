@@ -35,15 +35,18 @@ export function useCheckFilterValidity() {
   );
   const project = React.useContext(ProjectContext)!;
 
-  return React.useCallback(async (filter: TableFilterModel) => {
-    const res = await checkFilter({
-      body: filter,
-      params: {
-        path: {
-          project_id: project.id,
+  return React.useCallback(
+    async (filter: TableFilterModel) => {
+      const res = await checkFilter({
+        body: filter,
+        params: {
+          path: {
+            project_id: project.id,
+          },
         },
-      },
-    });
-    return res.data;
-  }, []);
+      });
+      return res.data;
+    },
+    [checkFilter, project.id],
+  );
 }

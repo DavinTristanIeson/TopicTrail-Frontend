@@ -59,7 +59,7 @@ const TableColumnStatesDrawer = React.forwardRef<
       return isPartOfColumns;
     });
     setColumnStates(resolvedColumnStates);
-  }, [columns, appliedColumnStates, opened]);
+  }, [columns, appliedColumnStates, opened, defaultColumnStates]);
 
   return (
     <Drawer
@@ -107,9 +107,9 @@ const TableColumnStatesDrawer = React.forwardRef<
         </Group>
       </Drawer.Header>
       <Alert color="blue" icon={<Info size={20} />}>
-        You can move columns that are closely related so that they're next to
-        each other, or even hide columns that are not necessary for the needs of
-        your analysis to lessen the mental burden.
+        You can move columns that are closely related so that they&apos;re next
+        to each other, or even hide columns that are not necessary for the needs
+        of your analysis to lessen the mental burden.
       </Alert>
       <TableColumnStatesSortableContext
         columnStates={columnStates}

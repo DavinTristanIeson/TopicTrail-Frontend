@@ -49,7 +49,7 @@ function ProjectsListRenderer(props: ProjectsListRendererProps) {
   );
 }
 
-export default function Dashboard() {
+export default function HomePage() {
   const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
 
   const router = useRouter();

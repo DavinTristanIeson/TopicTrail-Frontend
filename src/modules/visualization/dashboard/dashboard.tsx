@@ -1,25 +1,22 @@
 import { useControlledGridstack } from '@/hooks/gridstack';
-import { GridStackWidget } from 'gridstack';
+import { type GridStackWidget } from 'gridstack';
 import React from 'react';
 import DashboardGridItem from './grid-item';
 
 export default function GridstackDashboard() {
   const ids = React.useMemo(() => {
-    return Array.from({ length: 10 }, (_, index) =>
+    return Array.from({ length: 10 }, () =>
       Math.random().toString(16).substring(2),
     );
   }, []);
-  const makeWidget = React.useCallback(
-    (id: string, element: HTMLDivElement) => {
-      return {
-        id,
-        minH: 3,
-        minW: 3,
-      } as GridStackWidget;
-    },
-    [],
-  );
-  const { id, grid, gridElements } = useControlledGridstack({
+  const makeWidget = React.useCallback((id: string) => {
+    return {
+      id,
+      minH: 3,
+      minW: 3,
+    } as GridStackWidget;
+  }, []);
+  const { id, gridElements } = useControlledGridstack({
     gridItems: ids,
     options: {
       removable: false,
@@ -31,7 +28,11 @@ export default function GridstackDashboard() {
     <div className="rounded color-gray-100">
       <div className="grid-stack" id={id}>
         {ids.map((id) => (
-          <div className="grid-stack-item" ref={gridElements.current[id]}>
+          <div
+            className="grid-stack-item"
+            ref={gridElements.current[id]}
+            key={id}
+          >
             <DashboardGridItem />
           </div>
         ))}

@@ -57,9 +57,10 @@ export function ConfigureProjectFlow_CheckDataset(
             <Text inherit>
               To prevent data corruption, we will not allow you to edit the
               dataset fields without verifying the dataset. If you want to edit
-              the dataset, please press the "Change Dataset" button. Note that
-              if the new dataset has different columns compared to the current
-              dataset, your pre-existing column configurations will be deleted.
+              the dataset, please press the &quot;Change Dataset&quot; button.
+              Note that if the new dataset has different columns compared to the
+              current dataset, your pre-existing column configurations will be
+              deleted.
             </Text>
             <Button
               leftSection={<LockOpen />}

@@ -17,7 +17,6 @@ import dayjs from 'dayjs';
 import dayjsRelativeTimePlugin from 'dayjs/plugin/relativeTime';
 import GlobalConfig from '@/common/constants/global';
 import { IconContext } from '@phosphor-icons/react';
-import Colors from '@/common/constants/colors';
 
 dayjs.extend(dayjsRelativeTimePlugin);
 

@@ -23,7 +23,7 @@ function ProjectConfigColumnFormSwitcher(
 ) {
   const { index } = props;
   let component: React.ReactNode = undefined;
-  const { control, getValues } = useFormContext<ProjectConfigFormType>();
+  const { control } = useFormContext<ProjectConfigFormType>();
   const name = `columns.${props.index}.type` as const;
   const type = useWatch({
     name,

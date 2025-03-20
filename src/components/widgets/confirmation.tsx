@@ -1,7 +1,6 @@
-import { Text, Button, CheckIcon, Flex, Modal, Title } from '@mantine/core';
+import { Text, Button, CheckIcon, Flex, Modal } from '@mantine/core';
 import React from 'react';
 import { TrashSimple, X } from '@phosphor-icons/react';
-import Colors from '@/common/constants/colors';
 import PromiseButton from '../standard/button/promise';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 

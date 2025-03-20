@@ -1,4 +1,4 @@
-import { Button, ButtonProps, createPolymorphicComponent } from '@mantine/core';
+import { Button, type ButtonProps } from '@mantine/core';
 import React from 'react';
 
 const PromiseButton = React.forwardRef<
@@ -18,7 +18,12 @@ const PromiseButton = React.forwardRef<
   };
 
   return (
-    <Button {...props} loading={loading} onClick={props.onClick && onClick} />
+    <Button
+      ref={ref}
+      {...props}
+      loading={loading}
+      onClick={props.onClick && onClick}
+    />
   );
 });
 export default PromiseButton;

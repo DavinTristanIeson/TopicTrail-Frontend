@@ -19,7 +19,7 @@ import {
 
 function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
   const { name: name } = props;
-  const project = React.useContext(ProjectContext)!;
+  const project = React.useContext(ProjectContext);
   const column = useProjectColumnField(name ? `${name}.target` : 'target');
 
   const inputProps = {
@@ -54,7 +54,7 @@ function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
 
 function ValuesBasedTableFilterComponent(props: TableFilterComponentProps) {
   const { name } = props;
-  const project = React.useContext(ProjectContext)!;
+  const project = React.useContext(ProjectContext);
   const column = useProjectColumnField(name ? `${name}.target` : 'target');
   const inputProps = {
     label: 'Values',

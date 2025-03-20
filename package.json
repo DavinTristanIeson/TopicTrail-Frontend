@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc --noEmit && eslint src",
     "openapi-autogen": "openapi-typescript http://127.0.0.1:8000/api/openapi.json -o src/api/openapi.d.ts"
   },
   "dependencies": {

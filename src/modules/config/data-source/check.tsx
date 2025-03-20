@@ -9,7 +9,7 @@ import {
 } from '../form-type';
 import { showNotification } from '@mantine/notifications';
 import { formSetErrors } from '@/common/utils/form';
-import { useFormContext, UseFormReturn } from 'react-hook-form';
+import { useFormContext, type UseFormReturn } from 'react-hook-form';
 import React from 'react';
 import fromPairs from 'lodash/fromPairs';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
@@ -90,7 +90,7 @@ export function useVerifyFormDataSource() {
         );
       }
     }
-  }, []);
+  }, [clearErrors, getValues, onSubmitBasic, setError, setValue]);
 
   return { onSubmit, isPending };
 }
@@ -129,7 +129,7 @@ export function useVerifyUpdateModalDataSource(
         );
       }
     }
-  }, []);
+  }, [clearErrors, close, getValues, onSubmitBasic, setError, setValue]);
 
   return { onSubmit, isPending };
 }

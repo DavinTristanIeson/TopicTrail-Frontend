@@ -1,5 +1,6 @@
 {
   "extends": ["next/core-web-vitals", "next/typescript", "plugin:react-hooks/recommended", "plugin:import/recommended"],
+  "ignorePatterns": ["**/openapi.d.ts"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": "warn",
@@ -9,6 +10,6 @@
     "react/jsx-key": "warn",
     "@typescript-eslint/no-namespace": "off",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }

@@ -30,17 +30,20 @@ export default function TableColumnStatesSortableContext(
     },
   });
 
-  const onSort = React.useCallback((ids: string[]) => {
-    setColumnStates((prev) => {
-      const next: typeof prev = [];
-      for (const id of ids) {
-        const associatedColumnState = prev.find((col) => col.name === id);
-        if (!associatedColumnState) continue;
-        next.push(associatedColumnState);
-      }
-      return next;
-    });
-  }, []);
+  const onSort = React.useCallback(
+    (ids: string[]) => {
+      setColumnStates((prev) => {
+        const next: typeof prev = [];
+        for (const id of ids) {
+          const associatedColumnState = prev.find((col) => col.name === id);
+          if (!associatedColumnState) continue;
+          next.push(associatedColumnState);
+        }
+        return next;
+      });
+    },
+    [setColumnStates],
+  );
   useSortableGridStack({
     grid,
     onSort,
@@ -68,7 +71,7 @@ export default function TableColumnStatesSortableContext(
                 variant="subtle"
                 size={32}
                 color={visible ? 'green' : 'gray'}
-                onClick={(e) => {
+                onClick={() => {
                   setColumnStates((columnState) => {
                     if (!columnState[index]) return columnState;
                     const next = columnState.slice();

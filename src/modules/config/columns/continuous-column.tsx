@@ -113,10 +113,10 @@ export function ProjectConfigColumnContinuousForm(
         }}
       />
       <Alert color="blue" icon={<Info size={20} />} title="Why bins?">
-        By splitting the continuous data into bins, you've effectively created
-        another ordinal variable from the continuous data. This means that you
-        can now use analysis methods for ordered categorical columns on the
-        bins.
+        By splitting the continuous data into bins, you&apos;ve effectively
+        created another ordinal variable from the continuous data. This means
+        that you can now use analysis methods for ordered categorical columns on
+        the bins.
       </Alert>
       <Spoiler
         hideLabel={'Hide Descriptive Statistics'}

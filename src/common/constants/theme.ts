@@ -2,7 +2,6 @@ import {
   ActionIcon,
   createTheme,
   Drawer,
-  DrawerHeader,
   InputWrapper,
   LoadingOverlay,
   Modal,

@@ -1,11 +1,9 @@
-import { TableFilterModel } from '@/api/table';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import {
   yupNullableArray,
   yupNullableMixed,
   yupNullableString,
 } from '@/common/utils/form';
-import { Resolver } from 'react-hook-form';
 import * as Yup from 'yup';
 
 const isAmong = (candidates: TableFilterTypeEnum[]) => {

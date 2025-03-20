@@ -1,6 +1,6 @@
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
-import { ActionIcon, Button, Group, Paper, Stack, Switch } from '@mantine/core';
+import { ActionIcon, Button, Group, Paper, Stack } from '@mantine/core';
 import { Plus, TrashSimple } from '@phosphor-icons/react';
 import React from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
@@ -32,7 +32,6 @@ export function TableFilterScaffold(props: TableFilterScaffoldProps) {
   const type = useWatch({ name: typeName }) as TableFilterTypeEnum;
   const target = useWatch({ name: targetName }) as string;
 
-  if (!project) return null;
   return (
     <Paper className="p-2">
       <Stack>
@@ -121,6 +120,7 @@ export function CompoundTableFilterComponent(
     <>
       {fields.map((field, index) => (
         <Renderer
+          key={`${parentName}.${index}`}
           name={`${parentName}.${index}`}
           onDelete={() => remove(index)}
         />

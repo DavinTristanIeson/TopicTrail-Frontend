@@ -2,9 +2,9 @@ import {
   ActionIcon,
   Pill,
   PillsInput,
-  PillsInputProps,
+  type PillsInputProps,
   TagsInput,
-  TagsInputProps,
+  type TagsInputProps,
 } from '@mantine/core';
 import { useUncontrolled } from '@mantine/hooks';
 import React from 'react';
@@ -32,15 +32,18 @@ export function MultipleNumberInput(props: MultipleNumberInputProps) {
     onChange: props.onChange,
   });
 
-  const onChange = React.useCallback((tags: string[]) => {
-    const newValues = tags
-      .map((tag) => parseInt(tag, 10))
-      .filter((tag) => !isNaN(tag));
-    if (ordered) {
-      newValues.sort((a, b) => a - b);
-    }
-    setValue(newValues);
-  }, []);
+  const onChange = React.useCallback(
+    (tags: string[]) => {
+      const newValues = tags
+        .map((tag) => parseInt(tag, 10))
+        .filter((tag) => !isNaN(tag));
+      if (ordered) {
+        newValues.sort((a, b) => a - b);
+      }
+      setValue(newValues);
+    },
+    [ordered, setValue],
+  );
 
   const tagsInputValue = React.useMemo(() => {
     return value.map(String);

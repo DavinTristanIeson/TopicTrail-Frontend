@@ -5,8 +5,6 @@ import React from 'react';
 
 function UpdateProjectPageContent() {
   const data = React.useContext(ProjectContext);
-  if (!data) return;
-
   return <ProjectConfigUpdateForm data={data.config} />;
 }
 

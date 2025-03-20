@@ -6,15 +6,12 @@ import {
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
+import { useProjectColumnField } from '@/modules/project/columns';
 import {
-  useProjectColumn,
-  useProjectColumnField,
-} from '@/modules/project/columns';
-import {
-  ComboboxItem,
-  ComboboxLikeRenderOptionInput,
+  type ComboboxItem,
+  type ComboboxLikeRenderOptionInput,
+  type SelectProps,
   Text,
-  SelectProps,
   Select,
 } from '@mantine/core';
 
@@ -221,9 +218,7 @@ export function TableFilterTypeSelectField(
   );
 }
 
-interface CompoundTableFilterTypeSelectInputProps
-  extends Omit<SelectProps, 'data'> {}
-
+type CompoundTableFilterTypeSelectInputProps = Omit<SelectProps, 'data'>;
 export function CompoundTableFilterTypeSelectInput(
   props: CompoundTableFilterTypeSelectInputProps,
 ) {

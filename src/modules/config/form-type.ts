@@ -6,6 +6,7 @@ import {
   DocumentPreprocessingMethodEnum,
   GeospatialRoleEnum,
   SchemaColumnTypeEnum,
+  TemporalPrecisionEnum,
 } from '@/common/constants/enum';
 import * as Yup from 'yup';
 import { transformDataSourceFormType2DataSourceInput } from './columns/utils';
@@ -46,6 +47,12 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   }),
+  temporal_precision: yupNullableString.when('type', {
+    is: SchemaColumnTypeEnum.Temporal,
+    then: (schema) =>
+      schema.required().oneOf(Object.values(TemporalPrecisionEnum)),
+    otherwise: (schema) => schema.strip(),
+  }),
 
   is_json: Yup.boolean()
     .nullable()
@@ -66,12 +73,11 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     otherwise: (schema) => schema.strip(),
   }),
 
-  role: yupNullableString
-    .oneOf(Object.values(GeospatialRoleEnum))
-    .when('type', {
-      is: SchemaColumnTypeEnum.Geospatial,
-      otherwise: (schema) => schema.strip(),
-    }),
+  role: yupNullableString.when('type', {
+    is: SchemaColumnTypeEnum.Geospatial,
+    then: (schema) => schema.oneOf(Object.values(GeospatialRoleEnum)),
+    otherwise: (schema) => schema.strip(),
+  }),
 
   preprocessing: Yup.object({
     pipeline_type: Yup.string()
@@ -214,6 +220,7 @@ export function DefaultProjectSchemaColumnValues(
           : GeospatialRoleEnum.Latitude
         : undefined,
     datetime_format: null,
+    temporal_precision: TemporalPrecisionEnum.DateTime,
   } as ProjectConfigColumnFormType;
 }
 
@@ -228,6 +235,8 @@ export function ProjectConfigDefaultValues(
           bins: 'bins' in col ? col.bins : null,
           datetime_format:
             'datetime_format' in col ? col.datetime_format : null,
+          temporal_precision:
+            'temporal_precision' in col ? col.temporal_precision : null,
           name: col.name,
           alias: col.alias,
           description: col.description,
@@ -319,6 +328,7 @@ export function ProjectConfigFormType2Input(
               ...basicColumn,
               type,
               datetime_format: col.datetime_format!,
+              temporal_precision: col.temporal_precision!,
             } as components['schemas']['TemporalSchemaColumn-Input'];
           case SchemaColumnTypeEnum.Continuous:
             return {

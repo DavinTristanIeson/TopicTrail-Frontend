@@ -13,12 +13,12 @@ interface TableRendererComponentProps {
 export default function TableRendererComponent(
   props: TableRendererComponentProps,
 ) {
-  const { columns, data, sort, setSort } = props;
+  const { data } = props;
   // TODO: Hansen
   return (
     <>
-      {data.map((row) => (
-        <Text>{JSON.stringify(row)}</Text>
+      {data.map((row, index) => (
+        <Text key={index}>{JSON.stringify(row)}</Text>
       ))}
     </>
   );

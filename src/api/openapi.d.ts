@@ -109,57 +109,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/debug/sanity-check": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Sanity Check */
-        post: operations["post__sanity_check_debug_sanity_check_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/debug/task-state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  Task State */
-        get: operations["get__task_state_debug_task_state_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/debug/result/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  Result */
-        get: operations["get__result_debug_result__id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/table/{project_id}/check-filter": {
         parameters: {
             query?: never;
@@ -364,19 +313,114 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/topics/{project_id}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Start Topic Modeling */
+        post: operations["post__start_topic_modeling_topics__project_id__start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topics/{project_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Topic Modeling  Status */
+        get: operations["get__topic_modeling__status_topics__project_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topics/{project_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  All Topics */
+        get: operations["get__all_topics_topics__project_id___get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topics/{project_id}/refine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Refine  Topics */
+        put: operations["refine__topics_topics__project_id__refine_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topics/{project_id}/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Documents Per Topic */
+        get: operations["get__documents_per_topic_topics__project_id__documents_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** AndTableFilter */
-        AndTableFilter: {
+        "AndTableFilter-Input": {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "and";
             /** Operands */
-            operands: (components["schemas"]["_BaseTableFilter"] | components["schemas"]["_BaseCompoundTableFilter"])[];
+            operands: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
+        };
+        /** AndTableFilter */
+        "AndTableFilter-Output": {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "and";
+            /** Operands */
+            operands: (components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
         };
         /** ApiErrorResult */
         ApiErrorResult: {
@@ -388,7 +432,7 @@ export interface components {
         /** ApiResult[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
         ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
             /** Data */
-            data: components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            data: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
             /** Message */
             message: string | null;
         };
@@ -471,6 +515,13 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[list[ColumnTopicModelingResultResource]] */
+        ApiResult_list_ColumnTopicModelingResultResource__: {
+            /** Data */
+            data: components["schemas"]["ColumnTopicModelingResultResource"][];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[list[ProjectResource]] */
         ApiResult_list_ProjectResource__: {
             /** Data */
@@ -541,6 +592,11 @@ export interface components {
         };
         /** CheckDatasetSchema */
         CheckDatasetSchema: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
+        /** ColumnTopicModelingResultResource */
+        ColumnTopicModelingResultResource: {
+            column: components["schemas"]["TextualSchemaColumn-Output"];
+            result: components["schemas"]["TopicModelingResult"] | null;
+        };
         /** ComparisonGroupWordsSchema */
         ComparisonGroupWordsSchema: {
             /** Groups */
@@ -660,12 +716,29 @@ export interface components {
          * @enum {string}
          */
         DocumentEmbeddingMethodEnum: "doc2vec" | "all-MiniLM-L6-v2" | "lsa";
+        /** DocumentPerTopicResource */
+        DocumentPerTopicResource: {
+            /** Id */
+            id: number;
+            /** Original */
+            original: string;
+            /** Preprocessed */
+            preprocessed: string;
+            /** Topic */
+            topic: number;
+        };
         /**
          * DocumentPreprocessingMethodEnum
-         * @constant
          * @enum {string}
          */
         DocumentPreprocessingMethodEnum: "en_core_web_sm";
+        /** DocumentTopicMappingUpdateSchema */
+        DocumentTopicMappingUpdateSchema: {
+            /** Document Id */
+            document_id: number;
+            /** Topic Id */
+            topic_id: number;
+        };
         /**
          * EffectSizeMethodEnum
          * @enum {string}
@@ -769,12 +842,12 @@ export interface components {
             /** Column */
             column: string;
             /** Filter */
-            filter: (components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
         };
         /** GetTableGeographicalColumnSchema */
         GetTableGeographicalColumnSchema: {
             /** Filter */
-            filter: (components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
             /** Latitude Column */
             latitude_column: string;
             /** Longitude Column */
@@ -933,7 +1006,7 @@ export interface components {
             /** Name */
             name: string;
             /** Filter */
-            filter: components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
         };
         /** NotEmptyTableFilter */
         NotEmptyTableFilter: {
@@ -946,14 +1019,24 @@ export interface components {
             type: "not_empty";
         };
         /** NotTableFilter */
-        NotTableFilter: {
+        "NotTableFilter-Input": {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "not";
             /** Operand */
-            operand: components["schemas"]["_BaseTableFilter"] | components["schemas"]["_BaseCompoundTableFilter"];
+            operand: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+        };
+        /** NotTableFilter */
+        "NotTableFilter-Output": {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "not";
+            /** Operand */
+            operand: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
         };
         /** OnlyTableFilter */
         OnlyTableFilter: {
@@ -968,14 +1051,24 @@ export interface components {
             values: string[];
         };
         /** OrTableFilter */
-        OrTableFilter: {
+        "OrTableFilter-Input": {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "or";
             /** Operands */
-            operands: (components["schemas"]["_BaseTableFilter"] | components["schemas"]["_BaseCompoundTableFilter"])[];
+            operands: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
+        };
+        /** OrTableFilter */
+        "OrTableFilter-Output": {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "or";
+            /** Operands */
+            operands: (components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
         };
         /** OrderedCategoricalSchemaColumn */
         "OrderedCategoricalSchemaColumn-Input": {
@@ -1034,7 +1127,7 @@ export interface components {
              */
             limit: number | null;
             /** Filter */
-            filter?: (components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter?: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
             sort?: components["schemas"]["TableSort"] | null;
         };
         /** ParquetDataSource */
@@ -1071,6 +1164,12 @@ export interface components {
             path: string;
             config: components["schemas"]["Config"];
         };
+        /** RefineTopicsSchema */
+        RefineTopicsSchema: {
+            topics: components["schemas"]["TopicUpdateSchema"];
+            /** Document Topics */
+            document_topics: components["schemas"]["DocumentTopicMappingUpdateSchema"][];
+        };
         /**
          * SchemaColumnTypeEnum
          * @enum {string}
@@ -1094,6 +1193,15 @@ export interface components {
             statistic: number;
             /** P Value */
             p_value: number;
+        };
+        /** StartTopicModelingSchema */
+        StartTopicModelingSchema: {
+            /** Use Cached Document Vectors */
+            use_cached_document_vectors: boolean;
+            /** Use Preprocessed Documents */
+            use_preprocessed_documents: boolean;
+            /** Use Cached Umap Vectors */
+            use_cached_umap_vectors: boolean;
         };
         /**
          * StatisticTestMethodEnum
@@ -1166,6 +1274,16 @@ export interface components {
             column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
             statistics: components["schemas"]["DescriptiveStatisticsResource"];
         };
+        /** TablePaginationApiResult[DocumentPerTopicResource] */
+        TablePaginationApiResult_DocumentPerTopicResource_: {
+            /** Data */
+            data: components["schemas"]["DocumentPerTopicResource"][];
+            /** Message */
+            message: string | null;
+            /** Columns */
+            columns: (components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"])[];
+            meta: components["schemas"]["PaginationMeta"];
+        };
         /** TablePaginationApiResult[dict[str, Any]] */
         TablePaginationApiResult_dict_str__Any__: {
             /** Data */
@@ -1206,6 +1324,36 @@ export interface components {
             /** Words */
             words: components["schemas"]["TableWordItemResource"][];
         };
+        /** TaskLog */
+        TaskLog: {
+            status: components["schemas"]["TaskStatusEnum"];
+            /** Message */
+            message: string;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp?: string;
+        };
+        /** TaskResponse[TopicModelingResult] */
+        TaskResponse_TopicModelingResult_: {
+            /** Id */
+            id: string;
+            data: components["schemas"]["TopicModelingResult"] | null;
+            /** Logs */
+            logs: components["schemas"]["TaskLog"][];
+            status: components["schemas"]["TaskStatusEnum"];
+        };
+        /**
+         * TaskStatusEnum
+         * @enum {string}
+         */
+        TaskStatusEnum: "idle" | "pending" | "success" | "failed";
+        /**
+         * TemporalPrecisionEnum
+         * @enum {string}
+         */
+        TemporalPrecisionEnum: "date" | "date-time";
         /** TemporalSchemaColumn */
         "TemporalSchemaColumn-Input": {
             /** Name */
@@ -1226,6 +1374,8 @@ export interface components {
             type: "temporal";
             /** Datetime Format */
             datetime_format: string | null;
+            /** @default date-time */
+            temporal_precision: components["schemas"]["TemporalPrecisionEnum"];
         };
         /** TemporalSchemaColumn */
         "TemporalSchemaColumn-Output": {
@@ -1242,6 +1392,8 @@ export interface components {
             type: "temporal";
             /** Datetime Format */
             datetime_format: string | null;
+            /** @default date-time */
+            temporal_precision: components["schemas"]["TemporalPrecisionEnum"];
         };
         /** TextPreprocessingConfig */
         TextPreprocessingConfig: {
@@ -1387,6 +1539,26 @@ export interface components {
              */
             represent_outliers: boolean;
         };
+        /** TopicModelingResult */
+        TopicModelingResult: {
+            /** Project Id */
+            project_id: string;
+            /** Topics */
+            topics: components["schemas"]["Topic"][];
+            /** Valid Count */
+            valid_count: number;
+            /** Outlier Count */
+            outlier_count: number;
+            /** Invalid Count */
+            invalid_count: number;
+            /** Total Count */
+            total_count: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at?: string;
+        };
         /** TopicSchemaColumn */
         "TopicSchemaColumn-Input": {
             /** Name */
@@ -1420,6 +1592,15 @@ export interface components {
              */
             type: "topic";
         };
+        /** TopicUpdateSchema */
+        TopicUpdateSchema: {
+            /** Id */
+            id: number;
+            /** Label */
+            label: string | null;
+            /** Children */
+            children: components["schemas"]["TopicUpdateSchema"][] | null;
+        };
         /** UniqueSchemaColumn */
         "UniqueSchemaColumn-Input": {
             /** Name */
@@ -1452,15 +1633,6 @@ export interface components {
              * @enum {string}
              */
             type: "unique";
-        };
-        /** _BaseCompoundTableFilter */
-        _BaseCompoundTableFilter: Record<string, never>;
-        /** _BaseTableFilter */
-        _BaseTableFilter: {
-            /** Target */
-            target: string;
-            /** Type */
-            type: unknown;
         };
     };
     responses: never;
@@ -2082,205 +2254,6 @@ export interface operations {
             };
         };
     };
-    post__sanity_check_debug_sanity_check_post: {
-        parameters: {
-            query: {
-                id: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    get__task_state_debug_task_state_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    get__result_debug_result__id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
     post__check_filter_table__project_id__check_filter_post: {
         parameters: {
             query?: never;
@@ -2292,7 +2265,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AndTableFilter"] | components["schemas"]["OrTableFilter"] | components["schemas"]["NotTableFilter"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+                "application/json": components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
             };
         };
         responses: {
@@ -3084,6 +3057,362 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__start_topic_modeling_topics__project_id__start_post: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartTopicModelingSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__topic_modeling__status_topics__project_id__status_get: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponse_TopicModelingResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__all_topics_topics__project_id___get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_ColumnTopicModelingResultResource__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    refine__topics_topics__project_id__refine_put: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefineTopicsSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__documents_per_topic_topics__project_id__documents_get: {
+        parameters: {
+            query: {
+                column: string;
+                topic: number;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaginationParams"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TablePaginationApiResult_DocumentPerTopicResource_"];
                 };
             };
             /** @description Bad Request */

@@ -14,7 +14,7 @@ import ConfirmationDialog from '@/components/widgets/confirmation';
 
 export default function ProjectConfigCreateForm() {
   const { mutateAsync: create } = client.useMutation('post', '/projects/', {
-    onSuccess(data, variables, context) {
+    onSuccess() {
       queryClient.invalidateQueries({
         queryKey: client.queryOptions('get', '/projects/').queryKey,
       });

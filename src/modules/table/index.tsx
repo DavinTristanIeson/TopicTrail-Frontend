@@ -52,23 +52,24 @@ function TablePreprocessor(props: TablePreprocessorProps) {
     const availableColumnKeys = columns.map((column) => column.name);
     const data = result.data.map((row) => pick(row, availableColumnKeys));
     return { data, columns };
-  }, []);
+  }, [columnStates, result.columns, result.data]);
 
   if (columns.length === 0) {
     return (
       <Alert icon={<Warning size={20} />} title="No Columns?" color="red">
-        Oops, there doesn't seem to be any columns in your dataset. Either this
-        is because our local copy of the dataset file has been corrupted in some
-        way, or because you accidentally hid every single available column in
-        the "Column States" drawer.
+        Oops, there doesn&apos;t seem to be any columns in your dataset. Either
+        this is because our local copy of the dataset file has been corrupted in
+        some way, or because you accidentally hid every single available column
+        in the &quot;Column States&quot; drawer.
       </Alert>
     );
   }
   if (data.length === 0) {
     return (
       <Alert icon={<Warning size={20} />} title="No Rows?" color="red">
-        Oops, there doesn't seem to be any rows in this sub-dataset. Your filter
-        may be too strict. Consider changing the filter in the "Filter" drawer.
+        Oops, there doesn&apos;t seem to be any rows in this sub-dataset. Your
+        filter may be too strict. Consider changing the filter in the
+        &quot;Filter&quot; drawer.
       </Alert>
     );
   }
@@ -136,7 +137,7 @@ export default function TableQueryComponent() {
     {
       params: {
         path: {
-          project_id: project?.id!,
+          project_id: project.id,
         },
       },
       body: {
@@ -153,9 +154,6 @@ export default function TableQueryComponent() {
   const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
   const tableColumnStatesRemote = React.useRef<DisclosureTrigger | null>(null);
 
-  if (!project) {
-    return null;
-  }
   return (
     <>
       <TableFilterDrawer

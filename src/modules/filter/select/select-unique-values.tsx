@@ -6,9 +6,9 @@ import {
 import {
   Loader,
   MultiSelect,
-  MultiSelectProps,
+  type MultiSelectProps,
   Select,
-  SelectProps,
+  type SelectProps,
 } from '@mantine/core';
 import { uniq } from 'lodash';
 

@@ -31,18 +31,11 @@ import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { handleErrorFn } from '@/common/utils/error';
 import { showNotification } from '@mantine/notifications';
-import {
-  DisclosureTrigger,
-  ParametrizedDisclosureTrigger,
-  useDisclosureTrigger,
-  useParametrizedDisclosureTrigger,
-} from '@/hooks/disclosure';
+import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { client } from '@/common/api/client';
 import { queryClient } from '@/common/api/query-client';
 
-interface ProjectListItemProps extends ProjectModel {}
-
-export function ProjectListItem(props: ProjectListItemProps) {
+export function ProjectListItem(props: ProjectModel) {
   const router = useRouter();
   const metadata = props.config.metadata;
   return (
@@ -58,7 +51,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
             >{`from ${props.path}`}</Text>
             <Group wrap="wrap" gap={4} className="pt-2">
               {metadata.tags?.map((tag) => (
-                <Badge color="brand" variant="light" radius="sm">
+                <Badge color="brand" variant="light" radius="sm" key={tag}>
                   {tag}
                 </Badge>
               ))}
@@ -71,7 +64,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
               color="brand"
               onClick={() => {
                 router.push({
-                  pathname: NavigationRoutes.Project,
+                  pathname: NavigationRoutes.ProjectTopics,
                   query: {
                     id: props.id,
                   },
@@ -82,7 +75,7 @@ export function ProjectListItem(props: ProjectListItemProps) {
             </ActionIcon>
             <ActionIcon
               variant="subtle"
-              onClick={(e) => {
+              onClick={() => {
                 router.push({
                   pathname: NavigationRoutes.ProjectConfiguration,
                   query: {
@@ -121,7 +114,7 @@ export const DeleteProjectModal = React.forwardRef<
     'delete',
     '/projects/{project_id}',
     {
-      onSuccess(data, variables, context) {
+      onSuccess(data, variables) {
         invalidateProjectDependencyQueries(variables.params.path.project_id);
       },
     },
@@ -183,13 +176,13 @@ export const DeleteProjectModal = React.forwardRef<
 async function readFile(file: File) {
   const fileReader = new FileReader();
   return new Promise<string>((resolve, reject) => {
-    fileReader.onloadend = (ev) => {
+    fileReader.onloadend = () => {
       resolve(fileReader.result as string);
     };
-    fileReader.onerror = (ev) => {
+    fileReader.onerror = () => {
       reject(fileReader.error);
     };
-    fileReader.onabort = (ev) => {
+    fileReader.onabort = () => {
       reject(fileReader.error);
     };
     fileReader.readAsText(file);
@@ -223,7 +216,7 @@ export const ImportProjectModal = React.forwardRef<
     error,
     isPending,
   } = client.useMutation('post', '/projects/', {
-    onSuccess(data, variables, context) {
+    onSuccess() {
       queryClient.invalidateQueries({
         queryKey: client.queryOptions('get', '/projects/').queryKey,
       });
@@ -281,8 +274,8 @@ export const ImportProjectModal = React.forwardRef<
         />
         {error && (
           <Alert title="Failed Import">
-            We weren't able to import the provided project successfully due to
-            the following reasons:
+            We weren&apos;t able to import the provided project successfully due
+            to the following reasons:
             <br />
             {error.message}
             <br />
