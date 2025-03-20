@@ -44,13 +44,12 @@ export default function ProjectConfigForm(props: ProjectConfigFormProps) {
 
   React.useEffect(() => {
     form.reset(defaultValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editable]);
 
   return (
-    <div className="px-3 pt-3">
-      <FormWrapper form={form} onSubmit={handleSubmit}>
-        {children}
-      </FormWrapper>
-    </div>
+    <FormWrapper form={form} onSubmit={handleSubmit}>
+      {children}
+    </FormWrapper>
   );
 }

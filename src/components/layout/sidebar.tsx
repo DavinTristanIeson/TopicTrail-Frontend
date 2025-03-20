@@ -1,10 +1,7 @@
 import { handleErrorFn } from '@/common/utils/error';
-import Colors from '@/common/constants/colors';
 import { useRouter } from 'next/router';
 import React from 'react';
-import PromiseButton from '../standard/button/promise';
-import { Url } from 'next/dist/shared/lib/router/router';
-import { Divider, Group, NavLink, Stack } from '@mantine/core';
+import { NavLink, Stack } from '@mantine/core';
 import NavigationRoutes from '@/common/constants/routes';
 
 export interface AppNavigationLink {

@@ -19,7 +19,7 @@ const AddTableVisualizationDialog = React.forwardRef<DisclosureTrigger, object>(
         >
           Humans absorb information more easily with images rather than text or
           numbers. Rather than reading through your dataset row per row, why not
-          refer to these graphs to help you get a bird's eye view over the
+          refer to these graphs to help you get a bird&apos;s eye view over the
           dataset? These visualization components will also be affected by the
           filters you have set on your dataset.
         </Alert>

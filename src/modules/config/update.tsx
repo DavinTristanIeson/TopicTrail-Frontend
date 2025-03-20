@@ -5,11 +5,7 @@ import {
 } from '@/api/project';
 import { client } from '@/common/api/client';
 import NavigationRoutes from '@/common/constants/routes';
-import SubmitButton from '@/components/standard/button/submit';
-import {
-  DisclosureTrigger,
-  ParametrizedDisclosureTrigger,
-} from '@/hooks/disclosure';
+import { DisclosureTrigger } from '@/hooks/disclosure';
 import ProjectConfigForm from '@/modules/config/form';
 import { DeleteProjectModal } from '@/modules/project/actions';
 import { ProjectContext } from '@/modules/project/context';
@@ -25,7 +21,6 @@ function UpdateProjectDeleteButton() {
   const deleteRemote = React.useRef<DisclosureTrigger | null>(null);
   const router = useRouter();
   const project = React.useContext(ProjectContext);
-  if (!project) return null;
   return (
     <>
       <DeleteProjectModal
@@ -103,7 +98,7 @@ export default function ProjectConfigUpdateForm(
     'put',
     '/projects/{project_id}',
     {
-      onSuccess(data, variables, context) {
+      onSuccess(data, variables) {
         invalidateProjectDependencyQueries(variables.params.path.project_id);
       },
     },

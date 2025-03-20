@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { Button, ButtonProps, Tooltip } from '@mantine/core';
+import { Button, type ButtonProps, Tooltip } from '@mantine/core';
 import { FloppyDisk } from '@phosphor-icons/react';
 import { isEmpty } from 'lodash';
 

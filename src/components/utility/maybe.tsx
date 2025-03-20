@@ -1,4 +1,4 @@
-import { Text, TextProps } from '@mantine/core';
+import { Text, type TextProps } from '@mantine/core';
 import React from 'react';
 
 interface MaybeTextProps extends TextProps {

@@ -27,17 +27,15 @@ export enum DocumentPreprocessingMethodEnum {
   English = 'en_core_web_sm',
 }
 
+export enum TemporalPrecisionEnum {
+  Date = 'date',
+  DateTime = 'date-time',
+}
+
 export enum DataSourceTypeEnum {
   CSV = 'csv',
   Parquet = 'parquet',
   Excel = 'excel',
-}
-
-export enum TaskStatusEnum {
-  Idle = 'idle',
-  Pending = 'pending',
-  Success = 'success',
-  Failed = 'failed',
 }
 
 export enum TableFilterTypeEnum {
@@ -74,14 +72,22 @@ export enum EffectSizeMethodEnum {
   CramerV = 'cramer-v',
 }
 
+export enum TaskStatusEnum {
+  Idle = 'idle',
+  Pending = 'pending',
+  Success = 'success',
+  Failed = 'failed',
+}
+
 export enum EnumList {
   SchemaColumnTypeEnum = 'SchemaColumnTypeEnum',
   GeospatialRoleEnum = 'GeospatialRoleEnum',
   DocumentEmbeddingMethodEnum = 'DocumentEmbeddingMethodEnum',
   DocumentPreprocessingMethodEnum = 'DocumentPreprocessingMethodEnum',
+  TemporalPrecisionEnum = 'TemporalPrecisionEnum',
   DataSourceTypeEnum = 'DataSourceTypeEnum',
-  TaskStatusEnum = 'TaskStatusEnum',
   TableFilterTypeEnum = 'TableFilterTypeEnum',
   StatisticTestMethodEnum = 'StatisticTestMethodEnum',
   EffectSizeMethodEnum = 'EffectSizeMethodEnum',
+  TaskStatusEnum = 'TaskStatusEnum',
 }

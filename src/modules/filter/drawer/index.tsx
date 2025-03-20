@@ -1,13 +1,9 @@
 import { TableFilterModel } from '@/api/table';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import ConfirmationDialog from '@/components/widgets/confirmation';
-import {
-  DisclosureTrigger,
-  ParametrizedDisclosureTrigger,
-  useDisclosureTrigger,
-} from '@/hooks/disclosure';
+import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { Button, Drawer, Group } from '@mantine/core';
-import { Faders, Warning, X } from '@phosphor-icons/react';
+import { Warning, X } from '@phosphor-icons/react';
 import React from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 import { tableFilterFormSchema, TableFilterFormType } from './form-type';
@@ -15,7 +11,6 @@ import SubmitButton from '@/components/standard/button/submit';
 import TableFilterComponent from './components';
 import FormWrapper from '@/components/utility/form/wrapper';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ProjectContext } from '@/modules/project/context';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 import { showNotification } from '@mantine/notifications';
 import { useCheckFilterValidity } from '../management/hooks';
@@ -23,14 +18,17 @@ import TableFilterManagementSection from '../management';
 
 function useValidateFilter() {
   const checkFilter = useCheckFilterValidity();
-  return React.useCallback(async (formValues: TableFilterFormType) => {
-    const payload = tableFilterFormSchema.cast(formValues, {
-      stripUnknown: true,
-    }) as TableFilterModel;
+  return React.useCallback(
+    async (formValues: TableFilterFormType) => {
+      const payload = tableFilterFormSchema.cast(formValues, {
+        stripUnknown: true,
+      }) as TableFilterModel;
 
-    const filter = await checkFilter(payload);
-    return filter;
-  }, []);
+      const filter = await checkFilter(payload);
+      return filter;
+    },
+    [checkFilter],
+  );
 }
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
@@ -56,7 +54,7 @@ function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
     return tableFilterFormSchema.cast(getValues(), {
       stripUnknown: true,
     }) as TableFilterModel;
-  }, []);
+  }, [getValues]);
 
   return (
     <>
@@ -132,11 +130,9 @@ const TableFilterDrawer = React.forwardRef<
     reset(defaultValues);
   }, [appliedFilter, defaultValues, opened, reset]);
 
-  const project = React.useContext(ProjectContext);
   const checkFilter = useValidateFilter();
   const onSubmit = React.useCallback(
     async (formValues: TableFilterFormType) => {
-      if (!project) return;
       const filter = await checkFilter(formValues);
       setAppliedFilter(filter);
       close();
@@ -145,12 +141,8 @@ const TableFilterDrawer = React.forwardRef<
         color: 'green',
       });
     },
-    [checkFilter, close, project, setAppliedFilter],
+    [checkFilter, close, setAppliedFilter],
   );
-
-  if (!project) {
-    return null;
-  }
 
   return (
     <Drawer

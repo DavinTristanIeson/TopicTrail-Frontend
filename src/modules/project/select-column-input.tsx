@@ -1,24 +1,21 @@
 import { SchemaColumnModel } from '@/api/project';
-import Colors from '@/common/constants/colors';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import {
-  IRHFField,
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import { SelectFieldProps } from '@/components/standard/fields/wrapper';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import {
-  ComboboxItem,
-  ComboboxLikeRenderOptionInput,
+  type ComboboxItem,
+  type ComboboxLikeRenderOptionInput,
+  type SelectProps,
   Group,
   Select,
-  SelectProps,
   Stack,
   Text,
 } from '@mantine/core';
 import capitalize from 'lodash/capitalize';
-import { useFormContext } from 'react-hook-form';
 
 export interface ProjectColumnComboboxItem extends ComboboxItem {
   data: SchemaColumnModel;

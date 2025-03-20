@@ -1,5 +1,5 @@
 import { showNotification } from '@mantine/notifications';
-import { FieldError } from 'react-hook-form';
+import type { FieldError } from 'react-hook-form';
 import { isObject } from 'lodash';
 
 export function isFieldError(x: any): x is FieldError {
@@ -58,24 +58,28 @@ export function getAllErrors(errors: any): FieldError[] {
   return __getAllErrorRecursive(errors);
 }
 
+export function handleError(e: any) {
+  console.error(e);
+  if (e.message) {
+    showNotification({
+      message: e.message.toString(),
+      color: 'red',
+    });
+  } else {
+    showNotification({
+      message: 'An unexpected error has occurred.',
+      color: 'red',
+    });
+  }
+}
+
 export function handleErrorFn<T extends (...args: any) => any>(fn: T): T {
   return async function (...args: any[]) {
     try {
       const result = await fn(...args);
       return result;
     } catch (e: any) {
-      console.error(e);
-      if (e.message) {
-        showNotification({
-          message: e.message.toString(),
-          color: 'red',
-        });
-      } else {
-        showNotification({
-          message: 'An unexpected error has occurred.',
-          color: 'red',
-        });
-      }
+      handleError(e);
     }
   } as T;
 }

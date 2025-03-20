@@ -32,7 +32,7 @@ interface ReorderCategoryOrderDrawerBodyProps {
 const ReorderCategoryOrderDrawer = React.forwardRef<
   DisclosureTrigger | null,
   ReorderCategoryOrderDrawerBodyProps
->((props, ref) => {
+>(function ReorderCategoryOrderDrawer(props, ref) {
   const [opened, { close }] = useDisclosureTrigger(ref);
   const { categories: formCategories, setCategories: setFormCategories } =
     props;

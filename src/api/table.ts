@@ -1,8 +1,10 @@
 import { components } from './openapi';
 
-export type OrTableFilterModel = components['schemas']['OrTableFilter'];
-export type AndTableFilterModel = components['schemas']['AndTableFilter'];
-export type NotTableFilterModel = components['schemas']['NotTableFilter'];
+export type OrTableFilterModel = components['schemas']['OrTableFilter-Output'];
+export type AndTableFilterModel =
+  components['schemas']['AndTableFilter-Output'];
+export type NotTableFilterModel =
+  components['schemas']['NotTableFilter-Output'];
 export type OnlyTableFilterModel = components['schemas']['OnlyTableFilter'];
 export type EmptyTableFilterModel = components['schemas']['EmptyTableFilter'];
 export type HasTextTableFilter = components['schemas']['HasTextTableFilter'];

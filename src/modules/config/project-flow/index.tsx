@@ -3,9 +3,7 @@ import React from 'react';
 import { ConfigureProjectFlow_CheckProjectId } from './phase-1';
 import { ConfigureProjectFlow_CheckDataset } from './phase-2';
 import ConfigureProjectFlow_ConfigureColumns from './phase-3';
-import { useFormContext } from 'react-hook-form';
-import { getAnyError } from '@/common/utils/error';
-import { Lock, Warning } from '@phosphor-icons/react';
+import { Lock } from '@phosphor-icons/react';
 import { FormEditableContext } from '@/components/standard/fields/context';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 
@@ -50,9 +48,9 @@ export default function ProjectConfigFormPhaseSwitcher(
       <ErrorAlert />
       {!editable && (
         <Alert icon={<Lock size={20} />} title="View-Only" color="yellow">
-          You're currently viewing the configuration of this project. If you
-          want to make any changes, press the "Edit" button at the top right
-          corner.
+          You&apos;re currently viewing the configuration of this project. If
+          you want to make any changes, press the &quot;Edit&quot; button at the
+          top right corner.
         </Alert>
       )}
       <div className="flex flex-col items-center pt-5">

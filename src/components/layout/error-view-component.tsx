@@ -1,5 +1,4 @@
 import { Box, Button, Flex, Title, Text } from '@mantine/core';
-import Colors from '@/common/constants/colors';
 import { ArrowClockwise } from '@phosphor-icons/react';
 
 export interface ErrorViewComponentProps {

@@ -1,6 +1,5 @@
 import { showNotification } from '@mantine/notifications';
-import { UseFormReturn, UseFormSetError } from 'react-hook-form';
-import Colors from '../constants/colors';
+import type { UseFormReturn, UseFormSetError } from 'react-hook-form';
 
 export function formSetErrors(
   errors: { [key: string]: any },
@@ -71,7 +70,7 @@ function nullIfFalsey(value: any): any | null {
   return value || null;
 }
 
-function nullIfMixedNumber(value: any): any | null {
+function nullIfFalseyMixed(value: any): any | null {
   if ((typeof value === 'number' && isNaN(value)) || !value) {
     return null;
   }
@@ -89,7 +88,9 @@ export const yupNullableNumber = Yup.number().transform(nullIfNaN).nullable();
 export const yupNullableString = Yup.string()
   .transform(nullIfFalsey)
   .nullable();
-export const yupNullableMixed = Yup.mixed().transform(nullIfFalsey).nullable();
+export const yupNullableMixed = Yup.mixed()
+  .transform(nullIfFalseyMixed)
+  .nullable();
 export const yupNullableArray = Yup.array()
   .transform(nullIfEmptyArray)
   .nullable();

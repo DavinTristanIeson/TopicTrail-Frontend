@@ -1,4 +1,7 @@
-import { MantineColorsTuple, DefaultMantineColor } from '@mantine/core';
+import {
+  type MantineColorsTuple,
+  type DefaultMantineColor,
+} from '@mantine/core';
 
 type ExtendedCustomColors = 'brand' | DefaultMantineColor;
 declare module '@mantine/core' {

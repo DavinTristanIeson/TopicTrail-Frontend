@@ -1,7 +1,7 @@
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import React from 'react';
 import { useVerifyUpdateModalDataSource } from './check';
-import { Form, useForm, useFormContext } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import {
   ProjectConfigDataSourceUpdateModalFormSchema,
   ProjectConfigFormType,
@@ -9,7 +9,6 @@ import {
 import { Button, Flex, LoadingOverlay, Modal, Stack } from '@mantine/core';
 import { ProjectConfigDataSourceFormBody } from './form-body';
 import { yupResolver } from '@hookform/resolvers/yup';
-import SubmitButton from '@/components/standard/button/submit';
 import { CheckCircle, X } from '@phosphor-icons/react';
 import FormWrapper from '@/components/utility/form/wrapper';
 
@@ -28,6 +27,7 @@ export const ProjectConfigDataSourceUpdateModal = React.forwardRef<
 
   React.useEffect(() => {
     form.reset({ source: getValues('source') });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   const { onSubmit, isPending } = useVerifyUpdateModalDataSource(form, close);

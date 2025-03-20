@@ -1,18 +1,18 @@
 import {
   NumberInput,
-  NumberInputProps,
+  type NumberInputProps,
   Switch,
-  SwitchProps,
+  type SwitchProps,
   TagsInput,
-  TagsInputProps,
+  type TagsInputProps,
   TextInput,
-  TextInputProps,
+  type TextInputProps,
   Select,
-  SelectProps,
+  type SelectProps,
   Textarea,
-  TextareaProps,
+  type TextareaProps,
 } from '@mantine/core';
-import { DateTimePicker, DateTimePickerProps } from '@mantine/dates';
+import { DateTimePicker, type DateTimePickerProps } from '@mantine/dates';
 
 import {
   IRHFField,
