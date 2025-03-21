@@ -6,14 +6,9 @@ import {
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { useProjectColumnField } from '@/modules/project/columns';
-import {
-  type ComboboxItem,
-  type ComboboxLikeRenderOptionInput,
-  type SelectProps,
-  Text,
-  Select,
-} from '@mantine/core';
+import { type SelectProps, Select } from '@mantine/core';
 
 const FILTER_COMBOBOXES = {
   [TableFilterTypeEnum.Empty]: {
@@ -148,21 +143,6 @@ export const COMPOUND_FILTER_TYPES = [
   TableFilterTypeEnum.Not,
 ];
 
-function TableFilterTypeComboboxItemRenderer(
-  combobox: ComboboxLikeRenderOptionInput<ComboboxItem>,
-) {
-  const { option } = combobox;
-  const props = FILTER_COMBOBOXES[option.value as TableFilterTypeEnum];
-  return (
-    <div>
-      <Text size="sm">{props.label}</Text>
-      <Text size="xs" c="gray">
-        {props.description}
-      </Text>
-    </div>
-  );
-}
-
 interface TableFilterTypeSelectInputProps extends Omit<SelectProps, 'data'> {
   columnType: SchemaColumnTypeEnum;
 }
@@ -171,16 +151,15 @@ export function TableFilterTypeSelectInput(
   props: TableFilterTypeSelectInputProps,
 ) {
   const { columnType, ...selectProps } = props;
+  const renderOption = useDescriptionBasedRenderOption(FILTER_COMBOBOXES);
   return (
     <Select
       {...selectProps}
+      renderOption={renderOption}
       data={
         ALLOWED_FILTER_TYPES_FOR_COLUMNS[columnType]?.map((value) => {
           return FILTER_COMBOBOXES[value];
         }) ?? []
-      }
-      renderOption={
-        TableFilterTypeComboboxItemRenderer as SelectProps['renderOption']
       }
       placeholder="Pick a filter type"
     />
@@ -222,15 +201,14 @@ type CompoundTableFilterTypeSelectInputProps = Omit<SelectProps, 'data'>;
 export function CompoundTableFilterTypeSelectInput(
   props: CompoundTableFilterTypeSelectInputProps,
 ) {
+  const renderOption = useDescriptionBasedRenderOption(FILTER_COMBOBOXES);
   return (
     <Select
       {...props}
       data={COMPOUND_FILTER_TYPES.map((value) => {
         return FILTER_COMBOBOXES[value];
       })}
-      renderOption={
-        TableFilterTypeComboboxItemRenderer as SelectProps['renderOption']
-      }
+      renderOption={renderOption}
       placeholder="Pick a filter type"
     />
   );

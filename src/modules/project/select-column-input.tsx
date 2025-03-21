@@ -26,17 +26,13 @@ function ProjectColumnComboboxItemRenderer(
 ) {
   const { option } = combobox;
   return (
-    <>
-      <Group>
-        <ProjectSchemaTypeIcon
-          type={option.data.type as SchemaColumnTypeEnum}
-        />
-        <Text>{option.label}</Text>
-      </Group>
-      <Text size="sm" c="gray">
+    <Group>
+      <ProjectSchemaTypeIcon type={option.data.type as SchemaColumnTypeEnum} />
+      <Text size="sm">{option.label}</Text>
+      <Text size="xs" c="gray">
         {capitalize(option.data.type)}
       </Text>
-    </>
+    </Group>
   );
 }
 

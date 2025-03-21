@@ -52,3 +52,6 @@ export type TablePaginationApiResult =
 
 export type DescriptiveStatisticsModel =
   components['schemas']['DescriptiveStatisticsResource'];
+
+export type ComparisonStatisticTestInput =
+  components['schemas']['ComparisonStatisticTestSchema'];

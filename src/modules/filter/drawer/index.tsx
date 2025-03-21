@@ -16,23 +16,9 @@ import FormWrapper from '@/components/utility/form/wrapper';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 import { showNotification } from '@mantine/notifications';
-import { useCheckFilterValidity } from '../management/hooks';
 import TableFilterManagementSection from '../management';
+import { useCheckFilterValidity } from '../management/hooks';
 
-function useValidateFilter() {
-  const checkFilter = useCheckFilterValidity();
-  return React.useCallback(
-    async (formValues: TableFilterFormType) => {
-      const payload = tableFilterFormSchema.cast(formValues, {
-        stripUnknown: true,
-      }) as TableFilterModel;
-
-      const filter = await checkFilter(payload);
-      return filter;
-    },
-    [checkFilter],
-  );
-}
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
   setFilter: React.Dispatch<TableFilterModel | null>;
@@ -45,18 +31,18 @@ interface TableFilterDrawerComponentProps {
   AboveForm?: React.ReactNode;
 }
 
-export function TableFilterDrawerComponent(
+export function TableFilterDrawerFormBody(
   props: TableFilterDrawerComponentProps,
 ) {
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { reset, getValues } = useFormContext<TableFilterFormType>();
+  const { reset, setValue, getValues } = useFormContext();
   const { setFilter, close, AboveForm, name } = props;
 
   const getFilter = React.useCallback(() => {
-    return tableFilterFormSchema.cast(getValues(), {
+    return tableFilterFormSchema.cast(name ? getValues(name) : getValues(), {
       stripUnknown: true,
     }) as TableFilterModel;
-  }, [getValues]);
+  }, [getValues, name]);
 
   return (
     <>
@@ -67,7 +53,11 @@ export function TableFilterDrawerComponent(
         dangerous
         positiveAction="Reset"
         onConfirm={async () => {
-          reset(defaultTableFilterFormValues);
+          if (name) {
+            setValue(name, defaultTableFilterFormValues);
+          } else {
+            reset(defaultTableFilterFormValues);
+          }
           setFilter(null);
           close();
         }}
@@ -98,23 +88,19 @@ export function TableFilterDrawerComponent(
       {AboveForm}
       <TableFilterManagementSection
         getFilter={getFilter}
-        setFilter={(filter) => {
-          setFilter(filter);
-          close();
-        }}
+        setFilter={setFilter}
       />
       <TableFilterComponent name={name} />
     </>
   );
 }
 
-const TableFilterDrawer = React.forwardRef<
-  DisclosureTrigger | null,
-  TableFilterDrawerProps
->(function TableFilterDrawer(props, ref) {
-  const { filter: appliedFilter, setFilter: setAppliedFilter } = props;
-  const [opened, { close }] = useDisclosureTrigger(ref);
+interface TableFilterDrawerFormProps extends TableFilterDrawerProps {
+  onClose(): void;
+}
 
+function TableFilterDrawerForm(props: TableFilterDrawerFormProps) {
+  const { filter: appliedFilter, setFilter: setAppliedFilter, onClose } = props;
   const defaultValues = React.useMemo(() => {
     return (
       (appliedFilter as TableFilterFormType | undefined) ??
@@ -127,25 +113,44 @@ const TableFilterDrawer = React.forwardRef<
     resolver: yupResolver(tableFilterFormSchema),
     defaultValues,
   });
-  const { reset } = form;
-  // Sync applied filter with local filter
-  React.useEffect(() => {
-    reset(defaultValues);
-  }, [appliedFilter, defaultValues, opened, reset]);
 
-  const checkFilter = useValidateFilter();
+  const checkFilter = useCheckFilterValidity();
   const onSubmit = React.useCallback(
     async (formValues: TableFilterFormType) => {
-      const filter = await checkFilter(formValues);
+      const payload = tableFilterFormSchema.cast(formValues, {
+        stripUnknown: true,
+      }) as TableFilterModel;
+      const filter = await checkFilter(payload);
       setAppliedFilter(filter);
-      close();
+      onClose();
       showNotification({
         message: 'Filter has been applied successfully',
         color: 'green',
       });
     },
-    [checkFilter, close, setAppliedFilter],
+    [checkFilter, onClose, setAppliedFilter],
   );
+
+  return (
+    <FormWrapper form={form} onSubmit={onSubmit}>
+      <ErrorAlert />
+      <TableFilterDrawerFormBody
+        name=""
+        close={onClose}
+        setFilter={(filter) => {
+          setAppliedFilter(filter);
+          onClose();
+        }}
+      />
+    </FormWrapper>
+  );
+}
+
+const TableFilterDrawer = React.forwardRef<
+  DisclosureTrigger | null,
+  TableFilterDrawerProps
+>(function TableFilterDrawer(props, ref) {
+  const [opened, { close }] = useDisclosureTrigger(ref);
 
   return (
     <Drawer
@@ -155,14 +160,7 @@ const TableFilterDrawer = React.forwardRef<
       closeOnClickOutside={false}
       closeOnEscape={false}
     >
-      <FormWrapper form={form} onSubmit={onSubmit}>
-        <ErrorAlert />
-        <TableFilterDrawerComponent
-          name=""
-          close={close}
-          setFilter={setAppliedFilter}
-        />
-      </FormWrapper>
+      {opened && <TableFilterDrawerForm {...props} onClose={close} />}
     </Drawer>
   );
 });

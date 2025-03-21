@@ -5,7 +5,7 @@ import {
   ParametrizedDisclosureTrigger,
   useParametrizedDisclosureTrigger,
 } from '@/hooks/disclosure';
-import { TableFilterDrawerComponent } from '@/modules/filter/drawer';
+import { TableFilterDrawerFormBody } from '@/modules/filter/drawer';
 import {
   TableFilterFormType,
   defaultTableFilterFormValues,
@@ -23,14 +23,17 @@ import { useCheckFilterValidity } from '@/modules/filter/management/hooks';
 import { NamedFiltersContext } from '../context';
 import RHFField from '@/components/standard/fields';
 
-const ComparisonFilterDrawer = React.forwardRef<
-  ParametrizedDisclosureTrigger<NamedTableFilterModel> | null,
-  object
->(function TableFilterDrawer(props, ref) {
+interface ComparisonFilterDrawerContentsProps {
+  appliedFilter: NamedTableFilterModel;
+  onClose(): void;
+}
+
+function ComparisonFilterDrawerContents(
+  props: ComparisonFilterDrawerContentsProps,
+) {
+  const { appliedFilter, onClose } = props;
   const { filters: appliedFilters, setFilters: setAppliedFilters } =
     React.useContext(NamedFiltersContext);
-
-  const [appliedFilter, { close }] = useParametrizedDisclosureTrigger(ref);
 
   const uniqueFilterNames = React.useMemo(() => {
     return appliedFilters.map((filter) => filter.name);
@@ -52,11 +55,7 @@ const ComparisonFilterDrawer = React.forwardRef<
     resolver: yupResolver(comparisonFilterFormSchema(uniqueFilterNames)),
     defaultValues,
   });
-  const { reset, getValues } = form;
-  // Sync applied filter with local filter
-  React.useEffect(() => {
-    reset(defaultValues);
-  }, [appliedFilter, defaultValues, reset]);
+  const { getValues, reset } = form;
 
   const checkFilter = useCheckFilterValidity();
 
@@ -83,13 +82,13 @@ const ComparisonFilterDrawer = React.forwardRef<
         }
         return next;
       });
-      close();
+      onClose();
       showNotification({
         message: 'Filter has been updated successfully',
         color: 'green',
       });
     },
-    [appliedFilter, checkFilter, close, setAppliedFilters, uniqueFilterNames],
+    [appliedFilter, checkFilter, onClose, setAppliedFilters, uniqueFilterNames],
   );
 
   const loadFilter = React.useCallback(
@@ -103,6 +102,34 @@ const ComparisonFilterDrawer = React.forwardRef<
   );
 
   return (
+    <FormWrapper form={form} onSubmit={onSubmit}>
+      <ErrorAlert />
+      <TableFilterDrawerFormBody
+        name="filter"
+        close={close}
+        setFilter={loadFilter}
+        AboveForm={
+          <div className="pb-3">
+            <RHFField
+              type="text"
+              name="name"
+              label="Group Name"
+              required
+              description="Group name should be unique."
+            />
+          </div>
+        }
+      />
+    </FormWrapper>
+  );
+}
+
+const ComparisonFilterDrawer = React.forwardRef<
+  ParametrizedDisclosureTrigger<NamedTableFilterModel> | null,
+  object
+>(function TableFilterDrawer(props, ref) {
+  const [appliedFilter, { close }] = useParametrizedDisclosureTrigger(ref);
+  return (
     <Drawer
       title="Filter"
       opened={appliedFilter != null}
@@ -110,25 +137,12 @@ const ComparisonFilterDrawer = React.forwardRef<
       closeOnClickOutside={false}
       closeOnEscape={false}
     >
-      <FormWrapper form={form} onSubmit={onSubmit}>
-        <ErrorAlert />
-        <TableFilterDrawerComponent
-          name="filter"
-          close={close}
-          setFilter={loadFilter}
-          AboveForm={
-            <div className="pb-3">
-              <RHFField
-                type="text"
-                name="name"
-                label="Group Name"
-                required
-                description="Group name should be unique."
-              />
-            </div>
-          }
+      {appliedFilter && (
+        <ComparisonFilterDrawerContents
+          appliedFilter={appliedFilter}
+          onClose={close}
         />
-      </FormWrapper>
+      )}
     </Drawer>
   );
 });
