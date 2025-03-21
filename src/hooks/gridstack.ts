@@ -75,3 +75,23 @@ export function useSortableGridStack(props: UseSortableGridStackProps) {
     };
   }, [grid, onSort]);
 }
+
+interface SortableGridStackDefaultOptionsProps {
+  itemsCount: number;
+}
+
+export function SortableGridStackDefaultOptions(
+  props: SortableGridStackDefaultOptionsProps,
+): GridStackOptions {
+  const { itemsCount } = props;
+  return {
+    column: 1,
+    margin: 4,
+    maxRow: itemsCount,
+    cellHeight: 80,
+    disableResize: true,
+    removable: false,
+    alwaysShowResizeHandle: false,
+    float: true,
+  };
+}

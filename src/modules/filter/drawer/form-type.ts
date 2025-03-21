@@ -71,3 +71,8 @@ export type TableFilterFormType = Yup.InferType<
   operands?: TableFilterFormType[];
   operand?: TableFilterFormType[];
 };
+
+export const defaultTableFilterFormValues: TableFilterFormType = {
+  type: TableFilterTypeEnum.And,
+  operands: [],
+};

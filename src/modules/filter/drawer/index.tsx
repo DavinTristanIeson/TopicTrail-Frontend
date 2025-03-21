@@ -1,12 +1,15 @@
 import { TableFilterModel } from '@/api/table';
-import { TableFilterTypeEnum } from '@/common/constants/enum';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { Button, Drawer, Group } from '@mantine/core';
 import { Warning, X } from '@phosphor-icons/react';
 import React from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
-import { tableFilterFormSchema, TableFilterFormType } from './form-type';
+import {
+  defaultTableFilterFormValues,
+  tableFilterFormSchema,
+  TableFilterFormType,
+} from './form-type';
 import SubmitButton from '@/components/standard/button/submit';
 import TableFilterComponent from './components';
 import FormWrapper from '@/components/utility/form/wrapper';
@@ -32,23 +35,22 @@ function useValidateFilter() {
 }
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
-  setFilter: React.Dispatch<React.SetStateAction<TableFilterModel | null>>;
+  setFilter: React.Dispatch<TableFilterModel | null>;
 }
-
-const defaultTableFilterFormValues: TableFilterFormType = {
-  type: TableFilterTypeEnum.And,
-  operands: [],
-};
 
 interface TableFilterDrawerComponentProps {
-  setFilter: React.Dispatch<React.SetStateAction<TableFilterModel | null>>;
+  setFilter: React.Dispatch<TableFilterModel | null>;
   close(): void;
+  name: string;
+  AboveForm?: React.ReactNode;
 }
 
-function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
+export function TableFilterDrawerComponent(
+  props: TableFilterDrawerComponentProps,
+) {
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
   const { reset, getValues } = useFormContext<TableFilterFormType>();
-  const { setFilter, close } = props;
+  const { setFilter, close, AboveForm, name } = props;
 
   const getFilter = React.useCallback(() => {
     return tableFilterFormSchema.cast(getValues(), {
@@ -93,6 +95,7 @@ function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
           <SubmitButton>Apply</SubmitButton>
         </Group>
       </Drawer.Header>
+      {AboveForm}
       <TableFilterManagementSection
         getFilter={getFilter}
         setFilter={(filter) => {
@@ -100,7 +103,7 @@ function TableFilterDrawerComponent(props: TableFilterDrawerComponentProps) {
           close();
         }}
       />
-      <TableFilterComponent name="" />
+      <TableFilterComponent name={name} />
     </>
   );
 }
@@ -155,6 +158,7 @@ const TableFilterDrawer = React.forwardRef<
       <FormWrapper form={form} onSubmit={onSubmit}>
         <ErrorAlert />
         <TableFilterDrawerComponent
+          name=""
           close={close}
           setFilter={setAppliedFilter}
         />
