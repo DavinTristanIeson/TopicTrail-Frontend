@@ -43,8 +43,6 @@ export type TableFilterModel =
   | LessThanOrEqualToTableFilterModel
   | GreaterThanOrEqualToTableFilterModel;
 
-export type NamedTableFilterModel = components['schemas']['NamedTableFilter'];
-
 export type TableSortModel = components['schemas']['TableSort'];
 export type PaginationMetaModel = components['schemas']['PaginationMeta'];
 export type TablePaginationApiResult =
@@ -52,6 +50,3 @@ export type TablePaginationApiResult =
 
 export type DescriptiveStatisticsModel =
   components['schemas']['DescriptiveStatisticsResource'];
-
-export type ComparisonStatisticTestInput =
-  components['schemas']['ComparisonStatisticTestSchema'];

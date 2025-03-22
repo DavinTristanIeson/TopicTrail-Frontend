@@ -1,4 +1,4 @@
-import { NamedTableFilterModel, TableFilterModel } from '@/api/table';
+import { TableFilterModel } from '@/api/table';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 import FormWrapper from '@/components/utility/form/wrapper';
 import {
@@ -22,6 +22,7 @@ import {
 import { useCheckFilterValidity } from '@/modules/filter/management/hooks';
 import { NamedFiltersContext } from '../context';
 import RHFField from '@/components/standard/fields';
+import { NamedTableFilterModel } from '@/api/comparison';
 
 interface ComparisonFilterDrawerContentsProps {
   appliedFilter: NamedTableFilterModel;

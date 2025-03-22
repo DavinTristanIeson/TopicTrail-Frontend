@@ -1,4 +1,4 @@
-import { NamedTableFilterModel, TableFilterModel } from '@/api/table';
+import { TableFilterModel } from '@/api/table';
 import { ListSkeleton } from '@/components/visual/loading';
 import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import dynamic from 'next/dynamic';
@@ -8,6 +8,7 @@ import { Alert, Button, Stack } from '@mantine/core';
 import { NamedFiltersContext } from '../context';
 import { Plus, Warning } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
+import { NamedTableFilterModel } from '@/api/comparison';
 
 const SortableNamedTableFilterDndContext = dynamic(
   () => import('./sortable-filter-context'),
@@ -46,7 +47,7 @@ export default function NamedFiltersManager() {
             });
           }}
         >
-          Add New Filter
+          Add New Group
         </Button>
       </Stack>
       <ComparisonFilterDrawer ref={editRemote} />

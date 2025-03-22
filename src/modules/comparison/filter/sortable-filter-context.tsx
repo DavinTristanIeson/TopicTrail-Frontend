@@ -1,4 +1,4 @@
-import { NamedTableFilterModel } from '@/api/table';
+import { NamedTableFilterModel } from '@/api/comparison';
 import NavigationRoutes from '@/common/constants/routes';
 import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import {

@@ -57,14 +57,12 @@ export enum TableFilterTypeEnum {
 }
 
 export enum StatisticTestMethodEnum {
-  Auto = 'auto',
   T = 't',
   MannWhitneyU = 'mann-whitney-u',
   ChiSquared = 'chi-squared',
 }
 
 export enum EffectSizeMethodEnum {
-  Auto = 'auto',
   MeanDifference = 'mean-difference',
   MedianDifference = 'median-difference',
   CohensD = 'cohen-d',

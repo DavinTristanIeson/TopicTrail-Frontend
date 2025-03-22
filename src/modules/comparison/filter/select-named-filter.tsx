@@ -1,4 +1,4 @@
-import { NamedTableFilterModel } from '@/api/table';
+import { NamedTableFilterModel } from '@/api/comparison';
 import {
   IRHFMantineAdaptable,
   useRHFMantineAdapter,

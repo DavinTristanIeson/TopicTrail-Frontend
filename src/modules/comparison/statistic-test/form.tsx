@@ -1,14 +1,10 @@
-import { ComparisonStatisticTestInput } from '@/api/table';
+import { ComparisonStatisticTestInput } from '@/api/comparison';
 import React from 'react';
 import { NamedFiltersContext } from '../context';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { statisticTestFormSchema, StatisticTestFormType } from './form-type';
-import {
-  EffectSizeMethodEnum,
-  SchemaColumnTypeEnum,
-  StatisticTestMethodEnum,
-} from '@/common/constants/enum';
+import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import FormWrapper from '@/components/utility/form/wrapper';
 import { showNotification } from '@mantine/notifications';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
@@ -91,11 +87,11 @@ export default function StatisticTestForm(props: StatisticTestModalFormProps) {
   const defaultValues = React.useMemo<StatisticTestFormType>(() => {
     return {
       column: '',
-      effect_size_preference: EffectSizeMethodEnum.Auto,
+      effect_size_preference: null as any,
       exclude_overlapping_rows: true,
       group1: '',
       group2: '',
-      statistic_test_preference: StatisticTestMethodEnum.Auto,
+      statistic_test_preference: null as any,
     };
   }, []);
   const form = useForm({
@@ -113,6 +109,7 @@ export default function StatisticTestForm(props: StatisticTestModalFormProps) {
       });
       showNotification({
         message: 'Please wait a while until the statistic test is finished...',
+        loading: true,
         color: 'green',
       });
     },
