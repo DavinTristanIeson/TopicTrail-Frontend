@@ -1,154 +1,50 @@
-import { TextualSchemaColumnModel } from '@/api/project';
-import React, { useState } from 'react';
-import { Button, Stack, Text, Group, Badge, Card, ScrollArea, Checkbox, Tooltip, Collapse } from '@mantine/core';
-import { Play } from "@phosphor-icons/react";
+import {
+  invalidateProjectDependencyQueries,
+  SchemaColumnModel,
+  TextualSchemaColumnModel,
+} from '@/api/project';
+import React from 'react';
+import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 import useTopicModelingActions from './status-check';
-import { TaskStatusEnum } from '@/common/constants/enum';
+import TopicModelingProgressLogs from './progress-logs';
+import ProjectTopicsEmptyPageControls from './controls';
+import { TopicModelingTaskResponseModel } from '@/api/topic';
+import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
+import { ProjectContext } from '@/modules/project/context';
+import { showNotification } from '@mantine/notifications';
 
+interface ProjectTopicsSuccessModalProps {
+  column: SchemaColumnModel;
+}
 interface ProjectTopicsEmptyPageProps {
   column: TextualSchemaColumnModel;
 }
-
 export default function ProjectTopicsEmptyPage(
   props: ProjectTopicsEmptyPageProps,
 ) {
   const { column } = props;
-  const [useCachedDocVectors, setUseCachedDocVectors] = useState(true);
-  const [useCachedUMAP, setUseCachedUMAP] = useState(true);
-  const [useCachedPreprocessedDocs, setUseCachedPreprocessedDocs] = useState(true);
-  const [showExplanation, setShowExplanation] = useState(false);
+  const project = React.useContext(ProjectContext);
+  const topicModelingActions = useTopicModelingActions(column.name);
+  const { progress } = topicModelingActions;
 
-  const { 
-    onStartTopicModeling, 
-    startTopicModelingButtonIsLoading, 
-    progress
-  } = useTopicModelingActions(column.name, useCachedDocVectors, useCachedUMAP, useCachedPreprocessedDocs);
+  const hasAcknowledgedSuccessfulTopicModeling = React.useRef(false);
 
-  const getStatusColor = (status: TaskStatusEnum) => {
-    switch (status.toLowerCase()) {
-      case TaskStatusEnum.Success:
-        return 'green';
-      case TaskStatusEnum.Pending:
-        return 'yellow';
-      case TaskStatusEnum.Failed:
-        return 'red';
-      default:
-        return 'gray';
-    }
-  };
-
-  const formatTimestamp = (timestamp?: string) => {
-    if (!timestamp) return 'Unknown time';
-    const date = new Date(timestamp);
-    return date.toLocaleString('en-US', {
-      timeZone: 'Asia/Jakarta',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
+  React.useEffect(() => {
+    if (!progress?.data || hasAcknowledgedSuccessfulTopicModeling.current)
+      return;
+    const message = `We have successfully finished running the topic modeling algorithm on the documents of "${column}".`;
+    showNotification({
+      message,
+      color: 'green',
+      autoClose: 5000,
     });
-  };
-
+    invalidateProjectDependencyQueries(project.id);
+    hasAcknowledgedSuccessfulTopicModeling.current = true;
+  }, []);
   return (
-    <Stack>
-      <Card withBorder shadow="lg" p="md" radius="md" style={{ backgroundColor: 'white', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Group align="center">
-          <div
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              backgroundColor: 'white',
-              border: '8px solid black',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <Play size={40} weight="fill" color="black" />
-          </div>
-
-          <div style={{ flex: 1, maxWidth: 600 }}>
-            <Text fw={700} size="xl">Discover Topics</Text>
-            <Text size="sm">
-              Our algorithm will scan all of the textual columns in your dataset to try and find common keywords from documents that discuss the same theme or concept.
-            </Text>
-            <Button size="xs" variant="subtle" onClick={() => setShowExplanation(!showExplanation)} style={{ border: '2px solid #7a84b9' }}>
-              {showExplanation ? "Hide Explanation" : "More Explanation"}
-            </Button>
-          </div>
-        </Group>
-
-        <Collapse in={showExplanation} style={{ marginTop: '8px' }}>
-          <Card withBorder shadow="sm" p="md" radius="md" style={{backgroundColor: '#E6E6FA'}}>
-            <Text size="sm">
-              <strong>Topic Modeling</strong> is a technique used in natural language processing (NLP) to identify hidden patterns or topics in a collection of documents. It groups similar words and phrases that frequently appear together, helping to uncover underlying themes.
-            </Text>
-            <Text size="sm" mt="sm">
-              <strong>Algorithm Used</strong>: This application utilizes advanced topic modeling techniques such as BERTopic, which leverages BERT embeddings and clustering methods like HDBSCAN to discover meaningful topics in textual data.
-            </Text>
-          </Card>
-        </Collapse>
-      </Card>
-
-      <Group align="flex-start">
-        <Stack>
-          <Tooltip label="Computing document vectors can be time-consuming, so it is recommended to use cached document vectors. Unless you have changed the topic modeling configuration for this column." maw={250} multiline>
-            <Checkbox
-              label="Use cached document vectors"
-              checked={useCachedDocVectors}
-              onChange={(event) => setUseCachedDocVectors(event.currentTarget.checked)}
-            />
-          </Tooltip>
-
-          <Tooltip label="Computing UMAP vectors can take a long time, so it is recommended to use cached UMAP vectors. Unless you have modified the topic modeling configuration for this column" maw={250} multiline>
-            <Checkbox
-              label="Use cached UMAP vectors"
-              checked={useCachedUMAP}
-              onChange={(event) => setUseCachedUMAP(event.currentTarget.checked)}
-            />
-          </Tooltip>
-
-          <Tooltip label="The preprocessing stage can be time-consuming, so it is recommended to use cached preprocessed documents. Unless you have changed the preprocessing configuration for this column." maw={250} multiline>
-            <Checkbox
-              label="Use cached preprocessed documents"
-              checked={useCachedPreprocessedDocs}
-              onChange={(event) => setUseCachedPreprocessedDocs(event.currentTarget.checked)}
-            />
-          </Tooltip>
-        </Stack>
-      </Group>
-
-      <Button
-          onClick={onStartTopicModeling}
-          loading={startTopicModelingButtonIsLoading}
-        >
-          Start Topic Modeling
-        </Button>
-
-      {progress?.logs && progress.logs.length > 0 && (
-        <Card withBorder shadow="lg" p="md" radius="md" style={{ backgroundColor: '#E6E6FA', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <Text size="lg" mb="sm">
-            Topic Modeling Execution Logs
-          </Text>
-          <ScrollArea style={{ flexGrow: 1, maxHeight: '80vh', overflowY: 'auto' }}>
-            <Stack>
-              {progress.logs.map((log) => (
-                <Card key={log.timestamp ?? Math.random()} withBorder shadow="xs" p="sm" radius="md" style={{ backgroundColor: '#ffffff' }}>
-                  <Group>
-                    <Badge color={getStatusColor(log.status as TaskStatusEnum)}>{log.status}</Badge>
-                    <Text size="sm" c='gray'>{formatTimestamp(log.timestamp)}</Text>
-                  </Group>
-                  <Text mt="xs" size="sm">{log.message}</Text>
-                </Card>
-              ))}
-            </Stack>
-          </ScrollArea>
-        </Card>
-      )}
+    <Stack className="pb-8">
+      <ProjectTopicsEmptyPageControls {...topicModelingActions} />
+      <TopicModelingProgressLogs {...topicModelingActions} />
     </Stack>
   );
 }

@@ -61,12 +61,7 @@ function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   };
 }
 
-export default function useTopicModelingActions(
-  column: string,
-  shouldUseCachedDocumentVectors: boolean,
-  shouldUseCachedUMAPVectors: boolean,
-  shouldUsePreprocessedDocuments: boolean
-) {
+export default function useTopicModelingActions(column: string) {
   const project = React.useContext(ProjectContext);
   const {
     mutateAsync: startTopicModeling,
@@ -75,6 +70,14 @@ export default function useTopicModelingActions(
   } = client.useMutation('post', '/topics/{project_id}/start');
   const status = usePeriodicTopicModelingStatusCheck(!!hasStarted);
   const { checkAgain, isStillPolling } = status;
+
+  const [shouldUseCachedDocumentVectors, setUseCachedDocumentVectors] =
+    React.useState(true);
+  const [shouldUseCachedUMAPVectors, setUseCachedUMAPVectors] =
+    React.useState(true);
+  const [shouldUsePreprocessedDocuments, setUsePreprocessedDocuments] =
+    React.useState(true);
+
   const onStartTopicModeling = React.useCallback(async () => {
     try {
       const res = await startTopicModeling({
@@ -117,6 +120,12 @@ export default function useTopicModelingActions(
     onStartTopicModeling,
     startTopicModelingButtonIsLoading:
       isStillPolling || isStartingTopicModeling,
+    shouldUseCachedDocumentVectors,
+    setUseCachedDocumentVectors,
+    shouldUseCachedUMAPVectors,
+    setUseCachedUMAPVectors,
+    shouldUsePreprocessedDocuments,
+    setUsePreprocessedDocuments,
     ...status,
   };
 }

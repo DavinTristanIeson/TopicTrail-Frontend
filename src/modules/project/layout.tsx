@@ -104,11 +104,12 @@ function ProjectNavbar(props: ProjectNavbarProps) {
 }
 
 interface AppProjectLayoutProps {
+  withPadding?: boolean;
   children?: React.ReactNode;
 }
 
 export default function AppProjectLayout(props: AppProjectLayoutProps) {
-  const { children } = props;
+  const { children, withPadding = true } = props;
   const id = useRouter().query.id as string;
   const query = client.useQuery(
     'get',
@@ -132,7 +133,9 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
       <UseQueryWrapperComponent query={query}>
         {(data) => (
           <ProjectContext.Provider value={data.data}>
-            <div className="pt-3 px-3">{children}</div>
+            <div className={withPadding ? 'pt-3 px-3' : undefined}>
+              {children}
+            </div>
           </ProjectContext.Provider>
         )}
       </UseQueryWrapperComponent>

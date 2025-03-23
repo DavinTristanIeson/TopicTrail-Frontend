@@ -6,7 +6,7 @@ import {
   TopicModelingResultContext,
   TopicModelingResultSelector,
 } from '@/modules/topics/components/context';
-import { Group, Stack, Text } from '@mantine/core';
+import { Group, Paper, Stack, Text } from '@mantine/core';
 import React from 'react';
 import ProjectTopicsEmptyPage from '@/modules/topics/empty';
 import ProjectTopicsPage from '@/modules/topics';
@@ -36,40 +36,44 @@ function ProjectTopicColumnManager() {
   }, [firstColumn]);
 
   return (
-    <Stack>
-      <ProjectColumnSelectInput
-        data={columns}
-        value={column}
-        onChange={(col) => setColumn(col?.name ?? null)}
-        allowDeselect={false}
-        styles={{
-          input: {
-            width: 384,
-          },
-        }}
-        disabled={columns.length === 0}
-        inputContainer={(children) => (
-          <Group>
-            <Text c="gray" size="sm">
-              Column
-            </Text>
-            {children}
-          </Group>
+    <div className="relative">
+      <Paper className="p-2 sticky top-0" radius={0}>
+        <ProjectColumnSelectInput
+          data={columns}
+          value={column}
+          onChange={(col) => setColumn(col?.name ?? null)}
+          allowDeselect={false}
+          styles={{
+            input: {
+              width: 384,
+            },
+          }}
+          disabled={columns.length === 0}
+          inputContainer={(children) => (
+            <Group>
+              <Text c="gray" size="sm">
+                Column
+              </Text>
+              {children}
+            </Group>
+          )}
+        />
+      </Paper>
+      <div className="pt-4 px-3">
+        {columns.length === 0 && <NoTextualColumnWarning />}
+        {column && (
+          <TopicModelingResultSelector column={column}>
+            <ProjectTopicSwitcher />
+          </TopicModelingResultSelector>
         )}
-      />
-      {columns.length === 0 && <NoTextualColumnWarning />}
-      {column && (
-        <TopicModelingResultSelector column={column}>
-          <ProjectTopicSwitcher />
-        </TopicModelingResultSelector>
-      )}
-    </Stack>
+      </div>
+    </div>
   );
 }
 
 export default function ProjectTopics() {
   return (
-    <AppProjectLayout>
+    <AppProjectLayout withPadding={false}>
       <ProjectAllTopicsProvider>
         <ProjectTopicColumnManager />
       </ProjectAllTopicsProvider>
