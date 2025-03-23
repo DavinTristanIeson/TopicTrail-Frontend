@@ -36,10 +36,6 @@ function ComparisonFilterDrawerContents(
   const { filters: appliedFilters, setFilters: setAppliedFilters } =
     React.useContext(NamedFiltersContext);
 
-  const uniqueFilterNames = React.useMemo(() => {
-    return appliedFilters.map((filter) => filter.name);
-  }, [appliedFilters]);
-
   const defaultValues = React.useMemo(() => {
     const defaultComparisonFilterValues: ComparisonFilterFormType = {
       name: `Group ${appliedFilters.length + 1}`,
@@ -53,7 +49,7 @@ function ComparisonFilterDrawerContents(
 
   const form = useForm({
     mode: 'onChange',
-    resolver: yupResolver(comparisonFilterFormSchema(uniqueFilterNames)),
+    resolver: yupResolver(comparisonFilterFormSchema),
     defaultValues,
   });
   const { getValues, reset } = form;
@@ -63,12 +59,9 @@ function ComparisonFilterDrawerContents(
   const onSubmit = React.useCallback(
     async (formValues: ComparisonFilterFormType) => {
       if (!appliedFilter) return;
-      const payload = comparisonFilterFormSchema(uniqueFilterNames).cast(
-        formValues,
-        {
-          stripUnknown: true,
-        },
-      ) as NamedTableFilterModel;
+      const payload = comparisonFilterFormSchema.cast(formValues, {
+        stripUnknown: true,
+      }) as NamedTableFilterModel;
       payload.filter = await checkFilter(payload.filter);
 
       setAppliedFilters((prev) => {
@@ -89,7 +82,7 @@ function ComparisonFilterDrawerContents(
         color: 'green',
       });
     },
-    [appliedFilter, checkFilter, onClose, setAppliedFilters, uniqueFilterNames],
+    [appliedFilter, checkFilter, onClose, setAppliedFilters],
   );
 
   const loadFilter = React.useCallback(
@@ -107,7 +100,7 @@ function ComparisonFilterDrawerContents(
       <ErrorAlert />
       <TableFilterDrawerFormBody
         name="filter"
-        close={close}
+        close={onClose}
         setFilter={loadFilter}
         AboveForm={
           <div className="pb-3">

@@ -1254,10 +1254,14 @@ export interface components {
         TableComparisonGroupInfo: {
             /** Name */
             name: string;
-            /** Sample Size */
-            sample_size: number;
-            /** Invalid Size */
-            invalid_size: number;
+            /** Empty Count */
+            empty_count: number;
+            /** Overlap Count */
+            overlap_count: number;
+            /** Valid Count */
+            valid_count: number;
+            /** Total Count */
+            total_count: number;
         };
         /** TableComparisonResult */
         TableComparisonResult: {

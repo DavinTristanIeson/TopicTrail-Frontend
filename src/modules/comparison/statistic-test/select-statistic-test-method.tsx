@@ -1,7 +1,6 @@
 import {
   EffectSizeMethodEnum,
   SchemaColumnTypeEnum,
-  StatisticTestMethodEnum,
 } from '@/common/constants/enum';
 import RHFField from '@/components/standard/fields';
 import { SelectFieldProps } from '@/components/standard/fields/wrapper';
@@ -13,32 +12,11 @@ import {
   type ComboboxLikeRenderOptionInput,
 } from '@mantine/core';
 import {
+  EFFECT_SIZE_CONSTRAINTS,
   EFFECT_SIZE_DICTIONARY,
+  STATISTIC_METHOD_CONSTRAINTS,
   STATISTIC_TEST_METHOD_DICTIONARY,
 } from './dictionary';
-
-const ORDERED_STATISTIC_METHOD_CONSTRAINTS = [
-  StatisticTestMethodEnum.MannWhitneyU,
-  StatisticTestMethodEnum.ChiSquared,
-];
-const CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS = [
-  StatisticTestMethodEnum.ChiSquared,
-];
-const STATISTIC_METHOD_CONSTRAINTS: Partial<
-  Record<SchemaColumnTypeEnum, StatisticTestMethodEnum[]>
-> = {
-  [SchemaColumnTypeEnum.Continuous]: [
-    StatisticTestMethodEnum.T,
-    StatisticTestMethodEnum.MannWhitneyU,
-  ],
-  [SchemaColumnTypeEnum.Categorical]: CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
-  [SchemaColumnTypeEnum.MultiCategorical]:
-    CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
-  [SchemaColumnTypeEnum.OrderedCategorical]:
-    ORDERED_STATISTIC_METHOD_CONSTRAINTS,
-  [SchemaColumnTypeEnum.Temporal]: ORDERED_STATISTIC_METHOD_CONSTRAINTS,
-  [SchemaColumnTypeEnum.Topic]: CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
-};
 
 interface StatisticMethodSelectFieldProps extends SelectFieldProps {
   columnType: SchemaColumnTypeEnum;
@@ -51,7 +29,9 @@ export function StatisticMethodSelectField(
   const renderOption = useDescriptionBasedRenderOption(
     STATISTIC_TEST_METHOD_DICTIONARY,
   );
-  const supportedMethods = STATISTIC_METHOD_CONSTRAINTS[columnType] ?? [];
+  const supportedMethods = (STATISTIC_METHOD_CONSTRAINTS[columnType] ?? []).map(
+    (value) => STATISTIC_TEST_METHOD_DICTIONARY[value],
+  );
   return (
     <RHFField
       {...restProps}
@@ -68,27 +48,6 @@ export function StatisticMethodSelectField(
   );
 }
 
-const ORDERED_EFFECT_SIZE_CONSTRAINTS = [
-  EffectSizeMethodEnum.RankBiserialCorrelation,
-  EffectSizeMethodEnum.CramerV,
-];
-const CATEGORICAL_EFFECT_SIZE_CONSTRAINTS = [EffectSizeMethodEnum.CramerV];
-const EFFECT_SIZE_CONSTRAINTS: Partial<
-  Record<SchemaColumnTypeEnum, EffectSizeMethodEnum[]>
-> = {
-  [SchemaColumnTypeEnum.Continuous]: [
-    EffectSizeMethodEnum.CohensD,
-    EffectSizeMethodEnum.MeanDifference,
-    EffectSizeMethodEnum.MedianDifference,
-    EffectSizeMethodEnum.RankBiserialCorrelation,
-  ],
-  [SchemaColumnTypeEnum.Categorical]: CATEGORICAL_EFFECT_SIZE_CONSTRAINTS,
-  [SchemaColumnTypeEnum.MultiCategorical]: CATEGORICAL_EFFECT_SIZE_CONSTRAINTS,
-  [SchemaColumnTypeEnum.OrderedCategorical]: ORDERED_EFFECT_SIZE_CONSTRAINTS,
-  [SchemaColumnTypeEnum.Temporal]: ORDERED_EFFECT_SIZE_CONSTRAINTS,
-  [SchemaColumnTypeEnum.Topic]: CATEGORICAL_EFFECT_SIZE_CONSTRAINTS,
-};
-
 function EffectSizeSelectInputRenderOption({
   option,
 }: ComboboxLikeRenderOptionInput<ComboboxItem>) {
@@ -101,7 +60,9 @@ function EffectSizeSelectInputRenderOption({
       <Group gap={4}>
         <Text size="sm">{props.label}</Text>
         {props.range && (
-          <Text size="sm">{`(${props.range[0]}, ${props.range[1]})`}</Text>
+          <Text size="xs" c="gray">
+            {props.range}
+          </Text>
         )}
       </Group>
       <Text size="xs" c="gray">
@@ -113,7 +74,9 @@ function EffectSizeSelectInputRenderOption({
 
 export function EffectSizeSelectField(props: StatisticMethodSelectFieldProps) {
   const { columnType, ...restProps } = props;
-  const supportedMethods = EFFECT_SIZE_CONSTRAINTS[columnType] ?? [];
+  const supportedMethods = (EFFECT_SIZE_CONSTRAINTS[columnType] ?? []).map(
+    (value) => EFFECT_SIZE_DICTIONARY[value],
+  );
   return (
     <RHFField
       {...restProps}

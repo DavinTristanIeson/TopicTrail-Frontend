@@ -1,34 +1,53 @@
-import { ComparisonStatisticTestInput } from '@/api/comparison';
 import React from 'react';
 import { NamedFiltersContext } from '../context';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { statisticTestFormSchema, StatisticTestFormType } from './form-type';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import FormWrapper from '@/components/utility/form/wrapper';
-import { showNotification } from '@mantine/notifications';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { ProjectContext } from '@/modules/project/context';
 import { Group, Stack } from '@mantine/core';
 import { NamedFilterSelectField } from '../filter/select-named-filter';
-import { StatisticMethodSelectField } from './select-statistic-test-method';
+import {
+  EffectSizeSelectField,
+  StatisticMethodSelectField,
+} from './select-statistic-test-method';
 import RHFField from '@/components/standard/fields';
+import { SUPPORTED_COLUMN_TYPES_FOR_STATISTIC_TEST } from './dictionary';
+import SubmitButton from '@/components/standard/button/submit';
+import { TestTube } from '@phosphor-icons/react';
 
 function StatisticTestFormBody() {
   const project = React.useContext(ProjectContext);
   const { filters } = React.useContext(NamedFiltersContext);
+  const { setValue } = useFormContext<StatisticTestFormType>();
   const [columnType, setColumnType] =
     React.useState<SchemaColumnTypeEnum | null>(null);
+  const columns = project.config.data_schema.columns.filter((column) =>
+    SUPPORTED_COLUMN_TYPES_FOR_STATISTIC_TEST.includes(
+      column.type as SchemaColumnTypeEnum,
+    ),
+  );
   return (
     <Stack>
       <ProjectColumnSelectField
-        data={project.config.data_schema.columns}
+        data={columns}
         name="column"
         label="Target"
         required
+        error={
+          columns.length === 0
+            ? 'There are no columns in your dataset that supports statistic tests.'
+            : undefined
+        }
         description="The column that will be used for the statistic test."
         onChange={(combobox) => {
           const type = combobox?.type as SchemaColumnTypeEnum;
+          if (type !== columnType) {
+            setValue('effect_size_preference', null as any);
+            setValue('statistic_test_preference', null as any);
+          }
           setColumnType(type ?? null);
         }}
       />
@@ -51,11 +70,12 @@ function StatisticTestFormBody() {
           <StatisticMethodSelectField
             name="statistic_test_preference"
             type="select"
+            label="Statistic Test"
             className="flex-1"
             description="What test method do you want to use in this statistic test?"
             columnType={columnType}
           />
-          <StatisticMethodSelectField
+          <EffectSizeSelectField
             name="effect_size_preference"
             type="select"
             className="flex-1"
@@ -71,19 +91,21 @@ function StatisticTestFormBody() {
         label="Exclude overlapping rows?"
         description="We recommend that you leave this setting on. Any rows that overlap between both groups will not be used in the statistic test. This is especially important as some statistic tests like Chi-Squared Tests expect both groups to be mutually exclusive."
       />
+      <Group justify="center">
+        <SubmitButton leftSection={<TestTube />} fullWidth className="max-w-md">
+          Perform Statistic Test
+        </SubmitButton>
+      </Group>
     </Stack>
   );
 }
 
 interface StatisticTestModalFormProps {
-  setInput: React.Dispatch<
-    React.SetStateAction<ComparisonStatisticTestInput | null>
-  >;
+  onSubmit(input: StatisticTestFormType): void;
 }
 
 export default function StatisticTestForm(props: StatisticTestModalFormProps) {
-  const { setInput } = props;
-  const { filters } = React.useContext(NamedFiltersContext);
+  const { onSubmit } = props;
   const defaultValues = React.useMemo<StatisticTestFormType>(() => {
     return {
       column: '',
@@ -99,22 +121,6 @@ export default function StatisticTestForm(props: StatisticTestModalFormProps) {
     mode: 'onChange',
     defaultValues,
   });
-
-  const onSubmit = React.useCallback(
-    (values: StatisticTestFormType) => {
-      setInput({
-        ...values,
-        group1: filters.find((filter) => values.group1 === filter.name)!,
-        group2: filters.find((filter) => values.group2 === filter.name)!,
-      });
-      showNotification({
-        message: 'Please wait a while until the statistic test is finished...',
-        loading: true,
-        color: 'green',
-      });
-    },
-    [filters, setInput],
-  );
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
       <StatisticTestFormBody />

@@ -1,21 +1,19 @@
 import {
-  ComparisonStatisticTestInput,
+  EffectSizeResultModel,
   SignificanceResultModel,
   TableComparisonGroupInfoModel,
   TableComparisonResultModel,
 } from '@/api/comparison';
-import { client } from '@/common/api/client';
-import { ProjectContext } from '@/modules/project/context';
 import {
   Alert,
   Group,
-  LoadingOverlay,
+  HoverCard,
   Paper,
   RingProgress,
   Stack,
   Text,
 } from '@mantine/core';
-import { Warning } from '@phosphor-icons/react';
+import { Info, Warning } from '@phosphor-icons/react';
 import React from 'react';
 import {
   EFFECT_SIZE_DICTIONARY,
@@ -26,38 +24,90 @@ import {
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
 
-interface StatisticTestResultRendererProps {
-  input: ComparisonStatisticTestInput | null;
-}
-
 function GroupCountsInfoCard(props: TableComparisonGroupInfoModel) {
-  const totalSize = props.sample_size + props.invalid_size;
-  const validProportion = (props.sample_size * 100) / totalSize;
-  const invalidProportion = (props.invalid_size * 100) / totalSize;
+  const emptyProportion = Math.round(
+    (props.empty_count * 100) / props.total_count,
+  );
+  const overlapProportion = Math.round(
+    (props.overlap_count * 100) / props.total_count,
+  );
+  const validProportion = Math.round(
+    (props.valid_count * 100) / props.total_count,
+  );
   return (
     <Paper className="flex-1 p-2">
-      <Text ta="center" fw={500}>
-        {`Group: ${props.name}`}
-      </Text>
-      <RingProgress
-        label={
-          <Text size="xs" ta="center">
-            Sample Size
-          </Text>
-        }
-        sections={[
-          {
-            value: validProportion,
-            tooltip: `Used Samples: ${props.sample_size}`,
-            color: 'green',
-          },
-          {
-            value: invalidProportion,
-            tooltip: `Invalid Samples: ${props.invalid_size}`,
-            color: 'red',
-          },
-        ]}
-      />
+      <Stack align="center" gap={0}>
+        <Text ta="center" fw={500}>
+          {`Sample Sizes of ${props.name}`}
+        </Text>
+        <RingProgress
+          label={
+            <div>
+              <Text size="lg" fw="bold" c="brand" ta="center" lh={1}>
+                {props.total_count}
+              </Text>
+              <Text c="gray" size="xs" ta="center" lh={1}>
+                rows
+              </Text>
+            </div>
+          }
+          sections={[
+            {
+              value: validProportion,
+              tooltip: `Valid Rows: ${props.valid_count}`,
+              color: 'green',
+            },
+            {
+              value: emptyProportion,
+              tooltip: `Empty Rows: ${props.empty_count}`,
+              color: 'red',
+            },
+            {
+              value: overlapProportion,
+              tooltip: `Overlapping Rows: ${props.empty_count}`,
+              color: 'yellow',
+            },
+          ]}
+        />
+      </Stack>
+    </Paper>
+  );
+}
+
+interface ResultCardProps {
+  label: string;
+  value: string;
+  info?: string;
+}
+
+function ResultCard(props: ResultCardProps) {
+  return (
+    <Paper className="flex-1 p-2">
+      <Stack align="center" gap={4}>
+        <Group justify="center">
+          <Text fw={500}>{props.label}</Text>
+          {props.info && (
+            <HoverCard>
+              <HoverCard.Target>
+                <Info />
+              </HoverCard.Target>
+              <HoverCard.Dropdown>
+                <Text className={'max-w-sm'}>{props.info}</Text>
+              </HoverCard.Dropdown>
+            </HoverCard>
+          )}
+        </Group>
+        <Text
+          size="xl"
+          c="brand"
+          fw={500}
+          style={{
+            fontSize: 36,
+          }}
+        >
+          {props.value}
+        </Text>
+      </Stack>
     </Paper>
   );
 }
@@ -66,96 +116,44 @@ function SignificanceResultRenderer(props: SignificanceResultModel) {
   const dictionaryEntry =
     STATISTIC_TEST_METHOD_DICTIONARY[props.type as StatisticTestMethodEnum];
   const confidence = (1 - props.p_value) * 100;
-  const color = props.p_value < 0.05 ? 'brand.300' : 'brand.600';
   return (
     <>
-      <Paper className="flex-1 p-2">
-        <Stack>
-          <Text ta="center" fw={500}>
-            {`Statistic (${dictionaryEntry.label})`}
-          </Text>
-          <Text size="lg" fw="bold">
-            {props.statistic}
-          </Text>
-        </Stack>
-      </Paper>
-      <Paper className="flex-1 p-2">
-        <Stack justify="center">
-          <Text ta="center" fw={500}>
-            P-Value
-          </Text>
-          <Text size="lg" fw="bold" ta="center" c={color}>
-            {props.p_value}
-          </Text>
-          <Text size="sm" fw={500} ta="center">
-            Confidence
-          </Text>
-          <Text size="sm" fw="bold" ta="center" c={color}>
-            {`${confidence}%`}
-          </Text>
-        </Stack>
-      </Paper>
+      <ResultCard
+        label={`Statistic (${dictionaryEntry.label})`}
+        value={props.statistic.toFixed(4)}
+        info="The value calculated by the statistic test, which is later used to calculate the p value and confidence. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead."
+      />
+      <ResultCard
+        label="P-Value"
+        value={props.p_value.toFixed(4)}
+        info="The p value calculated from the statistic test. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead"
+      />
+      <ResultCard
+        label="Confidence"
+        value={`${confidence.toFixed(2)}%`}
+        info="A high confidence means that you can be sure that both groups are different. For example, you might have a hypothesis that guests who come as a group tend to give higher ratings than guests who come alone; if this confidence value is high (generally above 95%), then you can be sure that your hypothesis is correct."
+      />
     </>
   );
 }
 
-function EffectSizeResultRenderer(props: TableComparisonResultModel) {
-  const { significance, effect_size } = props;
+function EffectSizeResultRenderer(props: EffectSizeResultModel) {
   const dictionaryEntry =
-    EFFECT_SIZE_DICTIONARY[effect_size.type as EffectSizeMethodEnum];
-  const color = significance.p_value < 0.05 ? 'brand.300' : 'brand.600';
+    EFFECT_SIZE_DICTIONARY[props.type as EffectSizeMethodEnum];
+
   return (
-    <Paper className="flex-1 p-2">
-      <Stack>
-        <Text ta="center" fw={500}>
-          {`Effect Size (${dictionaryEntry.label})`}
-        </Text>
-        <Text size="lg" fw="bold" color={color} ta="center">
-          {effect_size.value}
-        </Text>
-      </Stack>
-    </Paper>
+    <ResultCard
+      label={`${dictionaryEntry.label})`}
+      value={props.value.toFixed(4)}
+      info={dictionaryEntry.description}
+    />
   );
 }
 
 export default function StatisticTestResultRenderer(
-  props: StatisticTestResultRendererProps,
+  data: TableComparisonResultModel,
 ) {
-  const { input } = props;
-  const project = React.useContext(ProjectContext);
-  const { data, error, isFetching } = client.useQuery(
-    'post',
-    '/table/{project_id}/statistic-test',
-    {
-      body: input as ComparisonStatisticTestInput,
-      params: {
-        path: {
-          project_id: project.id,
-        },
-      },
-    },
-    {
-      enabled: !!input,
-    },
-  );
-  const warnings = data?.data.warnings;
-  if (isFetching) {
-    return <LoadingOverlay />;
-  }
-  if (error) {
-    return (
-      <Alert
-        title="An error occurred while running the statistic test!"
-        color="red"
-        icon={<Warning size={20} />}
-      >
-        {error.message}
-      </Alert>
-    );
-  }
-  if (!data) {
-    return null;
-  }
+  const warnings = data.warnings;
   return (
     <>
       {warnings && warnings.length > 0 && (
@@ -170,13 +168,13 @@ export default function StatisticTestResultRenderer(
         </Alert>
       )}
       <Group>
-        {data?.data.groups.map((group) => (
+        {data?.groups.map((group) => (
           <GroupCountsInfoCard key={group.name} {...group} />
         ))}
       </Group>
-      <Group>
-        <SignificanceResultRenderer {...data?.data.significance} />
-        <EffectSizeResultRenderer {...data.data} />
+      <Group align="stretch">
+        <SignificanceResultRenderer {...data?.significance} />
+        <EffectSizeResultRenderer {...data?.effect_size} />
       </Group>
     </>
   );

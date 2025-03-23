@@ -5,14 +5,13 @@ import {
 } from '@/modules/filter/drawer/form-type';
 import * as Yup from 'yup';
 
-export const comparisonFilterFormSchema = (uniqueNames: string[]) =>
-  Yup.object({
-    name: Yup.string().required().notOneOf(uniqueNames),
-    filter: tableFilterFormSchema,
-  });
+export const comparisonFilterFormSchema = Yup.object({
+  name: Yup.string().required(),
+  filter: tableFilterFormSchema,
+});
 
 export type ComparisonFilterFormType = ReplaceKeys<
-  Yup.InferType<ReturnType<typeof comparisonFilterFormSchema>>,
+  Yup.InferType<typeof comparisonFilterFormSchema>,
   {
     filter: TableFilterFormType;
   }

@@ -1,32 +1,42 @@
-import { DisclosureTrigger } from '@/hooks/disclosure';
-import { Group, Button } from '@mantine/core';
-import { Plus } from '@phosphor-icons/react';
+import { useControlledGridstack } from '@/hooks/gridstack';
+import { type GridStackWidget } from 'gridstack';
 import React from 'react';
-import AddTableVisualizationDialog from './add-visualization-dialog';
-import dynamic from 'next/dynamic';
-import { GridSkeleton } from '@/components/visual/loading';
+import DashboardGridItem from './grid-item';
 
-const GridstackDashboard = dynamic(() => import('./dashboard'), {
-  ssr: false,
-  loading: GridSkeleton,
-});
-
-export default function DashboardManager() {
-  const addTableDialogRemote = React.useRef<DisclosureTrigger | null>(null);
+export default function GridstackDashboard() {
+  const ids = React.useMemo(() => {
+    return Array.from({ length: 10 }, () =>
+      Math.random().toString(16).substring(2),
+    );
+  }, []);
+  const makeWidget = React.useCallback((id: string) => {
+    return {
+      id,
+      minH: 3,
+      minW: 3,
+    } as GridStackWidget;
+  }, []);
+  const { id, gridElements } = useControlledGridstack({
+    gridItems: ids,
+    options: {
+      removable: false,
+      margin: 4,
+    },
+    makeWidget,
+  });
   return (
-    <>
-      <AddTableVisualizationDialog ref={addTableDialogRemote} />
-      <Group justify="end" className="pb-3">
-        <Button
-          leftSection={<Plus />}
-          onClick={() => {
-            addTableDialogRemote.current?.open();
-          }}
-        >
-          Add Visualization
-        </Button>
-      </Group>
-      <GridstackDashboard />
-    </>
+    <div className="rounded color-gray-100">
+      <div className="grid-stack" id={id}>
+        {ids.map((id) => (
+          <div
+            className="grid-stack-item"
+            ref={gridElements.current[id]}
+            key={id}
+          >
+            <DashboardGridItem />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
