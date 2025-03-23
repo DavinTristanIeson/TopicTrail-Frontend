@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Checkbox,
   createTheme,
   Drawer,
   InputWrapper,
@@ -84,6 +85,11 @@ const mantineTheme = createTheme({
       defaultProps: {
         centered: true,
         size: 'lg',
+      },
+    }),
+    Checkbox: Checkbox.extend({
+      defaultProps: {
+        radius: 'sm',
       },
     }),
   },

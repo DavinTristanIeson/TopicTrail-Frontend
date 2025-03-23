@@ -68,6 +68,9 @@ export default function useTopicModelingActions(column: string) {
     isPending: isStartingTopicModeling,
     data: hasStarted,
   } = client.useMutation('post', '/topics/{project_id}/start');
+  const status = usePeriodicTopicModelingStatusCheck(!!hasStarted);
+  const { checkAgain, isStillPolling } = status;
+
   const [shouldUseCachedDocumentVectors, setUseCachedDocumentVectors] =
     React.useState(true);
   const [shouldUseCachedUMAPVectors, setUseCachedUMAPVectors] =
@@ -75,8 +78,6 @@ export default function useTopicModelingActions(column: string) {
   const [shouldUsePreprocessedDocuments, setUsePreprocessedDocuments] =
     React.useState(true);
 
-  const status = usePeriodicTopicModelingStatusCheck(!!hasStarted);
-  const { checkAgain, isStillPolling } = status;
   const onStartTopicModeling = React.useCallback(async () => {
     try {
       const res = await startTopicModeling({
@@ -119,8 +120,11 @@ export default function useTopicModelingActions(column: string) {
     onStartTopicModeling,
     startTopicModelingButtonIsLoading:
       isStillPolling || isStartingTopicModeling,
+    shouldUseCachedDocumentVectors,
     setUseCachedDocumentVectors,
+    shouldUseCachedUMAPVectors,
     setUseCachedUMAPVectors,
+    shouldUsePreprocessedDocuments,
     setUsePreprocessedDocuments,
     ...status,
   };
