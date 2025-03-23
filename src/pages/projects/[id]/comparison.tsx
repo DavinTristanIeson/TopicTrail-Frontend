@@ -33,12 +33,16 @@ function ComparisonPageStateManager() {
       <div className="border border-solid border-gray-200 rounded-xl p-3">
         <NamedFiltersManager />
       </div>
-      <Divider className="my-5" />
-      <Group justify="end">
-        <OpenStatisticTestModalButton />
-        <AddTableVisualizationButton />
-      </Group>
-      <GridstackDashboard />
+      {filters.length > 0 && (
+        <>
+          <Divider className="my-5" />
+          <Group justify="end">
+            <OpenStatisticTestModalButton />
+            <AddTableVisualizationButton />
+          </Group>
+          <GridstackDashboard />
+        </>
+      )}
     </NamedFiltersContext.Provider>
   );
 }
