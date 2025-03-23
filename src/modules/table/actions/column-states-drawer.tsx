@@ -11,13 +11,16 @@ const TableColumnStatesSortableContext = dynamic(
   () => import('./sortable-column-states-context'),
   {
     ssr: false,
-    loading: ListSkeleton,
+    loading() {
+      return <ListSkeleton />;
+    },
   },
 );
 export interface TableColumnState {
   name: string;
   visible: boolean;
 }
+
 interface TableColumnStatesDrawerProps {
   columnStates: TableColumnState[] | null;
   setColumnStates: React.Dispatch<
@@ -25,19 +28,22 @@ interface TableColumnStatesDrawerProps {
   >;
   columns: SchemaColumnModel[];
 }
-const TableColumnStatesDrawer = React.forwardRef<
-  DisclosureTrigger | null,
-  TableColumnStatesDrawerProps
->(function TableColumnStatesDrawer(props, ref) {
-  const [opened, { close }] = useDisclosureTrigger(ref);
+
+interface TableColumnStatesDrawerStateManagerProps
+  extends TableColumnStatesDrawerProps {
+  onClose(): void;
+}
+
+function TableColumnStatesDrawerStateManager(
+  props: TableColumnStatesDrawerStateManagerProps,
+) {
   const {
     columnStates: appliedColumnStates,
     setColumnStates: setAppliedColumnStates,
     columns,
+    onClose,
   } = props;
-  const [columnStates, setColumnStates] = React.useState<TableColumnState[]>(
-    [],
-  );
+
   const defaultColumnStates = React.useMemo(() => {
     return columns.map<TableColumnState>((column) => {
       return {
@@ -46,30 +52,24 @@ const TableColumnStatesDrawer = React.forwardRef<
       };
     });
   }, [columns]);
-
-  React.useEffect(() => {
-    const combinedColumnStates = (appliedColumnStates ?? []).concat(
-      defaultColumnStates ?? [],
-    );
-    const uniqueColumnStates = uniqBy(combinedColumnStates, (x) => x.name);
-    const resolvedColumnStates = uniqueColumnStates.filter((column) => {
-      const isPartOfColumns = !!defaultColumnStates.find(
-        (col) => col.name === column.name,
+  const [columnStates, setColumnStates] = React.useState<TableColumnState[]>(
+    () => {
+      const combinedColumnStates = (appliedColumnStates ?? []).concat(
+        defaultColumnStates ?? [],
       );
-      return isPartOfColumns;
-    });
-    setColumnStates(resolvedColumnStates);
-  }, [columns, appliedColumnStates, opened, defaultColumnStates]);
+      const uniqueColumnStates = uniqBy(combinedColumnStates, (x) => x.name);
+      const resolvedColumnStates = uniqueColumnStates.filter((column) => {
+        const isPartOfColumns = !!defaultColumnStates.find(
+          (col) => col.name === column.name,
+        );
+        return isPartOfColumns;
+      });
+      return resolvedColumnStates;
+    },
+  );
 
   return (
-    <Drawer
-      title="Column States"
-      opened={opened}
-      onClose={close}
-      position="right"
-      closeOnClickOutside={false}
-      closeOnEscape={false}
-    >
+    <>
       <Drawer.Header>
         <Group className="py-3 w-full">
           <Button
@@ -77,7 +77,7 @@ const TableColumnStatesDrawer = React.forwardRef<
             leftSection={<Warning />}
             onClick={() => {
               setAppliedColumnStates(null);
-              close();
+              onClose();
             }}
           >
             Reset
@@ -87,7 +87,7 @@ const TableColumnStatesDrawer = React.forwardRef<
             leftSection={<X />}
             color="red"
             variant="outline"
-            onClick={close}
+            onClick={onClose}
           >
             Cancel
           </Button>
@@ -99,7 +99,7 @@ const TableColumnStatesDrawer = React.forwardRef<
               } else {
                 setAppliedColumnStates(columnStates);
               }
-              close();
+              onClose();
             }}
           >
             Apply
@@ -115,6 +115,28 @@ const TableColumnStatesDrawer = React.forwardRef<
         columnStates={columnStates}
         setColumnStates={setColumnStates}
       />
+    </>
+  );
+}
+
+const TableColumnStatesDrawer = React.forwardRef<
+  DisclosureTrigger | null,
+  TableColumnStatesDrawerProps
+>(function TableColumnStatesDrawer(props, ref) {
+  const [opened, { close }] = useDisclosureTrigger(ref);
+
+  return (
+    <Drawer
+      title="Column States"
+      opened={opened}
+      onClose={close}
+      position="right"
+      closeOnClickOutside={false}
+      closeOnEscape={false}
+    >
+      {opened && (
+        <TableColumnStatesDrawerStateManager {...props} onClose={close} />
+      )}
     </Drawer>
   );
 });

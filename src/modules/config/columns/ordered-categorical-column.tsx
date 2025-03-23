@@ -21,7 +21,9 @@ const ReorderCategoryOrderDndContext = dynamic(
   () => import('./sortable-category-context'),
   {
     ssr: false,
-    loading: ListSkeleton,
+    loading() {
+      return <ListSkeleton />;
+    },
   },
 );
 
@@ -29,18 +31,50 @@ interface ReorderCategoryOrderDrawerBodyProps {
   categories: string[];
   setCategories(categories: string[]): void;
 }
+
+interface ReorderCategoryOrderDrawerStateManagerProps
+  extends ReorderCategoryOrderDrawerBodyProps {
+  onClose(): void;
+}
+
+function ReorderCategoryOrderDrawerStateManager(
+  props: ReorderCategoryOrderDrawerStateManagerProps,
+) {
+  const {
+    categories: formCategories,
+    setCategories: setFormCategories,
+    onClose,
+  } = props;
+  const [localCategories, setLocalCategories] = React.useState(formCategories);
+  return (
+    <>
+      <Group justify="end" gap={8}>
+        <Button variant="outline" color="red" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="default"
+          onClick={() => {
+            setFormCategories(localCategories);
+            onClose();
+          }}
+        >
+          Save
+        </Button>
+      </Group>
+      <ReorderCategoryOrderDndContext
+        categories={localCategories}
+        setCategories={setLocalCategories}
+      />
+    </>
+  );
+}
+
 const ReorderCategoryOrderDrawer = React.forwardRef<
   DisclosureTrigger | null,
   ReorderCategoryOrderDrawerBodyProps
 >(function ReorderCategoryOrderDrawer(props, ref) {
   const [opened, { close }] = useDisclosureTrigger(ref);
-  const { categories: formCategories, setCategories: setFormCategories } =
-    props;
-  const [localCategories, setLocalCategories] = React.useState(formCategories);
-
-  React.useEffect(() => {
-    setLocalCategories(formCategories);
-  }, [formCategories]);
 
   return (
     <Drawer
@@ -52,24 +86,9 @@ const ReorderCategoryOrderDrawer = React.forwardRef<
       closeOnEscape={false}
       title="Reorder Categories"
     >
-      <Group justify="end" gap={8}>
-        <Button variant="outline" color="red" onClick={close}>
-          Cancel
-        </Button>
-        <Button
-          variant="default"
-          onClick={() => {
-            setFormCategories(localCategories);
-            close();
-          }}
-        >
-          Save
-        </Button>
-      </Group>
-      <ReorderCategoryOrderDndContext
-        categories={localCategories}
-        setCategories={setLocalCategories}
-      />
+      {opened && (
+        <ReorderCategoryOrderDrawerStateManager {...props} onClose={close} />
+      )}
     </Drawer>
   );
 });

@@ -1,10 +1,16 @@
 import { SimpleGrid, Skeleton } from '@mantine/core';
 
-export function ListSkeleton() {
+interface ListSkeletonProps {
+  count?: number;
+  height?: number;
+}
+
+export function ListSkeleton(props: ListSkeletonProps) {
+  const { count = 10, height = 60 } = props;
   return (
     <>
-      {Array.from({ length: 10 }, (_, i) => (
-        <Skeleton height={60} key={i} />
+      {Array.from({ length: count }, (_, i) => (
+        <Skeleton height={height} key={i} />
       ))}
     </>
   );

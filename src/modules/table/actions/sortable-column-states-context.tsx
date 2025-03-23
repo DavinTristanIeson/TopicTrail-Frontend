@@ -1,4 +1,5 @@
 import {
+  SortableGridStackDefaultOptions,
   useControlledGridstack,
   useSortableGridStack,
 } from '@/hooks/gridstack';
@@ -18,16 +19,9 @@ export default function TableColumnStatesSortableContext(
     props;
   const { id, grid, gridElements } = useControlledGridstack({
     gridItems: columnStates.map((column) => column.name),
-    options: {
-      column: 1,
-      margin: 4,
-      maxRow: columnStates.length,
-      cellHeight: 80,
-      disableResize: true,
-      removable: false,
-      alwaysShowResizeHandle: false,
-      float: true,
-    },
+    options: SortableGridStackDefaultOptions({
+      itemsCount: columnStates.length,
+    }),
   });
 
   const onSort = React.useCallback(

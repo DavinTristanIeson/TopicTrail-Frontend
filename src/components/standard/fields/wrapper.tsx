@@ -75,7 +75,8 @@ export function SwitchField(props: SwitchFieldProps) {
       return e.target.checked;
     },
   });
-  return <Switch {...mergedProps} />;
+  const { value, ...switchProps } = mergedProps;
+  return <Switch {...switchProps} checked={value} />;
 }
 
 export type TagsFieldProps = IRHFField<

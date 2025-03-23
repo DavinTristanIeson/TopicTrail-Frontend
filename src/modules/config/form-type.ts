@@ -44,7 +44,6 @@ export const ProjectConfigColumnFormSchema = Yup.object({
 
   datetime_format: yupNullableString.when('type', {
     is: SchemaColumnTypeEnum.Temporal,
-    then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   }),
   temporal_precision: yupNullableString.when('type', {

@@ -11,7 +11,7 @@ import { useDisclosure } from '@mantine/hooks';
 export default function TableFilterManagementModal(
   props: FilterManagementActionComponentProps,
 ) {
-  const [opened, { toggle }] = useDisclosure(true);
+  const [opened, { toggle }] = useDisclosure(false);
   return (
     <div className="pb-3">
       <Paper className="p-2">

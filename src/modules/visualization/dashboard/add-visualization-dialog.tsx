@@ -35,4 +35,20 @@ const AddTableVisualizationDialog = React.forwardRef<DisclosureTrigger, object>(
     );
   },
 );
-export default AddTableVisualizationDialog;
+
+export function AddTableVisualizationButton() {
+  const addTableDialogRemote = React.useRef<DisclosureTrigger | null>(null);
+  return (
+    <>
+      <AddTableVisualizationDialog ref={addTableDialogRemote} />
+      <Button
+        leftSection={<Plus />}
+        onClick={() => {
+          addTableDialogRemote.current?.open();
+        }}
+      >
+        Add Visualization
+      </Button>
+    </>
+  );
+}
