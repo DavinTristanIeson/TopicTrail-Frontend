@@ -1,6 +1,6 @@
 import { TextualSchemaColumnModel } from '@/api/project';
 import React, { useState } from 'react';
-import { Button, Stack, Text, Group, Badge, Card, ScrollArea, Checkbox, Tooltip } from '@mantine/core';
+import { Button, Stack, Text, Group, Badge, Card, ScrollArea, Checkbox, Tooltip, Collapse } from '@mantine/core';
 import { Play } from "@phosphor-icons/react";
 import useTopicModelingActions from './status-check';
 import { TaskStatusEnum } from '@/common/constants/enum';
@@ -16,14 +16,13 @@ export default function ProjectTopicsEmptyPage(
   const [useCachedDocVectors, setUseCachedDocVectors] = useState(true);
   const [useCachedUMAP, setUseCachedUMAP] = useState(true);
   const [useCachedPreprocessedDocs, setUseCachedPreprocessedDocs] = useState(true);
+  const [showExplanation, setShowExplanation] = useState(false);
 
   const { 
     onStartTopicModeling, 
     startTopicModelingButtonIsLoading, 
     progress
   } = useTopicModelingActions(column.name, useCachedDocVectors, useCachedUMAP, useCachedPreprocessedDocs);
-
-  
 
   const getStatusColor = (status: TaskStatusEnum) => {
     switch (status.toLowerCase()) {
@@ -49,39 +48,51 @@ export default function ProjectTopicsEmptyPage(
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      fractionalSecondDigits: 3,
       hour12: false
     });
   };
 
   return (
     <Stack>
-      {/* Header dengan Play Icon dan Teks sejajar */}
-      <Group align="center">
-        {/* Ikon Play dalam Lingkaran */}
-        <div
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: '50%',
-            backgroundColor: 'white',
-            border: '8px solid black',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <Play size={40} weight="fill" color="black" />
-        </div>
+      <Card withBorder shadow="lg" p="md" radius="md" style={{ backgroundColor: 'white', maxHeight: '90vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <Group align="center">
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              backgroundColor: 'white',
+              border: '8px solid black',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Play size={40} weight="fill" color="black" />
+          </div>
 
-        {/* Stack untuk judul & teks tetap sejajar */}
-        <div style={{ flex: 1, maxWidth: 600 }}>
-          <Text fw={700} size="xl">Discover Topics</Text>
-          <Text size="sm">
-            Our algorithm will scan all of the textual columns in your dataset to try and find common keywords from documents that discuss the same theme or concept.
-          </Text>
-        </div>
-      </Group>
+          <div style={{ flex: 1, maxWidth: 600 }}>
+            <Text fw={700} size="xl">Discover Topics</Text>
+            <Text size="sm">
+              Our algorithm will scan all of the textual columns in your dataset to try and find common keywords from documents that discuss the same theme or concept.
+            </Text>
+            <Button size="xs" variant="subtle" onClick={() => setShowExplanation(!showExplanation)} style={{ border: '2px solid #7a84b9' }}>
+              {showExplanation ? "Hide Explanation" : "More Explanation"}
+            </Button>
+          </div>
+        </Group>
+
+        <Collapse in={showExplanation} style={{ marginTop: '8px' }}>
+          <Card withBorder shadow="sm" p="md" radius="md" style={{backgroundColor: '#E6E6FA'}}>
+            <Text size="sm">
+              <strong>Topic Modeling</strong> is a technique used in natural language processing (NLP) to identify hidden patterns or topics in a collection of documents. It groups similar words and phrases that frequently appear together, helping to uncover underlying themes.
+            </Text>
+            <Text size="sm" mt="sm">
+              <strong>Algorithm Used</strong>: This application utilizes advanced topic modeling techniques such as BERTopic, which leverages BERT embeddings and clustering methods like HDBSCAN to discover meaningful topics in textual data.
+            </Text>
+          </Card>
+        </Collapse>
+      </Card>
 
       <Group align="flex-start">
         <Stack>
