@@ -6,7 +6,7 @@ import {
   TopicModelingResultContext,
   TopicModelingResultSelector,
 } from '@/modules/topics/components/context';
-import { Group, Paper, Stack, Text } from '@mantine/core';
+import { Group, Paper, Text } from '@mantine/core';
 import React from 'react';
 import ProjectTopicsEmptyPage from '@/modules/topics/empty';
 import ProjectTopicsPage from '@/modules/topics';

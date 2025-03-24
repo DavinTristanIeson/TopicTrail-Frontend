@@ -1,6 +1,6 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
-import { Divider, Group, Stack } from '@mantine/core';
+import { Divider, Stack } from '@mantine/core';
 import React from 'react';
 import RHFField from '@/components/standard/fields';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
@@ -78,20 +78,12 @@ export function ProjectConfigColumnFormItem(
   const parentName = `columns.${index}`;
   return (
     <Stack className="pt-5">
-      <Group align="start">
-        <ProjectColumnTypeSelectField
-          name={`${parentName}.type`}
-          type="select"
-          className="flex-1"
-          required
-        />
-        <RHFField
-          name={`${parentName}.alias`}
-          label="Alias"
-          type="text"
-          description="The alias of the column that will be displayed in tables/graphs. Leave it blank if you don't want any aliases."
-        />
-      </Group>
+      <ProjectColumnTypeSelectField
+        name={`${parentName}.type`}
+        type="select"
+        className="flex-1"
+        required
+      />
       <RHFField
         name={`${parentName}.description`}
         label="Description"

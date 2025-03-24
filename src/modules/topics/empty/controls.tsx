@@ -34,7 +34,7 @@ function TopicsIcon(props: TopicsIconProps) {
         height: 80,
         borderRadius: '50%',
         backgroundColor: 'white',
-        border: `0.3rem solid ${color}`,
+        border: `0.5rem solid ${color}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -197,14 +197,16 @@ export default function ProjectTopicsEmptyPageControls(
               Discover Topics
             </Text>
             <TopicModelingExplanation />
-            <Button
-              onClick={onStartTopicModeling}
-              loading={startTopicModelingButtonIsLoading}
-              leftSection={<Play />}
-              className="max-w-sm"
-            >
-              Start Topic Modeling
-            </Button>
+            <Group justify="end">
+              <Button
+                onClick={onStartTopicModeling}
+                loading={startTopicModelingButtonIsLoading}
+                leftSection={<Play />}
+                className="max-w-sm"
+              >
+                Start Topic Modeling
+              </Button>
+            </Group>
           </Stack>
           <Divider orientation="vertical" />
           <Stack>

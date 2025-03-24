@@ -54,7 +54,11 @@ export type PercentageFieldProps = IRHFField<
 
 export function PercentageField(props: PercentageFieldProps) {
   const { bounded, ...restProps } = props;
-  const { mergedProps } = useRHFMantineAdapter(restProps, {});
+  const { mergedProps } = useRHFMantineAdapter(restProps, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
   return (
     <PercentageInput
       {...mergedProps}

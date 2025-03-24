@@ -548,8 +548,6 @@ export interface components {
         "CategoricalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -567,8 +565,6 @@ export interface components {
         "CategoricalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -633,8 +629,6 @@ export interface components {
         "ContinuousSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -659,8 +653,6 @@ export interface components {
         "ContinuousSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -743,7 +735,7 @@ export interface components {
          * EffectSizeMethodEnum
          * @enum {string}
          */
-        EffectSizeMethodEnum: "auto" | "mean-difference" | "median-difference" | "cohen-d" | "rank-biserial-correlation" | "cramer-v";
+        EffectSizeMethodEnum: "mean-difference" | "median-difference" | "cohen-d" | "rank-biserial-correlation" | "cramer-v";
         /** EffectSizeResult */
         EffectSizeResult: {
             /** Type */
@@ -806,8 +798,6 @@ export interface components {
         "GeospatialSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -826,8 +816,6 @@ export interface components {
         "GeospatialSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -952,8 +940,6 @@ export interface components {
         "MultiCategoricalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -981,8 +967,6 @@ export interface components {
         "MultiCategoricalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1074,8 +1058,6 @@ export interface components {
         "OrderedCategoricalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1095,8 +1077,6 @@ export interface components {
         "OrderedCategoricalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1207,7 +1187,7 @@ export interface components {
          * StatisticTestMethodEnum
          * @enum {string}
          */
-        StatisticTestMethodEnum: "auto" | "t" | "mann-whitney-u" | "chi-squared";
+        StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
         /** TableColumnCountsResource */
         TableColumnCountsResource: {
             /** Column */
@@ -1362,8 +1342,6 @@ export interface components {
         "TemporalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1385,8 +1363,6 @@ export interface components {
         "TemporalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1449,8 +1425,6 @@ export interface components {
         "TextualSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1470,8 +1444,6 @@ export interface components {
         "TextualSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1567,8 +1539,6 @@ export interface components {
         "TopicSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1586,8 +1556,6 @@ export interface components {
         "TopicSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1609,8 +1577,6 @@ export interface components {
         "UniqueSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1628,8 +1594,6 @@ export interface components {
         "UniqueSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**

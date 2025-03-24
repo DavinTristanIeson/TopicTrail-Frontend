@@ -18,7 +18,6 @@ import {
 
 export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
-  alias: yupNullableString,
   description: yupNullableString,
   type: yupNullableString.oneOf(Object.values(SchemaColumnTypeEnum)),
   bin_count: yupNullableNumber.positive().when('type', {
@@ -173,7 +172,6 @@ export function DefaultProjectSchemaColumnValues(
   return {
     name,
     type,
-    alias: null,
     description: null,
     preprocessing:
       type === SchemaColumnTypeEnum.Textual
@@ -237,7 +235,6 @@ export function ProjectConfigDefaultValues(
           temporal_precision:
             'temporal_precision' in col ? col.temporal_precision : null,
           name: col.name,
-          alias: col.alias,
           description: col.description,
           is_json: 'is_json' in col ? col.is_json : null,
           preprocessing:
@@ -291,7 +288,6 @@ export function ProjectConfigFormType2Input(
     data_schema: {
       columns: values.columns.map((col) => {
         const basicColumn = {
-          alias: col.alias ?? null,
           name: col.name,
           description: col.description,
           internal: false,

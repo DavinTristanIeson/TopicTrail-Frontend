@@ -10,24 +10,23 @@ import { TaskStatusEnum } from '@/common/constants/enum';
 function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   const project = React.useContext(ProjectContext);
   const { column } = React.useContext(TopicModelingResultContext);
-  const { data, isLoading, isFetching, dataUpdatedAt, refetch, error } =
-    client.useQuery(
-      'get',
-      '/topics/{project_id}/status',
-      {
-        params: {
-          path: {
-            project_id: project.id,
-          },
-          query: {
-            column: column.name,
-          },
+  const { data, isRefetching, dataUpdatedAt, refetch, error } = client.useQuery(
+    'get',
+    '/topics/{project_id}/status',
+    {
+      params: {
+        path: {
+          project_id: project.id,
+        },
+        query: {
+          column: column.name,
         },
       },
-      {
-        enabled,
-      },
-    );
+    },
+    {
+      enabled,
+    },
+  );
 
   React.useEffect(() => {
     if (error) {
@@ -53,8 +52,7 @@ function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   });
   return {
     progress: data,
-    isFirstLoading: isLoading && isFetching,
-    isSubsequentLoading: isLoading && !isFetching,
+    isCheckingStatus: isRefetching,
     dataUpdatedAt: !data ? undefined : new Date(dataUpdatedAt),
     checkAgain: refetch,
     isStillPolling,
