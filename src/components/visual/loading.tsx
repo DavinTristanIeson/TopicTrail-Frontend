@@ -25,3 +25,13 @@ export function GridSkeleton() {
     </SimpleGrid>
   );
 }
+
+export function TableSkeleton() {
+  return (
+    <SimpleGrid className="w-full" cols={6}>
+      {Array.from({ length: 42 }, (_, i) => (
+        <Skeleton height={60} key={i} />
+      ))}
+    </SimpleGrid>
+  );
+}

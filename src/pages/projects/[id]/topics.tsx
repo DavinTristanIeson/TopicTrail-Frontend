@@ -3,21 +3,34 @@ import { ProjectColumnSelectInput } from '@/modules/project/select-column-input'
 import {
   AllTopicModelingResultContext,
   ProjectAllTopicsProvider,
-  TopicModelingResultContext,
-  TopicModelingResultSelector,
+  useTopicModelingResultOfColumn,
 } from '@/modules/topics/components/context';
 import { Group, Paper, Text } from '@mantine/core';
 import React from 'react';
 import ProjectTopicsEmptyPage from '@/modules/topics/empty';
-import ProjectTopicsPage from '@/modules/topics';
+import ProjectTopicResultsPage from '@/modules/topics/results';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
+import { SchemaColumnContext } from '@/modules/project/context';
 
-function ProjectTopicSwitcher() {
-  const { column, result } = React.useContext(TopicModelingResultContext);
-  if (!result) {
-    return <ProjectTopicsEmptyPage column={column} />;
+interface ProjectTopicSwitcherProps {
+  column: string;
+}
+
+function ProjectTopicSwitcher(props: ProjectTopicSwitcherProps) {
+  const { column } = props;
+  const topicModelingResult = useTopicModelingResultOfColumn(column);
+  if (!topicModelingResult) {
+    return null;
   }
-  return <ProjectTopicsPage column={column} result={result} />;
+  return (
+    <SchemaColumnContext.Provider value={topicModelingResult.column}>
+      {topicModelingResult.result ? (
+        <ProjectTopicResultsPage />
+      ) : (
+        <ProjectTopicsEmptyPage />
+      )}
+    </SchemaColumnContext.Provider>
+  );
 }
 
 function ProjectTopicColumnManager() {
@@ -61,11 +74,7 @@ function ProjectTopicColumnManager() {
       </Paper>
       <div className="pt-4 px-3">
         {columns.length === 0 && <NoTextualColumnWarning />}
-        {column && (
-          <TopicModelingResultSelector column={column}>
-            <ProjectTopicSwitcher />
-          </TopicModelingResultSelector>
-        )}
+        {column && <ProjectTopicSwitcher column={column} />}
       </div>
     </div>
   );

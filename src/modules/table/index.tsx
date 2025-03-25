@@ -1,5 +1,4 @@
 import {
-  PaginationMetaModel,
   TableFilterModel,
   TablePaginationApiResult,
   TableSortModel,
@@ -7,17 +6,7 @@ import {
 import { client } from '@/common/api/client';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import { ProjectContext } from '@/modules/project/context';
-import {
-  Text,
-  Alert,
-  Group,
-  Indicator,
-  Pagination,
-  Stack,
-  Select,
-  Button,
-  Loader,
-} from '@mantine/core';
+import { Alert, Group, Indicator, Stack, Button } from '@mantine/core';
 import { Eye, Funnel, Warning } from '@phosphor-icons/react';
 import React from 'react';
 import TableFilterDrawer from '@/modules/filter/drawer';
@@ -27,6 +16,8 @@ import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import TableColumnStatesDrawer, {
   TableColumnState,
 } from './actions/column-states-drawer';
+import { TableSkeleton } from '@/components/visual/loading';
+import TablePagination from '@/components/widgets/pagination';
 
 interface TablePreprocessorProps {
   columnStates: TableColumnState[] | null;
@@ -83,42 +74,6 @@ function TablePreprocessor(props: TablePreprocessorProps) {
       />
       {Bottom}
     </Stack>
-  );
-}
-
-interface TablePaginatorProps {
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  limit: number;
-  setLimit: React.Dispatch<React.SetStateAction<number>>;
-  meta: PaginationMetaModel;
-}
-
-function TablePaginator(props: TablePaginatorProps) {
-  const { meta, page, limit, setPage, setLimit } = props;
-
-  return (
-    <Group justify="space-between" align="end">
-      <Text c="gray">{`Showing ${meta.total <= 0 ? 0 : page * limit + 1} - ${Math.min(meta.total, (page + 1) * limit)} out of ${meta.total} rows`}</Text>
-      <Pagination
-        total={meta.pages}
-        value={page + 1}
-        onChange={(page) => setPage(page - 1)}
-        hideWithOnePage
-      />
-      <Group>
-        <Text c="gray" size="sm">
-          Rows per page
-        </Text>
-        <Select
-          value={limit.toString()}
-          onChange={(value) => setLimit(value == null ? 25 : parseInt(value))}
-          allowDeselect={false}
-          data={[15, 25, 50, 100].map(String)}
-          maw={80}
-        />
-      </Group>
-    </Group>
   );
 }
 
@@ -191,11 +146,7 @@ export default function TableQueryComponent() {
       </Group>
       <UseQueryWrapperComponent
         query={query}
-        loadingComponent={
-          <div className="min-h-3xl flex items-center justify-center">
-            <Loader type="dots" size={48} />
-          </div>
-        }
+        loadingComponent={<TableSkeleton />}
       >
         {(data) => (
           <TablePreprocessor
@@ -204,7 +155,7 @@ export default function TableQueryComponent() {
             setSort={setSort}
             sort={sort}
             Bottom={
-              <TablePaginator
+              <TablePagination
                 setLimit={setLimit}
                 setPage={setPage}
                 limit={limit}

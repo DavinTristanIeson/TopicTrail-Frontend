@@ -17,26 +17,6 @@ export function useTopicModelingResultOfColumn(
   );
 }
 
-interface TopicModelingResultSelectorProps {
-  column: string;
-  children?: React.ReactNode;
-}
-
-export const TopicModelingResultContext =
-  React.createContext<ColumnTopicModelingResultModel>(undefined as any);
-
-export function TopicModelingResultSelector(
-  props: TopicModelingResultSelectorProps,
-) {
-  const { column, children } = props;
-  const topicModelingResult = useTopicModelingResultOfColumn(column);
-  return (
-    <TopicModelingResultContext.Provider value={topicModelingResult!}>
-      {children}
-    </TopicModelingResultContext.Provider>
-  );
-}
-
 export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
   const { children } = props;
   const project = React.useContext(ProjectContext);

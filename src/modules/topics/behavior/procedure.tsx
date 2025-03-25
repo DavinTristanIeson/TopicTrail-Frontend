@@ -1,7 +1,6 @@
 import { client } from '@/common/api/client';
-import { ProjectContext } from '@/modules/project/context';
+import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
 import React from 'react';
-import { TopicModelingResultContext } from '../components/context';
 import { usePolling } from '@/hooks/polling';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
@@ -9,7 +8,7 @@ import { TaskStatusEnum } from '@/common/constants/enum';
 
 function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   const project = React.useContext(ProjectContext);
-  const { column } = React.useContext(TopicModelingResultContext);
+  const column = React.useContext(SchemaColumnContext);
   const { data, isRefetching, dataUpdatedAt, refetch, error } = client.useQuery(
     'get',
     '/topics/{project_id}/status',
@@ -59,15 +58,13 @@ function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   };
 }
 
-export default function useTopicModelingActions(column: string) {
+export function useStartTopicModeling(column: string) {
   const project = React.useContext(ProjectContext);
   const {
     mutateAsync: startTopicModeling,
     isPending: isStartingTopicModeling,
     data: hasStarted,
   } = client.useMutation('post', '/topics/{project_id}/start');
-  const status = usePeriodicTopicModelingStatusCheck(!!hasStarted);
-  const { checkAgain, isStillPolling } = status;
 
   const [shouldUseCachedDocumentVectors, setUseCachedDocumentVectors] =
     React.useState(true);
@@ -99,14 +96,10 @@ export default function useTopicModelingActions(column: string) {
           color: 'green',
         });
       }
-      // Manual refetch after isStillPolling has stopped will force the query to run again
-      // Which means that status from BE is reset to Pending, and polling resumes.
-      checkAgain();
     } catch (e) {
       handleError(e);
     }
   }, [
-    checkAgain,
     column,
     project.id,
     shouldUseCachedDocumentVectors,
@@ -116,14 +109,36 @@ export default function useTopicModelingActions(column: string) {
   ]);
   return {
     onStartTopicModeling,
-    startTopicModelingButtonIsLoading:
-      isStillPolling || isStartingTopicModeling,
     shouldUseCachedDocumentVectors,
     setUseCachedDocumentVectors,
     shouldUseCachedUMAPVectors,
     setUseCachedUMAPVectors,
     shouldUsePreprocessedDocuments,
     setUsePreprocessedDocuments,
+    isStartingTopicModeling,
+    hasStarted: !!hasStarted,
+  };
+}
+
+export default function useTopicModelingActions(column: string) {
+  const startActions = useStartTopicModeling(column);
+  const {
+    isStartingTopicModeling,
+    hasStarted,
+    onStartTopicModeling: startTopicModeling,
+  } = startActions;
+
+  const status = usePeriodicTopicModelingStatusCheck(!!hasStarted);
+  const { checkAgain, isStillPolling } = status;
+  const onStartTopicModeling = React.useCallback(async () => {
+    await startTopicModeling();
+    checkAgain();
+  }, [checkAgain, startTopicModeling]);
+  return {
     ...status,
+    ...startActions,
+    onStartTopicModeling,
+    startTopicModelingButtonIsLoading:
+      isStillPolling || isStartingTopicModeling,
   };
 }
