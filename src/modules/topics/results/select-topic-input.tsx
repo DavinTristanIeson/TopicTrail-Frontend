@@ -1,48 +1,14 @@
 import { TopicModel } from '@/api/topic';
-import Colors from '@/common/constants/colors';
 import {
   type ComboboxItem,
   type ComboboxLikeRenderOptionInput,
   type SelectProps,
-  Badge,
-  Group,
   Select,
-  Stack,
-  Text,
 } from '@mantine/core';
+import { TopicInfo, TopicWordsRenderer } from '../components/info';
 
 export interface TopicComboboxItem extends ComboboxItem {
   data: TopicModel;
-}
-
-function TopicWordsRenderer(props: TopicModel) {
-  const maxWordValue = props.words.reduce(
-    (acc, cur) => Math.max(acc, cur[1]),
-    0,
-  );
-  const normalizedWordValues = props.words.map(
-    ([, value]) => value / maxWordValue,
-  );
-  const hexValueBase = normalizedWordValues.map((value) =>
-    Math.min(255, value * 127 + 128),
-  );
-  return (
-    <Group>
-      {props.words.slice(0, 5).map(([word], index) => {
-        const hexValue = hexValueBase[index]!.toString(16);
-        return (
-          <Badge
-            key={word}
-            color={`${Colors.brand}${hexValue}`}
-            variant="light"
-            radius="sm"
-          >
-            {word}
-          </Badge>
-        );
-      })}
-    </Group>
-  );
 }
 
 function TopicComboboxItemRenderer(
@@ -50,42 +16,7 @@ function TopicComboboxItemRenderer(
 ) {
   const { option } = combobox;
 
-  return (
-    <Stack>
-      <Group gap={6}>
-        <Text size="sm" c="brand" fw={500}>
-          {option.data.id + 1}.
-        </Text>
-        <Text size="sm" fw={500} c="brand">
-          {option.label}
-        </Text>
-        <Text size="xs" c="gray">{`(${option.data.frequency} rows)`}</Text>
-      </Group>
-      <div>
-        <Text size="xs" c="gray">
-          Topic Words
-        </Text>
-        <TopicWordsRenderer {...option.data} />
-      </div>
-      <div>
-        {option.data.tags && (
-          <>
-            <Text size="xs">Tags</Text>
-            <Group>
-              {option.data.tags.map((tag) => (
-                <Badge key={tag} variant="light" radius="sm">
-                  {tag}
-                </Badge>
-              ))}
-            </Group>
-          </>
-        )}
-      </div>
-      {option.data.description && (
-        <Text size="xs">{option.data.description}</Text>
-      )}
-    </Stack>
-  );
+  return <TopicInfo {...option.data} />;
 }
 
 interface TopicSelectInputProps

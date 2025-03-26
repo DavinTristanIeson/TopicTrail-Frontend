@@ -28,9 +28,9 @@ export function GridSkeleton() {
 
 export function TableSkeleton() {
   return (
-    <SimpleGrid className="w-full" cols={6}>
+    <SimpleGrid className="w-full" cols={6} spacing="xs">
       {Array.from({ length: 42 }, (_, i) => (
-        <Skeleton height={60} key={i} />
+        <Skeleton height={40} key={i} radius={0} />
       ))}
     </SimpleGrid>
   );
