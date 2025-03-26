@@ -37,9 +37,9 @@ function TableFilterButton() {
 }
 
 interface TableRendererComponentProps {
-  columns: SchemaColumnModel[] | undefined;
-  data: Record<string, any>[] | undefined;
-  meta: PaginationMetaModel | undefined;
+  columns: SchemaColumnModel[];
+  data: Record<string, any>[];
+  meta: PaginationMetaModel;
   isFetching: boolean;
 }
 
@@ -47,9 +47,7 @@ export default function TableRendererComponent(
   props: TableRendererComponentProps,
 ) {
   const { data, columns, meta, isFetching } = props;
-  const dataTableColumns = useSchemaColumnToMantineDataGridAdapter(
-    columns ?? [],
-  );
+  const dataTableColumns = useSchemaColumnToMantineDataGridAdapter(columns);
   const tableStateProps = useTableStateToMantineDataGridAdapter({ meta });
   const {
     effectiveColumns,

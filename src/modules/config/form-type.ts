@@ -98,10 +98,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   }),
   topic_modeling: Yup.object({
     min_topic_size: Yup.number().positive().required(),
-    max_topic_size: yupNullableNumber.when({
-      is: null,
-      otherwise: (schema) => schema.moreThan(Yup.ref('min_topic_size')),
-    }),
+    max_topic_size: yupNullableNumber,
     max_topics: yupNullableNumber.positive(),
     n_gram_range: Yup.array(Yup.number().positive().required())
       .required()
@@ -184,7 +181,7 @@ export function DefaultProjectSchemaColumnValues(
             max_unique_words: 1_000_000,
             max_df: 1 / 2,
             min_df: 5,
-            min_document_length: 5,
+            min_document_length: 3,
             min_word_length: 3,
             pipeline_type: DocumentPreprocessingMethodEnum.English,
           }

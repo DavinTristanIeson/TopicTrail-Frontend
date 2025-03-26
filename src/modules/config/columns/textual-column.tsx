@@ -212,7 +212,7 @@ function TopicModelingConfigurationFormBody(
         <RHFField
           type="number"
           name={`${TOPIC_MODELING_NAME}.reference_document_count`}
-          label="Globality Consideration"
+          label="Reference Document Count"
           className="flex-1"
           classNames={{
             description: 'whitespace-pre-line',

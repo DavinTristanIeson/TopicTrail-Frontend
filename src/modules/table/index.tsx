@@ -34,25 +34,31 @@ export default function TableQueryComponent() {
     },
   );
 
-  if (!data && isFetching) {
+  const errorComponent = error && (
+    <Alert
+      variant="red"
+      icon={<Warning size={20} />}
+      title="An error has occurred while loading the dataset"
+    >
+      {error.message}
+    </Alert>
+  );
+
+  if (error && !data) {
+    return errorComponent;
+  }
+
+  if (!data) {
     return <TableSkeleton />;
   }
 
   return (
     <TableStateContext.Provider value={tableState}>
-      {error && (
-        <Alert
-          variant="red"
-          icon={<Warning size={20} />}
-          title="An error has occurred while loading the dataset"
-        >
-          {error.message}
-        </Alert>
-      )}
+      {errorComponent}
       <TableRendererComponent
-        columns={data?.columns}
-        data={data?.data}
-        meta={data?.meta}
+        columns={data.columns}
+        data={data.data}
+        meta={data.meta}
         isFetching={isFetching}
       />
     </TableStateContext.Provider>
