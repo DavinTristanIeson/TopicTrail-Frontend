@@ -9,15 +9,7 @@ import {
 } from '@/common/constants/enum';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { TopicInfo } from '@/modules/topics/components/info';
-import {
-  Spoiler,
-  Tooltip,
-  Text,
-  HoverCard,
-  Group,
-  Badge,
-  useMantineTheme,
-} from '@mantine/core';
+import { Spoiler, Tooltip, Text, HoverCard, Group, Badge } from '@mantine/core';
 import dayjs from 'dayjs';
 import React from 'react';
 
@@ -59,8 +51,10 @@ function TopicColumnCell(props: TopicColumnCellProps) {
       <Tooltip
         color="red"
         label="We weren't able to load the topic modeling result of this column. This may be a developer mistake. Please restart the application to try and fix this. If the problem persists, try running the topic modeling algorithm again."
+        className="max-w-sm"
+        multiline
       >
-        <Text c="gray">{`Topic ${props.topic + 1}`}</Text>
+        <Text c="gray" size="sm">{`Topic ${props.topic + 1}`}</Text>
       </Tooltip>
     );
   }
@@ -75,8 +69,10 @@ function TopicColumnCell(props: TopicColumnCellProps) {
       <Tooltip
         color="red"
         label="We weren't able to find any topic with this ID. This may be a developer mistake. Please restart the application to try and fix this. If the problem persists, try running the topic modeling algorithm again."
+        className="max-w-sm"
+        multiline
       >
-        <Text c="gray">{`Topic ${props.topic + 1}`}</Text>
+        <Text c="gray" size="sm">{`Topic ${props.topic + 1}`}</Text>
       </Tooltip>
     );
   }
@@ -84,7 +80,9 @@ function TopicColumnCell(props: TopicColumnCellProps) {
   return (
     <HoverCard>
       <HoverCard.Target>
-        <Text c="brand">{topic.label}</Text>
+        <Text c="brand" size="sm">
+          {topic.label}
+        </Text>
       </HoverCard.Target>
       <HoverCard.Dropdown>
         <TopicInfo {...topic} />
@@ -123,21 +121,13 @@ interface CategoricalColumnCellProps {
 }
 
 function CategoricalColumnCell(props: CategoricalColumnCellProps) {
-  const { colors } = useMantineTheme();
   const order = props.categoryOrder
     ? props.categoryOrder.findIndex((category) => category === props.category)
     : -1;
   return (
     <Badge
       leftSection={
-        order === -1 ? undefined : (
-          <Text
-            className="rounded p-2"
-            style={{ backgroundColor: colors.brand[6] }}
-          >
-            {order}
-          </Text>
-        )
+        order === -1 ? undefined : <Badge color="brand.4">{order + 1}</Badge>
       }
     >
       {props.category}

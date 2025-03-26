@@ -96,7 +96,7 @@ const mantineTheme = createTheme({
     Badge: Badge.extend({
       defaultProps: {
         radius: 'sm',
-        variant: 'subtle',
+        variant: 'filled',
       },
     }),
   },
