@@ -18,7 +18,6 @@ import {
 
 export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
-  alias: yupNullableString,
   description: yupNullableString,
   type: yupNullableString.oneOf(Object.values(SchemaColumnTypeEnum)),
   bin_count: yupNullableNumber.positive().when('type', {
@@ -99,10 +98,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   }),
   topic_modeling: Yup.object({
     min_topic_size: Yup.number().positive().required(),
-    max_topic_size: yupNullableNumber.when({
-      is: null,
-      otherwise: (schema) => schema.moreThan(Yup.ref('min_topic_size')),
-    }),
+    max_topic_size: yupNullableNumber,
     max_topics: yupNullableNumber.positive(),
     n_gram_range: Yup.array(Yup.number().positive().required())
       .required()
@@ -173,7 +169,6 @@ export function DefaultProjectSchemaColumnValues(
   return {
     name,
     type,
-    alias: null,
     description: null,
     preprocessing:
       type === SchemaColumnTypeEnum.Textual
@@ -186,7 +181,7 @@ export function DefaultProjectSchemaColumnValues(
             max_unique_words: 1_000_000,
             max_df: 1 / 2,
             min_df: 5,
-            min_document_length: 5,
+            min_document_length: 3,
             min_word_length: 3,
             pipeline_type: DocumentPreprocessingMethodEnum.English,
           }
@@ -237,7 +232,6 @@ export function ProjectConfigDefaultValues(
           temporal_precision:
             'temporal_precision' in col ? col.temporal_precision : null,
           name: col.name,
-          alias: col.alias,
           description: col.description,
           is_json: 'is_json' in col ? col.is_json : null,
           preprocessing:
@@ -291,7 +285,6 @@ export function ProjectConfigFormType2Input(
     data_schema: {
       columns: values.columns.map((col) => {
         const basicColumn = {
-          alias: col.alias ?? null,
           name: col.name,
           description: col.description,
           internal: false,

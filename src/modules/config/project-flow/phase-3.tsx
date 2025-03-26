@@ -4,11 +4,6 @@ import {
   Title,
   Flex,
   Button,
-  Table,
-  Skeleton,
-  Alert,
-  TableScrollContainer,
-  Spoiler,
   Tabs,
   Group,
   Tooltip,
@@ -19,10 +14,9 @@ import { useFormContext, useFieldArray, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
 import { ProjectConfigColumnFormItem } from '../columns/form-body';
 import React from 'react';
-import { client } from '@/common/api/client';
-import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
 import { useWatchFieldError } from '@/components/standard/fields/watcher';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
+import { ProjectConfigPreviewTableQuery } from './preview-table';
 
 interface ProjectConfigColumnTitleProps {
   index: number;
@@ -87,79 +81,10 @@ function ProjectConfigColumnsFieldArray() {
   );
 }
 
-function ProjectConfigPreviewTable() {
-  const { control } = useFormContext<ProjectConfigFormType>();
-  const source = useWatch({
-    name: 'source',
-    control,
-  });
-  const {
-    data: preview,
-    isFetching,
-    error,
-  } = client.useQuery('post', '/projects/dataset_preview', {
-    body: transformDataSourceFormType2DataSourceInput(source),
-  });
-  if (isFetching) {
-    return (
-      <div className="grid grid-cols-5 gap-1">
-        {Array.from({ length: 15 }, (_, i) => (
-          <Skeleton height={32} key={i} />
-        ))}
-      </div>
-    );
-  }
-  const data = preview?.data;
-  if (error) {
-    return (
-      <Alert icon={<Warning size={20} />} color="red" title="No Preview">
-        We cannot provide a preview of the dataset right now due to the
-        following error. {error?.message}
-      </Alert>
-    );
-  }
-  if (!data) {
-    return null;
-  }
-  return (
-    <Spoiler
-      hideLabel={'Hide Dataset Preview'}
-      showLabel="Show Dataset Preview"
-    >
-      <TableScrollContainer minWidth={500}>
-        <Table>
-          <Table.Tr>
-            {data.dataset_columns.map((col) => (
-              <Table.Th key={col}>{col}</Table.Th>
-            ))}
-          </Table.Tr>
-          {data.preview_rows.map((row, idx) => (
-            <Table.Tr key={idx}>
-              {data.dataset_columns.map((col) => (
-                <Table.Td key={col}>{row[col]}</Table.Td>
-              ))}
-            </Table.Tr>
-          ))}
-        </Table>
-      </TableScrollContainer>
-      {data.total_rows > 15 && (
-        <Text ta="center" className="w-full" color="gray">
-          And {data.total_rows - 15} more rows...
-        </Text>
-      )}
-    </Spoiler>
-  );
-}
-
 export function ConfigureColumnsForm() {
   return (
     <>
-      <Stack className="pt-5">
-        <Title order={4} ta="center">
-          Dataset Preview
-        </Title>
-        <ProjectConfigPreviewTable />
-      </Stack>
+      <ProjectConfigPreviewTableQuery />
       <Stack>
         <Title order={4} ta="center">
           Column Configuration

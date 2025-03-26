@@ -50,3 +50,5 @@ export type TablePaginationApiResult =
 
 export type DescriptiveStatisticsModel =
   components['schemas']['DescriptiveStatisticsResource'];
+export type DatasetPreviewModel =
+  components['schemas']['DatasetPreviewResource'];

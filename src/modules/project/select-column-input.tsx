@@ -53,7 +53,7 @@ export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
       }
       data={data.map((item) => {
         return {
-          label: item.alias ?? item.name,
+          label: item.name,
           value: item.name,
           data: item,
         } as ProjectColumnComboboxItem;

@@ -1,6 +1,6 @@
 import { DocumentEmbeddingMethodEnum } from '@/common/constants/enum';
 import { Text, Select, Stack, Divider, Group, Spoiler } from '@mantine/core';
-import { useController, useFormContext } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 import RHFField from '@/components/standard/fields';
 import {
   ProjectConfigColumnFormProps,
@@ -8,7 +8,6 @@ import {
 } from './utils';
 import { DescriptiveStatisticsTable } from '@/modules/visualization/continuous/descriptive-statistics';
 import React from 'react';
-import { ProjectConfigFormType } from '../form-type';
 
 function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
   const { field } = useController({
@@ -112,6 +111,7 @@ function PreprocessingConfigurationFormBody(
           name={`${PREPROCESSING_NAME}.min_df`}
           label="Min. Word Frequency"
           type="number"
+          min={1}
           description="Words with frequencies below this threshold will be removed from the documents. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
         />
         <RHFField
@@ -212,7 +212,7 @@ function TopicModelingConfigurationFormBody(
         <RHFField
           type="number"
           name={`${TOPIC_MODELING_NAME}.reference_document_count`}
-          label="Globality Consideration"
+          label="Reference Document Count"
           className="flex-1"
           classNames={{
             description: 'whitespace-pre-line',
@@ -226,6 +226,7 @@ function TopicModelingConfigurationFormBody(
           name={`${TOPIC_MODELING_NAME}.top_n_words`}
           label="Number of Topic Words"
           className="flex-1"
+          min={3}
           description="The number of words that will be used to describe a topic. A higher number provides more context about the topic, but since some words might not be related to the topic, a high number of topic words may cause confusion rather than clarity."
         />
         <Group justify="space-between" wrap="wrap">
@@ -253,38 +254,6 @@ export function ProjectConfigColumnTextualForm(
   const { index } = props;
 
   const { data: column, loading } = useInferProjectDatasetColumn(index);
-  const parentName = `columns.${index}` as const;
-  const { setValue, getValues, getFieldState } =
-    useFormContext<ProjectConfigFormType>();
-
-  React.useEffect(() => {
-    if (!column || !column.descriptive_statistics) return;
-    if (getFieldState(parentName).isTouched) {
-      return;
-    }
-    const currentValues = { ...getValues(parentName) };
-    currentValues.topic_modeling.min_topic_size = Math.max(
-      Math.ceil(5 + column.descriptive_statistics.count / 500),
-      30,
-    );
-    currentValues.preprocessing.min_df = Math.min(
-      2,
-      Math.max(10, column.descriptive_statistics.count / 1000),
-    );
-    if (column.descriptive_statistics.count >= 10000) {
-      currentValues.topic_modeling.embedding_method =
-        DocumentEmbeddingMethodEnum.Doc2Vec;
-    } else {
-      currentValues.topic_modeling.embedding_method =
-        DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2;
-    }
-    if (column.descriptive_statistics.median >= 5000) {
-      currentValues.topic_modeling.embedding_method =
-        DocumentEmbeddingMethodEnum.LSA;
-    }
-    setValue(parentName, currentValues);
-  }, [column, getFieldState, getValues, parentName, setValue]);
-
   return (
     <Stack>
       <Spoiler

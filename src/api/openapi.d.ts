@@ -354,10 +354,27 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get  All Topics */
-        get: operations["get__all_topics_topics__project_id___get"];
+        /** Get  All Topic Modeling Results */
+        get: operations["get__all_topic_modeling_results_topics__project_id___get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topics/{project_id}/topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get  All Topics */
+        post: operations["get__all_topics_topics__project_id__topics_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -372,8 +389,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Refine  Topics */
-        put: operations["refine__topics_topics__project_id__refine_put"];
+        /** Put  Refine Topics */
+        put: operations["put__refine_topics_topics__project_id__refine_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -388,10 +405,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get  Documents Per Topic */
-        get: operations["get__documents_per_topic_topics__project_id__documents_get"];
+        get?: never;
         put?: never;
-        post?: never;
+        /** Post  Documents Per Topic */
+        post: operations["post__documents_per_topic_topics__project_id__documents_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -515,6 +532,12 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[TopicModelingResult] */
+        ApiResult_TopicModelingResult_: {
+            data: components["schemas"]["TopicModelingResult"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[list[ColumnTopicModelingResultResource]] */
         ApiResult_list_ColumnTopicModelingResultResource__: {
             /** Data */
@@ -548,8 +571,6 @@ export interface components {
         "CategoricalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -567,8 +588,6 @@ export interface components {
         "CategoricalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -633,8 +652,6 @@ export interface components {
         "ContinuousSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -659,8 +676,6 @@ export interface components {
         "ContinuousSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -743,7 +758,7 @@ export interface components {
          * EffectSizeMethodEnum
          * @enum {string}
          */
-        EffectSizeMethodEnum: "auto" | "mean-difference" | "median-difference" | "cohen-d" | "rank-biserial-correlation" | "cramer-v";
+        EffectSizeMethodEnum: "mean-difference" | "median-difference" | "cohen-d" | "rank-biserial-correlation" | "cramer-v";
         /** EffectSizeResult */
         EffectSizeResult: {
             /** Type */
@@ -806,8 +821,6 @@ export interface components {
         "GeospatialSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -826,8 +839,6 @@ export interface components {
         "GeospatialSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -952,8 +963,6 @@ export interface components {
         "MultiCategoricalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -981,8 +990,6 @@ export interface components {
         "MultiCategoricalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1074,8 +1081,6 @@ export interface components {
         "OrderedCategoricalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1095,8 +1100,6 @@ export interface components {
         "OrderedCategoricalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1207,7 +1210,7 @@ export interface components {
          * StatisticTestMethodEnum
          * @enum {string}
          */
-        StatisticTestMethodEnum: "auto" | "t" | "mann-whitney-u" | "chi-squared";
+        StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
         /** TableColumnCountsResource */
         TableColumnCountsResource: {
             /** Column */
@@ -1362,8 +1365,6 @@ export interface components {
         "TemporalSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1385,8 +1386,6 @@ export interface components {
         "TemporalSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1449,8 +1448,6 @@ export interface components {
         "TextualSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1470,8 +1467,6 @@ export interface components {
         "TextualSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1495,6 +1490,10 @@ export interface components {
             label: string | null;
             /** Frequency */
             frequency: number;
+            /** Description */
+            description?: string | null;
+            /** Tags */
+            tags?: string[] | null;
         };
         /** TopicModelingConfig */
         TopicModelingConfig: {
@@ -1567,8 +1566,6 @@ export interface components {
         "TopicSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1586,8 +1583,6 @@ export interface components {
         "TopicSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1605,12 +1600,15 @@ export interface components {
             /** Children */
             children: components["schemas"]["TopicUpdateSchema"][] | null;
         };
+        /** TopicsOfColumnSchema */
+        TopicsOfColumnSchema: {
+            /** Filter */
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+        };
         /** UniqueSchemaColumn */
         "UniqueSchemaColumn-Input": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -1628,8 +1626,6 @@ export interface components {
         "UniqueSchemaColumn-Output": {
             /** Name */
             name: string;
-            /** Alias */
-            alias?: string | null;
             /** Description */
             description?: string | null;
             /**
@@ -3252,7 +3248,7 @@ export interface operations {
             };
         };
     };
-    get__all_topics_topics__project_id___get: {
+    get__all_topic_modeling_results_topics__project_id___get: {
         parameters: {
             query?: never;
             header?: never;
@@ -3319,7 +3315,80 @@ export interface operations {
             };
         };
     };
-    refine__topics_topics__project_id__refine_put: {
+    get__all_topics_topics__project_id__topics_post: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TopicsOfColumnSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TopicModelingResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    put__refine_topics_topics__project_id__refine_put: {
         parameters: {
             query: {
                 column: string;
@@ -3392,7 +3461,7 @@ export interface operations {
             };
         };
     };
-    get__documents_per_topic_topics__project_id__documents_get: {
+    post__documents_per_topic_topics__project_id__documents_post: {
         parameters: {
             query: {
                 column: string;

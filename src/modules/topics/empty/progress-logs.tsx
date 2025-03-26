@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { QuestionMark } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
-import useTopicModelingActions from './status-check';
+import useTopicModelingActions from '../behavior/procedure';
 import PromiseButton from '@/components/standard/button/promise';
 import { usePolling } from '@/hooks/polling';
 import React from 'react';

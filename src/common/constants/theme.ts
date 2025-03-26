@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Badge,
   Checkbox,
   createTheme,
   Drawer,
@@ -90,6 +91,12 @@ const mantineTheme = createTheme({
     Checkbox: Checkbox.extend({
       defaultProps: {
         radius: 'sm',
+      },
+    }),
+    Badge: Badge.extend({
+      defaultProps: {
+        radius: 'sm',
+        variant: 'filled',
       },
     }),
   },
