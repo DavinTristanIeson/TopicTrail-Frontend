@@ -20,6 +20,49 @@ const SORTABLE_COLUMNS = [
 ];
 
 type SchemaColumnDataTableColumnType = MRT_ColumnDef<Record<string, any>>;
+
+type MantineReactTableProps = Partial<MRT_TableOptions<Record<string, any>>>;
+
+export const MantineReactTableStylingProps = {};
+
+export const MantineReactTableBehaviors = {
+  Default: {
+    mantineTableProps: {
+      stickyHeader: true,
+      withTableBorder: true,
+      withColumnBorders: true,
+    },
+    enableStickyHeader: true,
+    enableGlobalFilter: false,
+  } as MantineReactTableProps,
+  Resizable: {
+    enableColumnResizing: true,
+    layoutMode: 'grid',
+    columnResizeMode: 'onEnd',
+  } as MantineReactTableProps,
+  Sortable: {
+    enableSorting: false,
+    enableMultiSort: false,
+    manualSorting: true,
+    enableSortingRemoval: true,
+    sortDescFirst: false,
+  } as MantineReactTableProps,
+  WithPagination: {
+    mantinePaginationProps: {
+      rowsPerPageOptions: [10, 25, 50, 100].map(String),
+    },
+    enablePagination: true,
+    manualPagination: true,
+  } as MantineReactTableProps,
+  ColumnActions: {
+    enableColumnDragging: true,
+    enableColumnOrdering: true,
+    enableColumnFilters: false,
+    enableColumnPinning: true,
+    enableColumnResizing: true,
+  } as MantineReactTableProps,
+};
+
 export function useSchemaColumnToMantineReactTableAdapter(
   columns: SchemaColumnModel[],
 ): SchemaColumnDataTableColumnType[] {
@@ -29,7 +72,7 @@ export function useSchemaColumnToMantineReactTableAdapter(
         return {
           accessorKey: column.name,
           header: column.name,
-          minWidth: 150,
+          size: 150,
           enableSorting: SORTABLE_COLUMNS.includes(
             column.type as SchemaColumnTypeEnum,
           ),
@@ -74,19 +117,14 @@ export function useTableStateToMantineReactTableAdapter(
   }, [limit, page]);
 
   return {
-    enableSorting: false,
-    enableMultiSort: false,
-    manualSorting: true,
-    enableSortingRemoval: true,
-    sortDescFirst: false,
+    ...MantineReactTableBehaviors.Sortable,
+    ...MantineReactTableBehaviors.WithPagination,
     state: {
       sorting: tableSortStateArray,
       pagination: tablePaginationState,
       isLoading: isFetching,
     },
-    mantinePaginationProps: {
-      rowsPerPageOptions: [10, 25, 50, 100].map(String),
-    },
+
     onSortingChange: React.useCallback(
       (state: MRT_Updater<MRT_SortingState>) => {
         let newSortStateArray: MRT_SortingState;
@@ -108,9 +146,6 @@ export function useTableStateToMantineReactTableAdapter(
       },
       [setSort, tableSortStateArray],
     ),
-
-    enablePagination: true,
-    manualPagination: true,
     onPaginationChange: React.useCallback(
       (state: MRT_Updater<MRT_PaginationState>) => {
         let newPagination: MRT_PaginationState;

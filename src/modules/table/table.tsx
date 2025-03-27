@@ -3,6 +3,7 @@ import { PaginationMetaModel } from '@/api/table';
 import React from 'react';
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import {
+  MantineReactTableBehaviors,
   useSchemaColumnToMantineReactTableAdapter,
   useTableStateToMantineReactTableAdapter,
 } from './adapter';
@@ -27,18 +28,11 @@ export default function TableRendererComponent(
   const table = useMantineReactTable({
     data,
     columns: tableColumns,
+    ...MantineReactTableBehaviors.Default,
+    ...MantineReactTableBehaviors.Resizable,
     ...tableProps,
-    // Column actions
-    enableColumnDragging: true,
-    enableColumnOrdering: true,
-    enableColumnFilters: false,
-    enableColumnPinning: true,
-    enableColumnResizing: true,
-    enableGlobalFilter: false,
-    // Virtualization
     enableColumnVirtualization: columns.length > 12,
     enableRowVirtualization: data.length > 50,
-    enableStickyHeader: true,
   });
 
   return <MantineReactTable table={table} layoutMode={'grid-no-grow' as any} />;
