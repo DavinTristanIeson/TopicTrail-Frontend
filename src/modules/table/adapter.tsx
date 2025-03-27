@@ -11,6 +11,7 @@ import {
   type MRT_Updater,
   type MRT_PaginationState,
 } from 'mantine-react-table';
+import { Text, HoverCard } from '@mantine/core';
 
 const SORTABLE_COLUMNS = [
   SchemaColumnTypeEnum.OrderedCategorical,
@@ -18,6 +19,18 @@ const SORTABLE_COLUMNS = [
   SchemaColumnTypeEnum.Geospatial,
   SchemaColumnTypeEnum.Temporal,
 ];
+
+const DEFAULT_COLUMN_SIZES = {
+  [SchemaColumnTypeEnum.Categorical]: 200,
+  [SchemaColumnTypeEnum.Continuous]: 150,
+  [SchemaColumnTypeEnum.Geospatial]: 150,
+  [SchemaColumnTypeEnum.MultiCategorical]: 300,
+  [SchemaColumnTypeEnum.OrderedCategorical]: 200,
+  [SchemaColumnTypeEnum.Temporal]: 200,
+  [SchemaColumnTypeEnum.Textual]: 400,
+  [SchemaColumnTypeEnum.Topic]: 150,
+  [SchemaColumnTypeEnum.Unique]: 300,
+};
 
 type SchemaColumnDataTableColumnType = MRT_ColumnDef<Record<string, any>>;
 
@@ -32,6 +45,7 @@ export const MantineReactTableBehaviors = {
       withTableBorder: true,
       withColumnBorders: true,
     },
+    enableFilters: false,
     enableStickyHeader: true,
     enableGlobalFilter: false,
   } as MantineReactTableProps,
@@ -61,6 +75,12 @@ export const MantineReactTableBehaviors = {
     enableColumnPinning: true,
     enableColumnResizing: true,
   } as MantineReactTableProps,
+  Virtualized(rows: any[], columns: any[]) {
+    return {
+      enableColumnVirtualization: columns.length > 12,
+      enableRowVirtualization: rows.length > 50,
+    };
+  },
 };
 
 export function useSchemaColumnToMantineReactTableAdapter(
@@ -68,16 +88,37 @@ export function useSchemaColumnToMantineReactTableAdapter(
 ): SchemaColumnDataTableColumnType[] {
   return React.useMemo<SchemaColumnDataTableColumnType[]>(() => {
     const tableColumns = columns.map<SchemaColumnDataTableColumnType>(
-      (column) => {
+      (column: SchemaColumnModel) => {
         return {
           accessorKey: column.name,
           header: column.name,
-          size: 150,
+          Header() {
+            if (!column.description) {
+              return column.name;
+            }
+            return (
+              <HoverCard>
+                <HoverCard.Target>
+                  <Text fw="bold" size="sm">
+                    {column.name}
+                  </Text>
+                </HoverCard.Target>
+                <HoverCard.Dropdown className="max-w-md">
+                  <Text size="sm">{column.name}</Text>
+                </HoverCard.Dropdown>
+              </HoverCard>
+            );
+          },
+          size: DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
           enableSorting: SORTABLE_COLUMNS.includes(
             column.type as SchemaColumnTypeEnum,
           ),
           Cell({ cell: { getValue } }) {
-            return <ColumnCellRenderer column={column} value={getValue()} />;
+            return (
+              <div className="h-full">
+                <ColumnCellRenderer column={column} value={getValue()} />
+              </div>
+            );
           },
         };
       },
@@ -124,7 +165,8 @@ export function useTableStateToMantineReactTableAdapter(
       pagination: tablePaginationState,
       isLoading: isFetching,
     },
-
+    pageCount: meta?.pages,
+    rowCount: meta?.total,
     onSortingChange: React.useCallback(
       (state: MRT_Updater<MRT_SortingState>) => {
         let newSortStateArray: MRT_SortingState;
@@ -159,6 +201,5 @@ export function useTableStateToMantineReactTableAdapter(
       },
       [setLimit, setPage, tablePaginationState],
     ),
-    pageCount: meta?.pages ?? -1,
   };
 }

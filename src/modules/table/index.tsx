@@ -4,7 +4,7 @@ import React from 'react';
 import TableRendererComponent from './table';
 import { TableStateContext, useTableStateSetup } from './context';
 import { Funnel, Warning } from '@phosphor-icons/react';
-import { Alert, Button, Group, Indicator, Stack } from '@mantine/core';
+import { Alert, Button, Group, Indicator, Stack, Title } from '@mantine/core';
 import { TableSkeleton } from '@/components/visual/loading';
 import { keepPreviousData } from '@tanstack/react-query';
 import { DisclosureTrigger } from '@/hooks/disclosure';
@@ -81,7 +81,8 @@ export default function TableQueryComponent() {
     <TableStateContext.Provider value={tableState}>
       <Stack>
         {errorComponent}
-        <Group justify="end">
+        <Group justify="space-between">
+          <Title order={2}>Dataset of {project.config.metadata.name}</Title>
           <TableFilterButton />
         </Group>
         <TableRendererComponent

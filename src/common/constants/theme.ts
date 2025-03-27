@@ -9,6 +9,7 @@ import {
   Modal,
   Paper,
   ScrollArea,
+  Tooltip,
 } from '@mantine/core';
 import Colors from './colors';
 
@@ -97,6 +98,13 @@ const mantineTheme = createTheme({
       defaultProps: {
         radius: 'sm',
         variant: 'filled',
+      },
+    }),
+    Tooltip: Tooltip.extend({
+      defaultProps: {
+        color: 'white',
+        c: 'black',
+        multiline: true,
       },
     }),
   },

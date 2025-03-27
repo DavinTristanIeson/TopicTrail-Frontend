@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit && eslint src",
-    "openapi-autogen": "openapi-typescript http://127.0.0.1:8000/api/openapi.json -o src/api/openapi.d.ts"
+    "openapi": "openapi-typescript http://127.0.0.1:8000/api/openapi.json -o src/api/openapi.d.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

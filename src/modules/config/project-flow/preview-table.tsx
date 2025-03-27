@@ -29,7 +29,10 @@ function ProjectConfigPreviewTable(props: DatasetPreviewModel) {
       return {
         accessorKey: column,
         header: column,
-        size: 150,
+        size: 200,
+        Cell({ cell: { getValue } }) {
+          return <div className="h-full">{getValue() as React.ReactNode}</div>;
+        },
       };
     });
   }, [dataset_columns]);
@@ -39,6 +42,8 @@ function ProjectConfigPreviewTable(props: DatasetPreviewModel) {
     columns: tableColumns,
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
+    ...MantineReactTableBehaviors.ColumnActions,
+    ...MantineReactTableBehaviors.Virtualized(preview_rows, dataset_columns),
     mantineTableContainerProps: {
       mah: 500,
     },

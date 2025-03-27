@@ -24,15 +24,14 @@ export default function TableRendererComponent(
     meta,
     isFetching,
   });
-  console.log('RERENDER');
   const table = useMantineReactTable({
     data,
     columns: tableColumns,
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
+    ...MantineReactTableBehaviors.ColumnActions,
+    ...MantineReactTableBehaviors.Virtualized(data, columns),
     ...tableProps,
-    enableColumnVirtualization: columns.length > 12,
-    enableRowVirtualization: data.length > 50,
   });
 
   return <MantineReactTable table={table} layoutMode={'grid-no-grow' as any} />;

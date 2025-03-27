@@ -9,13 +9,43 @@ import {
 } from '@/common/constants/enum';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { TopicInfo } from '@/modules/topics/components/info';
-import { Spoiler, Tooltip, Text, HoverCard, Group, Badge } from '@mantine/core';
+import {
+  Spoiler,
+  Tooltip,
+  Text,
+  HoverCard,
+  Group,
+  Badge,
+  Box,
+} from '@mantine/core';
 import dayjs from 'dayjs';
 import React from 'react';
 
 function DefaultColumnCell(props: React.PropsWithChildren) {
   return <Text size="sm">{props.children}</Text>;
 }
+
+interface HighlightedCellProps {
+  dull?: boolean;
+  children?: React.ReactNode;
+}
+
+const HighlightedCell = React.forwardRef<HTMLDivElement, HighlightedCellProps>(
+  function HighlightedCell(props, ref) {
+    return (
+      <Box
+        bg={props.dull ? 'gray.6' : 'brand.6'}
+        c="white"
+        className="p-2 rounded"
+        ref={ref}
+      >
+        <Text size="sm" fw={500}>
+          {props.children}
+        </Text>
+      </Box>
+    );
+  },
+);
 
 function TextualColumnCell(props: React.PropsWithChildren) {
   return (
@@ -54,10 +84,23 @@ function TopicColumnCell(props: TopicColumnCellProps) {
         className="max-w-sm"
         multiline
       >
-        <Text c="gray" size="sm">{`Topic ${props.topic + 1}`}</Text>
+        <HighlightedCell dull>{`Topic ${props.topic + 1}`}</HighlightedCell>
       </Tooltip>
     );
   }
+
+  if (props.topic === -1 || props.topic == null) {
+    return (
+      <Tooltip
+        label="This document is considered an outlier. This means that this document cannot be grouped into one of the available topics."
+        className="max-w-sm"
+        multiline
+      >
+        <HighlightedCell dull>Outlier</HighlightedCell>
+      </Tooltip>
+    );
+  }
+
   const topic = topicModelingResult
     ? topicModelingResult.result?.topics.find(
         (topic) => topic.id === props.topic,
@@ -72,7 +115,7 @@ function TopicColumnCell(props: TopicColumnCellProps) {
         className="max-w-sm"
         multiline
       >
-        <Text c="gray" size="sm">{`Topic ${props.topic + 1}`}</Text>
+        <HighlightedCell>{`Topic ${props.topic + 1}`}</HighlightedCell>
       </Tooltip>
     );
   }
@@ -80,9 +123,9 @@ function TopicColumnCell(props: TopicColumnCellProps) {
   return (
     <HoverCard>
       <HoverCard.Target>
-        <Text c="brand" size="sm">
-          {topic.label}
-        </Text>
+        <div>
+          <HighlightedCell>{topic.label}</HighlightedCell>
+        </div>
       </HoverCard.Target>
       <HoverCard.Dropdown>
         <TopicInfo {...topic} />
@@ -109,7 +152,7 @@ function MultiCategoricalColumnCell(props: MultiCategoricalColumnCellProps) {
   return (
     <Group wrap="wrap">
       {tags.map((tag) => (
-        <Badge key={tag}>{tag}</Badge>
+        <HighlightedCell key={tag}>{tag}</HighlightedCell>
       ))}
     </Group>
   );
@@ -125,13 +168,14 @@ function CategoricalColumnCell(props: CategoricalColumnCellProps) {
     ? props.categoryOrder.findIndex((category) => category === props.category)
     : -1;
   return (
-    <Badge
-      leftSection={
-        order === -1 ? undefined : <Badge color="brand.4">{order + 1}</Badge>
-      }
-    >
+    <HighlightedCell>
+      {order === -1 ? undefined : (
+        <Badge color="brand.4" mr={8}>
+          {order + 1}
+        </Badge>
+      )}
       {props.category}
-    </Badge>
+    </HighlightedCell>
   );
 }
 
@@ -178,7 +222,12 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
       );
     }
     case SchemaColumnTypeEnum.Topic: {
-      return <TopicColumnCell topic={props.value} column={column.name} />;
+      return (
+        <TopicColumnCell
+          topic={props.value}
+          column={props.column.source_name}
+        />
+      );
     }
     case SchemaColumnTypeEnum.OrderedCategorical:
     case SchemaColumnTypeEnum.Categorical: {
