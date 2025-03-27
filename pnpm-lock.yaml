@@ -26,6 +26,9 @@ importers:
       '@phosphor-icons/react':
         specifier: ^2.1.7
         version: 2.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tabler/icons-react':
+        specifier: ^3.31.0
+        version: 3.31.0(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.56.2
         version: 5.59.0(react@18.3.1)
@@ -44,9 +47,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      mantine-datatable:
-        specifier: ^7.17.1
-        version: 7.17.1(@mantine/core@7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.17.1(react@18.3.1))(clsx@2.1.1)(react@18.3.1)
+      mantine-react-table:
+        specifier: 2.0.0-beta.9
+        version: 2.0.0-beta.9(@mantine/core@7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/dates@7.17.1(@mantine/core@7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.17.1(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.17.1(react@18.3.1))(@tabler/icons-react@3.31.0(react@18.3.1))(clsx@2.1.1)(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next:
         specifier: 14.2.13
         version: 14.2.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -104,7 +107,7 @@ importers:
         version: 15.2.2(eslint@8.57.1)(typescript@5.6.2)
       eslint-plugin-import:
         specifier: ^2.31.0
-        version: 2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+        version: 2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
       eslint-plugin-react-hooks:
         specifier: ^5.2.0
         version: 5.2.0(eslint@8.57.1)
@@ -441,6 +444,18 @@ packages:
   '@swc/helpers@0.5.5':
     resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
 
+  '@tabler/icons-react@3.31.0':
+    resolution: {integrity: sha512-2rrCM5y/VnaVKnORpDdAua9SEGuJKVqPtWxeQ/vUVsgaUx30LDgBZph7/lterXxDY1IKR6NO//HDhWiifXTi3w==}
+    peerDependencies:
+      react: '>= 16'
+
+  '@tabler/icons@3.31.0':
+    resolution: {integrity: sha512-dblAdeKY3+GA1U+Q9eziZ0ooVlZMHsE8dqP0RkwvRtEsAULoKOYaCUOcJ4oW1DjWegdxk++UAt2SlQVnmeHv+g==}
+
+  '@tanstack/match-sorter-utils@8.19.4':
+    resolution: {integrity: sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==}
+    engines: {node: '>=12'}
+
   '@tanstack/query-core@5.59.0':
     resolution: {integrity: sha512-WGD8uIhX6/deH/tkZqPNcRyAhDUqs729bWKoByYHSogcshXfFbppOdTER5+qY7mFvu8KEFJwT0nxr8RfPTVh0Q==}
 
@@ -448,6 +463,26 @@ packages:
     resolution: {integrity: sha512-YDXp3OORbYR+8HNQx+lf4F73NoiCmCcSvZvgxE29OifmQFk0sBlO26NWLHpcNERo92tVk3w+JQ53/vkcRUY1hA==}
     peerDependencies:
       react: ^18 || ^19
+
+  '@tanstack/react-table@8.20.5':
+    resolution: {integrity: sha512-WEHopKw3znbUZ61s9i0+i9g8drmDo6asTWbrQh8Us63DAk/M0FkmIqERew6P71HI75ksZ2Pxyuf4vvKh9rAkiA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
+  '@tanstack/react-virtual@3.11.2':
+    resolution: {integrity: sha512-OuFzMXPF4+xZgx8UzJha0AieuMihhhaWG0tCqpp6tDzlFwOmNBPYMuLOtMJ1Tr4pXLHmgjcWhG6RlknY2oNTdQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@tanstack/table-core@8.20.5':
+    resolution: {integrity: sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg==}
+    engines: {node: '>=12'}
+
+  '@tanstack/virtual-core@3.11.2':
+    resolution: {integrity: sha512-vTtpNt7mKCiZ1pwU9hfKPhpdVO2sVzFQsxoVBGtOSHxlrRRzYr8iQ2TlwbAcRYCcEiZ9ECAM8kBzH0v2+VzfKw==}
 
   '@turf/area@7.1.0':
     resolution: {integrity: sha512-w91FEe02/mQfMPRX2pXua48scFuKJ2dSVMF2XmJ6+BJfFiCPxp95I3+Org8+ZsYv93CDNKbf0oLNEPnuQdgs2g==}
@@ -1910,13 +1945,18 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  mantine-datatable@7.17.1:
-    resolution: {integrity: sha512-5GBpSTZyvVGqe2TqEaBYrZQyQjLgHuMqkb2wry+wPvwalRY0oFKG1kdFd43bxch9FOG0K0CREEa6+cYIDby55Q==}
+  mantine-react-table@2.0.0-beta.9:
+    resolution: {integrity: sha512-ZdfcwebWaPERoDvAuk43VYcBCzamohARVclnbuepT0PHZ0wRcDPMBR+zgaocL+pFy8EXUGwvWTOKNh25ITpjNQ==}
+    engines: {node: '>=16'}
     peerDependencies:
-      '@mantine/core': '>=7.14'
-      '@mantine/hooks': '>=7.14'
+      '@mantine/core': ^7.9
+      '@mantine/dates': ^7.9
+      '@mantine/hooks': ^7.9
+      '@tabler/icons-react': '>=2.23.0'
       clsx: '>=2'
-      react: '>=18.2'
+      dayjs: '>=1.11'
+      react: '>=18.0'
+      react-dom: '>=18.0'
 
   map-limit@0.0.1:
     resolution: {integrity: sha512-pJpcfLPnIF/Sk3taPW21G/RQsEEirGaFpCW3oXRwH9dnFHPHNGjNyvh++rdmC2fNqEaTw2MhYJraoJWAHx8kEg==}
@@ -2460,6 +2500,9 @@ packages:
 
   regl@2.1.0:
     resolution: {integrity: sha512-oWUce/aVoEvW5l2V0LK7O5KJMzUSKeiOwFuJehzpSFd43dO5spP9r+sSUfhKtsky4u6MCqWJaRL+abzExynfTg==}
+
+  remove-accents@0.5.0:
+    resolution: {integrity: sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A==}
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -3371,12 +3414,39 @@ snapshots:
       '@swc/counter': 0.1.3
       tslib: 2.7.0
 
+  '@tabler/icons-react@3.31.0(react@18.3.1)':
+    dependencies:
+      '@tabler/icons': 3.31.0
+      react: 18.3.1
+
+  '@tabler/icons@3.31.0': {}
+
+  '@tanstack/match-sorter-utils@8.19.4':
+    dependencies:
+      remove-accents: 0.5.0
+
   '@tanstack/query-core@5.59.0': {}
 
   '@tanstack/react-query@5.59.0(react@18.3.1)':
     dependencies:
       '@tanstack/query-core': 5.59.0
       react: 18.3.1
+
+  '@tanstack/react-table@8.20.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/table-core': 8.20.5
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@tanstack/react-virtual@3.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/virtual-core': 3.11.2
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@tanstack/table-core@8.20.5': {}
+
+  '@tanstack/virtual-core@3.11.2': {}
 
   '@turf/area@7.1.0':
     dependencies:
@@ -4313,8 +4383,8 @@ snapshots:
       '@typescript-eslint/parser': 8.8.0(eslint@8.57.1)(typescript@5.6.2)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0)(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.0(eslint@8.57.1)
       eslint-plugin-react: 7.37.1(eslint@8.57.1)
       eslint-plugin-react-hooks: 5.2.0(eslint@8.57.1)
@@ -4333,37 +4403,37 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0)(eslint@8.57.1):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.3.7(supports-color@9.4.0)
       enhanced-resolve: 5.17.1
       eslint: 8.57.1
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
       fast-glob: 3.3.2
       get-tsconfig: 4.8.1
       is-bun-module: 1.2.1
       is-glob: 4.0.3
     optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
     transitivePeerDependencies:
       - '@typescript-eslint/parser'
       - eslint-import-resolver-node
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.8.0(eslint@8.57.1)(typescript@5.6.2)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -4374,7 +4444,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.8.0(eslint@8.57.1)(typescript@5.6.2))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -5136,12 +5206,19 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  mantine-datatable@7.17.1(@mantine/core@7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.17.1(react@18.3.1))(clsx@2.1.1)(react@18.3.1):
+  mantine-react-table@2.0.0-beta.9(@mantine/core@7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/dates@7.17.1(@mantine/core@7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.17.1(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.17.1(react@18.3.1))(@tabler/icons-react@3.31.0(react@18.3.1))(clsx@2.1.1)(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@mantine/core': 7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mantine/dates': 7.17.1(@mantine/core@7.17.1(@mantine/hooks@7.17.1(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mantine/hooks@7.17.1(react@18.3.1))(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mantine/hooks': 7.17.1(react@18.3.1)
+      '@tabler/icons-react': 3.31.0(react@18.3.1)
+      '@tanstack/match-sorter-utils': 8.19.4
+      '@tanstack/react-table': 8.20.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-virtual': 3.11.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
+      dayjs: 1.11.13
       react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   map-limit@0.0.1:
     dependencies:
@@ -5829,6 +5906,8 @@ snapshots:
       regl-scatter2d: 3.3.1
 
   regl@2.1.0: {}
+
+  remove-accents@0.5.0: {}
 
   require-from-string@2.0.2: {}
 

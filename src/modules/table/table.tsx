@@ -1,40 +1,11 @@
 import { SchemaColumnModel } from '@/api/project';
 import { PaginationMetaModel } from '@/api/table';
 import React from 'react';
-import { DataTable, useDataTableColumns } from 'mantine-datatable';
+import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import {
-  useSchemaColumnToMantineDataGridAdapter,
-  useTableStateToMantineDataGridAdapter,
+  useSchemaColumnToMantineReactTableAdapter,
+  useTableStateToMantineReactTableAdapter,
 } from './adapter';
-import { LocalStorageKeys } from '@/common/constants/browser-storage-keys';
-import { Button, Group, Stack, Indicator } from '@mantine/core';
-import { ArrowClockwise, Funnel } from '@phosphor-icons/react';
-import { TableStateContext } from './context';
-import TableFilterDrawer from '../filter/drawer';
-import { DisclosureTrigger } from '@/hooks/disclosure';
-
-function TableFilterButton() {
-  const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { filter, setFilter } = React.useContext(TableStateContext);
-  return (
-    <Indicator disabled={!filter} color="red" zIndex={2}>
-      <TableFilterDrawer
-        ref={tableFilterRemote}
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Button
-        variant="outline"
-        onClick={() => {
-          tableFilterRemote.current?.open();
-        }}
-        leftSection={<Funnel />}
-      >
-        Filter
-      </Button>
-    </Indicator>
-  );
-}
 
 interface TableRendererComponentProps {
   columns: SchemaColumnModel[];
@@ -47,45 +18,28 @@ export default function TableRendererComponent(
   props: TableRendererComponentProps,
 ) {
   const { data, columns, meta, isFetching } = props;
-  const dataTableColumns = useSchemaColumnToMantineDataGridAdapter(columns);
-  const tableStateProps = useTableStateToMantineDataGridAdapter({ meta });
-  const {
-    effectiveColumns,
-    resetColumnsToggle,
-    resetColumnsOrder,
-    resetColumnsWidth,
-  } = useDataTableColumns({
-    key: LocalStorageKeys.TableColumnStates,
-    columns: dataTableColumns,
+  const tableColumns = useSchemaColumnToMantineReactTableAdapter(columns);
+  const tableProps = useTableStateToMantineReactTableAdapter({
+    meta,
+    isFetching,
+  });
+  console.log('RERENDER');
+  const table = useMantineReactTable({
+    data,
+    columns: tableColumns,
+    ...tableProps,
+    // Column actions
+    enableColumnDragging: true,
+    enableColumnOrdering: true,
+    enableColumnFilters: false,
+    enableColumnPinning: true,
+    enableColumnResizing: true,
+    enableGlobalFilter: false,
+    // Virtualization
+    enableColumnVirtualization: columns.length > 12,
+    enableRowVirtualization: data.length > 50,
+    enableStickyHeader: true,
   });
 
-  return (
-    <Stack>
-      <Group justify="end">
-        <Button
-          onClick={() => {
-            resetColumnsToggle();
-            resetColumnsOrder();
-            resetColumnsWidth();
-          }}
-          leftSection={<ArrowClockwise />}
-        >
-          Reset Column States
-        </Button>
-        <TableFilterButton />
-      </Group>
-      <DataTable
-        records={data}
-        columns={effectiveColumns}
-        withTableBorder
-        withColumnBorders
-        highlightOnHover
-        height={720}
-        width={720}
-        fetching={isFetching}
-        loaderType="dots"
-        {...tableStateProps}
-      />
-    </Stack>
-  );
+  return <MantineReactTable table={table} layoutMode={'grid-no-grow' as any} />;
 }
