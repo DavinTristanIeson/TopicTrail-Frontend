@@ -1,34 +1,9 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
 import { client } from '@/common/api/client';
-import { DataSourceTypeEnum } from '@/common/constants/enum';
-import { ProjectCheckDatasetInput } from '@/api/project';
 import { FormEditableContext } from '@/components/standard/fields/context';
 import React from 'react';
-
-export function transformDataSourceFormType2DataSourceInput(
-  source: ProjectConfigFormType['source'],
-): ProjectCheckDatasetInput {
-  switch (source.type) {
-    case DataSourceTypeEnum.CSV:
-      return {
-        type: source.type,
-        path: source.path,
-        delimiter: source.delimiter!,
-      };
-    case DataSourceTypeEnum.Excel:
-      return {
-        type: source.type,
-        path: source.path,
-        sheet_name: source.sheet_name!,
-      };
-    case DataSourceTypeEnum.Parquet:
-      return {
-        type: source.type,
-        path: source.path,
-      };
-  }
-}
+import { ProjectDataSourceModel } from '@/api/project';
 
 export function useInferProjectDatasetColumn(index: number) {
   const { control } = useFormContext<ProjectConfigFormType>();
@@ -45,7 +20,7 @@ export function useInferProjectDatasetColumn(index: number) {
       body: {
         column: name,
         dtype: type!,
-        source: transformDataSourceFormType2DataSourceInput(source),
+        source: source as ProjectDataSourceModel,
       },
     },
     {

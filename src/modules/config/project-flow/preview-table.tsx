@@ -19,8 +19,8 @@ import {
 } from 'mantine-datatable';
 import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
 import { ProjectConfigFormType } from '../form-type';
+import { ProjectDataSourceModel } from '@/api/project';
 
 function ProjectConfigPreviewTable(props: DatasetPreviewModel) {
   const { dataset_columns, preview_rows, total_rows } = props;
@@ -93,7 +93,7 @@ export function ProjectConfigPreviewTableQuery() {
     isFetching,
     error,
   } = client.useQuery('post', '/projects/dataset_preview', {
-    body: transformDataSourceFormType2DataSourceInput(source),
+    body: source as ProjectDataSourceModel,
   });
 
   if (isFetching) {
