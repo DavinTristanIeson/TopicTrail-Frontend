@@ -4,17 +4,15 @@ import {
   useCurrentTextualColumn,
 } from '@/modules/project/context';
 import React from 'react';
-import { TableFilterModel, TableSortModel } from '@/api/table';
+import { TableFilterModel } from '@/api/table';
 import { DocumentPerTopicModel } from '@/api/topic';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
-import TablePagination from '@/components/widgets/pagination';
 import { Stack } from '@mantine/core';
+import { TableStateContext, useTableStateSetup } from '@/modules/table/context';
 
 interface DocumentsPerTopicTableRendererProps {
   data: DocumentPerTopicModel[];
-  sort: TableSortModel | null;
-  setSort: React.Dispatch<React.SetStateAction<TableSortModel | null>>;
 }
 
 function DocumentsPerTopicTableRenderer(
@@ -36,9 +34,8 @@ export default function DocumentsPerTopicTable(
   const project = React.useContext(ProjectContext);
   const column = useCurrentTextualColumn();
 
-  const [sort, setSort] = React.useState<TableSortModel | null>(null);
-  const [page, setPage] = React.useState<number>(0);
-  const [limit, setLimit] = React.useState<number>(25);
+  const tableState = useTableStateSetup();
+  const { page, limit, sort } = tableState;
 
   const query = client.useQuery('post', '/topics/{project_id}/documents', {
     params: {
@@ -65,20 +62,9 @@ export default function DocumentsPerTopicTable(
       loadingComponent={<TableSkeleton />}
     >
       <Stack>
-        <DocumentsPerTopicTableRenderer
-          data={query.data?.data ?? []}
-          setSort={setSort}
-          sort={sort}
-        />
-        {query.data?.meta && (
-          <TablePagination
-            setLimit={setLimit}
-            setPage={setPage}
-            limit={limit}
-            page={page}
-            meta={query.data?.meta}
-          />
-        )}
+        <TableStateContext.Provider value={tableState}>
+          <DocumentsPerTopicTableRenderer data={query.data?.data ?? []} />
+        </TableStateContext.Provider>
       </Stack>
     </UseQueryWrapperComponent>
   );

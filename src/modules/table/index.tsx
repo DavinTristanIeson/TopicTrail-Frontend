@@ -3,10 +3,35 @@ import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
 import TableRendererComponent from './table';
 import { TableStateContext, useTableStateSetup } from './context';
-import { Warning } from '@phosphor-icons/react';
-import { Alert } from '@mantine/core';
+import { Funnel, Warning } from '@phosphor-icons/react';
+import { Alert, Button, Group, Indicator, Stack, Title } from '@mantine/core';
 import { TableSkeleton } from '@/components/visual/loading';
 import { keepPreviousData } from '@tanstack/react-query';
+import { DisclosureTrigger } from '@/hooks/disclosure';
+import TableFilterDrawer from '../filter/drawer';
+
+function TableFilterButton() {
+  const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
+  const { filter, setFilter } = React.useContext(TableStateContext);
+  return (
+    <Indicator disabled={!filter} color="red" zIndex={2}>
+      <TableFilterDrawer
+        ref={tableFilterRemote}
+        filter={filter}
+        setFilter={setFilter}
+      />
+      <Button
+        variant="outline"
+        onClick={() => {
+          tableFilterRemote.current?.open();
+        }}
+        leftSection={<Funnel />}
+      >
+        Filter
+      </Button>
+    </Indicator>
+  );
+}
 
 export default function TableQueryComponent() {
   const project = React.useContext(ProjectContext);
@@ -54,13 +79,19 @@ export default function TableQueryComponent() {
 
   return (
     <TableStateContext.Provider value={tableState}>
-      {errorComponent}
-      <TableRendererComponent
-        columns={data.columns}
-        data={data.data}
-        meta={data.meta}
-        isFetching={isFetching}
-      />
+      <Stack>
+        {errorComponent}
+        <Group justify="space-between">
+          <Title order={2}>Dataset of {project.config.metadata.name}</Title>
+          <TableFilterButton />
+        </Group>
+        <TableRendererComponent
+          columns={data.columns}
+          data={data.data}
+          meta={data.meta}
+          isFetching={isFetching}
+        />
+      </Stack>
     </TableStateContext.Provider>
   );
 }

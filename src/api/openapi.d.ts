@@ -568,7 +568,7 @@ export interface components {
             delimiter: string;
         };
         /** CategoricalSchemaColumn */
-        "CategoricalSchemaColumn-Input": {
+        CategoricalSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -578,18 +578,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "categorical";
-        };
-        /** CategoricalSchemaColumn */
-        "CategoricalSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -649,7 +639,7 @@ export interface components {
             data_schema: components["schemas"]["SchemaManager-Output"];
         };
         /** ContinuousSchemaColumn */
-        "ContinuousSchemaColumn-Input": {
+        ContinuousSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -659,25 +649,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "continuous";
-            /** Bins */
-            bins?: number[] | null;
-            /**
-             * Bin Count
-             * @default 3
-             */
-            bin_count: number;
-        };
-        /** ContinuousSchemaColumn */
-        "ContinuousSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -818,7 +791,7 @@ export interface components {
          */
         GeospatialRoleEnum: "latitude" | "longitude";
         /** GeospatialSchemaColumn */
-        "GeospatialSchemaColumn-Input": {
+        GeospatialSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -828,19 +801,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "geospatial";
-            role: components["schemas"]["GeospatialRoleEnum"];
-        };
-        /** GeospatialSchemaColumn */
-        "GeospatialSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -960,7 +922,7 @@ export interface components {
             value: string | number;
         };
         /** MultiCategoricalSchemaColumn */
-        "MultiCategoricalSchemaColumn-Input": {
+        MultiCategoricalSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -970,28 +932,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * Delimiter
-             * @default ,
-             */
-            delimiter: string;
-            /**
-             * Is Json
-             * @default true
-             */
-            is_json: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "multi-categorical";
-        };
-        /** MultiCategoricalSchemaColumn */
-        "MultiCategoricalSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * Delimiter
              * @default ,
@@ -1078,7 +1020,7 @@ export interface components {
             operands: (components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
         };
         /** OrderedCategoricalSchemaColumn */
-        "OrderedCategoricalSchemaColumn-Input": {
+        OrderedCategoricalSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -1088,20 +1030,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "ordered-categorical";
-            /** Category Order */
-            category_order?: string[] | null;
-        };
-        /** OrderedCategoricalSchemaColumn */
-        "OrderedCategoricalSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1181,12 +1111,12 @@ export interface components {
         /** SchemaManager */
         "SchemaManager-Input": {
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn-Input"] | components["schemas"]["CategoricalSchemaColumn-Input"] | components["schemas"]["OrderedCategoricalSchemaColumn-Input"] | components["schemas"]["TextualSchemaColumn-Input"] | components["schemas"]["ContinuousSchemaColumn-Input"] | components["schemas"]["TemporalSchemaColumn-Input"] | components["schemas"]["GeospatialSchemaColumn-Input"] | components["schemas"]["MultiCategoricalSchemaColumn-Input"] | components["schemas"]["TopicSchemaColumn-Input"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Input"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
         };
         /** SchemaManager */
         "SchemaManager-Output": {
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
         };
         /** SignificanceResult */
         SignificanceResult: {
@@ -1214,7 +1144,7 @@ export interface components {
         /** TableColumnCountsResource */
         TableColumnCountsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Total */
             total: number;
             /** Valid */
@@ -1227,7 +1157,7 @@ export interface components {
         /** TableColumnFrequencyDistributionResource */
         TableColumnFrequencyDistributionResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Values */
             values: string[];
             /** Frequencies */
@@ -1236,9 +1166,9 @@ export interface components {
         /** TableColumnGeographicalPointsResource */
         TableColumnGeographicalPointsResource: {
             /** Latitude Column */
-            latitude_column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            latitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Longitude Column */
-            longitude_column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            longitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Latitude */
             latitude: number[];
             /** Longitude */
@@ -1249,7 +1179,7 @@ export interface components {
         /** TableColumnValuesResource */
         TableColumnValuesResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Values */
             values: unknown[];
         };
@@ -1278,7 +1208,7 @@ export interface components {
         /** TableDescriptiveStatisticsResource */
         TableDescriptiveStatisticsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             statistics: components["schemas"]["DescriptiveStatisticsResource"];
         };
         /** TablePaginationApiResult[DocumentPerTopicResource] */
@@ -1288,7 +1218,7 @@ export interface components {
             /** Message */
             message: string | null;
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
             meta: components["schemas"]["PaginationMeta"];
         };
         /** TablePaginationApiResult[dict[str, Any]] */
@@ -1298,7 +1228,7 @@ export interface components {
             /** Message */
             message: string | null;
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
             meta: components["schemas"]["PaginationMeta"];
         };
         /** TableSort */
@@ -1311,7 +1241,7 @@ export interface components {
         /** TableTopicsResource */
         TableTopicsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Topics */
             topics: components["schemas"]["Topic"][];
         };
@@ -1327,7 +1257,7 @@ export interface components {
         /** TableWordsResource */
         TableWordsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn-Output"] | components["schemas"]["CategoricalSchemaColumn-Output"] | components["schemas"]["OrderedCategoricalSchemaColumn-Output"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn-Output"] | components["schemas"]["TemporalSchemaColumn-Output"] | components["schemas"]["GeospatialSchemaColumn-Output"] | components["schemas"]["MultiCategoricalSchemaColumn-Output"] | components["schemas"]["TopicSchemaColumn-Output"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Words */
             words: components["schemas"]["TableWordItemResource"][];
         };
@@ -1362,7 +1292,7 @@ export interface components {
          */
         TemporalPrecisionEnum: "date" | "date-time";
         /** TemporalSchemaColumn */
-        "TemporalSchemaColumn-Input": {
+        TemporalSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -1372,22 +1302,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "temporal";
-            /** Datetime Format */
-            datetime_format: string | null;
-            /** @default date-time */
-            temporal_precision: components["schemas"]["TemporalPrecisionEnum"];
-        };
-        /** TemporalSchemaColumn */
-        "TemporalSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1443,6 +1359,17 @@ export interface components {
              * @default 3
              */
             min_word_length: number;
+            /**
+             * N Gram Range
+             * @default [
+             *       1,
+             *       2
+             *     ]
+             */
+            n_gram_range: [
+                number,
+                number
+            ];
         };
         /** TextualSchemaColumn */
         "TextualSchemaColumn-Input": {
@@ -1455,6 +1382,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1469,6 +1398,13 @@ export interface components {
             name: string;
             /** Description */
             description?: string | null;
+            /**
+             * Internal
+             * @default false
+             */
+            internal: boolean;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1513,17 +1449,6 @@ export interface components {
             reference_document_count?: number | null;
             /** Max Topics */
             max_topics?: number | null;
-            /**
-             * N Gram Range
-             * @default [
-             *       1,
-             *       2
-             *     ]
-             */
-            n_gram_range: [
-                number,
-                number
-            ];
             /** @default all-MiniLM-L6-v2 */
             embedding_method: components["schemas"]["DocumentEmbeddingMethodEnum"];
             /**
@@ -1563,7 +1488,7 @@ export interface components {
             created_at?: string;
         };
         /** TopicSchemaColumn */
-        "TopicSchemaColumn-Input": {
+        TopicSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -1573,18 +1498,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "topic";
-        };
-        /** TopicSchemaColumn */
-        "TopicSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
@@ -1606,7 +1521,7 @@ export interface components {
             filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
         };
         /** UniqueSchemaColumn */
-        "UniqueSchemaColumn-Input": {
+        UniqueSchemaColumn: {
             /** Name */
             name: string;
             /** Description */
@@ -1616,18 +1531,8 @@ export interface components {
              * @default false
              */
             internal: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "unique";
-        };
-        /** UniqueSchemaColumn */
-        "UniqueSchemaColumn-Output": {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
+            /** Source Name */
+            source_name?: string | null;
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}

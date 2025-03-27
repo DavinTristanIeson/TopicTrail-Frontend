@@ -1,6 +1,5 @@
 import { DatasetPreviewModel } from '@/api/table';
 import { client } from '@/common/api/client';
-import { LocalStorageKeys } from '@/common/constants/browser-storage-keys';
 import {
   Text,
   Stack,
@@ -12,44 +11,43 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Warning } from '@phosphor-icons/react';
-import {
-  type DataTableColumn,
-  useDataTableColumns,
-  DataTable,
-} from 'mantine-datatable';
 import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
 import { ProjectConfigFormType } from '../form-type';
+import { ProjectDataSourceModel } from '@/api/project';
+import {
+  MantineReactTable,
+  type MRT_ColumnDef,
+  useMantineReactTable,
+} from 'mantine-react-table';
+import { MantineReactTableBehaviors } from '@/modules/table/adapter';
 
 function ProjectConfigPreviewTable(props: DatasetPreviewModel) {
   const { dataset_columns, preview_rows, total_rows } = props;
-  const dataTableColumns = React.useMemo(() => {
-    return dataset_columns.map<DataTableColumn<Record<string, any>>>(
-      (column) => {
-        return {
-          accessor: column,
-          title: column,
-          width: 200,
-          resizable: true,
-        };
-      },
-    );
+  const tableColumns = React.useMemo(() => {
+    return dataset_columns.map<MRT_ColumnDef<Record<string, any>>>((column) => {
+      return {
+        accessorKey: column,
+        header: column,
+        size: 200,
+        Cell({ cell: { getValue } }) {
+          return <div className="h-full">{getValue() as React.ReactNode}</div>;
+        },
+      };
+    });
   }, [dataset_columns]);
 
-  const { effectiveColumns, resetColumnsWidth } = useDataTableColumns({
-    key: LocalStorageKeys.DatasetTablePreviewStates,
-    columns: dataTableColumns,
+  const table = useMantineReactTable({
+    data: preview_rows,
+    columns: tableColumns,
+    ...MantineReactTableBehaviors.Default,
+    ...MantineReactTableBehaviors.Resizable,
+    ...MantineReactTableBehaviors.ColumnActions,
+    ...MantineReactTableBehaviors.Virtualized(preview_rows, dataset_columns),
+    mantineTableContainerProps: {
+      mah: 500,
+    },
   });
-
-  const hasAcknowledgedResetWidth = React.useRef(false);
-  React.useEffect(() => {
-    if (hasAcknowledgedResetWidth.current) {
-      return;
-    }
-    resetColumnsWidth();
-    hasAcknowledgedResetWidth.current = true;
-  }, [resetColumnsWidth]);
 
   const [opened, { toggle }] = useDisclosure();
 
@@ -62,16 +60,7 @@ function ProjectConfigPreviewTable(props: DatasetPreviewModel) {
         <Title order={4} ta="center">
           Dataset Preview
         </Title>
-        <DataTable
-          columns={effectiveColumns}
-          records={preview_rows as Record<string, any>[]}
-          withTableBorder
-          withColumnBorders
-          highlightOnHover
-          height={500}
-          width={720}
-          storeColumnsKey={LocalStorageKeys.DatasetTablePreviewStates}
-        />
+        <MantineReactTable table={table} />
         {total_rows > 15 && (
           <Text ta="center" className="w-full" color="gray">
             And {total_rows - 15} more rows...
@@ -93,7 +82,7 @@ export function ProjectConfigPreviewTableQuery() {
     isFetching,
     error,
   } = client.useQuery('post', '/projects/dataset_preview', {
-    body: transformDataSourceFormType2DataSourceInput(source),
+    body: source as ProjectDataSourceModel,
   });
 
   if (isFetching) {

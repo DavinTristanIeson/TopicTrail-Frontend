@@ -1,14 +1,17 @@
 import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
-import {
-  type DataTableSortStatus,
-  type DataTableColumn,
-} from 'mantine-datatable';
 import React from 'react';
 import { ColumnCellRenderer } from './cell';
 import { PaginationMetaModel } from '@/api/table';
 import { TableStateContext } from './context';
-import { LocalStorageKeys } from '@/common/constants/browser-storage-keys';
+import {
+  type MRT_TableOptions,
+  type MRT_ColumnDef,
+  type MRT_SortingState,
+  type MRT_Updater,
+  type MRT_PaginationState,
+} from 'mantine-react-table';
+import { Text, HoverCard } from '@mantine/core';
 
 const SORTABLE_COLUMNS = [
   SchemaColumnTypeEnum.OrderedCategorical,
@@ -17,26 +20,104 @@ const SORTABLE_COLUMNS = [
   SchemaColumnTypeEnum.Temporal,
 ];
 
-type SchemaColumnDataTableColumnType = DataTableColumn<Record<string, any>>;
-export function useSchemaColumnToMantineDataGridAdapter(
+const DEFAULT_COLUMN_SIZES = {
+  [SchemaColumnTypeEnum.Categorical]: 200,
+  [SchemaColumnTypeEnum.Continuous]: 150,
+  [SchemaColumnTypeEnum.Geospatial]: 150,
+  [SchemaColumnTypeEnum.MultiCategorical]: 300,
+  [SchemaColumnTypeEnum.OrderedCategorical]: 200,
+  [SchemaColumnTypeEnum.Temporal]: 200,
+  [SchemaColumnTypeEnum.Textual]: 400,
+  [SchemaColumnTypeEnum.Topic]: 150,
+  [SchemaColumnTypeEnum.Unique]: 300,
+};
+
+type SchemaColumnDataTableColumnType = MRT_ColumnDef<Record<string, any>>;
+
+type MantineReactTableProps = Partial<MRT_TableOptions<Record<string, any>>>;
+
+export const MantineReactTableStylingProps = {};
+
+export const MantineReactTableBehaviors = {
+  Default: {
+    mantineTableProps: {
+      stickyHeader: true,
+      withTableBorder: true,
+      withColumnBorders: true,
+    },
+    enableFilters: false,
+    enableStickyHeader: true,
+    enableGlobalFilter: false,
+  } as MantineReactTableProps,
+  Resizable: {
+    enableColumnResizing: true,
+    layoutMode: 'grid',
+    columnResizeMode: 'onEnd',
+  } as MantineReactTableProps,
+  Sortable: {
+    enableSorting: false,
+    enableMultiSort: false,
+    manualSorting: true,
+    enableSortingRemoval: true,
+    sortDescFirst: false,
+  } as MantineReactTableProps,
+  WithPagination: {
+    mantinePaginationProps: {
+      rowsPerPageOptions: [10, 25, 50, 100].map(String),
+    },
+    enablePagination: true,
+    manualPagination: true,
+  } as MantineReactTableProps,
+  ColumnActions: {
+    enableColumnDragging: true,
+    enableColumnOrdering: true,
+    enableColumnFilters: false,
+    enableColumnPinning: true,
+    enableColumnResizing: true,
+  } as MantineReactTableProps,
+  Virtualized(rows: any[], columns: any[]) {
+    return {
+      enableColumnVirtualization: columns.length > 12,
+      enableRowVirtualization: rows.length > 50,
+    };
+  },
+};
+
+export function useSchemaColumnToMantineReactTableAdapter(
   columns: SchemaColumnModel[],
 ): SchemaColumnDataTableColumnType[] {
   return React.useMemo<SchemaColumnDataTableColumnType[]>(() => {
     const tableColumns = columns.map<SchemaColumnDataTableColumnType>(
-      (column) => {
+      (column: SchemaColumnModel) => {
         return {
-          accessor: column.name,
-          title: column.name,
-          width: 200,
-          resizable: true,
-          toggleable: true,
-          draggable: true,
-          sortable: SORTABLE_COLUMNS.includes(
+          accessorKey: column.name,
+          header: column.name,
+          Header() {
+            if (!column.description) {
+              return column.name;
+            }
+            return (
+              <HoverCard>
+                <HoverCard.Target>
+                  <Text fw="bold" size="sm">
+                    {column.name}
+                  </Text>
+                </HoverCard.Target>
+                <HoverCard.Dropdown className="max-w-md">
+                  <Text size="sm">{column.name}</Text>
+                </HoverCard.Dropdown>
+              </HoverCard>
+            );
+          },
+          size: DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
+          enableSorting: SORTABLE_COLUMNS.includes(
             column.type as SchemaColumnTypeEnum,
           ),
-          render(data) {
+          Cell({ cell: { getValue } }) {
             return (
-              <ColumnCellRenderer column={column} value={data[column.name]} />
+              <div className="h-full">
+                <ColumnCellRenderer column={column} value={getValue()} />
+              </div>
             );
           },
         };
@@ -46,46 +127,79 @@ export function useSchemaColumnToMantineDataGridAdapter(
   }, [columns]);
 }
 
-interface UseTableStateToMantineDataGridAdapterProps {
+interface UseTableStateToMantineReactTableAdapterProps {
   meta: PaginationMetaModel | undefined;
+  isFetching: boolean;
 }
 
-export function useTableStateToMantineDataGridAdapter(
-  props: UseTableStateToMantineDataGridAdapterProps,
-) {
-  const { meta } = props;
+export function useTableStateToMantineReactTableAdapter(
+  props: UseTableStateToMantineReactTableAdapterProps,
+): Partial<MRT_TableOptions<Record<string, any>>> {
+  const { meta, isFetching } = props;
   const { sort, setSort, page, setPage, limit, setLimit } =
     React.useContext(TableStateContext);
+
+  const tableSortStateArray: MRT_SortingState = React.useMemo(() => {
+    return sort
+      ? [
+          {
+            id: sort.name,
+            desc: sort.asc,
+          },
+        ]
+      : [];
+  }, [sort]);
+
+  const tablePaginationState: MRT_PaginationState = React.useMemo(() => {
+    return {
+      pageIndex: page,
+      pageSize: limit,
+    };
+  }, [limit, page]);
+
   return {
-    sortStatus: sort
-      ? ({
-          columnAccessor: sort.name,
-          direction: sort.asc ? ('asc' as const) : ('desc' as const),
-        } as DataTableSortStatus<Record<string, any>>)
-      : (undefined as any),
-    onSortStatusChange: React.useCallback(
-      (sortStatus: DataTableSortStatus<Record<string, any>>) => {
-        setSort(
-          sortStatus
-            ? {
-                name: sortStatus.columnAccessor,
-                asc: sortStatus.direction === 'asc',
-              }
-            : null,
-        );
+    ...MantineReactTableBehaviors.Sortable,
+    ...MantineReactTableBehaviors.WithPagination,
+    state: {
+      sorting: tableSortStateArray,
+      pagination: tablePaginationState,
+      isLoading: isFetching,
+    },
+    pageCount: meta?.pages,
+    rowCount: meta?.total,
+    onSortingChange: React.useCallback(
+      (state: MRT_Updater<MRT_SortingState>) => {
+        let newSortStateArray: MRT_SortingState;
+        if (typeof state === 'function') {
+          newSortStateArray = state(tableSortStateArray);
+        } else {
+          newSortStateArray = state;
+        }
+
+        if (newSortStateArray.length === 0) {
+          setSort(null);
+        } else {
+          const newSortState = newSortStateArray[0]!;
+          setSort({
+            asc: !newSortState.desc,
+            name: newSortState.id,
+          });
+        }
       },
-      [setSort],
+      [setSort, tableSortStateArray],
     ),
-    storeColumnsKey: LocalStorageKeys.TableColumnStates,
-    totalRecords: meta?.total,
-    recordsPerPage: limit,
-    onRecordsPerPageChange: setLimit,
-    recordsPerPageOptions: [10, 25, 50, 100],
-    page: page + 1,
-    onPageChange: React.useCallback(
-      (page: number) => setPage(page - 1),
-      [setPage],
+    onPaginationChange: React.useCallback(
+      (state: MRT_Updater<MRT_PaginationState>) => {
+        let newPagination: MRT_PaginationState;
+        if (typeof state === 'function') {
+          newPagination = state(tablePaginationState);
+        } else {
+          newPagination = state;
+        }
+        setPage(newPagination.pageIndex);
+        setLimit(newPagination.pageSize);
+      },
+      [setLimit, setPage, tablePaginationState],
     ),
-    idAccessor: '__index',
   };
 }

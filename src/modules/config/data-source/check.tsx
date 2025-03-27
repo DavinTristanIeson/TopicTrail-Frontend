@@ -1,5 +1,4 @@
 import { client } from '@/common/api/client';
-import { transformDataSourceFormType2DataSourceInput } from '../columns/utils';
 import {
   DefaultProjectSchemaColumnValues,
   ProjectConfigColumnFormType,
@@ -13,6 +12,7 @@ import { useFormContext, type UseFormReturn } from 'react-hook-form';
 import React from 'react';
 import fromPairs from 'lodash/fromPairs';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { ProjectDataSourceModel } from '@/api/project';
 
 interface UseVerifyDataSourceReturn {
   onSubmit(
@@ -29,7 +29,7 @@ function useVerifyDataSource(): UseVerifyDataSourceReturn {
 
   const onSubmit = async (data: ProjectConfigFormType['source']) => {
     const res = await check({
-      body: transformDataSourceFormType2DataSourceInput(data),
+      body: data as ProjectDataSourceModel,
     });
     if (res.message) {
       showNotification({

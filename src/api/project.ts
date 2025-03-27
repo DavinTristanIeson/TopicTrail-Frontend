@@ -13,23 +13,22 @@ export type ProjectInferDatasetModel =
   components['schemas']['CheckDatasetResource'];
 
 export type CategoricalSchemaColumnModel =
-  components['schemas']['CategoricalSchemaColumn-Output'];
+  components['schemas']['CategoricalSchemaColumn'];
 export type ContinuousSchemaColumnModel =
-  components['schemas']['ContinuousSchemaColumn-Output'];
+  components['schemas']['ContinuousSchemaColumn'];
 export type GeospatialSchemaColumnModel =
-  components['schemas']['GeospatialSchemaColumn-Output'];
+  components['schemas']['GeospatialSchemaColumn'];
 export type MultiCategoricalSchemaColumnModel =
-  components['schemas']['MultiCategoricalSchemaColumn-Output'];
+  components['schemas']['MultiCategoricalSchemaColumn'];
 export type OrderedCategoricalSchemaColumnModel =
-  components['schemas']['OrderedCategoricalSchemaColumn-Output'];
+  components['schemas']['OrderedCategoricalSchemaColumn'];
 export type TemporalSchemaColumnModel =
-  components['schemas']['TemporalSchemaColumn-Output'];
+  components['schemas']['TemporalSchemaColumn'];
 export type TextualSchemaColumnModel =
   components['schemas']['TextualSchemaColumn-Output'];
-export type TopicSchemaColumnModel =
-  components['schemas']['TopicSchemaColumn-Output'];
+export type TopicSchemaColumnModel = components['schemas']['TopicSchemaColumn'];
 export type UniqueSchemaColumnModel =
-  components['schemas']['UniqueSchemaColumn-Output'];
+  components['schemas']['UniqueSchemaColumn'];
 
 export type SchemaColumnModel =
   | CategoricalSchemaColumnModel
