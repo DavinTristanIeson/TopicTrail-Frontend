@@ -94,3 +94,20 @@ export const yupNullableMixed = Yup.mixed()
 export const yupNullableArray = Yup.array()
   .transform(nullIfEmptyArray)
   .nullable();
+
+/**
+ * Applies validation to values in an object schema with arbitrary keys. Since this uses Yup.lazy, it's not as performant if you have many properties to validate
+ * https://github.com/jquense/yup/issues/524
+ */
+export const DictionarySchema = (schema: Yup.AnySchema) => {
+  return Yup.lazy((obj) => {
+    const result: Record<string, Yup.AnySchema> = Object.create(null);
+    for (const key of Object.getOwnPropertyNames(obj)) {
+      if (obj[key] === undefined) {
+        continue;
+      }
+      result[key] = schema;
+    }
+    return Yup.object(result).required();
+  });
+};

@@ -47,7 +47,7 @@ const HighlightedCell = React.forwardRef<HTMLDivElement, HighlightedCellProps>(
   },
 );
 
-function TextualColumnCell(props: React.PropsWithChildren) {
+export function TextualColumnCell(props: React.PropsWithChildren) {
   return (
     <Spoiler hideLabel="Show Less" showLabel="Show More">
       <DefaultColumnCell>{props.children}</DefaultColumnCell>
@@ -225,7 +225,7 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
       return (
         <TopicColumnCell
           topic={props.value}
-          column={props.column.source_name}
+          column={props.column.source_name!}
         />
       );
     }

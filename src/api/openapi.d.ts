@@ -313,7 +313,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/start": {
+    "/topic/{project_id}/start": {
         parameters: {
             query?: never;
             header?: never;
@@ -323,14 +323,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Start Topic Modeling */
-        post: operations["post__start_topic_modeling_topics__project_id__start_post"];
+        post: operations["post__start_topic_modeling_topic__project_id__start_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/status": {
+    "/topic/{project_id}/status": {
         parameters: {
             query?: never;
             header?: never;
@@ -338,7 +338,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get  Topic Modeling  Status */
-        get: operations["get__topic_modeling__status_topics__project_id__status_get"];
+        get: operations["get__topic_modeling__status_topic__project_id__status_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -347,7 +347,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/": {
+    "/topic/{project_id}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -355,7 +355,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get  All Topic Modeling Results */
-        get: operations["get__all_topic_modeling_results_topics__project_id___get"];
+        get: operations["get__all_topic_modeling_results_topic__project_id___get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -364,7 +364,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/topics": {
+    "/topic/{project_id}/topics": {
         parameters: {
             query?: never;
             header?: never;
@@ -374,14 +374,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Get  All Topics */
-        post: operations["get__all_topics_topics__project_id__topics_post"];
+        post: operations["get__all_topics_topic__project_id__topics_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/refine": {
+    "/topic/{project_id}/refine": {
         parameters: {
             query?: never;
             header?: never;
@@ -390,7 +390,7 @@ export interface paths {
         };
         get?: never;
         /** Put  Refine Topics */
-        put: operations["put__refine_topics_topics__project_id__refine_put"];
+        put: operations["put__refine_topics_topic__project_id__refine_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -398,7 +398,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/documents": {
+    "/topic/{project_id}/documents": {
         parameters: {
             query?: never;
             header?: never;
@@ -408,7 +408,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Documents Per Topic */
-        post: operations["post__documents_per_topic_topics__project_id__documents_post"];
+        post: operations["post__documents_per_topic_topic__project_id__documents_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -720,8 +720,8 @@ export interface components {
          * @enum {string}
          */
         DocumentPreprocessingMethodEnum: "en_core_web_sm";
-        /** DocumentTopicMappingUpdateSchema */
-        DocumentTopicMappingUpdateSchema: {
+        /** DocumentTopicAssignmentUpdateSchema */
+        DocumentTopicAssignmentUpdateSchema: {
             /** Document Id */
             document_id: number;
             /** Topic Id */
@@ -1099,9 +1099,10 @@ export interface components {
         };
         /** RefineTopicsSchema */
         RefineTopicsSchema: {
-            topics: components["schemas"]["TopicUpdateSchema"];
+            /** Topics */
+            topics: components["schemas"]["TopicUpdateSchema"][];
             /** Document Topics */
-            document_topics: components["schemas"]["DocumentTopicMappingUpdateSchema"][];
+            document_topics: components["schemas"]["DocumentTopicAssignmentUpdateSchema"][];
         };
         /**
          * SchemaColumnTypeEnum
@@ -1512,8 +1513,6 @@ export interface components {
             id: number;
             /** Label */
             label: string | null;
-            /** Children */
-            children: components["schemas"]["TopicUpdateSchema"][] | null;
         };
         /** TopicsOfColumnSchema */
         TopicsOfColumnSchema: {
@@ -3011,7 +3010,7 @@ export interface operations {
             };
         };
     };
-    post__start_topic_modeling_topics__project_id__start_post: {
+    post__start_topic_modeling_topic__project_id__start_post: {
         parameters: {
             query: {
                 column: string;
@@ -3084,7 +3083,7 @@ export interface operations {
             };
         };
     };
-    get__topic_modeling__status_topics__project_id__status_get: {
+    get__topic_modeling__status_topic__project_id__status_get: {
         parameters: {
             query: {
                 column: string;
@@ -3153,7 +3152,7 @@ export interface operations {
             };
         };
     };
-    get__all_topic_modeling_results_topics__project_id___get: {
+    get__all_topic_modeling_results_topic__project_id___get: {
         parameters: {
             query?: never;
             header?: never;
@@ -3220,7 +3219,7 @@ export interface operations {
             };
         };
     };
-    get__all_topics_topics__project_id__topics_post: {
+    get__all_topics_topic__project_id__topics_post: {
         parameters: {
             query: {
                 column: string;
@@ -3293,7 +3292,7 @@ export interface operations {
             };
         };
     };
-    put__refine_topics_topics__project_id__refine_put: {
+    put__refine_topics_topic__project_id__refine_put: {
         parameters: {
             query: {
                 column: string;
@@ -3366,7 +3365,7 @@ export interface operations {
             };
         };
     };
-    post__documents_per_topic_topics__project_id__documents_post: {
+    post__documents_per_topic_topic__project_id__documents_post: {
         parameters: {
             query: {
                 column: string;

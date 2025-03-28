@@ -35,7 +35,7 @@ export default function ProjectTopicsEmptyPage() {
     });
     invalidateProjectDependencyQueries(project.id);
     queryClient.invalidateQueries({
-      queryKey: client.queryOptions('get', '/topics/{project_id}/', {
+      queryKey: client.queryOptions('get', '/topic/{project_id}/', {
         params: {
           path: {
             project_id: project.id,

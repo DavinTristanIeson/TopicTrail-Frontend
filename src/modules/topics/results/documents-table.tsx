@@ -37,7 +37,7 @@ export default function DocumentsPerTopicTable(
   const tableState = useTableStateSetup();
   const { page, limit, sort } = tableState;
 
-  const query = client.useQuery('post', '/topics/{project_id}/documents', {
+  const query = client.useQuery('post', '/topic/{project_id}/documents', {
     params: {
       query: {
         column: column.name,
