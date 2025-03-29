@@ -32,7 +32,12 @@ function DocumentTableSelectInput(props: DocumentTableSelectInputProps) {
   const topicValue = documentTopics[row.id.toString()] ?? row.topic;
 
   return (
-    <TopicSelectInput data={topics} value={topicValue} variant="unstyled" />
+    <TopicSelectInput
+      data={topics}
+      value={topicValue}
+      variant="unstyled"
+      className="w-full"
+    />
   );
 }
 

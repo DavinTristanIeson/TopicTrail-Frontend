@@ -106,7 +106,7 @@ export function useSchemaColumnToMantineReactTableAdapter(
                   </Text>
                 </HoverCard.Target>
                 <HoverCard.Dropdown className="max-w-md">
-                  <Text size="sm">{column.name}</Text>
+                  <Text size="sm">{column.description}</Text>
                 </HoverCard.Dropdown>
               </HoverCard>
             );

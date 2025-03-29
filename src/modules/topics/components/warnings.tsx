@@ -1,12 +1,10 @@
 import NavigationRoutes from '@/common/constants/routes';
-import { Alert, Anchor, Text } from '@mantine/core';
+import { Alert, Text } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
-import Link from 'next/link';
 import React from 'react';
-import { ProjectContext } from '@/modules/project/context';
+import { ProjectPageLinks } from '@/components/utility/links';
 
 export function NoTextualColumnWarning() {
-  const project = React.useContext(ProjectContext);
   return (
     <Alert icon={<Warning />} color="yellow" title="There are no columns!">
       There are no textual columns in your dataset, which means that the{' '}
@@ -18,31 +16,13 @@ export function NoTextualColumnWarning() {
         Topic Correlation
       </Text>{' '}
       page will not be useful to you. Consider using the{' '}
-      <Anchor
-        component={Link}
-        href={{
-          pathname: NavigationRoutes.ProjectComparison,
-          query: {
-            id: project.id,
-          },
-        }}
-        inherit
-      >
+      <ProjectPageLinks route={NavigationRoutes.ProjectComparison}>
         Table Page
-      </Anchor>{' '}
+      </ProjectPageLinks>{' '}
       or{' '}
-      <Anchor
-        component={Link}
-        href={{
-          pathname: NavigationRoutes.ProjectComparison,
-          query: {
-            id: project.id,
-          },
-        }}
-        inherit
-      >
+      <ProjectPageLinks route={NavigationRoutes.ProjectComparison}>
         Comparison Page
-      </Anchor>{' '}
+      </ProjectPageLinks>{' '}
       instead.
     </Alert>
   );

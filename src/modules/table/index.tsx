@@ -13,7 +13,7 @@ export default function TableQueryComponent() {
   const project = React.useContext(ProjectContext);
   const tableState = useTableStateSetup();
   const { limit, page, sort, filter } = tableState;
-  const { data, error, isFetching } = client.useQuery(
+  const { data, error, isFetching, refetch } = client.useQuery(
     'post',
     '/table/{project_id}/',
     {
@@ -45,6 +45,7 @@ export default function TableQueryComponent() {
         <FetchWrapperComponent
           isLoading={isFetching && !data}
           error={error}
+          onRetry={refetch}
           loadingComponent={<TableSkeleton />}
         >
           {data && (

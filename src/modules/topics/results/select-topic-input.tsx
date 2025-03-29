@@ -117,7 +117,7 @@ export function TopicMultiSelectInput(props: TopicMultiSelectInputProps) {
           <HoverCard.Target>
             <Info />
           </HoverCard.Target>
-          <HoverCard.Dropdown>
+          <HoverCard.Dropdown className="max-w-lg">
             <Stack>
               {currentTopics.map((topic) => (
                 <TopicWordsRenderer {...topic} key={topic.id} />

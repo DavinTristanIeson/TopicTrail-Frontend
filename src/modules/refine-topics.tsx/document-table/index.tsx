@@ -23,7 +23,7 @@ export function RefineTopicsDocumentTable(
 
   const tableState = useTableStateSetup();
   const { page, limit, filter, sort } = tableState;
-  const { data, isFetching, error } = client.useQuery(
+  const { data, isFetching, error, refetch } = client.useQuery(
     'post',
     '/topic/{project_id}/documents',
     {
@@ -52,6 +52,7 @@ export function RefineTopicsDocumentTable(
         </Group>
         <FetchWrapperComponent
           error={error}
+          onRetry={refetch}
           isLoading={isFetching && !data}
           loadingComponent={<TableSkeleton />}
         >

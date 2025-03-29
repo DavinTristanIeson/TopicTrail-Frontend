@@ -4,6 +4,7 @@ import {
   Checkbox,
   createTheme,
   Drawer,
+  HoverCard,
   InputWrapper,
   LoadingOverlay,
   Modal,
@@ -105,6 +106,11 @@ const mantineTheme = createTheme({
         color: 'white',
         c: 'black',
         multiline: true,
+      },
+    }),
+    HoverCard: HoverCard.extend({
+      defaultProps: {
+        position: 'right',
       },
     }),
   },

@@ -18,7 +18,7 @@ import { ErrorAlert } from '@/components/standard/fields/watcher';
 import { showNotification } from '@mantine/notifications';
 import TableFilterManagementSection from '../management';
 import { useCheckFilterValidity } from '../management/hooks';
-import { FilterStateContext, TableStateContext } from '@/modules/table/context';
+import { FilterStateContext } from '@/modules/table/context';
 
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;

@@ -1,11 +1,11 @@
 import { TopicModel } from '@/api/topic';
 import React from 'react';
 import {
+  Badge,
   Button,
   HoverCard,
   NavLink,
   Paper,
-  ScrollArea,
   Stack,
   TextInput,
 } from '@mantine/core';
@@ -13,8 +13,9 @@ import { useDebouncedState } from '@mantine/hooks';
 import { TopicInfo } from '@/modules/topics/components/info';
 import { AndTableFilterModel, TableFilterModel } from '@/api/table';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
-import { TextualSchemaColumnModel } from '@/api/project';
+import { getTopicColumnName, TextualSchemaColumnModel } from '@/api/project';
 import { FilterStateContext } from '@/modules/table/context';
+import { CaretRight } from '@phosphor-icons/react';
 
 interface RefineTopicsTopicListProps {
   column: TextualSchemaColumnModel;
@@ -22,7 +23,7 @@ interface RefineTopicsTopicListProps {
 }
 
 function getTopicValuesFromTopicFilters(
-  column: TextualSchemaColumnModel,
+  column: string,
   filter: TableFilterModel | null,
 ): number[] | null {
   if (!filter) return null;
@@ -39,7 +40,7 @@ function getTopicValuesFromTopicFilters(
   if (topicOperand.type !== TableFilterTypeEnum.IsOneOf) {
     return null;
   }
-  if (topicOperand.target !== column.name) {
+  if (topicOperand.target !== column) {
     return null;
   }
   return topicOperand.values as number[];
@@ -50,21 +51,25 @@ function TopicListRenderer(props: RefineTopicsTopicListProps) {
 
   const { filter, setFilter } = React.useContext(FilterStateContext);
 
+  const topicColumnName = getTopicColumnName(column.name);
   const activeTopicIds = React.useMemo(() => {
-    return getTopicValuesFromTopicFilters(column, filter) ?? [];
-  }, [column, filter]);
+    return getTopicValuesFromTopicFilters(topicColumnName, filter) ?? [];
+  }, [filter, topicColumnName]);
 
   const setTopicFilter = React.useCallback(
     (topic: TopicModel) => {
       setFilter((prev) => {
-        const prevTopicValues = getTopicValuesFromTopicFilters(column, prev);
-        if (prevTopicValues == null) {
+        const filterTopicValues = getTopicValuesFromTopicFilters(
+          topicColumnName,
+          prev,
+        );
+        if (filterTopicValues == null) {
           return {
             type: TableFilterTypeEnum.And,
             operands: [
               {
                 type: TableFilterTypeEnum.IsOneOf,
-                target: column.name,
+                target: topicColumnName,
                 values: [topic.id],
               },
             ],
@@ -72,20 +77,26 @@ function TopicListRenderer(props: RefineTopicsTopicListProps) {
         }
 
         const filter = prev as AndTableFilterModel;
+        const prevTopicIdx = filterTopicValues.indexOf(topic.id);
+        if (prevTopicIdx === -1) {
+          filterTopicValues.push(topic.id);
+        } else {
+          filterTopicValues.splice(prevTopicIdx, 1);
+        }
         return {
           ...filter,
           operands: [
             {
               type: TableFilterTypeEnum.IsOneOf,
-              target: column.name,
-              values: [...prevTopicValues, topic.id],
+              target: topicColumnName,
+              values: filterTopicValues,
             },
             ...filter.operands.slice(1),
           ],
         };
       });
     },
-    [column, setFilter],
+    [setFilter, topicColumnName],
   );
 
   return (
@@ -98,13 +109,15 @@ function TopicListRenderer(props: RefineTopicsTopicListProps) {
               <NavLink
                 active={isActive}
                 component="button"
+                leftSection={<Badge color="brand.4">{topic.id + 1}</Badge>}
+                rightSection={<CaretRight />}
                 onClick={() => {
                   setTopicFilter(topic);
                 }}
                 label={topic.label}
               />
             </HoverCard.Target>
-            <HoverCard.Dropdown className="max-w-md">
+            <HoverCard.Dropdown className="max-w-lg">
               <TopicInfo {...topic} />
             </HoverCard.Dropdown>
           </HoverCard>

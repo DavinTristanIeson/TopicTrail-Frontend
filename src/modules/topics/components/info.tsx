@@ -1,6 +1,5 @@
 import { TopicModel } from '@/api/topic';
-import Colors from '@/common/constants/colors';
-import { Stack, Group, Badge, Text } from '@mantine/core';
+import { Stack, Group, Badge, Text, useMantineTheme } from '@mantine/core';
 
 export function TopicWordsRenderer(props: TopicModel) {
   const maxWordValue = props.words.reduce(
@@ -11,21 +10,30 @@ export function TopicWordsRenderer(props: TopicModel) {
     ([, value]) => value / maxWordValue,
   );
   const hexValueBase = normalizedWordValues.map((value) =>
-    Math.min(255, value * 127 + 128),
+    Math.round(Math.min(255, value * 127 + 128)),
   );
+
+  const { colors } = useMantineTheme();
   return (
-    <Group>
-      {props.words.slice(0, 5).map(([word], index) => {
+    <Group gap="xs">
+      {props.words.slice(0, 5).map(([word, value], index) => {
+        const proportion = normalizedWordValues[index]!;
         const hexValue = hexValueBase[index]!.toString(16);
         return (
-          <Badge
+          <Text
             key={word}
-            color={`${Colors.brand}${hexValue}`}
-            variant="light"
-            radius="sm"
+            fw={500}
+            px={4}
+            py={2}
+            size="xs"
+            className="rounded"
+            style={{
+              backgroundColor: `${colors.brand[6]}${hexValue}`,
+              color: proportion > 0.5 ? 'white' : 'black',
+            }}
           >
-            {word}
-          </Badge>
+            {`${word} (${value.toFixed(2)})`}
+          </Text>
         );
       })}
     </Group>

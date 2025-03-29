@@ -2,7 +2,6 @@ import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import NavigationRoutes from '@/common/constants/routes';
 import { ProjectPageLinks } from '@/components/utility/links';
-import { useProjectColumnField } from '@/modules/project/columns';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import {
   TopicMultiSelectField,
@@ -41,22 +40,28 @@ function NoTopicAlert() {
   );
 }
 
-export function TopicFilterSelectField(
-  props: Omit<TopicSelectFieldProps, 'data'>,
-) {
-  const column = useProjectColumnField(props.name);
-  const topics = useProvideTopicSelectInputData(column);
+type TopicFilterSelectFieldProps = Omit<TopicSelectFieldProps, 'data'> & {
+  column: SchemaColumnModel;
+};
+export function TopicFilterSelectField(props: TopicFilterSelectFieldProps) {
+  const topics = useProvideTopicSelectInputData(props.column);
   if (!topics) {
     return <NoTopicAlert />;
   }
   return <TopicSelectField data={topics} {...props} />;
 }
 
+type TopicFilterMultiSelectFieldProps = Omit<
+  TopicMultiSelectFieldProps,
+  'data'
+> & {
+  column: SchemaColumnModel;
+};
+
 export function TopicFilterMultiSelectField(
-  props: Omit<TopicMultiSelectFieldProps, 'data'>,
+  props: TopicFilterMultiSelectFieldProps,
 ) {
-  const column = useProjectColumnField(props.name);
-  const topics = useProvideTopicSelectInputData(column);
+  const topics = useProvideTopicSelectInputData(props.column);
   if (!topics) {
     return <NoTopicAlert />;
   }

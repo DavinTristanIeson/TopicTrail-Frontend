@@ -1,6 +1,7 @@
 import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import NavigationRoutes from '@/common/constants/routes';
+import { ProjectPageLinks } from '@/components/utility/links';
 import { GridSkeleton } from '@/components/visual/loading';
 import { ProjectContext } from '@/modules/project/context';
 import AppProjectLayout from '@/modules/project/layout';
@@ -11,10 +12,9 @@ import {
 } from '@/modules/topics/components/context';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
 import { AddTableVisualizationButton } from '@/modules/visualization/dashboard/add-visualization-dialog';
-import { Alert, Anchor, Group, Stack } from '@mantine/core';
+import { Alert, Group, Stack } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 import React from 'react';
 
 const GridstackDashboard = dynamic(
@@ -46,18 +46,9 @@ function TopicCorrelationStateManager() {
     return (
       <Alert icon={<Warning />} color="red" title="There are no topics!">
         {`Please run the topic modeling algorithm on at least one of the following columns: ${textualColumns.map((column) => column.name).join(', ')} in order to use the analysis methods in this page. You can find the topics from the `}
-        <Anchor
-          component={Link}
-          inherit
-          href={{
-            pathname: NavigationRoutes.ProjectTopics,
-            query: {
-              id: project.id,
-            },
-          }}
-        >
+        <ProjectPageLinks route={NavigationRoutes.ProjectTopics}>
           Topics Page
-        </Anchor>
+        </ProjectPageLinks>
         .
       </Alert>
     );
