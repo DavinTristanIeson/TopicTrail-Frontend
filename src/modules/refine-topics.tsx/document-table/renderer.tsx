@@ -1,13 +1,20 @@
-import { DocumentPerTopicModel, TopicModel } from '@/api/topic';
+import { TopicModel, DocumentPerTopicModel } from '@/api/topic';
+import { TextualColumnCell } from '@/modules/table/cell';
+import { TopicSelectInput } from '@/modules/topics/results/select-topic-input';
 import { Tooltip, Text } from '@mantine/core';
-import { type MRT_ColumnDef } from 'mantine-react-table';
-import React from 'react';
-import { TextualColumnCell } from '../table/cell';
-import { TopicSelectInput } from '../topics/results/select-topic-input';
+import {
+  MantineReactTable,
+  useMantineReactTable,
+  type MRT_ColumnDef,
+} from 'mantine-react-table';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { RefineTopicsFormType } from './form-type';
-import { TextualSchemaColumnModel } from '@/api/project';
-import { useTableStateSetup } from '../table/context';
+import { RefineTopicsFormType } from '../form-type';
+import React from 'react';
+import {
+  MantineReactTableBehaviors,
+  useTableStateToMantineReactTableAdapter,
+} from '@/modules/table/adapter';
+import { PaginationMetaModel } from '@/api/table';
 
 interface DocumentTableSelectInputProps {
   topics: TopicModel[];
@@ -82,18 +89,31 @@ function useDocumentTableColumns(topics: TopicModel[]) {
   }, [topics]);
 }
 
-interface RefineTopicsDocumentTableProps {
-  column: TextualSchemaColumnModel;
-  topic: TopicModel;
+interface RefineTopicsDocumentTableRendererProps {
+  data: DocumentPerTopicModel[];
+  meta: PaginationMetaModel | undefined;
   topics: TopicModel[];
+  isFetching: boolean;
 }
 
-export function RefineTopicsDocumentTable(
-  props: RefineTopicsDocumentTableProps,
+export function RefineTopicsDocumentTableRenderer(
+  props: RefineTopicsDocumentTableRendererProps,
 ) {
-  const { column, topic, topics } = props;
+  const { topics, data, meta, isFetching } = props;
   const columns = useDocumentTableColumns(topics);
+  const tableStateBehaviors = useTableStateToMantineReactTableAdapter({
+    isFetching,
+    meta,
+  });
 
-  const tableState = useTableStateSetup();
-  return <></>;
+  const table = useMantineReactTable<DocumentPerTopicModel>({
+    data,
+    columns,
+    ...tableStateBehaviors,
+    ...MantineReactTableBehaviors.Default,
+    ...MantineReactTableBehaviors.ColumnActions,
+    ...MantineReactTableBehaviors.Resizable,
+    ...MantineReactTableBehaviors.Virtualized(data, columns),
+  });
+  return <MantineReactTable table={table} />;
 }

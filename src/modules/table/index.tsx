@@ -3,35 +3,11 @@ import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
 import TableRendererComponent from './table';
 import { TableStateContext, useTableStateSetup } from './context';
-import { Funnel, Warning } from '@phosphor-icons/react';
-import { Alert, Button, Group, Indicator, Stack, Title } from '@mantine/core';
+import { Group, Stack, Title } from '@mantine/core';
 import { TableSkeleton } from '@/components/visual/loading';
 import { keepPreviousData } from '@tanstack/react-query';
-import { DisclosureTrigger } from '@/hooks/disclosure';
-import TableFilterDrawer from '../filter/drawer';
-
-function TableFilterButton() {
-  const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { filter, setFilter } = React.useContext(TableStateContext);
-  return (
-    <Indicator disabled={!filter} color="red" zIndex={2}>
-      <TableFilterDrawer
-        ref={tableFilterRemote}
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Button
-        variant="outline"
-        onClick={() => {
-          tableFilterRemote.current?.open();
-        }}
-        leftSection={<Funnel />}
-      >
-        Filter
-      </Button>
-    </Indicator>
-  );
-}
+import { TableFilterButton } from '../filter/drawer';
+import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
 
 export default function TableQueryComponent() {
   const project = React.useContext(ProjectContext);
@@ -59,38 +35,27 @@ export default function TableQueryComponent() {
     },
   );
 
-  const errorComponent = error && (
-    <Alert
-      variant="red"
-      icon={<Warning size={20} />}
-      title="An error has occurred while loading the dataset"
-    >
-      {error.message}
-    </Alert>
-  );
-
-  if (error && !data) {
-    return errorComponent;
-  }
-
-  if (!data) {
-    return <TableSkeleton />;
-  }
-
   return (
     <TableStateContext.Provider value={tableState}>
       <Stack>
-        {errorComponent}
         <Group justify="space-between">
           <Title order={2}>Dataset of {project.config.metadata.name}</Title>
           <TableFilterButton />
         </Group>
-        <TableRendererComponent
-          columns={data.columns}
-          data={data.data}
-          meta={data.meta}
-          isFetching={isFetching}
-        />
+        <FetchWrapperComponent
+          isLoading={isFetching && !data}
+          error={error}
+          loadingComponent={<TableSkeleton />}
+        >
+          {data && (
+            <TableRendererComponent
+              columns={data.columns}
+              data={data.data}
+              meta={data.meta}
+              isFetching={isFetching}
+            />
+          )}
+        </FetchWrapperComponent>
       </Stack>
     </TableStateContext.Provider>
   );

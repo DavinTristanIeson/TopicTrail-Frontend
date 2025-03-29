@@ -26,7 +26,7 @@ export default function TableRendererComponent(
   });
   const table = useMantineReactTable({
     data,
-    columns: tableColumns,
+    columns: tableColumns as any,
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,

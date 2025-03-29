@@ -36,6 +36,14 @@ export default function FormWrapper<T extends FieldValues>(
         className={classNames('relative', props.className)}
         style={props.style}
       >
+        {/* Prevent implicit submit behavior
+        https://stackoverflow.com/questions/895171/prevent-users-from-submitting-a-form-by-hitting-enter */}
+        <button
+          type="submit"
+          disabled
+          className="hidden"
+          aria-hidden="true"
+        ></button>
         <LoadingOverlay visible={isSubmitting} />
         {props.children}
       </Form>

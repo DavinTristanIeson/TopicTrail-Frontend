@@ -133,7 +133,7 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
       <UseQueryWrapperComponent query={query}>
         {(data) => (
           <ProjectContext.Provider value={data.data}>
-            <div className={withPadding ? 'pt-3 px-3' : undefined}>
+            <div className={withPadding ? 'pt-3 px-3 h-full' : undefined}>
               {children}
             </div>
           </ProjectContext.Provider>

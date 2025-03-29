@@ -11,6 +11,9 @@ import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RefineTopicsDocumentTable } from './document-table';
+import RefineTopicsTopicList from './topic-list';
+import { FilterStateProvider } from '../table/context';
+import { Divider, Group } from '@mantine/core';
 
 interface RefineTopicsFormProps {
   topicModelingResult: ColumnTopicModelingResultModel;
@@ -89,11 +92,23 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
   );
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
-      <RefineTopicsDocumentTable
-        column={topicModelingResult.column}
-        topics={topicModelingResult.result!.topics}
-        topic={topicModelingResult.result!.topics[0]!}
-      />
+      <FilterStateProvider>
+        <Group align="stretch" className="h-full">
+          <div className="max-w-md">
+            <RefineTopicsTopicList
+              column={topicModelingResult.column}
+              topics={topicModelingResult.result!.topics}
+            />
+          </div>
+          <Divider variant="vertical" />
+          <div className="flex-1">
+            <RefineTopicsDocumentTable
+              column={topicModelingResult.column}
+              topics={topicModelingResult.result!.topics}
+            />
+          </div>
+        </Group>
+      </FilterStateProvider>
     </FormWrapper>
   );
 }

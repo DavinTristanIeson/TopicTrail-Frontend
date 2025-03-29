@@ -143,6 +143,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/affected-rows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Affected Rows */
+        post: operations["post__get_affected_rows_table__project_id__affected_rows_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/column/frequency-distribution": {
         parameters: {
             query?: never;
@@ -552,6 +569,13 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[list[int]] */
+        ApiResult_list_int__: {
+            /** Data */
+            data: number[];
+            /** Message */
+            message: string | null;
+        };
         /** CSVDataSource */
         CSVDataSource: {
             /** Path */
@@ -663,6 +687,11 @@ export interface components {
              * @default 3
              */
             bin_count: number;
+        };
+        /** DatasetFilterSchema */
+        DatasetFilterSchema: {
+            /** Filter */
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
         };
         /** DatasetPreviewResource */
         DatasetPreviewResource: {
@@ -1424,7 +1453,7 @@ export interface components {
                 number
             ][];
             /** Label */
-            label: string | null;
+            label: string;
             /** Frequency */
             frequency: number;
             /** Description */
@@ -1512,7 +1541,7 @@ export interface components {
             /** Id */
             id: number;
             /** Label */
-            label: string | null;
+            label: string;
         };
         /** TopicsOfColumnSchema */
         TopicsOfColumnSchema: {
@@ -2251,6 +2280,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TablePaginationApiResult_dict_str__Any__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__get_affected_rows_table__project_id__affected_rows_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DatasetFilterSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_int__"];
                 };
             };
             /** @description Bad Request */
@@ -3369,7 +3469,6 @@ export interface operations {
         parameters: {
             query: {
                 column: string;
-                topic: number;
             };
             header?: never;
             path: {
