@@ -53,7 +53,7 @@ export const MantineReactTableBehaviors = {
   } satisfies MantineReactTableProps,
   Resizable: {
     enableColumnResizing: true,
-    layoutMode: 'grid',
+    layoutMode: 'grid-no-grow',
     columnResizeMode: 'onEnd',
   } satisfies MantineReactTableProps,
   Sortable: {

@@ -62,6 +62,7 @@ export function RefineTopicsDocumentTable(
               data={data.data}
               meta={data.meta}
               isFetching={isFetching}
+              column={column}
             />
           )}
         </FetchWrapperComponent>

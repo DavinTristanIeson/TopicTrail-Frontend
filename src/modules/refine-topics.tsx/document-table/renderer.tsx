@@ -1,13 +1,13 @@
 import { TopicModel, DocumentPerTopicModel } from '@/api/topic';
-import { TextualColumnCell } from '@/modules/table/cell';
+import { TextualColumnCell, TopicColumnCell } from '@/modules/table/cell';
 import { TopicSelectInput } from '@/modules/topics/results/select-topic-input';
-import { Tooltip, Text } from '@mantine/core';
+import { Tooltip, Text, Stack, Group } from '@mantine/core';
 import {
   MantineReactTable,
   useMantineReactTable,
   type MRT_ColumnDef,
 } from 'mantine-react-table';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 import { RefineTopicsFormType } from '../form-type';
 import React from 'react';
 import {
@@ -15,6 +15,7 @@ import {
   useTableStateToMantineReactTableAdapter,
 } from '@/modules/table/adapter';
 import { PaginationMetaModel } from '@/api/table';
+import { TextualSchemaColumnModel } from '@/api/project';
 
 interface DocumentTableSelectInputProps {
   topics: TopicModel[];
@@ -24,24 +25,31 @@ interface DocumentTableSelectInputProps {
 function DocumentTableSelectInput(props: DocumentTableSelectInputProps) {
   const { topics, row } = props;
   const { control } = useFormContext<RefineTopicsFormType>();
-  const documentTopics = useWatch({
+  const { field, fieldState } = useController({
     control,
-    name: 'document_topics',
+    name: `document_topics.${row.id.toString()}`,
   });
 
-  const topicValue = documentTopics[row.id.toString()] ?? row.topic;
+  const topicValue = field.value ?? row.topic;
 
   return (
     <TopicSelectInput
       data={topics}
       value={topicValue}
+      error={fieldState.error?.message}
+      onChange={(newTopic) => {
+        field.onChange(newTopic?.id ?? null);
+      }}
       variant="unstyled"
       className="w-full"
     />
   );
 }
 
-function useDocumentTableColumns(topics: TopicModel[]) {
+function useDocumentTableColumns(
+  topics: TopicModel[],
+  column: TextualSchemaColumnModel,
+) {
   return React.useMemo<MRT_ColumnDef<DocumentPerTopicModel>[]>(() => {
     return [
       {
@@ -84,28 +92,42 @@ function useDocumentTableColumns(topics: TopicModel[]) {
       },
       {
         accessorKey: 'topic',
-        header: 'Topic',
+        header: 'Original Topic',
+        size: 400,
+        Cell({ row: { original } }) {
+          return (
+            <TopicColumnCell
+              column={column.source_name!}
+              topic={original.topic}
+            />
+          );
+        },
+      },
+      {
+        id: 'new_topic',
+        header: 'New Topic',
         size: 400,
         Cell({ row: { original } }) {
           return <DocumentTableSelectInput topics={topics} row={original} />;
         },
       },
     ];
-  }, [topics]);
+  }, [column.source_name, topics]);
 }
 
 interface RefineTopicsDocumentTableRendererProps {
   data: DocumentPerTopicModel[];
   meta: PaginationMetaModel | undefined;
   topics: TopicModel[];
+  column: TextualSchemaColumnModel;
   isFetching: boolean;
 }
 
 export function RefineTopicsDocumentTableRenderer(
   props: RefineTopicsDocumentTableRendererProps,
 ) {
-  const { topics, data, meta, isFetching } = props;
-  const columns = useDocumentTableColumns(topics);
+  const { column, topics, data, meta, isFetching } = props;
+  const columns = useDocumentTableColumns(topics, column);
   const tableStateBehaviors = useTableStateToMantineReactTableAdapter({
     isFetching,
     meta,
@@ -120,5 +142,10 @@ export function RefineTopicsDocumentTableRenderer(
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.Virtualized(data, columns),
   });
-  return <MantineReactTable table={table} />;
+  return (
+    <Stack>
+      <Group>{/* TODO: Move topic en masse */}</Group>
+      <MantineReactTable table={table} />
+    </Stack>
+  );
 }

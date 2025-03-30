@@ -34,5 +34,5 @@ export default function TableRendererComponent(
     ...tableProps,
   });
 
-  return <MantineReactTable table={table} layoutMode={'grid-no-grow' as any} />;
+  return <MantineReactTable table={table} />;
 }

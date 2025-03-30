@@ -1,164 +1,127 @@
-import { TopicModel } from '@/api/topic';
 import React from 'react';
-import {
-  Badge,
-  Button,
-  HoverCard,
-  NavLink,
-  Paper,
-  Stack,
-  TextInput,
-} from '@mantine/core';
+import { Button, Paper, Stack, TextInput } from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
-import { TopicInfo } from '@/modules/topics/components/info';
-import { AndTableFilterModel, TableFilterModel } from '@/api/table';
-import { TableFilterTypeEnum } from '@/common/constants/enum';
 import { getTopicColumnName, TextualSchemaColumnModel } from '@/api/project';
 import { FilterStateContext } from '@/modules/table/context';
-import { CaretRight } from '@phosphor-icons/react';
+import {
+  DisclosureTrigger,
+  ParametrizedDisclosureTrigger,
+} from '@/hooks/disclosure';
+import { CreateNewTopicDialog, UpdateTopicLabelDialog } from './dialogs';
+import {
+  getTopicValuesFromTopicFilters,
+  RefineTopicsTopicListItem,
+} from './item';
+import { Plus } from '@phosphor-icons/react';
 
-interface RefineTopicsTopicListProps {
+import { useFormContext, useWatch } from 'react-hook-form';
+import { RefineTopicsFormType, TopicUpdateFormType } from '../form-type';
+
+interface TopicListRendererProps {
   column: TextualSchemaColumnModel;
-  topics: TopicModel[];
+  topics: TopicUpdateFormType[];
+  onEdit(topicId: number): void;
 }
 
-function getTopicValuesFromTopicFilters(
-  column: string,
-  filter: TableFilterModel | null,
-): number[] | null {
-  if (!filter) return null;
-  if (
-    filter.type !== TableFilterTypeEnum.And &&
-    filter.type !== TableFilterTypeEnum.Or
-  ) {
-    return null;
-  }
-  const topicOperand = filter.operands[0];
-  if (!topicOperand) {
-    return null;
-  }
-  if (topicOperand.type !== TableFilterTypeEnum.IsOneOf) {
-    return null;
-  }
-  if (topicOperand.target !== column) {
-    return null;
-  }
-  return topicOperand.values as number[];
-}
+function TopicListRenderer(props: TopicListRendererProps) {
+  const { column, topics, onEdit } = props;
 
-function TopicListRenderer(props: RefineTopicsTopicListProps) {
-  const { column, topics } = props;
-
-  const { filter, setFilter } = React.useContext(FilterStateContext);
+  const { filter } = React.useContext(FilterStateContext);
 
   const topicColumnName = getTopicColumnName(column.name);
   const activeTopicIds = React.useMemo(() => {
     return getTopicValuesFromTopicFilters(topicColumnName, filter) ?? [];
   }, [filter, topicColumnName]);
 
-  const setTopicFilter = React.useCallback(
-    (topic: TopicModel) => {
-      setFilter((prev) => {
-        const filterTopicValues = getTopicValuesFromTopicFilters(
-          topicColumnName,
-          prev,
-        );
-        if (filterTopicValues == null) {
-          return {
-            type: TableFilterTypeEnum.And,
-            operands: [
-              {
-                type: TableFilterTypeEnum.IsOneOf,
-                target: topicColumnName,
-                values: [topic.id],
-              },
-            ],
-          };
-        }
-
-        const filter = prev as AndTableFilterModel;
-        const prevTopicIdx = filterTopicValues.indexOf(topic.id);
-        if (prevTopicIdx === -1) {
-          filterTopicValues.push(topic.id);
-        } else {
-          filterTopicValues.splice(prevTopicIdx, 1);
-        }
-        return {
-          ...filter,
-          operands: [
-            {
-              type: TableFilterTypeEnum.IsOneOf,
-              target: topicColumnName,
-              values: filterTopicValues,
-            },
-            ...filter.operands.slice(1),
-          ],
-        };
-      });
-    },
-    [setFilter, topicColumnName],
-  );
-
   return (
     <Stack>
-      {topics.map((topic) => {
+      {topics.map((topic, index) => {
         const isActive = activeTopicIds.includes(topic.id);
         return (
-          <HoverCard key={topic.id}>
-            <HoverCard.Target>
-              <NavLink
-                active={isActive}
-                component="button"
-                leftSection={<Badge color="brand.4">{topic.id + 1}</Badge>}
-                rightSection={<CaretRight />}
-                onClick={() => {
-                  setTopicFilter(topic);
-                }}
-                label={topic.label}
-              />
-            </HoverCard.Target>
-            <HoverCard.Dropdown className="max-w-lg">
-              <TopicInfo {...topic} />
-            </HoverCard.Dropdown>
-          </HoverCard>
+          <RefineTopicsTopicListItem
+            key={topic.id}
+            column={column}
+            label={topic.label}
+            index={index}
+            isActive={isActive}
+            onEdit={() => {
+              onEdit(topic.id);
+            }}
+            topic={topic.original}
+          />
         );
       })}
     </Stack>
   );
 }
 
+interface RefineTopicsTopicListProps {
+  column: TextualSchemaColumnModel;
+}
+
 export default function RefineTopicsTopicList(
   props: RefineTopicsTopicListProps,
 ) {
-  const { column, topics } = props;
+  const { column } = props;
 
   const [q, setQ] = useDebouncedState<string | null>(null, 800);
+
+  const { control } = useFormContext<RefineTopicsFormType>();
+  const topics = useWatch({
+    name: 'topics',
+    control,
+  });
 
   const filteredTopics = React.useMemo(() => {
     if (!q) return topics;
     return topics.filter((topic) => {
-      const matchesLabel = !!topic.label && topic.label.includes(q);
-      const matchesTopicWords = topic.words.map((word) => word[0]).includes(q);
-      const matchesTags = !!topic.tags && topic.tags.includes(q);
+      const matchesLabel = topic.label.includes(q);
+      if (!topic.original) {
+        return matchesLabel;
+      }
+      const matchesTopicWords = topic.original.words
+        .map((word) => word[0])
+        .includes(q);
+      const matchesTags =
+        !!topic.original.tags && topic.original.tags.includes(q);
       return matchesLabel || matchesTopicWords || matchesTags;
     });
-  }, [q, topics]);
+  }, [topics, q]);
+
+  const createNewTopicRemote = React.useRef<DisclosureTrigger | null>(null);
+  const updateLabelDialogRemote =
+    React.useRef<ParametrizedDisclosureTrigger<number> | null>(null);
 
   return (
-    <Stack style={{ height: '90dvh' }}>
-      <Paper className="p-2">
-        <TextInput
-          label="Search for a topic"
-          placeholder="Name or tag."
-          onChange={(e) => setQ(e.target.value)}
-        />
+    <>
+      <CreateNewTopicDialog ref={createNewTopicRemote} />
+      <UpdateTopicLabelDialog ref={updateLabelDialogRemote} />
+      <Paper className="p-2" style={{ height: '90dvh' }}>
+        <Stack className="h-full">
+          <TextInput
+            label="Search for a topic"
+            placeholder="Name or tag."
+            onChange={(e) => setQ(e.target.value)}
+          />
+          <div className="h-full overflow-auto">
+            <TopicListRenderer
+              column={column}
+              topics={filteredTopics}
+              onEdit={(topicId: number) => {
+                updateLabelDialogRemote.current?.open(topicId);
+              }}
+            />
+          </div>
+          <Button
+            onClick={() => {
+              createNewTopicRemote.current?.open();
+            }}
+            leftSection={<Plus />}
+          >
+            Add New Topic
+          </Button>
+        </Stack>
       </Paper>
-      <Paper className="p-2 overflow-auto flex-1">
-        <TopicListRenderer column={column} topics={filteredTopics} />
-      </Paper>
-      <Paper className="p-2">
-        <Button>Add a New</Button>
-      </Paper>
-    </Stack>
+    </>
   );
 }

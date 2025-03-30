@@ -1,5 +1,5 @@
+import { TopicModel } from '@/api/topic';
 import { DictionarySchema } from '@/common/utils/form';
-import { ReplaceKeys } from '@/common/utils/types';
 import * as Yup from 'yup';
 
 const topicUpdateFormSchema = Yup.object({
@@ -12,10 +12,12 @@ export const refineTopicsFormSchema = Yup.object({
   document_topics: DictionarySchema(Yup.number().required()),
 }).required();
 
-export type TopicUpdateFormType = Yup.InferType<typeof topicUpdateFormSchema>;
-export type RefineTopicsFormType = ReplaceKeys<
-  Yup.InferType<typeof refineTopicsFormSchema>,
-  {
-    document_topics: Record<string, number>;
-  }
->;
+export type TopicUpdateFormType = Yup.InferType<
+  typeof topicUpdateFormSchema
+> & {
+  original: TopicModel | null;
+};
+export type RefineTopicsFormType = {
+  topics: TopicUpdateFormType[];
+  document_topics: Record<string, number>;
+};

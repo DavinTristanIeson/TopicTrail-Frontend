@@ -4,7 +4,7 @@ import { XCircle, ArrowClockwise } from '@phosphor-icons/react';
 interface ErrorViewComponentProps {
   title?: string;
   message?: string;
-  refetch: () => void;
+  refetch?: () => void;
 }
 
 export function ErrorViewComponent(props: ErrorViewComponentProps) {
@@ -17,19 +17,17 @@ export function ErrorViewComponent(props: ErrorViewComponentProps) {
       icon={<XCircle />}
     >
       <Text inherit>{message}</Text>
-      {refetch && (
-        <Button
-          className="max-w-md mt-3"
-          fullWidth
-          size="md"
-          variant="filled"
-          onClick={refetch}
-          color="red"
-          leftSection={<ArrowClockwise />}
-        >
-          Retry
-        </Button>
-      )}
+      {refetch && <Button
+        className="max-w-md mt-3"
+        fullWidth
+        size="md"
+        variant="filled"
+        onClick={refetch}
+        color="red"
+        leftSection={<ArrowClockwise />}
+      >
+        Retry
+      </Button>}
     </Alert>
   );
 }

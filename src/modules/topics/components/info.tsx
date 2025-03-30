@@ -1,7 +1,11 @@
 import { TopicModel } from '@/api/topic';
 import { Stack, Group, Badge, Text, useMantineTheme } from '@mantine/core';
 
-export function TopicWordsRenderer(props: TopicModel) {
+interface TopicWordsRendererProps {
+  words: TopicModel['words'];
+}
+
+export function TopicWordsRenderer(props: TopicWordsRendererProps) {
   const maxWordValue = props.words.reduce(
     (acc, cur) => Math.max(acc, cur[1]),
     0,
@@ -44,9 +48,6 @@ export function TopicInfo(props: TopicModel) {
   return (
     <Stack>
       <Group gap={6}>
-        <Text size="sm" c="brand" fw={500}>
-          {props.id + 1}.
-        </Text>
         <Text size="sm" fw={500} c="brand">
           {props.label}
         </Text>

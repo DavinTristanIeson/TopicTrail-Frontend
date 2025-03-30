@@ -13,7 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { RefineTopicsDocumentTable } from './document-table';
 import RefineTopicsTopicList from './topic-list';
 import { FilterStateProvider } from '../table/context';
-import { Divider, Group } from '@mantine/core';
+import { Group } from '@mantine/core';
 
 interface RefineTopicsFormProps {
   topicModelingResult: ColumnTopicModelingResultModel;
@@ -30,6 +30,7 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
         return {
           id: topic.id,
           label: topic.label,
+          original: topic,
         };
       }),
     };
@@ -93,14 +94,10 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
       <FilterStateProvider>
-        <Group align="stretch" className="h-full">
-          <div className="max-w-md">
-            <RefineTopicsTopicList
-              column={topicModelingResult.column}
-              topics={topicModelingResult.result!.topics}
-            />
+        <Group align="stretch" className="h-full" wrap="nowrap">
+          <div style={{ width: 448 }}>
+            <RefineTopicsTopicList column={topicModelingResult.column} />
           </div>
-          <Divider variant="vertical" />
           <div className="flex-1">
             <RefineTopicsDocumentTable
               column={topicModelingResult.column}

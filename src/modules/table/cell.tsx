@@ -74,7 +74,7 @@ interface TopicColumnCellProps {
   topic: number;
   column: string;
 }
-function TopicColumnCell(props: TopicColumnCellProps) {
+export function TopicColumnCell(props: TopicColumnCellProps) {
   const topicModelingResult = useTopicModelingResultOfColumn(props.column);
   if (!topicModelingResult?.result) {
     return (
