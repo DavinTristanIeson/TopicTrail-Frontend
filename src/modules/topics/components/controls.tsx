@@ -14,7 +14,7 @@ function TopicModelingOptionFlagCheckbox(
   props: TopicModelingOptionFlagCheckboxProps,
 ) {
   return (
-    <HoverCard>
+    <HoverCard position="left">
       <HoverCard.Target>
         <Group gap={4}>
           <Checkbox

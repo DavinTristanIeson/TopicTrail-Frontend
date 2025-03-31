@@ -66,8 +66,6 @@ function ValuesBasedTableFilterComponent(props: TableFilterComponentProps) {
     name: name ? `${name}.values` : 'values',
   };
 
-  console.log(column, name);
-
   if (!column) return;
   if (
     column.type === SchemaColumnTypeEnum.Categorical ||

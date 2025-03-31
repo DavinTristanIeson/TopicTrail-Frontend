@@ -1,49 +1,49 @@
-import {
-  Divider,
-  Stack,
-  Title,
-  Text,
-  Group,
-  Button,
-  Indicator,
-  Alert,
-  Grid
-} from '@mantine/core';
+import { Divider, Stack, Title, Text, Group, Alert } from '@mantine/core';
 import TopicResultsPageControls from './controls';
 import DocumentsPerTopicTable from './documents-table';
 import { client } from '@/common/api/client';
 import React from 'react';
 import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
 import { TableFilterModel } from '@/api/table';
-import TableFilterDrawer from '@/modules/filter/drawer';
-import { Funnel } from '@phosphor-icons/react';
-import { DisclosureTrigger } from '@/hooks/disclosure';
-import { TopicSelectInput } from './select-topic-input';
+import { TableFilterButton } from '@/modules/filter/drawer';
+import { TopicMultiSelectInput } from './select-topic-input';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
 import { TopicModel, TopicModelingResultModel } from '@/api/topic';
+import { FilterStateContext } from '@/modules/table/context';
+import { useDebouncedValue } from '@mantine/hooks';
 
 interface TopicSelectorProps {
-  filter: TableFilterModel | null;
   data: TopicModelingResultModel;
 }
 
 function TopicSelector(props: TopicSelectorProps) {
-  const { filter, data } = props;
-  const [topic, setTopic] = React.useState<TopicModel | null>(null);
+  const { data } = props;
+  const [topics, setTopics] = React.useState<TopicModel[]>([]);
+  const [debouncedTopics] = useDebouncedValue(topics, 1000, {
+    leading: false,
+  });
   return (
     <>
-      <TopicSelectInput
+      <TopicMultiSelectInput
         label="Topic"
         required
         data={data.topics}
-        value={topic?.id ?? null}
-        onChange={setTopic}
+        value={topics.map((topic) => topic.id) ?? []}
+        onChange={setTopics}
         withOutlier
       />
-      {!topic && <Alert color="yellow">Choose a topic to get started.</Alert>}
-      {topic && <div className="h-72 bg-gray-300">Topic Words Area</div>}
-      {topic && <DocumentsPerTopicTable topic={topic.id} filter={filter} />}
+      {topics.length === 0 && (
+        <Alert color="yellow">Choose a topic to get started.</Alert>
+      )}
+      {topics.length > 0 && (
+        <>
+          <div className="h-72 bg-gray-300">Topic Words Area</div>
+          <DocumentsPerTopicTable
+            topicIds={debouncedTopics.map((topic) => topic.id)}
+          />
+        </>
+      )}
     </>
   );
 }
@@ -66,58 +66,37 @@ function ProjectTopicsFilter() {
     },
   });
 
-  const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
-
   return (
-    <>
-      <TableFilterDrawer
-        ref={tableFilterRemote}
-        filter={filter}
-        setFilter={setFilter}
-      />
+    <FilterStateContext.Provider value={{ filter, setFilter }}>
       <Group justify="end">
-        <Indicator disabled={!filter} color="red" zIndex={2}>
-          <Button
-            variant="outline"
-            onClick={() => {
-              tableFilterRemote.current?.open();
-            }}
-            leftSection={<Funnel />}
-          >
-            Filter
-          </Button>
-        </Indicator>
+        <TableFilterButton />
       </Group>
       <UseQueryWrapperComponent
         loadingComponent={<TableSkeleton />}
         query={query}
       >
-        {(data) => <TopicSelector filter={filter} data={data.data} />}
+        {(data) => <TopicSelector data={data.data} />}
       </UseQueryWrapperComponent>
-    </>
+    </FilterStateContext.Provider>
   );
 }
 
 export default function ProjectTopicResultsPage() {
   const column = React.useContext(SchemaColumnContext);
   return (
-    <Stack>
-      <Grid align="center">
-        <Grid.Col span={9}>
-          <div>
-            <Title order={2} ta="center">
-              Topics of {column.name}
-            </Title>
-            {column.description && <Text ta="center">{column.description}</Text>}
-          </div>
-          <div className="h-72 bg-gray-300">Topic Visualization Area</div>
-        </Grid.Col>
-        <Grid.Col span={3}>
-        <div style={{ maxWidth: '300px', margin: '0 auto' }}>
-            <TopicResultsPageControls />
-          </div>
-        </Grid.Col>
-      </Grid>
+    <Stack className="w-full">
+      <div>
+        <Title order={2} ta="center">
+          Topics of {column.name}
+        </Title>
+        {column.description && <Text ta="center">{column.description}</Text>}
+      </div>
+      <Group className="w-full">
+        <div className="h-72 bg-gray-300 flex-1">Topic Visualization Area</div>
+        <div className="max-w-sm">
+          <TopicResultsPageControls />
+        </div>
+      </Group>
       <Divider />
       <ProjectTopicsFilter />
     </Stack>

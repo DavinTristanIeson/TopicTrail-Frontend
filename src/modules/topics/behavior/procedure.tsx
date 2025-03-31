@@ -5,6 +5,7 @@ import { usePolling } from '@/hooks/polling';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
 import { TaskStatusEnum } from '@/common/constants/enum';
+import { useRouter } from 'next/router';
 
 function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   const project = React.useContext(ProjectContext);
@@ -128,12 +129,18 @@ export default function useTopicModelingActions(column: string) {
     onStartTopicModeling: startTopicModeling,
   } = startActions;
 
-  const status = usePeriodicTopicModelingStatusCheck(!!hasStarted);
+  const isInitialOngoing = useRouter().query.ongoing === '1';
+
+  const status = usePeriodicTopicModelingStatusCheck(
+    !!hasStarted || isInitialOngoing,
+  );
   const { checkAgain, isStillPolling } = status;
+
   const onStartTopicModeling = React.useCallback(async () => {
     await startTopicModeling();
     checkAgain();
   }, [checkAgain, startTopicModeling]);
+
   return {
     ...status,
     ...startActions,

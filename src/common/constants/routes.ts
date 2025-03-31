@@ -5,7 +5,7 @@ enum NavigationRoutes {
   ProjectConfiguration = '/projects/[id]/config',
   ProjectTable = '/projects/[id]/table',
   ProjectTopics = '/projects/[id]/topics',
-  ProjectRefineTopics = '/projects/[id]/refine',
+  ProjectRefineTopics = '/projects/[id]/topics/refine',
   ProjectComparison = '/projects/[id]/comparison',
   ProjectTopicCorrelation = '/projects/[id]/topic-correlation',
 }

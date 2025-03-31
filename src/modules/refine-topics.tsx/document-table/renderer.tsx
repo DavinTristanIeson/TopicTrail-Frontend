@@ -24,6 +24,11 @@ function useDocumentTableColumns(
   return React.useMemo<MRT_ColumnDef<DocumentPerTopicModel>[]>(() => {
     return [
       {
+        accessorKey: 'id',
+        header: 'ID',
+        size: 100,
+      },
+      {
         accessorKey: 'original',
         size: 400,
         header: 'Original Documents',
@@ -56,7 +61,7 @@ function useDocumentTableColumns(
       {
         accessorKey: 'topic',
         header: 'Original Topic',
-        size: 400,
+        size: 250,
         Cell({ row: { original } }) {
           return (
             <TopicColumnCell column={column.name} topic={original.topic} />
