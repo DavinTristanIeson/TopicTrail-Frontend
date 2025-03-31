@@ -1,7 +1,7 @@
 import NavigationRoutes from '@/common/constants/routes';
 import { ProjectContext } from '@/modules/project/context';
 import AppProjectLayout from '@/modules/project/layout';
-import RefineTopicsForm from '@/modules/refine-topics.tsx/form';
+import RefineTopicsForm from '@/modules/refine-topics/form';
 import {
   ProjectAllTopicsProvider,
   useTopicModelingResultOfColumn,
