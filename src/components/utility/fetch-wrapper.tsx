@@ -3,7 +3,7 @@ import Script, { ScriptProps } from 'next/script';
 import React from 'react';
 
 import { MaybeFC, MaybeFCType } from '@/components/utility/maybe';
-import ErrorViewComponent from '../layout/error-view-component';
+import { ErrorViewComponent } from '@/components/visual/error';
 import { LoadingOverlay } from '@mantine/core';
 import transform from 'lodash/transform';
 import { ApiError } from '@/api/common';
@@ -17,7 +17,6 @@ export interface WrapperProps extends FetchWrapperSharedProps {
   error?: ApiError | boolean | null;
   onRetry?: () => void;
   children: React.ReactNode;
-  showOffline?: boolean;
 }
 
 export interface UseQueryWrapperProps<T extends object>

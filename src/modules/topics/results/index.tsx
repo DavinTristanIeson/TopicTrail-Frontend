@@ -38,6 +38,7 @@ function TopicSelector(props: TopicSelectorProps) {
         data={data.topics}
         value={topic?.id ?? null}
         onChange={setTopic}
+        withOutlier
       />
       {!topic && <Alert color="yellow">Choose a topic to get started.</Alert>}
       {topic && <div className="h-72 bg-gray-300">Topic Words Area</div>}
@@ -50,7 +51,7 @@ function ProjectTopicsFilter() {
   const project = React.useContext(ProjectContext);
   const column = React.useContext(SchemaColumnContext);
   const [filter, setFilter] = React.useState<TableFilterModel | null>(null);
-  const query = client.useQuery('post', '/topics/{project_id}/topics', {
+  const query = client.useQuery('post', '/topic/{project_id}/topics', {
     params: {
       path: {
         project_id: project.id,

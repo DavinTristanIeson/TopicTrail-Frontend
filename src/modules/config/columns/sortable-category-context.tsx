@@ -2,6 +2,7 @@
 import { Paper, Text } from '@mantine/core';
 import React from 'react';
 import {
+  SortableGridStackDefaultOptions,
   useControlledGridstack,
   useSortableGridStack,
 } from '@/hooks/gridstack';
@@ -18,16 +19,9 @@ export default function ReorderCategoryOrderDndContext(
 
   const { id, grid, gridElements } = useControlledGridstack({
     gridItems: categories,
-    options: {
-      column: 1,
-      margin: 4,
-      maxRow: categories.length,
-      cellHeight: 80,
-      disableResize: true,
-      removable: false,
-      alwaysShowResizeHandle: false,
-      float: true,
-    },
+    options: SortableGridStackDefaultOptions({
+      itemsCount: categories.length,
+    }),
   });
   useSortableGridStack({
     grid,

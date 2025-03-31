@@ -20,7 +20,7 @@ export function useTopicModelingResultOfColumn(
 export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
   const { children } = props;
   const project = React.useContext(ProjectContext);
-  const query = client.useQuery('get', '/topics/{project_id}/', {
+  const query = client.useQuery('get', '/topic/{project_id}/', {
     params: {
       path: {
         project_id: project.id,

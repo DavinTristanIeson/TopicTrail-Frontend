@@ -3,6 +3,7 @@ import {
   SchemaColumnModel,
   TemporalSchemaColumnModel,
 } from '@/api/project';
+import { getTopicLabel } from '@/api/topic';
 import {
   SchemaColumnTypeEnum,
   TemporalPrecisionEnum,
@@ -47,7 +48,7 @@ const HighlightedCell = React.forwardRef<HTMLDivElement, HighlightedCellProps>(
   },
 );
 
-function TextualColumnCell(props: React.PropsWithChildren) {
+export function TextualColumnCell(props: React.PropsWithChildren) {
   return (
     <Spoiler hideLabel="Show Less" showLabel="Show More">
       <DefaultColumnCell>{props.children}</DefaultColumnCell>
@@ -71,10 +72,10 @@ function TemporalColumnCellProps(props: TemporalColumnCellProps) {
 }
 
 interface TopicColumnCellProps {
-  topic: number;
+  topic: number | null | undefined;
   column: string;
 }
-function TopicColumnCell(props: TopicColumnCellProps) {
+export function TopicColumnCell(props: TopicColumnCellProps) {
   const topicModelingResult = useTopicModelingResultOfColumn(props.column);
   if (!topicModelingResult?.result) {
     return (
@@ -84,7 +85,19 @@ function TopicColumnCell(props: TopicColumnCellProps) {
         className="max-w-sm"
         multiline
       >
-        <HighlightedCell dull>{`Topic ${props.topic + 1}`}</HighlightedCell>
+        <HighlightedCell dull>No Topic</HighlightedCell>
+      </Tooltip>
+    );
+  }
+
+  if (props.topic == null) {
+    return (
+      <Tooltip
+        label="No topic was assigned to this column. This means that the document is considered invalid during the preprocessing step."
+        multiline
+        className="max-w-sm"
+      >
+        <HighlightedCell dull>No Topic</HighlightedCell>
       </Tooltip>
     );
   }
@@ -107,7 +120,7 @@ function TopicColumnCell(props: TopicColumnCellProps) {
       )
     : undefined;
 
-  if (!topic) {
+  if (topic == null) {
     return (
       <Tooltip
         color="red"
@@ -124,7 +137,7 @@ function TopicColumnCell(props: TopicColumnCellProps) {
     <HoverCard>
       <HoverCard.Target>
         <div>
-          <HighlightedCell>{topic.label}</HighlightedCell>
+          <HighlightedCell>{getTopicLabel(topic)}</HighlightedCell>
         </div>
       </HoverCard.Target>
       <HoverCard.Dropdown>
@@ -225,7 +238,7 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
       return (
         <TopicColumnCell
           topic={props.value}
-          column={props.column.source_name}
+          column={props.column.source_name!}
         />
       );
     }

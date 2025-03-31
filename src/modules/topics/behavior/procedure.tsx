@@ -11,7 +11,7 @@ function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   const column = React.useContext(SchemaColumnContext);
   const { data, isRefetching, dataUpdatedAt, refetch, error } = client.useQuery(
     'get',
-    '/topics/{project_id}/status',
+    '/topic/{project_id}/status',
     {
       params: {
         path: {
@@ -64,7 +64,7 @@ export function useStartTopicModeling(column: string) {
     mutateAsync: startTopicModeling,
     isPending: isStartingTopicModeling,
     data: hasStarted,
-  } = client.useMutation('post', '/topics/{project_id}/start');
+  } = client.useMutation('post', '/topic/{project_id}/start');
 
   const [shouldUseCachedDocumentVectors, setUseCachedDocumentVectors] =
     React.useState(true);

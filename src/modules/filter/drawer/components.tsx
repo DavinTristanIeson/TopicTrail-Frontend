@@ -16,6 +16,10 @@ import {
   TableUniqueValueSelectField,
   TableUniqueValuesMultiSelectField,
 } from '@/modules/filter/select/select-unique-values';
+import {
+  TopicFilterMultiSelectField,
+  TopicFilterSelectField,
+} from './topic-components';
 
 function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
   const { name: name } = props;
@@ -29,13 +33,10 @@ function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
   };
 
   if (!column) return;
-  if (column.type === SchemaColumnTypeEnum.Continuous) {
-    return <RHFField type="number" {...inputProps} />;
-  } else if (
+  if (
     column.type === SchemaColumnTypeEnum.Categorical ||
     column.type === SchemaColumnTypeEnum.OrderedCategorical ||
-    column.type === SchemaColumnTypeEnum.MultiCategorical ||
-    column.type === SchemaColumnTypeEnum.Topic
+    column.type === SchemaColumnTypeEnum.MultiCategorical
   ) {
     // NOTE: Topic should have a separate TopicSelect component
     return (
@@ -45,8 +46,10 @@ function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
         {...inputProps}
       />
     );
-  } else if (column.type === SchemaColumnTypeEnum.Temporal) {
-    return <RHFField type="datetime" {...inputProps} />;
+  } else if (column.type === SchemaColumnTypeEnum.Topic) {
+    return (
+      <TopicFilterSelectField column={column} {...inputProps} withOutlier />
+    );
   } else {
     return <RHFField type="text" {...inputProps} />;
   }
@@ -56,20 +59,20 @@ function ValuesBasedTableFilterComponent(props: TableFilterComponentProps) {
   const { name } = props;
   const project = React.useContext(ProjectContext);
   const column = useProjectColumnField(name ? `${name}.target` : 'target');
+
   const inputProps = {
     label: 'Values',
     required: true,
     name: name ? `${name}.values` : 'values',
   };
 
+  console.log(column, name);
+
   if (!column) return;
-  if (column.type === SchemaColumnTypeEnum.Continuous) {
-    return <RHFField type="multiple-number" {...inputProps} />;
-  } else if (
+  if (
     column.type === SchemaColumnTypeEnum.Categorical ||
     column.type === SchemaColumnTypeEnum.OrderedCategorical ||
-    column.type === SchemaColumnTypeEnum.MultiCategorical ||
-    column.type === SchemaColumnTypeEnum.Topic
+    column.type === SchemaColumnTypeEnum.MultiCategorical
   ) {
     // NOTE: Topic should have a separate TopicSelect component
     return (
@@ -79,8 +82,14 @@ function ValuesBasedTableFilterComponent(props: TableFilterComponentProps) {
         {...inputProps}
       />
     );
-  } else if (column.type === SchemaColumnTypeEnum.Temporal) {
-    return <RHFField type="multiple-datetime" {...inputProps} />;
+  } else if (column.type === SchemaColumnTypeEnum.Topic) {
+    return (
+      <TopicFilterMultiSelectField
+        column={column}
+        {...inputProps}
+        withOutlier
+      />
+    );
   } else {
     return <RHFField type="tags" {...inputProps} />;
   }

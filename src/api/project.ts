@@ -76,3 +76,7 @@ export function removeProjectDependencyQueries(projectId: string) {
     queryKey: client.queryOptions('get', '/projects/').queryKey,
   });
 }
+
+export function getTopicColumnName(columnName: string) {
+  return `${columnName} (Topic)`;
+}

@@ -143,6 +143,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/affected-rows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Affected Rows */
+        post: operations["post__get_affected_rows_table__project_id__affected_rows_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/column/frequency-distribution": {
         parameters: {
             query?: never;
@@ -313,7 +330,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/start": {
+    "/topic/{project_id}/start": {
         parameters: {
             query?: never;
             header?: never;
@@ -323,14 +340,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Start Topic Modeling */
-        post: operations["post__start_topic_modeling_topics__project_id__start_post"];
+        post: operations["post__start_topic_modeling_topic__project_id__start_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/status": {
+    "/topic/{project_id}/status": {
         parameters: {
             query?: never;
             header?: never;
@@ -338,7 +355,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get  Topic Modeling  Status */
-        get: operations["get__topic_modeling__status_topics__project_id__status_get"];
+        get: operations["get__topic_modeling__status_topic__project_id__status_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -347,7 +364,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/": {
+    "/topic/{project_id}/": {
         parameters: {
             query?: never;
             header?: never;
@@ -355,7 +372,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get  All Topic Modeling Results */
-        get: operations["get__all_topic_modeling_results_topics__project_id___get"];
+        get: operations["get__all_topic_modeling_results_topic__project_id___get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -364,7 +381,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/topics": {
+    "/topic/{project_id}/topics": {
         parameters: {
             query?: never;
             header?: never;
@@ -374,14 +391,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Get  All Topics */
-        post: operations["get__all_topics_topics__project_id__topics_post"];
+        post: operations["get__all_topics_topic__project_id__topics_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/refine": {
+    "/topic/{project_id}/refine": {
         parameters: {
             query?: never;
             header?: never;
@@ -390,7 +407,7 @@ export interface paths {
         };
         get?: never;
         /** Put  Refine Topics */
-        put: operations["put__refine_topics_topics__project_id__refine_put"];
+        put: operations["put__refine_topics_topic__project_id__refine_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -398,7 +415,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/topics/{project_id}/documents": {
+    "/topic/{project_id}/documents": {
         parameters: {
             query?: never;
             header?: never;
@@ -408,7 +425,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Documents Per Topic */
-        post: operations["post__documents_per_topic_topics__project_id__documents_post"];
+        post: operations["post__documents_per_topic_topic__project_id__documents_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -552,6 +569,13 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[list[int]] */
+        ApiResult_list_int__: {
+            /** Data */
+            data: number[];
+            /** Message */
+            message: string | null;
+        };
         /** CSVDataSource */
         CSVDataSource: {
             /** Path */
@@ -664,6 +688,11 @@ export interface components {
              */
             bin_count: number;
         };
+        /** DatasetFilterSchema */
+        DatasetFilterSchema: {
+            /** Filter */
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+        };
         /** DatasetPreviewResource */
         DatasetPreviewResource: {
             /** Dataset Columns */
@@ -709,19 +738,19 @@ export interface components {
             /** Id */
             id: number;
             /** Original */
-            original: string;
+            original: string | null;
             /** Preprocessed */
-            preprocessed: string;
+            preprocessed: string | null;
             /** Topic */
-            topic: number;
+            topic: number | null;
         };
         /**
          * DocumentPreprocessingMethodEnum
          * @enum {string}
          */
         DocumentPreprocessingMethodEnum: "en_core_web_sm";
-        /** DocumentTopicMappingUpdateSchema */
-        DocumentTopicMappingUpdateSchema: {
+        /** DocumentTopicAssignmentUpdateSchema */
+        DocumentTopicAssignmentUpdateSchema: {
             /** Document Id */
             document_id: number;
             /** Topic Id */
@@ -1099,9 +1128,10 @@ export interface components {
         };
         /** RefineTopicsSchema */
         RefineTopicsSchema: {
-            topics: components["schemas"]["TopicUpdateSchema"];
+            /** Topics */
+            topics: components["schemas"]["TopicUpdateSchema"][];
             /** Document Topics */
-            document_topics: components["schemas"]["DocumentTopicMappingUpdateSchema"][];
+            document_topics: components["schemas"]["DocumentTopicAssignmentUpdateSchema"][];
         };
         /**
          * SchemaColumnTypeEnum
@@ -1512,8 +1542,6 @@ export interface components {
             id: number;
             /** Label */
             label: string | null;
-            /** Children */
-            children: components["schemas"]["TopicUpdateSchema"][] | null;
         };
         /** TopicsOfColumnSchema */
         TopicsOfColumnSchema: {
@@ -2301,6 +2329,77 @@ export interface operations {
             };
         };
     };
+    post__get_affected_rows_table__project_id__affected_rows_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DatasetFilterSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_int__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
     post__get_table_column__frequency_distribution_table__project_id__column_frequency_distribution_post: {
         parameters: {
             query?: never;
@@ -3011,7 +3110,7 @@ export interface operations {
             };
         };
     };
-    post__start_topic_modeling_topics__project_id__start_post: {
+    post__start_topic_modeling_topic__project_id__start_post: {
         parameters: {
             query: {
                 column: string;
@@ -3084,7 +3183,7 @@ export interface operations {
             };
         };
     };
-    get__topic_modeling__status_topics__project_id__status_get: {
+    get__topic_modeling__status_topic__project_id__status_get: {
         parameters: {
             query: {
                 column: string;
@@ -3153,7 +3252,7 @@ export interface operations {
             };
         };
     };
-    get__all_topic_modeling_results_topics__project_id___get: {
+    get__all_topic_modeling_results_topic__project_id___get: {
         parameters: {
             query?: never;
             header?: never;
@@ -3220,7 +3319,7 @@ export interface operations {
             };
         };
     };
-    get__all_topics_topics__project_id__topics_post: {
+    get__all_topics_topic__project_id__topics_post: {
         parameters: {
             query: {
                 column: string;
@@ -3293,7 +3392,7 @@ export interface operations {
             };
         };
     };
-    put__refine_topics_topics__project_id__refine_put: {
+    put__refine_topics_topic__project_id__refine_put: {
         parameters: {
             query: {
                 column: string;
@@ -3366,11 +3465,10 @@ export interface operations {
             };
         };
     };
-    post__documents_per_topic_topics__project_id__documents_post: {
+    post__documents_per_topic_topic__project_id__documents_post: {
         parameters: {
             query: {
                 column: string;
-                topic: number;
             };
             header?: never;
             path: {

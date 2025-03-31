@@ -32,9 +32,11 @@ const DEFAULT_COLUMN_SIZES = {
   [SchemaColumnTypeEnum.Unique]: 300,
 };
 
-type SchemaColumnDataTableColumnType = MRT_ColumnDef<Record<string, any>>;
+export type SchemaColumnDataTableColumnType = MRT_ColumnDef<
+  Record<string, any>
+>;
 
-type MantineReactTableProps = Partial<MRT_TableOptions<Record<string, any>>>;
+type MantineReactTableProps = Partial<MRT_TableOptions<any>>;
 
 export const MantineReactTableStylingProps = {};
 
@@ -48,38 +50,38 @@ export const MantineReactTableBehaviors = {
     enableFilters: false,
     enableStickyHeader: true,
     enableGlobalFilter: false,
-  } as MantineReactTableProps,
+  } satisfies MantineReactTableProps,
   Resizable: {
     enableColumnResizing: true,
-    layoutMode: 'grid',
+    layoutMode: 'grid-no-grow',
     columnResizeMode: 'onEnd',
-  } as MantineReactTableProps,
+  } satisfies MantineReactTableProps,
   Sortable: {
     enableSorting: false,
     enableMultiSort: false,
     manualSorting: true,
     enableSortingRemoval: true,
     sortDescFirst: false,
-  } as MantineReactTableProps,
+  } satisfies MantineReactTableProps,
   WithPagination: {
     mantinePaginationProps: {
       rowsPerPageOptions: [10, 25, 50, 100].map(String),
     },
     enablePagination: true,
     manualPagination: true,
-  } as MantineReactTableProps,
+  } satisfies MantineReactTableProps,
   ColumnActions: {
     enableColumnDragging: true,
     enableColumnOrdering: true,
     enableColumnFilters: false,
     enableColumnPinning: true,
     enableColumnResizing: true,
-  } as MantineReactTableProps,
+  } satisfies MantineReactTableProps,
   Virtualized(rows: any[], columns: any[]) {
     return {
       enableColumnVirtualization: columns.length > 12,
       enableRowVirtualization: rows.length > 50,
-    };
+    } satisfies MantineReactTableProps;
   },
 };
 
@@ -104,7 +106,7 @@ export function useSchemaColumnToMantineReactTableAdapter(
                   </Text>
                 </HoverCard.Target>
                 <HoverCard.Dropdown className="max-w-md">
-                  <Text size="sm">{column.name}</Text>
+                  <Text size="sm">{column.description}</Text>
                 </HoverCard.Dropdown>
               </HoverCard>
             );
@@ -134,7 +136,7 @@ interface UseTableStateToMantineReactTableAdapterProps {
 
 export function useTableStateToMantineReactTableAdapter(
   props: UseTableStateToMantineReactTableAdapterProps,
-): Partial<MRT_TableOptions<Record<string, any>>> {
+): Partial<MRT_TableOptions<any>> {
   const { meta, isFetching } = props;
   const { sort, setSort, page, setPage, limit, setLimit } =
     React.useContext(TableStateContext);

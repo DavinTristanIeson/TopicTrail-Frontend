@@ -26,7 +26,7 @@ export default function TableRendererComponent(
   });
   const table = useMantineReactTable({
     data,
-    columns: tableColumns,
+    columns: tableColumns as any,
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,
@@ -34,5 +34,5 @@ export default function TableRendererComponent(
     ...tableProps,
   });
 
-  return <MantineReactTable table={table} layoutMode={'grid-no-grow' as any} />;
+  return <MantineReactTable table={table} />;
 }

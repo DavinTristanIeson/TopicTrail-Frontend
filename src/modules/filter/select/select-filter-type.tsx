@@ -104,7 +104,6 @@ const ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS = [
   TableFilterTypeEnum.Empty,
   TableFilterTypeEnum.NotEmpty,
   TableFilterTypeEnum.EqualTo,
-  TableFilterTypeEnum.IsOneOf,
 ];
 const ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS = [
   ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
@@ -113,22 +112,32 @@ const ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS = [
   TableFilterTypeEnum.LessThan,
   TableFilterTypeEnum.LessThanOrEqualTo,
 ];
-const ALLOWED_FILTER_TYPES_FOR_TEXTUAL_COLUMNS = [
-  ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
-  TableFilterTypeEnum.HasText,
-];
+
 const ALLOWED_FILTER_TYPES_FOR_COLUMNS = {
-  [SchemaColumnTypeEnum.Categorical]: ALLOWED_FILTER_TYPES_FOR_TEXTUAL_COLUMNS,
-  [SchemaColumnTypeEnum.OrderedCategorical]: [
-    ...ALLOWED_FILTER_TYPES_FOR_TEXTUAL_COLUMNS,
-    ...ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS,
+  [SchemaColumnTypeEnum.Categorical]: [
+    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
+    TableFilterTypeEnum.IsOneOf,
   ],
-  [SchemaColumnTypeEnum.Textual]: ALLOWED_FILTER_TYPES_FOR_TEXTUAL_COLUMNS,
-  [SchemaColumnTypeEnum.Unique]: ALLOWED_FILTER_TYPES_FOR_TEXTUAL_COLUMNS,
+  [SchemaColumnTypeEnum.OrderedCategorical]: [
+    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
+    ...ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS,
+    TableFilterTypeEnum.IsOneOf,
+  ],
+  [SchemaColumnTypeEnum.Textual]: [
+    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
+    TableFilterTypeEnum.HasText,
+  ],
+  [SchemaColumnTypeEnum.Unique]: [
+    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
+    TableFilterTypeEnum.HasText,
+  ],
   [SchemaColumnTypeEnum.Continuous]: ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS,
   [SchemaColumnTypeEnum.Geospatial]: ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS,
   [SchemaColumnTypeEnum.Temporal]: ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS,
-  [SchemaColumnTypeEnum.Topic]: ALLOWED_FILTER_TYPES_FOR_TEXTUAL_COLUMNS,
+  [SchemaColumnTypeEnum.Topic]: [
+    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
+    TableFilterTypeEnum.IsOneOf,
+  ],
   [SchemaColumnTypeEnum.MultiCategorical]: [
     ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
     TableFilterTypeEnum.Excludes,
