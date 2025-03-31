@@ -3,7 +3,6 @@ import { classNames } from '@/common/utils/styles';
 import { LoadingOverlay } from '@mantine/core';
 import React from 'react';
 import {
-  Form,
   FormProvider,
   type FieldValues,
   type UseFormReturn,
@@ -30,9 +29,12 @@ export default function FormWrapper<T extends FieldValues>(
   } = props.form;
   return (
     <FormProvider {...props.form}>
-      <Form
-        control={props.form.control}
-        onSubmit={handleSubmit as any}
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          handleSubmit(event);
+        }}
         className={classNames('relative', props.className)}
         style={props.style}
       >
@@ -46,7 +48,7 @@ export default function FormWrapper<T extends FieldValues>(
         ></button>
         <LoadingOverlay visible={isSubmitting} />
         {props.children}
-      </Form>
+      </form>
     </FormProvider>
   );
 }

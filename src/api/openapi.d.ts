@@ -738,11 +738,11 @@ export interface components {
             /** Id */
             id: number;
             /** Original */
-            original: string;
+            original: string | null;
             /** Preprocessed */
-            preprocessed: string;
+            preprocessed: string | null;
             /** Topic */
-            topic: number;
+            topic: number | null;
         };
         /**
          * DocumentPreprocessingMethodEnum
@@ -1453,7 +1453,7 @@ export interface components {
                 number
             ][];
             /** Label */
-            label: string;
+            label: string | null;
             /** Frequency */
             frequency: number;
             /** Description */
@@ -1541,7 +1541,7 @@ export interface components {
             /** Id */
             id: number;
             /** Label */
-            label: string;
+            label: string | null;
         };
         /** TopicsOfColumnSchema */
         TopicsOfColumnSchema: {

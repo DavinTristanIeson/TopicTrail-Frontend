@@ -1,5 +1,5 @@
 // Needs to be separated due to Gridstack import causing issues
-import { Badge, Group, Paper, Text } from '@mantine/core';
+import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
 import React from 'react';
 import {
   SortableGridStackDefaultOptions,
@@ -21,9 +21,12 @@ export default function ReorderCategoryOrderDndContext(
 
   const { id, grid, gridElements } = useControlledGridstack({
     gridItems: topics.map((topic) => topic.id.toString()),
-    options: SortableGridStackDefaultOptions({
-      itemsCount: topics.length,
-    }),
+    options: {
+      ...SortableGridStackDefaultOptions({
+        itemsCount: topics.length,
+      }),
+      cellHeight: 100,
+    },
   });
   useSortableGridStack({
     grid,
@@ -42,17 +45,16 @@ export default function ReorderCategoryOrderDndContext(
           key={topic.id}
           ref={gridElements.current![topic.id.toString()]}
         >
-          <Paper
-            className="p-3 select-none grid-stack-item-content"
-            style={{ display: 'flex' }}
-          >
-            <Group>
-              {!topic.original && <Badge>New</Badge>}
-              <Text>{topic.label}</Text>
-            </Group>
-            {topic.original && (
-              <TopicWordsRenderer words={topic.original?.words} />
-            )}
+          <Paper className="p-3 select-none grid-stack-item-content">
+            <Stack>
+              <Group>
+                {!topic.original && <Badge>New</Badge>}
+                <Text>{topic.label}</Text>
+              </Group>
+              {topic.original && (
+                <TopicWordsRenderer words={topic.original?.words} />
+              )}
+            </Stack>
           </Paper>
         </div>
       ))}

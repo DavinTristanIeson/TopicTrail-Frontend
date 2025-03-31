@@ -1,4 +1,4 @@
-import { TopicModel } from '@/api/topic';
+import { getTopicLabel, TopicModel } from '@/api/topic';
 import { Stack, Group, Badge, Text, useMantineTheme } from '@mantine/core';
 
 interface TopicWordsRendererProps {
@@ -49,7 +49,7 @@ export function TopicInfo(props: TopicModel) {
     <Stack>
       <Group gap={6}>
         <Text size="sm" fw={500} c="brand">
-          {props.label}
+          {getTopicLabel(props)}
         </Text>
         <Text size="xs" c="gray">{`(${props.frequency} rows)`}</Text>
       </Group>

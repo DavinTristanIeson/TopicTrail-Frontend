@@ -1,10 +1,16 @@
-import { getTopicColumnName, TextualSchemaColumnModel } from '@/api/project';
-import { AndTableFilterModel, TableFilterModel } from '@/api/table';
+import { TableFilterModel } from '@/api/table';
 import { TopicModel } from '@/api/topic';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
-import { FilterStateContext } from '@/modules/table/context';
 import { TopicInfo } from '@/modules/topics/components/info';
-import { HoverCard, NavLink, Badge, Group, ActionIcon } from '@mantine/core';
+import { OUTLIER_TOPIC } from '@/modules/topics/results/select-topic-input';
+import {
+  HoverCard,
+  NavLink,
+  Badge,
+  Group,
+  ActionIcon,
+  Tooltip,
+} from '@mantine/core';
 import { PencilSimple, CaretRight } from '@phosphor-icons/react';
 import React from 'react';
 
@@ -29,7 +35,7 @@ export function getTopicValuesFromTopicFilters(
   if (topicOperand.target !== column) {
     return null;
   }
-  return topicOperand.values as number[];
+  return topicOperand.values.slice() as number[];
 }
 
 interface TopicListItemProps {
@@ -38,56 +44,11 @@ interface TopicListItemProps {
   isActive: boolean;
   index: number;
   onEdit(): void;
-  column: TextualSchemaColumnModel;
+  onClick(): void;
 }
 
 export function RefineTopicsTopicListItem(props: TopicListItemProps) {
-  const { topic, isActive, index, column, onEdit, label } = props;
-  const { setFilter } = React.useContext(FilterStateContext);
-  const topicColumnName = getTopicColumnName(column.name);
-
-  const setTopicFilter = React.useCallback(
-    (topic: TopicModel) => {
-      setFilter((prev) => {
-        const filterTopicValues = getTopicValuesFromTopicFilters(
-          topicColumnName,
-          prev,
-        );
-        if (filterTopicValues == null) {
-          return {
-            type: TableFilterTypeEnum.And,
-            operands: [
-              {
-                type: TableFilterTypeEnum.IsOneOf,
-                target: topicColumnName,
-                values: [topic.id],
-              },
-            ],
-          };
-        }
-
-        const filter = prev as AndTableFilterModel;
-        const prevTopicIdx = filterTopicValues.indexOf(topic.id);
-        if (prevTopicIdx === -1) {
-          filterTopicValues.push(topic.id);
-        } else {
-          filterTopicValues.splice(prevTopicIdx, 1);
-        }
-        return {
-          ...filter,
-          operands: [
-            {
-              type: TableFilterTypeEnum.IsOneOf,
-              target: topicColumnName,
-              values: filterTopicValues,
-            },
-            ...filter.operands.slice(1),
-          ],
-        };
-      });
-    },
-    [setFilter, topicColumnName],
-  );
+  const { topic, isActive, index, onClick, onEdit, label } = props;
 
   const children = (
     <NavLink
@@ -101,15 +62,23 @@ export function RefineTopicsTopicListItem(props: TopicListItemProps) {
       }
       rightSection={
         <Group>
-          <ActionIcon onClick={onEdit}>
-            <PencilSimple />
-          </ActionIcon>
-          <CaretRight />
+          <Tooltip label="Update Topic Label">
+            <ActionIcon
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onEdit();
+              }}
+            >
+              <PencilSimple />
+            </ActionIcon>
+          </Tooltip>
+          {topic && <CaretRight />}
         </Group>
       }
       onClick={() => {
         if (!topic) return;
-        setTopicFilter(topic);
+        onClick();
       }}
       label={label}
     />
@@ -126,5 +95,26 @@ export function RefineTopicsTopicListItem(props: TopicListItemProps) {
         <TopicInfo {...topic} label={label} />
       </HoverCard.Dropdown>
     </HoverCard>
+  );
+}
+
+interface RefineTopicsOutlierTopicListItemProps {
+  isActive: boolean;
+  onClick(): void;
+}
+
+export function RefineTopicsOutlierTopicListItem(
+  props: RefineTopicsOutlierTopicListItemProps,
+) {
+  const { isActive, onClick } = props;
+  return (
+    <NavLink
+      active={isActive}
+      component="button"
+      rightSection={<CaretRight />}
+      onClick={onClick}
+      label="Outlier"
+      description={OUTLIER_TOPIC.description}
+    />
   );
 }

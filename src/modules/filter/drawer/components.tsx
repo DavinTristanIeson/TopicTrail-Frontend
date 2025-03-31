@@ -47,7 +47,9 @@ function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
       />
     );
   } else if (column.type === SchemaColumnTypeEnum.Topic) {
-    return <TopicFilterSelectField column={column} {...inputProps} />;
+    return (
+      <TopicFilterSelectField column={column} {...inputProps} withOutlier />
+    );
   } else {
     return <RHFField type="text" {...inputProps} />;
   }
@@ -81,7 +83,13 @@ function ValuesBasedTableFilterComponent(props: TableFilterComponentProps) {
       />
     );
   } else if (column.type === SchemaColumnTypeEnum.Topic) {
-    return <TopicFilterMultiSelectField column={column} {...inputProps} />;
+    return (
+      <TopicFilterMultiSelectField
+        column={column}
+        {...inputProps}
+        withOutlier
+      />
+    );
   } else {
     return <RHFField type="tags" {...inputProps} />;
   }

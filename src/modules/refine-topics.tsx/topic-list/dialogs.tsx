@@ -22,14 +22,16 @@ import { FloppyDisk, Info } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
 import { ListSkeleton } from '@/components/visual/loading';
 import { pickArrayById } from '@/common/utils/iterable';
+import { getTopicLabel } from '@/api/topic';
 
 interface TopicUpdateLabelDialogBodyProps {
   defaultValue: string;
+  placeholder: string | undefined;
   setValue(value: string): void;
 }
 
 function TopicUpdateLabelDialogBody(props: TopicUpdateLabelDialogBodyProps) {
-  const { defaultValue: defaultValue, setValue } = props;
+  const { defaultValue: defaultValue, setValue, placeholder } = props;
 
   const [topicLabel, setTopicLabel] = useUncontrolled({
     defaultValue,
@@ -37,8 +39,17 @@ function TopicUpdateLabelDialogBody(props: TopicUpdateLabelDialogBodyProps) {
   const { getValues } = useFormContext<RefineTopicsFormType>();
   const allOtherLabels = React.useMemo(() => {
     const allTopics = getValues('topics');
-    return allTopics.map((topic) => topic.label).filter(Boolean);
-  }, [getValues]);
+    const allLabels = allTopics.map((topic) => topic.label).filter(Boolean);
+    const allLabelsExceptThisOne = allLabels;
+    if (defaultValue) {
+      const defaultValueIdx = allLabelsExceptThisOne.indexOf(defaultValue);
+      if (defaultValueIdx !== -1) {
+        allLabelsExceptThisOne.splice(defaultValueIdx, 1);
+      }
+      return allLabelsExceptThisOne;
+    }
+    return allLabels;
+  }, [defaultValue, getValues]);
 
   const schema = React.useMemo(() => {
     return Yup.string()
@@ -64,6 +75,7 @@ function TopicUpdateLabelDialogBody(props: TopicUpdateLabelDialogBodyProps) {
         label="Topic Label"
         value={topicLabel}
         required
+        placeholder={placeholder}
         onChange={(e) => setTopicLabel(e.target.value)}
         error={error}
         description="A label to describe the topic. By default, the label used is a combination of the first three topic words; however, this kind of label might be harder to interpret during your analysis."
@@ -90,18 +102,19 @@ export const UpdateTopicLabelDialog =
       const { setValue, getValues } = useFormContext<RefineTopicsFormType>();
 
       const allTopics = getValues('topics');
-      const topicIndex = allTopics.findIndex(
+      const focusedTopicIndex = allTopics.findIndex(
         (topic) => topic.id != null && topic.id === topicId,
       );
+      const focusedTopic = allTopics[focusedTopicIndex];
 
       React.useEffect(() => {
-        if (topicIndex === -1) {
+        if (focusedTopicIndex === -1) {
           close();
         }
-      }, [close, topicIndex]);
+      }, [close, focusedTopicIndex]);
 
       return (
-        <Modal opened={topicIndex !== -1} onClose={close}>
+        <Modal opened={!!focusedTopic} onClose={close}>
           <Alert color="blue" icon={<Info />}>
             By default, we use the first three topic words as the label of a
             topic. But this might not be useful to an analyst. In which case, we
@@ -109,12 +122,22 @@ export const UpdateTopicLabelDialog =
             appropriate label for the topic so that you can understand it easily
             when performing other analysis.
           </Alert>
-          {topicIndex != null && (
+          {focusedTopicIndex !== -1 && (
             <TopicUpdateLabelDialogBody
-              defaultValue={getValues(`topics.${topicIndex}.label`)}
+              defaultValue={
+                getValues(`topics.${focusedTopicIndex}.label`) ?? ''
+              }
               setValue={(value) => {
-                return setValue(`topics.${topicIndex}.label`, value);
+                setValue(`topics.${focusedTopicIndex}.label`, value);
+                close();
               }}
+              placeholder={
+                focusedTopic?.original
+                  ? getTopicLabel({
+                      words: focusedTopic.original?.words,
+                    })
+                  : undefined
+              }
             />
           )}
         </Modal>
@@ -139,8 +162,9 @@ export const CreateNewTopicDialog = React.forwardRef<DisclosureTrigger | null>(
           original: null,
         });
         setValue('topics', allTopics);
+        close();
       },
-      [getValues, setValue],
+      [close, getValues, setValue],
     );
 
     return (
@@ -155,6 +179,7 @@ export const CreateNewTopicDialog = React.forwardRef<DisclosureTrigger | null>(
         {opened && (
           <TopicUpdateLabelDialogBody
             defaultValue=""
+            placeholder={undefined}
             setValue={onAddNewTopic}
           />
         )}
@@ -186,7 +211,7 @@ function SortTopicsDrawerBody(props: SortTopicsDrawerBodyProps) {
   return (
     <>
       <Drawer.Header>
-        <Group justify="end">
+        <Group justify="end" className="w-full">
           <Button
             leftSection={<FloppyDisk />}
             onClick={() => {
@@ -212,27 +237,28 @@ function SortTopicsDrawerBody(props: SortTopicsDrawerBodyProps) {
   );
 }
 
-export const SortTopicsDrawer = React.forwardRef<DisclosureTrigger | null>(
-  function SortTopicsDrawer(props, ref) {
-    const [opened, { close }] = useDisclosureTrigger(ref);
-    const { setValue, control } = useFormContext<RefineTopicsFormType>();
-    const topics = useWatch({
-      name: 'topics',
-      control,
-    });
+export const RefineTopicsSortTopicsDrawer =
+  React.forwardRef<DisclosureTrigger | null>(
+    function RefineTopicsSortTopicsDrawer(props, ref) {
+      const [opened, { close }] = useDisclosureTrigger(ref);
+      const { setValue, control } = useFormContext<RefineTopicsFormType>();
+      const topics = useWatch({
+        name: 'topics',
+        control,
+      });
 
-    return (
-      <Drawer opened={opened} onClose={close} title="Sort Topics">
-        {opened && (
-          <SortTopicsDrawerBody
-            topics={topics}
-            onSave={(topics: TopicUpdateFormType[]) => {
-              setValue('topics', topics);
-              close();
-            }}
-          />
-        )}
-      </Drawer>
-    );
-  },
-);
+      return (
+        <Drawer opened={opened} onClose={close} title="Sort Topics">
+          {opened && (
+            <SortTopicsDrawerBody
+              topics={topics}
+              onSave={(topics: TopicUpdateFormType[]) => {
+                setValue('topics', topics);
+                close();
+              }}
+            />
+          )}
+        </Drawer>
+      );
+    },
+  );

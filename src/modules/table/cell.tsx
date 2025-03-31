@@ -3,6 +3,7 @@ import {
   SchemaColumnModel,
   TemporalSchemaColumnModel,
 } from '@/api/project';
+import { getTopicLabel } from '@/api/topic';
 import {
   SchemaColumnTypeEnum,
   TemporalPrecisionEnum,
@@ -71,7 +72,7 @@ function TemporalColumnCellProps(props: TemporalColumnCellProps) {
 }
 
 interface TopicColumnCellProps {
-  topic: number;
+  topic: number | null | undefined;
   column: string;
 }
 export function TopicColumnCell(props: TopicColumnCellProps) {
@@ -84,7 +85,19 @@ export function TopicColumnCell(props: TopicColumnCellProps) {
         className="max-w-sm"
         multiline
       >
-        <HighlightedCell dull>{`Topic ${props.topic + 1}`}</HighlightedCell>
+        <HighlightedCell dull>No Topic</HighlightedCell>
+      </Tooltip>
+    );
+  }
+
+  if (props.topic == null) {
+    return (
+      <Tooltip
+        label="No topic was assigned to this column. This means that the document is considered invalid during the preprocessing step."
+        multiline
+        className="max-w-sm"
+      >
+        <HighlightedCell dull>No Topic</HighlightedCell>
       </Tooltip>
     );
   }
@@ -107,7 +120,7 @@ export function TopicColumnCell(props: TopicColumnCellProps) {
       )
     : undefined;
 
-  if (!topic) {
+  if (topic == null) {
     return (
       <Tooltip
         color="red"
@@ -124,7 +137,7 @@ export function TopicColumnCell(props: TopicColumnCellProps) {
     <HoverCard>
       <HoverCard.Target>
         <div>
-          <HighlightedCell>{topic.label}</HighlightedCell>
+          <HighlightedCell>{getTopicLabel(topic)}</HighlightedCell>
         </div>
       </HoverCard.Target>
       <HoverCard.Dropdown>

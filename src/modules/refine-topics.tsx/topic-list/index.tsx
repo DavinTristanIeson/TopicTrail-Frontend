@@ -1,21 +1,26 @@
 import React from 'react';
-import { Button, Paper, Stack, TextInput } from '@mantine/core';
-import { useDebouncedState } from '@mantine/hooks';
+import { Button, Drawer, Stack, TextInput, Text } from '@mantine/core';
+import { useDebouncedState, useDebouncedValue } from '@mantine/hooks';
 import { getTopicColumnName, TextualSchemaColumnModel } from '@/api/project';
 import { FilterStateContext } from '@/modules/table/context';
 import {
   DisclosureTrigger,
   ParametrizedDisclosureTrigger,
+  useDisclosureTrigger,
 } from '@/hooks/disclosure';
 import { CreateNewTopicDialog, UpdateTopicLabelDialog } from './dialogs';
 import {
   getTopicValuesFromTopicFilters,
+  RefineTopicsOutlierTopicListItem,
   RefineTopicsTopicListItem,
 } from './item';
 import { Plus } from '@phosphor-icons/react';
 
 import { useFormContext, useWatch } from 'react-hook-form';
 import { RefineTopicsFormType, TopicUpdateFormType } from '../form-type';
+import { getTopicLabel } from '@/api/topic';
+import { TableFilterTypeEnum } from '@/common/constants/enum';
+import { OUTLIER_TOPIC } from '@/modules/topics/results/select-topic-input';
 
 interface TopicListRendererProps {
   column: TextualSchemaColumnModel;
@@ -26,31 +31,78 @@ interface TopicListRendererProps {
 function TopicListRenderer(props: TopicListRendererProps) {
   const { column, topics, onEdit } = props;
 
-  const { filter } = React.useContext(FilterStateContext);
+  const { filter, setFilter } = React.useContext(FilterStateContext);
 
   const topicColumnName = getTopicColumnName(column.name);
-  const activeTopicIds = React.useMemo(() => {
+  const [activeTopicIds, setActiveTopicIds] = React.useState(() => {
     return getTopicValuesFromTopicFilters(topicColumnName, filter) ?? [];
-  }, [filter, topicColumnName]);
+  });
+
+  const [topicIdsToUpdateFilter] = useDebouncedValue(activeTopicIds, 1000, {
+    leading: false,
+  });
+
+  const hasMounted = React.useRef(false);
+  React.useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+    setFilter({
+      type: TableFilterTypeEnum.And,
+      operands: [
+        {
+          type: TableFilterTypeEnum.IsOneOf,
+          target: topicColumnName,
+          values: topicIdsToUpdateFilter,
+        },
+      ],
+    });
+  }, [setFilter, topicColumnName, topicIdsToUpdateFilter]);
+
+  const onAddTopicId = React.useCallback((topicId: number) => {
+    setActiveTopicIds((prev) => {
+      const prevTopicIdx = prev.indexOf(topicId);
+      if (prevTopicIdx === -1) {
+        return [...prev, topicId];
+      } else {
+        const next = prev.slice();
+        next.splice(prevTopicIdx, 1);
+        return next;
+      }
+    });
+  }, []);
 
   return (
     <Stack>
       {topics.map((topic, index) => {
         const isActive = activeTopicIds.includes(topic.id);
+        const defaultTopicLabel = topic.original
+          ? getTopicLabel(topic.original)
+          : 'Unnamed Topic';
         return (
           <RefineTopicsTopicListItem
             key={topic.id}
-            column={column}
-            label={topic.label}
+            label={topic.label ?? defaultTopicLabel}
             index={index}
             isActive={isActive}
             onEdit={() => {
               onEdit(topic.id);
             }}
+            onClick={() => {
+              if (!topic.original) return;
+              onAddTopicId(topic.id);
+            }}
             topic={topic.original}
           />
         );
       })}
+      <RefineTopicsOutlierTopicListItem
+        isActive={activeTopicIds.includes(OUTLIER_TOPIC.id)}
+        onClick={() => {
+          onAddTopicId(OUTLIER_TOPIC.id);
+        }}
+      />
     </Stack>
   );
 }
@@ -59,9 +111,7 @@ interface RefineTopicsTopicListProps {
   column: TextualSchemaColumnModel;
 }
 
-export default function RefineTopicsTopicList(
-  props: RefineTopicsTopicListProps,
-) {
+function RefineTopicsTopicListBody(props: RefineTopicsTopicListProps) {
   const { column } = props;
 
   const [q, setQ] = useDebouncedState<string | null>(null, 800);
@@ -75,7 +125,7 @@ export default function RefineTopicsTopicList(
   const filteredTopics = React.useMemo(() => {
     if (!q) return topics;
     return topics.filter((topic) => {
-      const matchesLabel = topic.label.includes(q);
+      const matchesLabel = topic.label && topic.label.includes(q);
       if (!topic.original) {
         return matchesLabel;
       }
@@ -96,32 +146,53 @@ export default function RefineTopicsTopicList(
     <>
       <CreateNewTopicDialog ref={createNewTopicRemote} />
       <UpdateTopicLabelDialog ref={updateLabelDialogRemote} />
-      <Paper className="p-2" style={{ height: '90dvh' }}>
-        <Stack className="h-full">
+      <Drawer.Header>
+        <Stack justify="center" className="w-full" gap={4}>
           <TextInput
             label="Search for a topic"
-            placeholder="Name or tag."
+            placeholder="Name, topic word, or tag."
             onChange={(e) => setQ(e.target.value)}
           />
-          <div className="h-full overflow-auto">
-            <TopicListRenderer
-              column={column}
-              topics={filteredTopics}
-              onEdit={(topicId: number) => {
-                updateLabelDialogRemote.current?.open(topicId);
-              }}
-            />
-          </div>
+          <Text ta="center" size="sm">
+            alternatively, you can
+          </Text>
           <Button
             onClick={() => {
               createNewTopicRemote.current?.open();
             }}
             leftSection={<Plus />}
           >
-            Add New Topic
+            Add a New Topic
           </Button>
         </Stack>
-      </Paper>
+      </Drawer.Header>
+      <TopicListRenderer
+        column={column}
+        topics={filteredTopics}
+        onEdit={(topicId: number) => {
+          updateLabelDialogRemote.current?.open(topicId);
+        }}
+      />
     </>
   );
 }
+
+export const RefineTopicsTopicList = React.forwardRef<
+  DisclosureTrigger | null,
+  RefineTopicsTopicListProps
+>(function RefineTopicsTopicList(props, ref) {
+  const [opened, { close }] = useDisclosureTrigger(ref);
+  return (
+    <>
+      <Drawer
+        opened={opened}
+        onClose={close}
+        closeOnClickOutside
+        closeOnEscape
+        title="Topic List"
+      >
+        {opened && <RefineTopicsTopicListBody {...props} />}
+      </Drawer>
+    </>
+  );
+});

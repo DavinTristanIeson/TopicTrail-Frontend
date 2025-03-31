@@ -11,9 +11,13 @@ import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RefineTopicsDocumentTable } from './document-table';
-import RefineTopicsTopicList from './topic-list';
 import { FilterStateProvider } from '../table/context';
-import { Group } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
+import { TableFilterButton } from '../filter/drawer';
+import { RefineTopicsTopicList } from './topic-list';
+import { DisclosureTrigger } from '@/hooks/disclosure';
+import { RefineTopicsSortTopicsDrawer } from './topic-list/dialogs';
+import { ArrowsDownUp, List } from '@phosphor-icons/react';
 
 interface RefineTopicsFormProps {
   topicModelingResult: ColumnTopicModelingResultModel;
@@ -91,20 +95,44 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
     },
     [project.id, refineTopics, replace, topicModelingResult.column.name],
   );
+
+  const refineTopicRemote = React.useRef<DisclosureTrigger | null>(null);
+  const sortTopicRemote = React.useRef<DisclosureTrigger | null>(null);
+
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
       <FilterStateProvider>
-        <Group align="stretch" className="h-full" wrap="nowrap">
-          <div style={{ width: 448 }}>
-            <RefineTopicsTopicList column={topicModelingResult.column} />
-          </div>
-          <div className="flex-1">
-            <RefineTopicsDocumentTable
-              column={topicModelingResult.column}
-              topics={topicModelingResult.result!.topics}
-            />
-          </div>
+        <RefineTopicsSortTopicsDrawer ref={sortTopicRemote} />
+        <RefineTopicsTopicList
+          column={topicModelingResult.column}
+          ref={refineTopicRemote}
+        />
+        <Group justify="end" className="pb-5">
+          <Button
+            variant="outline"
+            onClick={() => {
+              refineTopicRemote.current?.open();
+            }}
+            leftSection={<List />}
+          >
+            Open Topic List
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              sortTopicRemote.current?.open();
+            }}
+            leftSection={<ArrowsDownUp />}
+          >
+            Sort Topics
+          </Button>
+          <TableFilterButton />
         </Group>
+
+        <RefineTopicsDocumentTable
+          column={topicModelingResult.column}
+          topics={topicModelingResult.result!.topics}
+        />
       </FilterStateProvider>
     </FormWrapper>
   );

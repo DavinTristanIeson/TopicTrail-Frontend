@@ -1,10 +1,10 @@
 import { TopicModel } from '@/api/topic';
-import { DictionarySchema } from '@/common/utils/form';
+import { DictionarySchema, yupNullableString } from '@/common/utils/form';
 import * as Yup from 'yup';
 
 const topicUpdateFormSchema = Yup.object({
   id: Yup.number().integer().required(),
-  label: Yup.string().required(),
+  label: yupNullableString,
 }).required();
 
 export const refineTopicsFormSchema = Yup.object({

@@ -42,6 +42,7 @@ function DocumentTableSelectInput(props: DocumentTableSelectInputProps) {
       }}
       variant="unstyled"
       className="w-full"
+      withOutlier
     />
   );
 }
@@ -63,12 +64,8 @@ function useDocumentTableColumns(
             </Text>
           </Tooltip>
         ),
-        Cell({ cell: { getValue } }) {
-          return (
-            <TextualColumnCell>
-              {getValue() as React.ReactNode}
-            </TextualColumnCell>
-          );
+        Cell({ row: { original } }) {
+          return <TextualColumnCell>{original.original}</TextualColumnCell>;
         },
       },
       {
@@ -82,12 +79,8 @@ function useDocumentTableColumns(
             </Text>
           </Tooltip>
         ),
-        Cell({ cell: { getValue } }) {
-          return (
-            <TextualColumnCell>
-              {getValue() as React.ReactNode}
-            </TextualColumnCell>
-          );
+        Cell({ row: { original } }) {
+          return <TextualColumnCell>{original.preprocessed}</TextualColumnCell>;
         },
       },
       {
@@ -96,10 +89,7 @@ function useDocumentTableColumns(
         size: 400,
         Cell({ row: { original } }) {
           return (
-            <TopicColumnCell
-              column={column.source_name!}
-              topic={original.topic}
-            />
+            <TopicColumnCell column={column.name} topic={original.topic} />
           );
         },
       },
@@ -112,7 +102,7 @@ function useDocumentTableColumns(
         },
       },
     ];
-  }, [column.source_name, topics]);
+  }, [column.name, topics]);
 }
 
 interface RefineTopicsDocumentTableRendererProps {

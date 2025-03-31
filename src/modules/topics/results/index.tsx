@@ -38,6 +38,7 @@ function TopicSelector(props: TopicSelectorProps) {
         data={data.topics}
         value={topic?.id ?? null}
         onChange={setTopic}
+        withOutlier
       />
       {!topic && <Alert color="yellow">Choose a topic to get started.</Alert>}
       {topic && <div className="h-72 bg-gray-300">Topic Words Area</div>}
