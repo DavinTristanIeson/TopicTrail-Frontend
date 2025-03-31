@@ -35,5 +35,9 @@ export function useTableStateSetup() {
   const [page, setPage] = React.useState(0);
   const [sort, setSort] = React.useState<TableSortModel | null>(null);
   const { filter, setFilter } = React.useContext(FilterStateContext);
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [sort, filter, limit]);
   return { limit, setLimit, page, setPage, sort, setSort, filter, setFilter };
 }

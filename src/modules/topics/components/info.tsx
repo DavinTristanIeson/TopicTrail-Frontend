@@ -46,34 +46,45 @@ export function TopicWordsRenderer(props: TopicWordsRendererProps) {
 
 export function TopicInfo(props: TopicModel) {
   return (
-    <Stack>
+    <Stack className="border-solid border-b border-gray-400 w-full pb-2">
       <Group gap={6}>
         <Text size="sm" fw={500} c="brand">
           {getTopicLabel(props)}
         </Text>
-        <Text size="xs" c="gray">{`(${props.frequency} rows)`}</Text>
-      </Group>
-      <div>
-        <Text size="xs" c="gray">
-          Topic Words
-        </Text>
-        <TopicWordsRenderer {...props} />
-      </div>
-      <div>
-        {props.tags && (
-          <>
-            <Text size="xs">Tags</Text>
-            <Group>
-              {props.tags.map((tag) => (
-                <Badge key={tag} variant="light" radius="sm">
-                  {tag}
-                </Badge>
-              ))}
-            </Group>
-          </>
+        {props.frequency && (
+          <Text size="xs" c="gray">{`(${props.frequency} rows)`}</Text>
         )}
-      </div>
-      {props.description && <Text size="xs">{props.description}</Text>}
+      </Group>
+      {props.words && props.words.length > 0 && (
+        <div>
+          <Text size="xs" c="gray">
+            Topic Words
+          </Text>
+          <TopicWordsRenderer {...props} />
+        </div>
+      )}
+      {props.tags && props.tags.length > 0 && (
+        <div>
+          <Text size="xs" c="gray">
+            Tags
+          </Text>
+          <Group>
+            {props.tags.map((tag) => (
+              <Badge key={tag} variant="light" radius="sm">
+                {tag}
+              </Badge>
+            ))}
+          </Group>
+        </div>
+      )}
+      {props.description && (
+        <div>
+          <Text size="xs" c="gray">
+            Description
+          </Text>
+          <Text size="sm">{props.description}</Text>
+        </div>
+      )}
     </Stack>
   );
 }

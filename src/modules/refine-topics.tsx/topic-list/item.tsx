@@ -3,14 +3,7 @@ import { TopicModel } from '@/api/topic';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import { TopicInfo } from '@/modules/topics/components/info';
 import { OUTLIER_TOPIC } from '@/modules/topics/results/select-topic-input';
-import {
-  HoverCard,
-  NavLink,
-  Badge,
-  Group,
-  ActionIcon,
-  Tooltip,
-} from '@mantine/core';
+import { HoverCard, NavLink, Badge, Group, ActionIcon } from '@mantine/core';
 import { PencilSimple, CaretRight } from '@phosphor-icons/react';
 import React from 'react';
 
@@ -62,17 +55,15 @@ export function RefineTopicsTopicListItem(props: TopicListItemProps) {
       }
       rightSection={
         <Group>
-          <Tooltip label="Update Topic Label">
-            <ActionIcon
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onEdit();
-              }}
-            >
-              <PencilSimple />
-            </ActionIcon>
-          </Tooltip>
+          <ActionIcon
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onEdit();
+            }}
+          >
+            <PencilSimple />
+          </ActionIcon>
           {topic && <CaretRight />}
         </Group>
       }

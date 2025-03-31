@@ -1,0 +1,122 @@
+import React from 'react';
+import { useForm, useFormContext } from 'react-hook-form';
+import {
+  RefineTopicsFormType,
+  topicUpdateFormSchema,
+  TopicUpdateFormType,
+  createNewTopicFormSchema,
+} from '../form-type';
+import { yupResolver } from '@hookform/resolvers/yup';
+import FormWrapper from '@/components/utility/form/wrapper';
+import { Group, Stack } from '@mantine/core';
+import SubmitButton from '@/components/standard/button/submit';
+import RHFField from '@/components/standard/fields';
+import { showNotification } from '@mantine/notifications';
+import { getTopicLabel } from '@/api/topic';
+
+interface TopicUpdateFormProps {
+  topicId: number;
+  onClose(): void;
+}
+
+function TopicUpdateFormBody() {
+  return (
+    <>
+      <RHFField
+        type="text"
+        name="label"
+        label="Label"
+        required
+        description="A label to describe the topic. By default, the label used is a combination of the first three topic words; however, this kind of label might be harder to interpret during your analysis."
+      />
+      <RHFField
+        type="tags"
+        name="tags"
+        label="Tags"
+        description="Several tags to describe the topic. This is mainly to help searching for topics that fall under the same group or theme."
+      />
+      <RHFField
+        type="textarea"
+        name="description"
+        label="Description"
+        description="A brief description to explain the analyst's understanding of the topic."
+      />
+    </>
+  );
+}
+
+export default function TopicUpdateForm(props: TopicUpdateFormProps) {
+  const { topicId, onClose } = props;
+  const { getValues, setValue } = useFormContext<RefineTopicsFormType>();
+
+  const [focusedTopic, focusedTopicIndex] = React.useMemo(() => {
+    const allTopics = getValues('topics');
+    const focusedTopicIndex = allTopics.findIndex(
+      (topic) => topic.id != null && topic.id === topicId,
+    );
+    if (focusedTopicIndex === -1) {
+      return [undefined, -1];
+    }
+    const focusedTopic = allTopics[focusedTopicIndex];
+    return [focusedTopic, focusedTopicIndex];
+  }, [getValues, topicId]);
+
+  const isCreatingNewTopic = focusedTopicIndex === -1;
+
+  const initialValues = React.useMemo(() => {
+    if (focusedTopic) {
+      return focusedTopic;
+    }
+    return {
+      id: topicId,
+      original: null,
+      description: '',
+      label: '',
+      tags: [],
+    } as TopicUpdateFormType;
+  }, [focusedTopic, topicId]);
+
+  const onSubmit = React.useCallback(
+    (values: TopicUpdateFormType) => {
+      if (isCreatingNewTopic) {
+        setValue('topics', [...getValues('topics'), values]);
+        showNotification({
+          message: `A new topic called "${values.label}" has been successfully created. You should assign at least one document to this topic, as topics without a document assigned to it will be removed.`,
+          color: 'green',
+        });
+      } else {
+        setValue(`topics.${focusedTopicIndex}`, values);
+        showNotification({
+          message: `The metadata for topic "${getTopicLabel({
+            ...values.original,
+            label: values.label,
+          })}" has been successfully updated.`,
+          color: 'green',
+        });
+      }
+      onClose();
+    },
+    [focusedTopicIndex, getValues, isCreatingNewTopic, onClose, setValue],
+  );
+
+  const form = useForm({
+    resolver: yupResolver(
+      isCreatingNewTopic ? createNewTopicFormSchema : topicUpdateFormSchema,
+    ),
+    defaultValues: initialValues,
+    mode: 'onChange',
+  });
+
+  return (
+    <FormWrapper form={form} onSubmit={onSubmit}>
+      <Stack className="pt-5">
+        <TopicUpdateFormBody />
+        <Group justify="end">
+          <SubmitButton>
+            {isCreatingNewTopic ? 'Update Topic Metadata' : 'Create New Topic'}
+          </SubmitButton>
+        </Group>
+      </Stack>
+    </FormWrapper>
+  );
+}

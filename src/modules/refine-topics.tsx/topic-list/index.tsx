@@ -42,22 +42,25 @@ function TopicListRenderer(props: TopicListRendererProps) {
     leading: false,
   });
 
-  const hasMounted = React.useRef(false);
+  const hasChanged = React.useRef(false);
   React.useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
+    if (!hasChanged.current) {
       return;
     }
-    setFilter({
-      type: TableFilterTypeEnum.And,
-      operands: [
-        {
-          type: TableFilterTypeEnum.IsOneOf,
-          target: topicColumnName,
-          values: topicIdsToUpdateFilter,
-        },
-      ],
-    });
+    if (topicIdsToUpdateFilter.length === 0) {
+      setFilter(null);
+    } else {
+      setFilter({
+        type: TableFilterTypeEnum.And,
+        operands: [
+          {
+            type: TableFilterTypeEnum.IsOneOf,
+            target: topicColumnName,
+            values: topicIdsToUpdateFilter,
+          },
+        ],
+      });
+    }
   }, [setFilter, topicColumnName, topicIdsToUpdateFilter]);
 
   const onAddTopicId = React.useCallback((topicId: number) => {
@@ -71,6 +74,7 @@ function TopicListRenderer(props: TopicListRendererProps) {
         return next;
       }
     });
+    hasChanged.current = true;
   }, []);
 
   return (
@@ -125,15 +129,19 @@ function RefineTopicsTopicListBody(props: RefineTopicsTopicListProps) {
   const filteredTopics = React.useMemo(() => {
     if (!q) return topics;
     return topics.filter((topic) => {
-      const matchesLabel = topic.label && topic.label.includes(q);
+      const matchesLabel =
+        topic.label && topic.label.toLowerCase().includes(q.toLowerCase());
       if (!topic.original) {
         return matchesLabel;
       }
       const matchesTopicWords = topic.original.words
-        .map((word) => word[0])
-        .includes(q);
+        .map((word) => word[0].toLowerCase())
+        .includes(q.toLowerCase());
       const matchesTags =
-        !!topic.original.tags && topic.original.tags.includes(q);
+        !!topic.original.tags &&
+        topic.original.tags
+          .map((tag) => tag.toLowerCase())
+          .includes(q.toLowerCase());
       return matchesLabel || matchesTopicWords || matchesTags;
     });
   }, [topics, q]);

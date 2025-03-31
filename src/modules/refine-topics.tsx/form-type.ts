@@ -1,15 +1,29 @@
 import { TopicModel } from '@/api/topic';
-import { DictionarySchema, yupNullableString } from '@/common/utils/form';
+import {
+  DictionarySchema,
+  yupNullableArray,
+  yupNullableNumber,
+  yupNullableString,
+} from '@/common/utils/form';
 import * as Yup from 'yup';
 
-const topicUpdateFormSchema = Yup.object({
+export const createNewTopicFormSchema = Yup.object({
+  id: Yup.number().integer().required(),
+  label: Yup.string(),
+  description: yupNullableString,
+  tags: yupNullableArray.of(Yup.string().required()),
+}).required();
+
+export const topicUpdateFormSchema = Yup.object({
   id: Yup.number().integer().required(),
   label: yupNullableString,
+  description: yupNullableString,
+  tags: yupNullableArray.of(Yup.string().required()),
 }).required();
 
 export const refineTopicsFormSchema = Yup.object({
   topics: Yup.array(topicUpdateFormSchema).required(),
-  document_topics: DictionarySchema(Yup.number().required()),
+  document_topics: DictionarySchema(yupNullableNumber),
 }).required();
 
 export type TopicUpdateFormType = Yup.InferType<
@@ -19,5 +33,5 @@ export type TopicUpdateFormType = Yup.InferType<
 };
 export type RefineTopicsFormType = {
   topics: TopicUpdateFormType[];
-  document_topics: Record<string, number>;
+  document_topics: Record<string, number | null>;
 };

@@ -18,6 +18,7 @@ import { RefineTopicsTopicList } from './topic-list';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import { RefineTopicsSortTopicsDrawer } from './topic-list/dialogs';
 import { ArrowsDownUp, List } from '@phosphor-icons/react';
+import SubmitButton from '@/components/standard/button/submit';
 
 interface RefineTopicsFormProps {
   topicModelingResult: ColumnTopicModelingResultModel;
@@ -57,18 +58,20 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
     async (payload: RefineTopicsFormType) => {
       const res = await refineTopics({
         body: {
-          document_topics: Object.entries(payload.document_topics).map(
-            ([document_id, topic_id]) => {
+          document_topics: Object.entries(payload.document_topics)
+            .filter((x) => x[1] != null)
+            .map(([document_id, topic_id]) => {
               return {
                 document_id: parseInt(document_id),
-                topic_id,
+                topic_id: topic_id!,
               };
-            },
-          ),
+            }),
           topics: payload.topics.map((topic) => {
             return {
               id: topic.id,
               label: topic.label ?? null,
+              description: topic.description ?? null,
+              tags: topic.tags ?? null,
             };
           }),
         },
@@ -87,13 +90,15 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
           color: 'green',
         });
       }
-      replace(NavigationRoutes.ProjectTopics, {
+      replace({
+        pathname: NavigationRoutes.ProjectTopics,
         query: {
           id: project.id,
+          column: topicModelingResult.column.name,
         },
       });
     },
-    [project.id, refineTopics, replace, topicModelingResult.column.name],
+    [project.id, refineTopics, replace, topicModelingResult.column],
   );
 
   const refineTopicRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -107,7 +112,7 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
           column={topicModelingResult.column}
           ref={refineTopicRemote}
         />
-        <Group justify="end" className="pb-5">
+        <Group justify="end" className="pb-5 pt-5">
           <Button
             variant="outline"
             onClick={() => {
@@ -127,6 +132,7 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
             Sort Topics
           </Button>
           <TableFilterButton />
+          <SubmitButton>Save</SubmitButton>
         </Group>
 
         <RefineTopicsDocumentTable

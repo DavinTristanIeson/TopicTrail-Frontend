@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
   Divider,
+  Group,
 } from '@mantine/core';
 import { TopicInfo, TopicWordsRenderer } from '../components/info';
 import { Info } from '@phosphor-icons/react';
@@ -18,6 +19,7 @@ import {
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
+import React from 'react';
 
 export interface TopicComboboxItem extends ComboboxItem {
   data: TopicModel;
@@ -58,15 +60,21 @@ function TopicComboboxItemRenderer(
 const topicFilterFunction: OptionsFilter = (input) => {
   return input.options.filter((opt) => {
     const option = opt as TopicComboboxItem;
-    const matchesLabel = option.label && option.label.includes(input.search);
+    const matchesLabel =
+      option.label &&
+      option.label.toLowerCase().includes(input.search.toLowerCase());
     if (!option.data) {
       return matchesLabel;
     }
     const topic = option.data;
     const matchesTopicWords = topic.words
-      .map((word) => word[0])
-      .includes(input.search);
-    const matchesTags = !!topic.tags && topic.tags.includes(input.search);
+      .map((word) => word[0].toLowerCase())
+      .includes(input.search.toLowerCase());
+    const matchesTags =
+      !!topic.tags &&
+      topic.tags
+        .map((tag) => tag.toLowerCase())
+        .includes(input.search.toLowerCase());
     return matchesLabel || matchesTopicWords || matchesTags;
   });
 };
@@ -95,7 +103,7 @@ function topicsToComboboxes(
   ];
 }
 
-interface TopicSelectInputProps
+export interface TopicSelectInputProps
   extends Omit<SelectProps, 'onChange' | 'data' | 'value'> {
   data: TopicModel[];
   value?: number | null;
@@ -105,11 +113,14 @@ interface TopicSelectInputProps
 
 export function TopicSelectInput(props: TopicSelectInputProps) {
   const { onChange, data, value, withOutlier, ...selectProps } = props;
-  const currentTopic = value ? data.find((x) => x.id === value) : undefined;
+  const currentTopic =
+    value != null ? data.find((x) => x.id === value) : undefined;
   return (
     <Select
+      placeholder="Pick a topic"
+      description={currentTopic && <TopicWordsRenderer {...currentTopic} />}
       {...selectProps}
-      value={value ? value.toString() : null}
+      value={value != null ? value.toString() : null}
       renderOption={TopicComboboxItemRenderer as SelectProps['renderOption']}
       searchable
       filter={topicFilterFunction}
@@ -126,8 +137,6 @@ export function TopicSelectInput(props: TopicSelectInputProps) {
         const chosenTopic = data.find((x) => x.id === topicId) ?? null;
         onChange?.(chosenTopic);
       }}
-      placeholder="Pick a topic"
-      description={currentTopic && <TopicWordsRenderer {...currentTopic} />}
     />
   );
 }
@@ -144,7 +153,7 @@ export function TopicSelectField(props: TopicSelectFieldProps) {
   return <TopicSelectInput {...mergedProps} />;
 }
 
-interface TopicMultiSelectInputProps
+export interface TopicMultiSelectInputProps
   extends Omit<MultiSelectProps, 'onChange' | 'data' | 'value'> {
   data: TopicModel[];
   value?: number[];
@@ -161,6 +170,28 @@ export function TopicMultiSelectInput(props: TopicMultiSelectInputProps) {
 
   return (
     <MultiSelect
+      placeholder="Pick a topic"
+      description={
+        currentTopics.length > 0 && (
+          <HoverCard>
+            <HoverCard.Target>
+              <Group>
+                <Info /> View Selected Topics
+              </Group>
+            </HoverCard.Target>
+            <HoverCard.Dropdown className="max-w-lg">
+              <Stack>
+                {currentTopics.map((topic) => (
+                  <React.Fragment key={topic.id}>
+                    <TopicInfo {...topic} />
+                    <Divider />
+                  </React.Fragment>
+                ))}
+              </Stack>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        )
+      }
       {...selectProps}
       value={value?.map(String) ?? []}
       searchable
@@ -180,22 +211,6 @@ export function TopicMultiSelectInput(props: TopicMultiSelectInputProps) {
 
         onChange?.(topics);
       }}
-      placeholder="Pick a topic"
-      rightSection={
-        <HoverCard>
-          <HoverCard.Target>
-            <Info />
-          </HoverCard.Target>
-          <HoverCard.Dropdown className="max-w-lg">
-            <Stack>
-              {currentTopics.map((topic) => (
-                <TopicWordsRenderer {...topic} key={topic.id} />
-              ))}
-              <Divider />
-            </Stack>
-          </HoverCard.Dropdown>
-        </HoverCard>
-      }
     />
   );
 }

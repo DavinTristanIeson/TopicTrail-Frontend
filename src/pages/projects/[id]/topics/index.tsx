@@ -11,6 +11,7 @@ import ProjectTopicsEmptyPage from '@/modules/topics/empty';
 import ProjectTopicResultsPage from '@/modules/topics/results';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
 import { SchemaColumnContext } from '@/modules/project/context';
+import { useRouter } from 'next/router';
 
 interface ProjectTopicSwitcherProps {
   column: string;
@@ -35,12 +36,16 @@ function ProjectTopicSwitcher(props: ProjectTopicSwitcherProps) {
 
 function ProjectTopicColumnManager() {
   const topicModelingResults = React.useContext(AllTopicModelingResultContext);
-  const [column, setColumn] = React.useState<string | null>(null);
+
+  const queryColumn = useRouter().query.column as string;
+  const [column, setColumn] = React.useState<string | null>(
+    queryColumn ?? null,
+  );
 
   const columns = topicModelingResults.map((result) => result.column);
   const firstColumn = columns[0];
 
-  const hasInitializedColumn = React.useRef(false);
+  const hasInitializedColumn = React.useRef(!!queryColumn);
   React.useEffect(() => {
     if (hasInitializedColumn.current) return;
     if (!firstColumn) return;
