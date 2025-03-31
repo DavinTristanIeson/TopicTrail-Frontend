@@ -7,6 +7,7 @@ import {
   Button,
   Indicator,
   Alert,
+  Grid
 } from '@mantine/core';
 import TopicResultsPageControls from './controls';
 import DocumentsPerTopicTable from './documents-table';
@@ -101,14 +102,22 @@ export default function ProjectTopicResultsPage() {
   const column = React.useContext(SchemaColumnContext);
   return (
     <Stack>
-      <div>
-        <Title order={2} ta="center">
-          Topics of {column.name}
-        </Title>
-        {column.description && <Text ta="center">{column.description}</Text>}
-      </div>
-      <div className="h-72 bg-gray-300">Topic Visualization Area</div>
-      <TopicResultsPageControls />
+      <Grid align="center">
+        <Grid.Col span={9}>
+          <div>
+            <Title order={2} ta="center">
+              Topics of {column.name}
+            </Title>
+            {column.description && <Text ta="center">{column.description}</Text>}
+          </div>
+          <div className="h-72 bg-gray-300">Topic Visualization Area</div>
+        </Grid.Col>
+        <Grid.Col span={3}>
+        <div style={{ maxWidth: '300px', margin: '0 auto' }}>
+            <TopicResultsPageControls />
+          </div>
+        </Grid.Col>
+      </Grid>
       <Divider />
       <ProjectTopicsFilter />
     </Stack>
