@@ -3,13 +3,15 @@ import {
   ProjectContext,
   useCurrentTextualColumn,
 } from '@/modules/project/context';
-import React from 'react';
+import React, { useMemo, useContext } from 'react';
 import { TableFilterModel } from '@/api/table';
 import { DocumentPerTopicModel } from '@/api/topic';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
 import { Stack } from '@mantine/core';
 import { TableStateContext, useTableStateSetup } from '@/modules/table/context';
+import { MantineReactTable, MRT_ColumnDef, useMantineReactTable } from 'mantine-react-table';
+import { MantineReactTableBehaviors } from '@/modules/table/adapter';
 
 interface DocumentsPerTopicTableRendererProps {
   data: DocumentPerTopicModel[];
@@ -18,8 +20,36 @@ interface DocumentsPerTopicTableRendererProps {
 function DocumentsPerTopicTableRenderer(
   props: DocumentsPerTopicTableRendererProps,
 ) {
-  // TODO: Hansen
-  return <></>;
+  const { data } = props;
+  const tableColumns = useMemo<MRT_ColumnDef<Record<string, any>>[]>(() => [
+    {
+      accessorKey: 'id',
+      header: 'Document ID',
+    },
+    {
+      accessorKey: 'original',
+      header: 'Original Text',
+    },
+    {
+      accessorKey: 'preprocessed',
+      header: 'Preprocessed Text',
+    },
+    {
+      accessorKey: 'topic',
+      header: 'Topic',
+    },
+  ], []);
+
+  const table = useMantineReactTable({
+    data,
+    columns: tableColumns,
+    ...MantineReactTableBehaviors.Default,
+    ...MantineReactTableBehaviors.Resizable,
+    ...MantineReactTableBehaviors.ColumnActions,
+    ...MantineReactTableBehaviors.Virtualized(data, tableColumns),
+  });
+
+  return <MantineReactTable table={table} layoutMode={'grid-no-grow' as any} />;
 }
 
 interface DocumentsPerTopicTableProps {
@@ -55,7 +85,6 @@ export default function DocumentsPerTopicTable(
     },
   });
 
-  // TODO: Hansen
   return (
     <UseQueryWrapperComponent
       query={query}
