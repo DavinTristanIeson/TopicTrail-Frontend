@@ -432,6 +432,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/topic/{project_id}/visualization/topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Topic Visualization Results */
+        get: operations["get__topic_visualization_results_topic__project_id__visualization_topics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topic/{project_id}/visualization/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Document Visualization Results */
+        get: operations["get__document_visualization_results_topic__project_id__visualization_documents_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -479,6 +513,12 @@ export interface components {
         /** ApiResult[DatasetPreviewResource] */
         ApiResult_DatasetPreviewResource_: {
             data: components["schemas"]["DatasetPreviewResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[DocumentTopicsVisualizationResource] */
+        ApiResult_DocumentTopicsVisualizationResource_: {
+            data: components["schemas"]["DocumentTopicsVisualizationResource"];
             /** Message */
             message: string | null;
         };
@@ -566,6 +606,13 @@ export interface components {
         ApiResult_list_ProjectResource__: {
             /** Data */
             data: components["schemas"]["ProjectResource"][];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[list[TopicVisualizationResource]] */
+        ApiResult_list_TopicVisualizationResource__: {
+            /** Data */
+            data: components["schemas"]["TopicVisualizationResource"][];
             /** Message */
             message: string | null;
         };
@@ -755,6 +802,24 @@ export interface components {
             document_id: number;
             /** Topic Id */
             topic_id: number;
+        };
+        /** DocumentTopicsVisualizationResource */
+        DocumentTopicsVisualizationResource: {
+            /** Documents */
+            documents: components["schemas"]["DocumentVisualizationResource"][];
+            /** Topics */
+            topics: components["schemas"]["TopicVisualizationResource"][];
+        };
+        /** DocumentVisualizationResource */
+        DocumentVisualizationResource: {
+            /** Document */
+            document: string;
+            /** Topic */
+            topic: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /**
          * EffectSizeMethodEnum
@@ -1542,6 +1607,20 @@ export interface components {
             id: number;
             /** Label */
             label: string | null;
+            /** Tags */
+            tags: string[] | null;
+            /** Description */
+            description: string | null;
+        };
+        /** TopicVisualizationResource */
+        TopicVisualizationResource: {
+            topic: components["schemas"]["Topic"];
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+            /** Frequency */
+            frequency: number;
         };
         /** TopicsOfColumnSchema */
         TopicsOfColumnSchema: {
@@ -3489,6 +3568,144 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TablePaginationApiResult_DocumentPerTopicResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__topic_visualization_results_topic__project_id__visualization_topics_get: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_TopicVisualizationResource__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__document_visualization_results_topic__project_id__visualization_documents_get: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_DocumentTopicsVisualizationResource_"];
                 };
             };
             /** @description Bad Request */

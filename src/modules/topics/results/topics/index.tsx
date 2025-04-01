@@ -1,0 +1,157 @@
+import {
+  DocumentTopicsVisualizationModel,
+  TopicVisualizationModel,
+} from '@/api/topic';
+import { client } from '@/common/api/client';
+import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
+import { WidePlotSkeleton } from '@/components/visual/loading';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
+import { Select } from '@mantine/core';
+import React from 'react';
+import { TopicVisualizationBubbleChartRenderer } from './bubble-chart';
+import { TextualSchemaColumnModel } from '@/api/project';
+import { TopicVisualizationScatterPlotRenderer } from './scatter-plot';
+
+enum TopicVisualizationMethod {
+  InterTopicRelationship = 'inter-topic-relationship',
+  DocumentScatterPlot = 'document-scatter-plot',
+  TopicWordsBarchart = 'topic-words-barchart',
+  TopicWordsWordCloud = 'topic-words-word-cloud',
+}
+
+const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
+  [TopicVisualizationMethod.InterTopicRelationship]: {
+    label: 'Inter-Topic Relationship (Bubble Chart)',
+    description:
+      'Visualize the relationship between topics as a bubble chart. Topics with a higher frequency is represented with a larger bubble. Topics that have similar meanings are represented as bubbles that are close to each other.',
+    value: TopicVisualizationMethod.InterTopicRelationship,
+  },
+  [TopicVisualizationMethod.DocumentScatterPlot]: {
+    label: 'Document Semantic Space (Scatter-Plot)',
+    description:
+      'Visualize the meanings of the documents as a scatter plot. Documents with similar meanings are represented as points that are close to each other. Each document is colored according to its topic.',
+    value: TopicVisualizationMethod.DocumentScatterPlot,
+  },
+  [TopicVisualizationMethod.TopicWordsBarchart]: {
+    label: 'Topic Words (Bar Chart)',
+    description:
+      'Visualize the topic words of each topic as a bar chart. Each word is represented with a bar, and the significance of the word (how the word differentiates this topic compared to the other topics) is represented by the length of the bar.',
+    value: TopicVisualizationMethod.TopicWordsBarchart,
+  },
+  [TopicVisualizationMethod.TopicWordsWordCloud]: {
+    label: 'Topic Words (Bar Chart)',
+    description:
+      'Visualize the topic words of each topic as a word cloud. The significance of the word (how the word differentiates this topic compared to the other topics) is represented by the size of the word.',
+    value: TopicVisualizationMethod.TopicWordsWordCloud,
+  },
+};
+
+interface TopicVisualizationDataProviderProps {
+  children(props: {
+    data: TopicVisualizationModel[];
+    column: TextualSchemaColumnModel;
+  }): React.ReactNode;
+}
+
+function TopicVisualizationDataProvider(
+  props: TopicVisualizationDataProviderProps,
+) {
+  const { children: Child } = props;
+  const project = React.useContext(ProjectContext);
+  const column = React.useContext(
+    SchemaColumnContext,
+  ) as TextualSchemaColumnModel;
+  const query = client.useQuery(
+    'get',
+    '/topic/{project_id}/visualization/topics',
+    {
+      params: {
+        path: {
+          project_id: project.id,
+        },
+        query: {
+          column: column.name,
+        },
+      },
+    },
+  );
+  return (
+    <UseQueryWrapperComponent
+      query={query}
+      loadingComponent={<WidePlotSkeleton />}
+    >
+      {(data) => <Child data={data.data} column={column} />}
+    </UseQueryWrapperComponent>
+  );
+}
+
+interface DocumentTopicsVisualizationDataProviderProps {
+  children(props: {
+    data: DocumentTopicsVisualizationModel;
+    column: TextualSchemaColumnModel;
+  }): React.ReactNode;
+}
+
+function DocumentTopicsVisualizationDataProvider(
+  props: DocumentTopicsVisualizationDataProviderProps,
+) {
+  const { children: Child } = props;
+  const project = React.useContext(ProjectContext);
+  const column = React.useContext(
+    SchemaColumnContext,
+  ) as TextualSchemaColumnModel;
+  const query = client.useQuery(
+    'get',
+    '/topic/{project_id}/visualization/documents',
+    {
+      params: {
+        path: {
+          project_id: project.id,
+        },
+        query: {
+          column: column.name,
+        },
+      },
+    },
+  );
+  return (
+    <UseQueryWrapperComponent
+      query={query}
+      loadingComponent={<WidePlotSkeleton />}
+    >
+      {(data) => <Child data={data.data} column={column} />}
+    </UseQueryWrapperComponent>
+  );
+}
+
+export default function TopicVisualizationRenderer() {
+  const [method, setMethod] = React.useState<string | null>(
+    TopicVisualizationMethod.InterTopicRelationship,
+  );
+  const renderOption = useDescriptionBasedRenderOption(
+    TOPIC_VISUALIZATION_METHOD_DICTIONARY,
+  );
+  return (
+    <>
+      <Select
+        data={Object.values(TOPIC_VISUALIZATION_METHOD_DICTIONARY)}
+        label="Visualization method"
+        renderOption={renderOption}
+        value={method}
+        onChange={setMethod}
+        allowDeselect={false}
+        miw={512}
+      />
+      {method === TopicVisualizationMethod.InterTopicRelationship ? (
+        <TopicVisualizationDataProvider>
+          {TopicVisualizationBubbleChartRenderer}
+        </TopicVisualizationDataProvider>
+      ) : method === TopicVisualizationMethod.DocumentScatterPlot ? (
+        <DocumentTopicsVisualizationDataProvider>
+          {TopicVisualizationScatterPlotRenderer}
+        </DocumentTopicsVisualizationDataProvider>
+      ) : null}
+    </>
+  );
+}

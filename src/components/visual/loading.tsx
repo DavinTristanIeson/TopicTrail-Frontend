@@ -35,3 +35,7 @@ export function TableSkeleton() {
     </SimpleGrid>
   );
 }
+
+export function WidePlotSkeleton() {
+  return <Skeleton height={512} />;
+}

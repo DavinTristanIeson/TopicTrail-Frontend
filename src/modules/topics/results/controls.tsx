@@ -46,11 +46,12 @@ const RediscoverTopicsModal = React.forwardRef<
       pathname: NavigationRoutes.ProjectTopics,
       query: {
         id: project.id,
+        column: column.name,
         ongoing: '1',
       },
     });
     close();
-  }, [close, onStartTopicModeling, project.id, replace]);
+  }, [close, column.name, onStartTopicModeling, project.id, replace]);
 
   return (
     <Modal opened={opened} onClose={close} title="Re-discover Topics">

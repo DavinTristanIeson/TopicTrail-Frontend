@@ -2,6 +2,7 @@ import { Stack, Tabs } from '@mantine/core';
 import DocumentsPerTopicTable from './document-table';
 import React from 'react';
 import { Cards, Files } from '@phosphor-icons/react';
+import TopicVisualizationRenderer from './topics';
 
 enum TopicsPageTab {
   Topics = 'topics',
@@ -22,7 +23,11 @@ export default function ProjectTopicResultsPage() {
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
-      {tab === TopicsPageTab.Topics ? <></> : <DocumentsPerTopicTable />}
+      {tab === TopicsPageTab.Topics ? (
+        <TopicVisualizationRenderer />
+      ) : (
+        <DocumentsPerTopicTable />
+      )}
     </Stack>
   );
 }
