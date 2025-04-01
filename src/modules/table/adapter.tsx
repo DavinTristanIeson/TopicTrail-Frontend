@@ -28,7 +28,7 @@ const DEFAULT_COLUMN_SIZES = {
   [SchemaColumnTypeEnum.OrderedCategorical]: 200,
   [SchemaColumnTypeEnum.Temporal]: 200,
   [SchemaColumnTypeEnum.Textual]: 400,
-  [SchemaColumnTypeEnum.Topic]: 150,
+  [SchemaColumnTypeEnum.Topic]: 250,
   [SchemaColumnTypeEnum.Unique]: 300,
 };
 

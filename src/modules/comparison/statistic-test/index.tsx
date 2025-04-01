@@ -1,23 +1,14 @@
-import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-import {
-  Alert,
-  Button,
-  Divider,
-  LoadingOverlay,
-  Modal,
-  Stack,
-  Title,
-} from '@mantine/core';
+import { Alert, Divider, LoadingOverlay, Stack, Title } from '@mantine/core';
 import React from 'react';
 import StatisticTestForm from './form';
 import StatisticTestResultRenderer from './result';
-import { TestTube, Warning } from '@phosphor-icons/react';
+import { Warning } from '@phosphor-icons/react';
 import { ProjectContext } from '@/modules/project/context';
 import { client } from '@/common/api/client';
 import { StatisticTestFormType } from './form-type';
 import { NamedFiltersContext } from '../context';
 
-function StatisticTestModalBody() {
+export default function ComparisonStatisticTest() {
   const project = React.useContext(ProjectContext);
   const { filters } = React.useContext(NamedFiltersContext);
   const { data, error, isPending, mutateAsync } = client.useMutation(
@@ -62,35 +53,5 @@ function StatisticTestModalBody() {
         </>
       )}
     </Stack>
-  );
-}
-
-const StatisticTestModal = React.forwardRef<DisclosureTrigger | null, object>(
-  function StatisticTestModal(props, ref) {
-    const [opened, { close }] = useDisclosureTrigger(ref);
-    return (
-      <Modal opened={opened} onClose={close} title="Statistic Test" size={1200}>
-        {opened && <StatisticTestModalBody />}
-      </Modal>
-    );
-  },
-);
-
-export default StatisticTestModal;
-
-export function OpenStatisticTestModalButton() {
-  const remote = React.useRef<DisclosureTrigger | null>(null);
-  return (
-    <>
-      <Button
-        onClick={() => {
-          remote.current?.open();
-        }}
-        leftSection={<TestTube />}
-      >
-        Statistic Test
-      </Button>
-      <StatisticTestModal ref={remote} />
-    </>
   );
 }
