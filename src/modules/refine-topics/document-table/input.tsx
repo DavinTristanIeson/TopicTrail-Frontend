@@ -1,7 +1,7 @@
 import {
   TopicSelectInput,
   TopicSelectInputProps,
-} from '@/modules/topics/results/select-topic-input';
+} from '@/modules/topics/components/select-topic-input';
 import { Group, Text } from '@mantine/core';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { RefineTopicsFormType } from '../form-type';

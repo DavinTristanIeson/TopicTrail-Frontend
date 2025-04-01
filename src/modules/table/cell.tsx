@@ -8,6 +8,7 @@ import {
   SchemaColumnTypeEnum,
   TemporalPrecisionEnum,
 } from '@/common/constants/enum';
+import { getPlotColor } from '@/common/utils/colors';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { TopicInfo } from '@/modules/topics/components/info';
 import {
@@ -27,6 +28,7 @@ function DefaultColumnCell(props: React.PropsWithChildren) {
 }
 
 interface HighlightedCellProps {
+  color?: string;
   dull?: boolean;
   children?: React.ReactNode;
 }
@@ -35,7 +37,7 @@ const HighlightedCell = React.forwardRef<HTMLDivElement, HighlightedCellProps>(
   function HighlightedCell(props, ref) {
     return (
       <Box
-        bg={props.dull ? 'gray.6' : 'brand.6'}
+        bg={props.color ? props.color : props.dull ? 'gray.6' : 'brand.6'}
         c="white"
         className="p-2 rounded"
         ref={ref}
@@ -128,7 +130,7 @@ export function TopicColumnCell(props: TopicColumnCellProps) {
         className="max-w-sm"
         multiline
       >
-        <HighlightedCell>{`Topic ${props.topic + 1}`}</HighlightedCell>
+        <HighlightedCell dull>{`Topic ${props.topic + 1}`}</HighlightedCell>
       </Tooltip>
     );
   }
@@ -137,11 +139,13 @@ export function TopicColumnCell(props: TopicColumnCellProps) {
     <HoverCard>
       <HoverCard.Target>
         <div>
-          <HighlightedCell>{getTopicLabel(topic)}</HighlightedCell>
+          <HighlightedCell color={getPlotColor(topic.id)}>
+            {getTopicLabel(topic)}
+          </HighlightedCell>
         </div>
       </HoverCard.Target>
-      <HoverCard.Dropdown>
-        <TopicInfo {...topic} />
+      <HoverCard.Dropdown className="max-w-lg">
+        <TopicInfo {...topic} topicWordsLimit={null} />
       </HoverCard.Dropdown>
     </HoverCard>
   );

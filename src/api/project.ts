@@ -80,3 +80,7 @@ export function removeProjectDependencyQueries(projectId: string) {
 export function getTopicColumnName(columnName: string) {
   return `${columnName} (Topic)`;
 }
+
+export function getPreprocessedDocumentsColumnName(columnName: string) {
+  return `${columnName} (Preprocessed)`;
+}
