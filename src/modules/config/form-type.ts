@@ -225,7 +225,7 @@ export function ProjectConfigDefaultValues(
 ): ProjectConfigFormType {
   if (data) {
     return {
-      columns: data.data_schema.columns,
+      columns: data.data_schema.columns.filter((column) => !column.internal),
       metadata: data.metadata,
       source: data.source,
     } as ProjectConfigFormType;

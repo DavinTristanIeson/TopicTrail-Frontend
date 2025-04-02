@@ -28,7 +28,7 @@ const RediscoverTopicsModal = React.forwardRef<
   const { replace } = useRouter();
 
   const startActions = useStartTopicModeling(column.name);
-  const { onStartTopicModeling } = startActions;
+  const { onStartTopicModeling, urlParams } = startActions;
 
   const onStart = React.useCallback(async () => {
     await onStartTopicModeling();
@@ -48,10 +48,18 @@ const RediscoverTopicsModal = React.forwardRef<
         id: project.id,
         column: column.name,
         ongoing: '1',
+        ...urlParams,
       },
     });
     close();
-  }, [close, column.name, onStartTopicModeling, project.id, replace]);
+  }, [
+    close,
+    column.name,
+    onStartTopicModeling,
+    project.id,
+    replace,
+    urlParams,
+  ]);
 
   return (
     <Modal opened={opened} onClose={close} title="Re-discover Topics">

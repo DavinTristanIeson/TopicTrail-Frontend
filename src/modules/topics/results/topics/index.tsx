@@ -1,5 +1,5 @@
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { Select } from '@mantine/core';
+import { Alert, Select, Text } from '@mantine/core';
 import React from 'react';
 import { TopicVisualizationBubbleChartRenderer } from './bubble-chart';
 import { TopicVisualizationScatterPlotRenderer } from './scatter-plot';
@@ -8,6 +8,8 @@ import {
   DocumentTopicsVisualizationDataProvider,
   TopicVisualizationDataProvider,
 } from './data-providers';
+import { TopicVisualizationWordCloudRenderer } from './word-cloud';
+import { Info } from '@phosphor-icons/react';
 
 enum TopicVisualizationMethod {
   InterTopicRelationship = 'inter-topic-relationship',
@@ -59,6 +61,15 @@ export default function TopicVisualizationRenderer() {
   );
   return (
     <>
+      <Alert color="blue" icon={<Info />}>
+        You can examine the topics through various visualization methods in this
+        tab in order to help you get a quick overview of the topics. To find out
+        the context of these topics, considering using the &quot;
+        <Text fw={500} inherit span>
+          Documents
+        </Text>
+        &quot; tab instead.
+      </Alert>
       <Select
         data={Object.values(TOPIC_VISUALIZATION_METHOD_DICTIONARY)}
         label="Visualization method"
@@ -83,6 +94,10 @@ export default function TopicVisualizationRenderer() {
       ) : method === TopicVisualizationMethod.TopicsBarchart ? (
         <TopicVisualizationDataProvider>
           {TopicBarChartRenderer}
+        </TopicVisualizationDataProvider>
+      ) : method === TopicVisualizationMethod.TopicWordsWordCloud ? (
+        <TopicVisualizationDataProvider>
+          {TopicVisualizationWordCloudRenderer}
         </TopicVisualizationDataProvider>
       ) : null}
     </>

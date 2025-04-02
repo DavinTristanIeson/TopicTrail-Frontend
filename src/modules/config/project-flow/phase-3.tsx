@@ -17,6 +17,7 @@ import React from 'react';
 import { useWatchFieldError } from '@/components/standard/fields/watcher';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import { ProjectConfigPreviewTableQuery } from './preview-table';
+import { FormEditableContext } from '@/components/standard/fields/context';
 
 interface ProjectConfigColumnTitleProps {
   index: number;
@@ -105,6 +106,7 @@ export default function ConfigureProjectFlow_ConfigureColumns(
   props: ProjectConfigFormBodyProps,
 ) {
   const { hasData } = props;
+  const { editable } = React.useContext(FormEditableContext);
   return (
     <Stack>
       <Title order={2}>3/3: Project Configuration</Title>
@@ -117,9 +119,11 @@ export default function ConfigureProjectFlow_ConfigureColumns(
         been removed from your dataset.
       </Text>
       <Flex justify="space-between" direction="row-reverse" align="center">
-        <SubmitButton>
-          {hasData ? 'Save Project' : 'Create Project'}
-        </SubmitButton>
+        {editable && (
+          <SubmitButton>
+            {hasData ? 'Save Project' : 'Create Project'}
+          </SubmitButton>
+        )}
         {props.onBack && (
           <Button
             leftSection={<ArrowLeft size={20} />}

@@ -5,7 +5,7 @@ import {
   ProjectAllTopicsProvider,
   useTopicModelingResultOfColumn,
 } from '@/modules/topics/components/context';
-import { Group, Paper, Text } from '@mantine/core';
+import { Alert, Group, Paper, Text } from '@mantine/core';
 import React from 'react';
 import ProjectTopicsEmptyPage from '@/modules/topics/empty';
 import ProjectTopicResultsPage from '@/modules/topics/results';
@@ -13,6 +13,7 @@ import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
 import { SchemaColumnContext } from '@/modules/project/context';
 import { useRouter } from 'next/router';
 import TopicResultsPageControls from '@/modules/topics/results/controls';
+import { Warning } from '@phosphor-icons/react';
 
 interface ProjectTopicSwitcherProps {
   column: string;
@@ -27,7 +28,17 @@ function ProjectTopicPageSwitcher(props: ProjectTopicSwitcherProps) {
   return (
     <SchemaColumnContext.Provider value={topicModelingResult.column}>
       {topicModelingResult.result ? (
-        <ProjectTopicResultsPage />
+        topicModelingResult.result.topics.length === 0 ? (
+          <Alert color="red" icon={<Warning />}>
+            Oops, even though the topic modeling algorithm has been run on this
+            dataset. It seems like that it did not manage to find any topics.
+            This may be because there are no apparent themes in the dataset, or
+            because your preprocessing or topic modeling configuration is too
+            strict.
+          </Alert>
+        ) : (
+          <ProjectTopicResultsPage />
+        )
       ) : (
         <ProjectTopicsEmptyPage />
       )}

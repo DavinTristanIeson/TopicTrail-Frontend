@@ -33,6 +33,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "react-plotly.js": "^2.6.0",
+    "react-wordcloud": "^1.2.7",
     "wordwrapjs": "^5.1.0",
     "yup": "^1.4.0"
   },
