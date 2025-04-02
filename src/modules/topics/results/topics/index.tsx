@@ -12,10 +12,12 @@ import React from 'react';
 import { TopicVisualizationBubbleChartRenderer } from './bubble-chart';
 import { TextualSchemaColumnModel } from '@/api/project';
 import { TopicVisualizationScatterPlotRenderer } from './scatter-plot';
+import { TopicBarChartRenderer, TopicWordsBarChartRenderer } from './bar-chart';
 
 enum TopicVisualizationMethod {
   InterTopicRelationship = 'inter-topic-relationship',
   DocumentScatterPlot = 'document-scatter-plot',
+  TopicsBarchart = 'topic-barchart',
   TopicWordsBarchart = 'topic-words-barchart',
   TopicWordsWordCloud = 'topic-words-word-cloud',
 }
@@ -33,6 +35,12 @@ const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
       'Visualize the meanings of the documents as a scatter plot. Documents with similar meanings are represented as points that are close to each other. Each document is colored according to its topic.',
     value: TopicVisualizationMethod.DocumentScatterPlot,
   },
+  [TopicVisualizationMethod.TopicsBarchart]: {
+    label: 'Topic Frequencies (Bar Chart)',
+    description:
+      'Visualize the frequencies of each topic as a bar chart. Each topic is represented with a bar, and the frequency of the topic is represented by the length of the bar.',
+    value: TopicVisualizationMethod.TopicsBarchart,
+  },
   [TopicVisualizationMethod.TopicWordsBarchart]: {
     label: 'Topic Words (Bar Chart)',
     description:
@@ -40,7 +48,7 @@ const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
     value: TopicVisualizationMethod.TopicWordsBarchart,
   },
   [TopicVisualizationMethod.TopicWordsWordCloud]: {
-    label: 'Topic Words (Bar Chart)',
+    label: 'Topic Words (Word Cloud)',
     description:
       'Visualize the topic words of each topic as a word cloud. The significance of the word (how the word differentiates this topic compared to the other topics) is represented by the size of the word.',
     value: TopicVisualizationMethod.TopicWordsWordCloud,
@@ -151,6 +159,14 @@ export default function TopicVisualizationRenderer() {
         <DocumentTopicsVisualizationDataProvider>
           {TopicVisualizationScatterPlotRenderer}
         </DocumentTopicsVisualizationDataProvider>
+      ) : method === TopicVisualizationMethod.TopicWordsBarchart ? (
+        <TopicVisualizationDataProvider>
+          {TopicWordsBarChartRenderer}
+        </TopicVisualizationDataProvider>
+      ) : method === TopicVisualizationMethod.TopicsBarchart ? (
+        <TopicVisualizationDataProvider>
+          {TopicBarChartRenderer}
+        </TopicVisualizationDataProvider>
       ) : null}
     </>
   );

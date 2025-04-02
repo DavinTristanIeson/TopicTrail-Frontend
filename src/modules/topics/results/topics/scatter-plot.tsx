@@ -1,5 +1,5 @@
 import { TextualSchemaColumnModel } from '@/api/project';
-import { DocumentTopicsVisualizationModel, getTopicLabel } from '@/api/topic';
+import { DocumentTopicsVisualizationModel } from '@/api/topic';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer, { plotlyWrapText } from '@/components/widgets/plotly';
 import { zip } from 'lodash';
@@ -7,6 +7,7 @@ import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { useTopicModelingResultOfColumn } from '../../components/context';
 import { useMantineTheme } from '@mantine/core';
+import { extractTopicCustomdataForPlotly } from './utils';
 
 interface TopicVisualizationBubbleChartRendererProps {
   data: DocumentTopicsVisualizationModel;
@@ -30,23 +31,20 @@ export function TopicVisualizationScatterPlotRenderer(
     const documentContents = data.documents.map((item) =>
       plotlyWrapText(item.document),
     );
-    const topicLabels = documentTopicAssignments.map((topic) => {
-      if (topic === -1) return 'Outlier';
-      return getTopicLabel(actualTopicMap.get(topic)!);
-    });
-    const topicDescriptions = documentTopicAssignments.map((topic) => {
-      return plotlyWrapText(actualTopicMap.get(topic)?.description ?? '');
-    });
-    const topicTags = documentTopicAssignments.map((topic) => {
-      return plotlyWrapText(actualTopicMap.get(topic)?.tags?.join(', ') ?? '');
-    });
 
-    const customdata = zip(
-      documentContents,
-      topicLabels,
-      topicDescriptions,
-      topicTags,
+    const topicsMapping = documentTopicAssignments.map(
+      (topic) => actualTopicMap.get(topic) ?? null,
     );
+    const { customdata: topicsCustomdata, hovertemplate: topicsHovertemplate } =
+      extractTopicCustomdataForPlotly({
+        topics: topicsMapping,
+        startIndex: 1,
+        toggles: {
+          words: false,
+        },
+      });
+
+    const customdata = zip(documentContents, ...topicsCustomdata) as string[][];
     const { colors } = generateColorsFromSequence(documentTopicAssignments, {
       partialColorMap: new Map([[-1, mantineColors.gray[4]]]),
     });
@@ -56,7 +54,7 @@ export function TopicVisualizationScatterPlotRenderer(
           x,
           y,
           mode: 'markers',
-          hovertemplate: `<b>Content</b>: %{customdata[0]}<br><b>Topic</b>: %{customdata[1]}<br><b>Topic Description</b>: %{customdata[2]}<br><b>Topic Tags</b>: %{customdata[3]}<br>`,
+          hovertemplate: `<b>Content</b>: %{customdata[0]}<br>${topicsHovertemplate}`,
           customdata,
           marker: {
             color: colors,
