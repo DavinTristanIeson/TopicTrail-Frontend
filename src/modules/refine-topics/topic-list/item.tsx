@@ -2,7 +2,7 @@ import { TableFilterModel } from '@/api/table';
 import { TopicModel } from '@/api/topic';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import { TopicInfo } from '@/modules/topics/components/info';
-import { OUTLIER_TOPIC } from '@/modules/topics/results/select-topic-input';
+import { OUTLIER_TOPIC } from '@/modules/topics/components/select-topic-input';
 import { HoverCard, NavLink, Badge, Group, ActionIcon } from '@mantine/core';
 import { PencilSimple, CaretRight } from '@phosphor-icons/react';
 import React from 'react';

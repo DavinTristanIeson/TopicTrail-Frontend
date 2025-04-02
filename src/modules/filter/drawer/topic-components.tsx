@@ -8,7 +8,7 @@ import {
   TopicMultiSelectFieldProps,
   TopicSelectField,
   TopicSelectFieldProps,
-} from '@/modules/topics/results/select-topic-input';
+} from '@/modules/topics/components/select-topic-input';
 import { Alert } from '@mantine/core';
 import React from 'react';
 

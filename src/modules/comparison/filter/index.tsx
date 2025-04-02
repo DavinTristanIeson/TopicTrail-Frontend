@@ -4,9 +4,9 @@ import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import ComparisonFilterDrawer from './drawer';
-import { Alert, Button, Stack } from '@mantine/core';
+import { Button, Stack, Title } from '@mantine/core';
 import { NamedFiltersContext } from '../context';
-import { Plus, Warning } from '@phosphor-icons/react';
+import { Plus } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { NamedTableFilterModel } from '@/api/comparison';
 
@@ -29,17 +29,13 @@ export default function NamedFiltersManager() {
   return (
     <>
       <Stack>
+        <Title order={2} className="pb-3">
+          Groups
+        </Title>
         <SortableNamedTableFilterDndContext editRemote={editRemote} />
-        {filters.length < 2 && (
-          <Alert color="yellow" icon={<Warning size={20} />}>
-            First things first, create at least two groups to be compared. Each
-            group represents a subset of your dataset, which is defined by a
-            name and a filter. Press the &quot;Add New Filter&quot; button to
-            create a new group.
-          </Alert>
-        )}
         <Button
           leftSection={<Plus />}
+          className="max-w-md"
           onClick={() => {
             editRemote.current?.open({
               name: `Group ${filters.length + 1}`,

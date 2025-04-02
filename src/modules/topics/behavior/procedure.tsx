@@ -67,12 +67,27 @@ export function useStartTopicModeling(column: string) {
     data: hasStarted,
   } = client.useMutation('post', '/topic/{project_id}/start');
 
+  const router = useRouter();
+
   const [shouldUseCachedDocumentVectors, setUseCachedDocumentVectors] =
-    React.useState(true);
-  const [shouldUseCachedUMAPVectors, setUseCachedUMAPVectors] =
-    React.useState(true);
+    React.useState(router.query.use_cached_document_vectors !== '0');
+  const [shouldUseCachedUMAPVectors, setUseCachedUMAPVectors] = React.useState(
+    router.query.use_cached_umap_vectors !== '0',
+  );
   const [shouldUsePreprocessedDocuments, setUsePreprocessedDocuments] =
-    React.useState(true);
+    React.useState(router.query.use_preprocessed_documents !== '0');
+
+  const urlParams = React.useMemo(() => {
+    return {
+      use_cached_document_vectors: shouldUseCachedDocumentVectors ? '1' : '0',
+      use_cached_umap_vectors: shouldUseCachedUMAPVectors ? '1' : '0',
+      use_preprocessed_documents: shouldUsePreprocessedDocuments ? '1' : '0',
+    };
+  }, [
+    shouldUseCachedDocumentVectors,
+    shouldUseCachedUMAPVectors,
+    shouldUsePreprocessedDocuments,
+  ]);
 
   const onStartTopicModeling = React.useCallback(async () => {
     try {
@@ -118,6 +133,7 @@ export function useStartTopicModeling(column: string) {
     setUsePreprocessedDocuments,
     isStartingTopicModeling,
     hasStarted: !!hasStarted,
+    urlParams,
   };
 }
 

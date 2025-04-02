@@ -1,4 +1,4 @@
-import { TopicModel } from '@/api/topic';
+import { getTopicLabel, TopicModel } from '@/api/topic';
 import {
   type ComboboxItem,
   type ComboboxLikeRenderOptionInput,
@@ -13,7 +13,7 @@ import {
   Divider,
   Group,
 } from '@mantine/core';
-import { TopicInfo, TopicWordsRenderer } from '../components/info';
+import { TopicInfo, TopicWordsRenderer } from './info';
 import { Info } from '@phosphor-icons/react';
 import {
   IRHFMantineAdaptable,
@@ -85,7 +85,7 @@ function topicsToComboboxes(
 ): ComboboxItem[] {
   const topicComboboxes = topics.map((topic) => {
     return {
-      label: topic.label,
+      label: getTopicLabel(topic),
       value: topic.id.toString(),
       data: topic,
     } as TopicComboboxItem;
@@ -173,9 +173,9 @@ export function TopicMultiSelectInput(props: TopicMultiSelectInputProps) {
       placeholder="Pick a topic"
       description={
         currentTopics.length > 0 && (
-          <HoverCard>
+          <HoverCard position="bottom">
             <HoverCard.Target>
-              <Group>
+              <Group className="w-fit">
                 <Info /> View Selected Topics
               </Group>
             </HoverCard.Target>

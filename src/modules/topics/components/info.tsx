@@ -1,28 +1,33 @@
 import { getTopicLabel, TopicModel } from '@/api/topic';
-import { Stack, Group, Badge, Text, useMantineTheme } from '@mantine/core';
+import Colors from '@/common/constants/colors';
+import {
+  getTextColorBasedOnContrast,
+  getPlotColor,
+} from '@/common/utils/colors';
+import { Stack, Group, Badge, Text } from '@mantine/core';
+import chroma from 'chroma-js';
 
 interface TopicWordsRendererProps {
   words: TopicModel['words'];
+  limit?: number | null;
 }
 
 export function TopicWordsRenderer(props: TopicWordsRendererProps) {
-  const maxWordValue = props.words.reduce(
+  const { words, limit = 10 } = props;
+  const usedTopicWords = limit != null ? words.slice(0, limit) : words;
+  const maxWordValue = usedTopicWords.reduce(
     (acc, cur) => Math.max(acc, cur[1]),
     0,
   );
-  const normalizedWordValues = props.words.map(
+  const normalizedWordValues = usedTopicWords.map(
     ([, value]) => value / maxWordValue,
   );
-  const hexValueBase = normalizedWordValues.map((value) =>
-    Math.round(Math.min(255, value * 127 + 128)),
-  );
 
-  const { colors } = useMantineTheme();
   return (
     <Group gap="xs">
-      {props.words.slice(0, 5).map(([word, value], index) => {
+      {usedTopicWords.map(([word, value], index) => {
         const proportion = normalizedWordValues[index]!;
-        const hexValue = hexValueBase[index]!.toString(16);
+        const backgroundColor = chroma(Colors.brand).alpha(proportion).hex();
         return (
           <Text
             key={word}
@@ -32,8 +37,8 @@ export function TopicWordsRenderer(props: TopicWordsRendererProps) {
             size="xs"
             className="rounded"
             style={{
-              backgroundColor: `${colors.brand[6]}${hexValue}`,
-              color: proportion > 0.5 ? 'white' : 'black',
+              backgroundColor,
+              color: getTextColorBasedOnContrast(backgroundColor),
             }}
           >
             {`${word} (${value.toFixed(2)})`}
@@ -44,11 +49,15 @@ export function TopicWordsRenderer(props: TopicWordsRendererProps) {
   );
 }
 
-export function TopicInfo(props: TopicModel) {
+interface TopicInfoProps extends TopicModel {
+  topicWordsLimit?: number | null;
+}
+
+export function TopicInfo(props: TopicInfoProps) {
   return (
     <Stack className="border-solid border-b border-gray-400 w-full pb-2">
       <Group gap={6}>
-        <Text size="sm" fw={500} c="brand">
+        <Text size="sm" fw={500} c={getPlotColor(props.id)}>
           {getTopicLabel(props)}
         </Text>
         {props.frequency && (
@@ -60,7 +69,7 @@ export function TopicInfo(props: TopicModel) {
           <Text size="xs" c="gray">
             Topic Words
           </Text>
-          <TopicWordsRenderer {...props} />
+          <TopicWordsRenderer {...props} limit={props.topicWordsLimit} />
         </div>
       )}
       {props.tags && props.tags.length > 0 && (

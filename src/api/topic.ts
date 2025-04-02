@@ -12,6 +12,11 @@ export type TopicModelingTaskResponseModel =
   components['schemas']['TaskResponse_TopicModelingResult_'];
 export type TaskLogModel = components['schemas']['TaskLog'];
 
+export type TopicVisualizationModel =
+  components['schemas']['TopicVisualizationResource'];
+export type DocumentTopicsVisualizationModel =
+  components['schemas']['DocumentTopicsVisualizationResource'];
+
 interface GetTopicLabelParams {
   id?: number;
   words?: [string, number][];

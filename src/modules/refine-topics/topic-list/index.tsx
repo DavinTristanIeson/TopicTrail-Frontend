@@ -20,7 +20,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { RefineTopicsFormType, TopicUpdateFormType } from '../form-type';
 import { getTopicLabel } from '@/api/topic';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
-import { OUTLIER_TOPIC } from '@/modules/topics/results/select-topic-input';
+import { OUTLIER_TOPIC } from '@/modules/topics/components/select-topic-input';
 
 interface TopicListRendererProps {
   column: TextualSchemaColumnModel;
