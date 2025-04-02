@@ -1,18 +1,13 @@
-import {
-  DocumentTopicsVisualizationModel,
-  TopicVisualizationModel,
-} from '@/api/topic';
-import { client } from '@/common/api/client';
-import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
-import { WidePlotSkeleton } from '@/components/visual/loading';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
 import { Select } from '@mantine/core';
 import React from 'react';
 import { TopicVisualizationBubbleChartRenderer } from './bubble-chart';
-import { TextualSchemaColumnModel } from '@/api/project';
 import { TopicVisualizationScatterPlotRenderer } from './scatter-plot';
 import { TopicBarChartRenderer, TopicWordsBarChartRenderer } from './bar-chart';
+import {
+  DocumentTopicsVisualizationDataProvider,
+  TopicVisualizationDataProvider,
+} from './data-providers';
 
 enum TopicVisualizationMethod {
   InterTopicRelationship = 'inter-topic-relationship',
@@ -55,84 +50,6 @@ const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
   },
 };
 
-interface TopicVisualizationDataProviderProps {
-  children(props: {
-    data: TopicVisualizationModel[];
-    column: TextualSchemaColumnModel;
-  }): React.ReactNode;
-}
-
-function TopicVisualizationDataProvider(
-  props: TopicVisualizationDataProviderProps,
-) {
-  const { children: Child } = props;
-  const project = React.useContext(ProjectContext);
-  const column = React.useContext(
-    SchemaColumnContext,
-  ) as TextualSchemaColumnModel;
-  const query = client.useQuery(
-    'get',
-    '/topic/{project_id}/visualization/topics',
-    {
-      params: {
-        path: {
-          project_id: project.id,
-        },
-        query: {
-          column: column.name,
-        },
-      },
-    },
-  );
-  return (
-    <UseQueryWrapperComponent
-      query={query}
-      loadingComponent={<WidePlotSkeleton />}
-    >
-      {(data) => <Child data={data.data} column={column} />}
-    </UseQueryWrapperComponent>
-  );
-}
-
-interface DocumentTopicsVisualizationDataProviderProps {
-  children(props: {
-    data: DocumentTopicsVisualizationModel;
-    column: TextualSchemaColumnModel;
-  }): React.ReactNode;
-}
-
-function DocumentTopicsVisualizationDataProvider(
-  props: DocumentTopicsVisualizationDataProviderProps,
-) {
-  const { children: Child } = props;
-  const project = React.useContext(ProjectContext);
-  const column = React.useContext(
-    SchemaColumnContext,
-  ) as TextualSchemaColumnModel;
-  const query = client.useQuery(
-    'get',
-    '/topic/{project_id}/visualization/documents',
-    {
-      params: {
-        path: {
-          project_id: project.id,
-        },
-        query: {
-          column: column.name,
-        },
-      },
-    },
-  );
-  return (
-    <UseQueryWrapperComponent
-      query={query}
-      loadingComponent={<WidePlotSkeleton />}
-    >
-      {(data) => <Child data={data.data} column={column} />}
-    </UseQueryWrapperComponent>
-  );
-}
-
 export default function TopicVisualizationRenderer() {
   const [method, setMethod] = React.useState<string | null>(
     TopicVisualizationMethod.InterTopicRelationship,
@@ -149,7 +66,7 @@ export default function TopicVisualizationRenderer() {
         value={method}
         onChange={setMethod}
         allowDeselect={false}
-        miw={512}
+        maw={512}
       />
       {method === TopicVisualizationMethod.InterTopicRelationship ? (
         <TopicVisualizationDataProvider>

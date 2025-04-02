@@ -1,5 +1,3 @@
-import { TextualSchemaColumnModel } from '@/api/project';
-import { DocumentTopicsVisualizationModel } from '@/api/topic';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer, { plotlyWrapText } from '@/components/widgets/plotly';
 import { zip } from 'lodash';
@@ -8,14 +6,10 @@ import { PlotParams } from 'react-plotly.js';
 import { useTopicModelingResultOfColumn } from '../../components/context';
 import { useMantineTheme } from '@mantine/core';
 import { extractTopicCustomdataForPlotly } from './utils';
-
-interface TopicVisualizationBubbleChartRendererProps {
-  data: DocumentTopicsVisualizationModel;
-  column: TextualSchemaColumnModel;
-}
+import { DocumentTopicsVisualizationRendererProps } from './data-providers';
 
 export function TopicVisualizationScatterPlotRenderer(
-  props: TopicVisualizationBubbleChartRendererProps,
+  props: DocumentTopicsVisualizationRendererProps,
 ) {
   const { data, column } = props;
   const topicModelingResult = useTopicModelingResultOfColumn(column.name)!;
@@ -65,6 +59,7 @@ export function TopicVisualizationScatterPlotRenderer(
         title: {
           text: `Documents of "${column.name}"`,
         },
+        height: 720,
       },
     };
   }, [

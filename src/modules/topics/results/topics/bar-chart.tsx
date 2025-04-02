@@ -1,37 +1,44 @@
-import { TextualSchemaColumnModel } from '@/api/project';
-import { getTopicLabel, TopicVisualizationModel } from '@/api/topic';
+import { getTopicLabel } from '@/api/topic';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
-import { zip } from 'lodash';
+import { merge, zip } from 'lodash';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
-import { Alert, Anchor, Select, Stack } from '@mantine/core';
+import { Alert, Anchor, Input, Select, Slider, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 import { useCategoricalDataFrequencyMode } from '@/modules/visualization/categorical/utils';
-
-interface TopicVisualizationBarChartRendererProps {
-  data: TopicVisualizationModel[];
-  column: TextualSchemaColumnModel;
-}
+import { useDebouncedState } from '@mantine/hooks';
+import { TopicVisualizationRendererProps } from './data-providers';
 
 export function TopicWordsBarChartRenderer(
-  props: TopicVisualizationBarChartRendererProps,
+  props: TopicVisualizationRendererProps,
 ) {
   const { data, column } = props;
-  const [topNWords, setTopNWords] = React.useState(5);
+  const [topNWords, setTopNWords] = useDebouncedState(5, 500);
   const plot: PlotParams = React.useMemo(() => {
     const subplots: PlotParams['data'] = [];
     const topics = data.map((item) => item.topic);
     const { colors } = generateColorsFromSequence(
       topics.map((topic) => topic.id),
     );
+    const maxX = data.reduce((acc, cur) => {
+      return Math.max(
+        acc,
+        cur.topic.words.reduce((acc, cur) => {
+          return Math.max(acc, cur[1]);
+        }, 0),
+      );
+    }, 0);
+    const layouts: any = {};
     for (let i = 0; i < topics.length; i++) {
       const color = colors[i];
       const topic = topics[i]!;
       const topicWords = topic.words.slice(0, topNWords);
       const y = topicWords.map((word) => word[0]);
       const x = topicWords.map((word) => word[1]);
+      y.reverse();
+      x.reverse();
       subplots.push({
         x,
         y,
@@ -39,14 +46,17 @@ export function TopicWordsBarChartRenderer(
         type: 'bar',
         orientation: 'h',
         hovertemplate: `<b>Topic</b>: %{y}<br><b>Significance</b>: %{x}<br>`,
-        // domain: {
-        //   row: Math.floor(i / 3),
-        //   column: i % 3,
-        // },
+        xaxis: `x${i + 1}`,
+        yaxis: `y${i + 1}`,
         marker: {
           color,
         },
       });
+      layouts[i === 0 ? 'xaxis' : `xaxis${i + 1}`] = {
+        minallowed: 0,
+        title: getTopicLabel(topic),
+        range: [0, maxX],
+      };
     }
     const rows = Math.ceil(subplots.length / 3);
     return {
@@ -61,27 +71,27 @@ export function TopicWordsBarChartRenderer(
           columns: 3,
           pattern: 'independent',
         },
+        ...layouts,
       },
     };
   }, [column.name, data, topNWords]);
   return (
     <Stack>
-      <Select
+      <Input.Wrapper
         label="Show top N words"
-        required
-        allowDeselect={false}
-        value={topNWords.toString()}
-        onChange={(e) => {
-          if (!e) return;
-          setTopNWords(parseInt(e));
-        }}
-        data={[5, 10, 15, 20, 25, 50].map((x) => {
-          return {
-            label: `Top ${x} words`,
-            value: x.toString(),
-          };
-        })}
-      />
+        description="This value determines how many words are shown at once in this plot. Please note that having too many words on screen may make it harder for you to understand the topics. Usually 5 - 10 keywords are enough to represent the meaning of a topic."
+      >
+        <Slider
+          min={3}
+          max={50}
+          defaultValue={topNWords}
+          onChange={setTopNWords}
+          step={1}
+          maw={512}
+          label={`Show top ${topNWords} Words`}
+        />
+      </Input.Wrapper>
+
       <Alert color="blue" icon={<Info />}>
         The &quot;significance&quot; in question is the c-TF-IDF score of each
         word. This score represents how much this word uniquely identifies this
@@ -100,9 +110,7 @@ export function TopicWordsBarChartRenderer(
   );
 }
 
-export function TopicBarChartRenderer(
-  props: TopicVisualizationBarChartRendererProps,
-) {
+export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
   const { data, column } = props;
   const {
     plotlyLayoutProps,
@@ -139,9 +147,18 @@ export function TopicBarChartRenderer(
         },
       ],
       layout: {
-        ...plotlyLayoutProps,
+        ...merge(plotlyLayoutProps, {
+          xaxis: {
+            minallowed: 0,
+          },
+        }),
+        height: 720,
         title: {
-          text: `Topics of "${column.name}"`,
+          text: `Topic Frequencies of "${column.name}"`,
+        },
+        minallowed: 0,
+        yaxis: {
+          automargin: true,
         },
       },
     };
@@ -154,7 +171,7 @@ export function TopicBarChartRenderer(
   ]);
   return (
     <Stack>
-      <Select {...selectProps} />
+      <Select {...selectProps} maw={512} />
       <PlotRenderer plot={plot} />
     </Stack>
   );

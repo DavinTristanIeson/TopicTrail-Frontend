@@ -21,19 +21,15 @@ export function plotlyWrapText(text: string) {
 
 interface PlotRendererProps {
   plot: PlotParams;
-  width?: number;
-  height?: number;
 }
 export default function PlotRenderer(props: PlotRendererProps) {
-  const { plot, width = 1280, height = 720 } = props;
+  const { plot } = props;
 
   return (
     <Plot
       {...plot}
       layout={{
         ...plot.layout,
-        width,
-        height,
         dragmode: 'pan',
       }}
       config={{

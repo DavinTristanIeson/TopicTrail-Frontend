@@ -1,19 +1,14 @@
-import { TextualSchemaColumnModel } from '@/api/project';
-import { getTopicLabel, TopicVisualizationModel } from '@/api/topic';
+import { getTopicLabel } from '@/api/topic';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
 import { zip } from 'lodash';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
-
-interface TopicVisualizationBubbleChartRendererProps {
-  data: TopicVisualizationModel[];
-  column: TextualSchemaColumnModel;
-}
+import { TopicVisualizationRendererProps } from './data-providers';
 
 export function TopicVisualizationBubbleChartRenderer(
-  props: TopicVisualizationBubbleChartRendererProps,
+  props: TopicVisualizationRendererProps,
 ) {
   const { data, column } = props;
   const plot: PlotParams = React.useMemo(() => {
@@ -49,6 +44,7 @@ export function TopicVisualizationBubbleChartRenderer(
         title: {
           text: `Topics of "${column.name}"`,
         },
+        height: 720,
       },
     };
   }, [column.name, data]);

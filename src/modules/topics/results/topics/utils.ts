@@ -43,7 +43,7 @@ export function extractTopicCustomdataForPlotly(
     });
     customdata.push(topicFrequencies);
     hovertemplateBuilder.push(
-      `<b>Frequency</b>: %{customdata[${index()}]}<br>`,
+      `<b>${percentage ? 'Proportion' : 'Frequency'}</b>: %{customdata[${index()}]}<br>`,
     );
   }
   if (toggles?.tags !== false) {
