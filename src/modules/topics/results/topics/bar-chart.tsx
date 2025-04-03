@@ -7,7 +7,7 @@ import { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { Alert, Anchor, Input, Select, Slider, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import { useCategoricalDataFrequencyMode } from '@/modules/visualization/categorical/utils';
+import { useCategoricalDataFrequencyMode } from '@/modules/visualization/components/categorical/utils';
 import { useDebouncedState } from '@mantine/hooks';
 import { TopicVisualizationRendererProps } from './data-providers';
 
