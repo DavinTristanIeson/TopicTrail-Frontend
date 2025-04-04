@@ -20,6 +20,7 @@ import {
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import React from 'react';
+import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
 
 export interface TopicComboboxItem extends ComboboxItem {
   data: TopicModel;
@@ -58,25 +59,19 @@ function TopicComboboxItemRenderer(
 }
 
 const topicFilterFunction: OptionsFilter = (input) => {
-  return input.options.filter((opt) => {
-    const option = opt as TopicComboboxItem;
-    const matchesLabel =
-      option.label &&
-      option.label.toLowerCase().includes(input.search.toLowerCase());
-    if (!option.data) {
-      return matchesLabel;
-    }
-    const topic = option.data;
-    const matchesTopicWords = topic.words
-      .map((word) => word[0].toLowerCase())
-      .includes(input.search.toLowerCase());
-    const matchesTags =
-      !!topic.tags &&
-      topic.tags
-        .map((tag) => tag.toLowerCase())
-        .includes(input.search.toLowerCase());
-    return matchesLabel || matchesTopicWords || matchesTags;
-  });
+  if (!input.search) return input.options;
+  const indices = filterByString(
+    input.search,
+    input.options.map((opt) => {
+      const option = opt as TopicComboboxItem;
+      return {
+        label: option.label,
+        words: option.data.words.map((word) => word[0]),
+        tags: option.data.tags,
+      };
+    }),
+  );
+  return pickArrayByIndex(input.options, indices);
 };
 
 function topicsToComboboxes(

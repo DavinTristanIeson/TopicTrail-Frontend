@@ -1,15 +1,34 @@
 import {
+  Badge,
+  CheckIcon,
+  Group,
+  Stack,
   Text,
   type ComboboxItem,
   type ComboboxLikeRenderOptionInput,
 } from '@mantine/core';
 import React from 'react';
 
+interface SelectedComboboxWrapperProps {
+  checked: boolean;
+  children?: React.ReactNode;
+}
+
+export function SelectedComboboxWrapper(props: SelectedComboboxWrapperProps) {
+  return (
+    <Group flex="1" gap="xs" align="start">
+      {props.checked && <CheckIcon />}
+      {props.children}
+    </Group>
+  );
+}
+
 type DescriptionRenderOptionDictionary = Record<
   string,
   {
     label: string;
-    description: string;
+    description?: string | null;
+    tags?: string[] | null;
   }
 >;
 
@@ -26,12 +45,23 @@ export function useDescriptionBasedRenderOption(
         return option.label;
       }
       return (
-        <div>
-          <Text size="sm">{props.label}</Text>
-          <Text size="xs" c="gray">
-            {props.description}
-          </Text>
-        </div>
+        <SelectedComboboxWrapper checked={!!combobox.checked}>
+          <Stack>
+            <Text size="sm">{props.label}</Text>
+            {props.tags && (
+              <Group>
+                {props.tags.map((tag) => (
+                  <Badge key={tag}>{tag}</Badge>
+                ))}
+              </Group>
+            )}
+            {props.description && (
+              <Text size="xs" c="gray">
+                {props.description}
+              </Text>
+            )}
+          </Stack>
+        </SelectedComboboxWrapper>
       );
     },
     [dictionary],
