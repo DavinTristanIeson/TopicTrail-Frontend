@@ -64,13 +64,26 @@ interface TemporalColumnCellProps {
 }
 
 function TemporalColumnCellProps(props: TemporalColumnCellProps) {
-  return (
-    <DefaultColumnCell>
-      {props.precision === TemporalPrecisionEnum.Date
-        ? dayjs(props.date).format('DD MMMM YYYY')
-        : dayjs(props.date).format('DD MMMM YYYY, HH:mm:ss')}
-    </DefaultColumnCell>
-  );
+  let value: string;
+  switch (props.precision) {
+    case TemporalPrecisionEnum.Year: {
+      value = dayjs(props.date).format('YYYY');
+      break;
+    }
+    case TemporalPrecisionEnum.Month: {
+      value = dayjs(props.date).format('MMMM YYYY');
+      break;
+    }
+    case TemporalPrecisionEnum.Date: {
+      value = dayjs(props.date).format('DD MMMM YYYY');
+      break;
+    }
+    default: {
+      value = dayjs(props.date).format('DD MMMM YYYY, HH:mm:ss');
+      break;
+    }
+  }
+  return <DefaultColumnCell>{value}</DefaultColumnCell>;
 }
 
 interface TopicColumnCellProps {
@@ -233,7 +246,7 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
     }
     case SchemaColumnTypeEnum.Temporal: {
       const temporalPrecision = (column as TemporalSchemaColumnModel)
-        .temporal_precision as TemporalPrecisionEnum;
+        .temporal_precision as TemporalPrecisionEnum | null;
       return (
         <TemporalColumnCellProps date={value} precision={temporalPrecision} />
       );

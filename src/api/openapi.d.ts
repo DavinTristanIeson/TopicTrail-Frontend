@@ -177,6 +177,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/column/aggregate-totals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Table Column  Aggregate Totals */
+        post: operations["post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/column/counts": {
         parameters: {
             query?: never;
@@ -538,6 +555,12 @@ export interface components {
         /** ApiResult[ProjectResource] */
         ApiResult_ProjectResource_: {
             data: components["schemas"]["ProjectResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[TableColumnAggregateTotalsResource] */
+        ApiResult_TableColumnAggregateTotalsResource_: {
+            data: components["schemas"]["TableColumnAggregateTotalsResource"];
             /** Message */
             message: string | null;
         };
@@ -904,6 +927,14 @@ export interface components {
             type: "geospatial";
             role: components["schemas"]["GeospatialRoleEnum"];
         };
+        /** GetTableColumnAggregateTotalsSchema */
+        GetTableColumnAggregateTotalsSchema: {
+            /** Column */
+            column: string;
+            /** Filter */
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            grouped_by: components["schemas"]["TableSort"];
+        };
         /** GetTableColumnSchema */
         GetTableColumnSchema: {
             /** Column */
@@ -1236,6 +1267,15 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
+        /** TableColumnAggregateTotalsResource */
+        TableColumnAggregateTotalsResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Values */
+            values: string[];
+            /** Totals */
+            totals: number[];
+        };
         /** TableColumnCountsResource */
         TableColumnCountsResource: {
             /** Column */
@@ -1382,10 +1422,15 @@ export interface components {
          */
         TaskStatusEnum: "idle" | "pending" | "success" | "failed";
         /**
+         * TemporalColumnFeatureEnum
+         * @enum {string}
+         */
+        TemporalColumnFeatureEnum: "year" | "month" | "date" | "monthly" | "day_of_week" | "hour";
+        /**
          * TemporalPrecisionEnum
          * @enum {string}
          */
-        TemporalPrecisionEnum: "date" | "date-time";
+        TemporalPrecisionEnum: "year" | "month" | "date";
         /** TemporalSchemaColumn */
         TemporalSchemaColumn: {
             /** Name */
@@ -1406,8 +1451,9 @@ export interface components {
             type: "temporal";
             /** Datetime Format */
             datetime_format: string | null;
-            /** @default date-time */
-            temporal_precision: components["schemas"]["TemporalPrecisionEnum"];
+            /** Temporal Features */
+            temporal_features: components["schemas"]["TemporalColumnFeatureEnum"][];
+            precision?: components["schemas"]["TemporalPrecisionEnum"] | null;
         };
         /** TextPreprocessingConfig */
         TextPreprocessingConfig: {
@@ -2501,6 +2547,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_TableColumnFrequencyDistributionResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetTableColumnAggregateTotalsSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TableColumnAggregateTotalsResource_"];
                 };
             };
             /** @description Bad Request */
