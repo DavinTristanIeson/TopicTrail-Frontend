@@ -5,7 +5,7 @@ import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
 import AppProjectLayout from '@/modules/project/layout';
 import { ProjectAllTopicsProvider } from '@/modules/topics/components/context';
-import { AddTableVisualizationButton } from '@/modules/visualization/dashboard/add-visualization-dialog';
+import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { Alert, Stack, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
@@ -71,7 +71,7 @@ function ComparisonPageStateManager() {
           <NamedFiltersManager />
         ) : tab === ComparisonPageTab.Visualization ? (
           <Stack>
-            <AddTableVisualizationButton />
+            <DashboardControls />
             <GridstackDashboard />
           </Stack>
         ) : tab === ComparisonPageTab.StatisticTest ? (

@@ -11,7 +11,7 @@ import {
   ProjectAllTopicsProvider,
 } from '@/modules/topics/components/context';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
-import { AddTableVisualizationButton } from '@/modules/visualization/dashboard/add-visualization-dialog';
+import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { Alert, Group, Stack } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
@@ -64,7 +64,7 @@ function TopicCorrelationStateManager() {
       {column1 && column2 && (
         <>
           <Group justify="end">
-            <AddTableVisualizationButton />
+            <DashboardControls />
           </Group>
           <GridstackDashboard />
         </>

@@ -1,5 +1,7 @@
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-import { Alert, Button, Group, Modal } from '@mantine/core';
+import UserDataManager from '@/modules/userdata';
+import { useTableDashboardDataManager } from '@/modules/userdata/data-manager';
+import { Alert, Button, Group, Modal, Stack } from '@mantine/core';
 import { Info, Plus, X } from '@phosphor-icons/react';
 import React from 'react';
 
@@ -36,19 +38,34 @@ const AddTableVisualizationDialog = React.forwardRef<DisclosureTrigger, object>(
   },
 );
 
-export function AddTableVisualizationButton() {
+function DashboardStateManager() {
+  const rendererProps = useTableDashboardDataManager({
+    onApply() {
+      alert('TODO');
+    },
+    state: null,
+  });
+  return <UserDataManager {...rendererProps} label="Dashboard" />;
+}
+
+export function DashboardControls() {
   const addTableDialogRemote = React.useRef<DisclosureTrigger | null>(null);
   return (
     <>
       <AddTableVisualizationDialog ref={addTableDialogRemote} />
-      <Button
-        leftSection={<Plus />}
-        onClick={() => {
-          addTableDialogRemote.current?.open();
-        }}
-      >
-        Add Visualization
-      </Button>
+      <Stack>
+        <DashboardStateManager />
+        <Group justify="end">
+          <Button
+            leftSection={<Plus />}
+            onClick={() => {
+              addTableDialogRemote.current?.open();
+            }}
+          >
+            Add Visualization
+          </Button>
+        </Group>
+      </Stack>
     </>
   );
 }
