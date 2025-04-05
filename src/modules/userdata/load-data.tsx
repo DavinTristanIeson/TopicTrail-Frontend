@@ -14,7 +14,7 @@ interface LoadUserDataActionComponentProps<T>
 export function LoadUserDataActionComponent<T>(
   props: LoadUserDataActionComponentProps<T>,
 ) {
-  const { data, onLoad, onEdit, canSave } = props;
+  const { data, onLoad, onEdit } = props;
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
 
   const dictionary = React.useMemo(() => {
@@ -37,51 +37,46 @@ export function LoadUserDataActionComponent<T>(
   const renderOption = useDescriptionBasedRenderOption(dictionary);
 
   return (
-    <Select
-      value={selectedId}
-      data={data.map((item) => {
-        return {
-          label: item.name,
-          value: item.id,
-        };
-      })}
-      disabled={data.length === 0}
-      onChange={setSelectedId}
-      renderOption={renderOption}
-      styles={{
-        input: {
-          minWidth: 448,
-        },
-      }}
-      description={`Pick an item to perform an action on. You can either apply/use the selected item by pressing the "Apply" button or delete the filter by pressing the "Delete" button.`}
-      inputContainer={(children) => {
-        return (
-          <Group align="start" className="flex-1">
-            {children}
-            <Button
-              leftSection={<Download />}
-              disabled={!selectedData}
-              onClick={() => {
-                if (!selectedId) return;
-                onLoad(selectedId);
-              }}
-            >
-              Apply
-            </Button>
-            <Button
-              variant="outline"
-              leftSection={<PencilSimple />}
-              disabled={!selectedData || !canSave}
-              onClick={() => {
-                if (!selectedId) return;
-                onEdit(selectedId);
-              }}
-            >
-              Edit
-            </Button>
-          </Group>
-        );
-      }}
-    />
+    <Group align="start" className="flex-1">
+      <Select
+        value={selectedId}
+        data={data.map((item) => {
+          return {
+            label: item.name,
+            value: item.id,
+          };
+        })}
+        disabled={data.length === 0}
+        onChange={setSelectedId}
+        renderOption={renderOption}
+        styles={{
+          input: {
+            minWidth: 448,
+          },
+        }}
+        description={`Pick an item to perform an action on. You can either apply/use the selected item by pressing the "Apply" button or delete the filter by pressing the "Delete" button.`}
+      />
+      <Button
+        leftSection={<Download />}
+        disabled={!selectedData}
+        onClick={() => {
+          if (!selectedId) return;
+          onLoad(selectedId);
+        }}
+      >
+        Apply
+      </Button>
+      <Button
+        variant="outline"
+        leftSection={<PencilSimple />}
+        disabled={!selectedData}
+        onClick={() => {
+          if (!selectedId) return;
+          onEdit(selectedId);
+        }}
+      >
+        Edit
+      </Button>
+    </Group>
   );
 }

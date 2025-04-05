@@ -82,17 +82,24 @@ export function useBaseUserDataManager<T>(
     });
   }, [pathname, sharedParams]);
 
+  const sharedMutationOptions = {
+    onSuccess: invalidateQuery,
+  };
+
   const { mutateAsync: createUserData } = client.useMutation(
     'post',
     `/userdata/{project_id}/${pathname}`,
+    sharedMutationOptions,
   );
   const { mutateAsync: updateUserData } = client.useMutation(
     'put',
     `/userdata/{project_id}/${pathname}/{id}`,
+    sharedMutationOptions,
   );
   const { mutateAsync: deleteUserData } = client.useMutation(
     'delete',
     `/userdata/{project_id}/${pathname}/{id}`,
+    sharedMutationOptions,
   );
 
   const onSave = React.useCallback(

@@ -8,6 +8,7 @@ import {
   Group,
   Paper,
   Stack,
+  Tooltip,
 } from '@mantine/core';
 import {
   CaretDown,
@@ -25,6 +26,44 @@ import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 
 interface UserDataManagerProps<T> extends UserDataManagerRendererProps<T> {
   label: string;
+}
+
+interface StoreUserDataActionComponentProps {
+  label: string;
+  onEdit(): void;
+  canSave: boolean;
+}
+
+function StoreUserDataActionComponent(
+  props: StoreUserDataActionComponentProps,
+) {
+  const { label, onEdit, canSave } = props;
+  return (
+    <Group className="h-full" justify="space-between">
+      <Text c="gray" size="sm">
+        Store the current {label.toLowerCase()} configuration so you can use it
+        later. If you want to modify an existing configuration,{' '}
+        <Text inherit span>
+          load
+        </Text>{' '}
+        a configuration first from the &quot;Load {label}&quot; section and then
+        press &quot;Edit&quot;.
+      </Text>
+      <Tooltip
+        disabled={canSave}
+        label="Your configuration is invalid. Please fix any existing issues before saving it."
+      >
+        <Button
+          leftSection={<Plus />}
+          disabled={!canSave}
+          className="max-w-md min-w-48"
+          onClick={onEdit}
+        >
+          Store
+        </Button>
+      </Tooltip>
+    </Group>
+  );
 }
 
 export default function UserDataManager<T>(props: UserDataManagerProps<T>) {
@@ -63,33 +102,18 @@ export default function UserDataManager<T>(props: UserDataManagerProps<T>) {
               </Alert>
               <Group align="stretch">
                 <Fieldset legend="Save Data" className="min-w-md flex-1">
-                  <Group className="h-full" justify="space-between">
-                    <Text c="gray" size="sm">
-                      Store the current {label.toLowerCase()} configuration so
-                      you can use it later. If you want to modify an existing
-                      configuration,{' '}
-                      <Text inherit span>
-                        load
-                      </Text>{' '}
-                      a configuration first from the &quot;Load {label}&quot;
-                      section and then press &quot;Edit&quot;.
-                    </Text>
-                    <Button
-                      leftSection={<Plus />}
-                      disabled={!canSave}
-                      className="max-w-md min-w-48"
-                      onClick={() => {
-                        editDataRemote.current?.open({
-                          id: null,
-                          name: '',
-                          description: null,
-                          tags: null,
-                        });
-                      }}
-                    >
-                      Store
-                    </Button>
-                  </Group>
+                  <StoreUserDataActionComponent
+                    onEdit={() => {
+                      editDataRemote.current?.open({
+                        id: null,
+                        name: '',
+                        description: null,
+                        tags: null,
+                      });
+                    }}
+                    canSave={canSave}
+                    label={label}
+                  />
                 </Fieldset>
 
                 <Fieldset legend={`Load ${label}`} className="min-w-md flex-1">

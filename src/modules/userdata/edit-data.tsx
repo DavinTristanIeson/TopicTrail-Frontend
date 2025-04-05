@@ -13,7 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { yupNullableArray, yupNullableString } from '@/common/utils/form';
 import RHFField from '@/components/standard/fields';
 import SubmitButton from '@/components/standard/button/submit';
-import { TrashSimple } from '@phosphor-icons/react';
+import { TrashSimple, Warning, X } from '@phosphor-icons/react';
 import PromiseButton from '@/components/standard/button/promise';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -28,12 +28,20 @@ type EditUserDataFormType = Yup.InferType<typeof EditUserDataFormSchema>;
 
 interface EditUserDataFormProps {
   initialValues: UserDataInput;
+  canSave: boolean;
   onSave(props: UserDataInput): Promise<void>;
+  onClose(): void;
   onDelete: (() => void) | undefined;
 }
 
 function EditUserDataForm(props: EditUserDataFormProps) {
-  const { initialValues: initialValues, onSave, onDelete } = props;
+  const {
+    initialValues: initialValues,
+    onSave,
+    canSave,
+    onDelete,
+    onClose,
+  } = props;
 
   const defaultValues = React.useMemo<EditUserDataFormType>(() => {
     return {
@@ -54,10 +62,18 @@ function EditUserDataForm(props: EditUserDataFormProps) {
     <FormWrapper
       form={form}
       onSubmit={(values: UserDataInput) => {
+        if (!canSave) return;
         return onSave(values);
       }}
     >
       <Stack>
+        {!canSave && (
+          <Alert color="yellow" icon={<Warning />}>
+            Unfortunately, your current configuration is not valid so we cannot
+            allow you to save it. Please close this modal and fix the issues
+            before trying again.
+          </Alert>
+        )}
         <RHFField
           type="text"
           name="name"
@@ -88,7 +104,16 @@ function EditUserDataForm(props: EditUserDataFormProps) {
               Delete
             </Button>
           )}
-          <SubmitButton>Save</SubmitButton>
+          <div className="flex-1" />
+          <Button
+            color="red"
+            variant="outline"
+            leftSection={<X />}
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+          <SubmitButton disabled={!canSave}>Save</SubmitButton>
         </Group>
       </Stack>
     </FormWrapper>
@@ -103,7 +128,7 @@ const EditUserDataModal = React.forwardRef<
   ParametrizedDisclosureTrigger<UserDataInput> | null,
   EditUserDataModalProps
 >(function EditUserDataModal(props, ref) {
-  const { onSave, onDelete, label } = props;
+  const { onSave, onDelete, canSave, label } = props;
   const [data, { close }] = useParametrizedDisclosureTrigger(ref);
   const [
     isConfirmingDeletion,
@@ -118,18 +143,21 @@ const EditUserDataModal = React.forwardRef<
             icon={<TrashSimple />}
             title="Delete Confirmation"
             withCloseButton
-            onClose={dismissDeleteConfirmation}
+            onClose={() => {
+              dismissDeleteConfirmation();
+              close();
+            }}
           >
             <Stack>
               <Text inherit>
                 Are you sure you want to delete{' '}
-                <Text inherit fw={500}>
+                <Text inherit span fw={500}>
                   {data.name}
                 </Text>
                 ? You will not be able to recover the item after its deletion.
               </Text>
               <PromiseButton
-                variant="outline"
+                variant="filled"
                 color="red"
                 leftSection={<TrashSimple />}
                 onClick={() => onDelete(data!.id!)}
@@ -141,7 +169,9 @@ const EditUserDataModal = React.forwardRef<
         )}
         {data && (
           <EditUserDataForm
+            canSave={canSave}
             initialValues={data}
+            onClose={close}
             onSave={async (values) => {
               await onSave(values);
               close();
