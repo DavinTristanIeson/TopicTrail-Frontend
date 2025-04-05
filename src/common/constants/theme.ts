@@ -10,6 +10,7 @@ import {
   Modal,
   Paper,
   ScrollArea,
+  Select,
   Tooltip,
 } from '@mantine/core';
 import Colors from './colors';
@@ -111,6 +112,11 @@ const mantineTheme = createTheme({
     HoverCard: HoverCard.extend({
       defaultProps: {
         position: 'right',
+      },
+    }),
+    Select: Select.extend({
+      defaultProps: {
+        searchable: true,
       },
     }),
   },

@@ -57,38 +57,60 @@ function EditUserDataForm(props: EditUserDataFormProps) {
         return onSave(values);
       }}
     >
-      <Group justify="end">
-        {onDelete && (
-          <Button
-            variant="outline"
-            color="red"
-            leftSection={<TrashSimple />}
-            onClick={onDelete}
-          >
-            Delete
-          </Button>
-        )}
-        <SubmitButton>Save</SubmitButton>
-      </Group>
-      <RHFField type="text" name="name" label="Name" required />
-      <RHFField type="tags" name="tags" label="Tags" />
-      <RHFField type="textarea" name="description" label="Description" />
+      <Stack>
+        <RHFField
+          type="text"
+          name="name"
+          label="Name"
+          required
+          description="Provide a unique name for the item."
+        />
+        <RHFField
+          type="tags"
+          name="tags"
+          label="Tags"
+          description="One or more tag to help you search for this item later on."
+        />
+        <RHFField
+          type="textarea"
+          name="description"
+          label="Description"
+          description="A brief description about the contents of this item."
+        />
+        <Group justify="end">
+          {onDelete && (
+            <Button
+              variant="outline"
+              color="red"
+              leftSection={<TrashSimple />}
+              onClick={onDelete}
+            >
+              Delete
+            </Button>
+          )}
+          <SubmitButton>Save</SubmitButton>
+        </Group>
+      </Stack>
     </FormWrapper>
   );
 }
 
+interface EditUserDataModalProps extends UserDataManagerRendererProps<any> {
+  label: string;
+}
+
 const EditUserDataModal = React.forwardRef<
   ParametrizedDisclosureTrigger<UserDataInput> | null,
-  UserDataManagerRendererProps<any>
+  EditUserDataModalProps
 >(function EditUserDataModal(props, ref) {
-  const { onSave, onDelete } = props;
+  const { onSave, onDelete, label } = props;
   const [data, { close }] = useParametrizedDisclosureTrigger(ref);
   const [
     isConfirmingDeletion,
     { open: raiseDeleteConfirmation, close: dismissDeleteConfirmation },
   ] = useDisclosure();
   return (
-    <Modal opened={!!data} onClose={close}>
+    <Modal opened={!!data} onClose={close} title={`Save ${label}`}>
       <Stack>
         {isConfirmingDeletion && data?.id && (
           <Alert

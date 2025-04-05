@@ -1,4 +1,4 @@
-import { Group, Button, Select, Fieldset } from '@mantine/core';
+import { Group, Button, Select } from '@mantine/core';
 import { Download, PencilSimple } from '@phosphor-icons/react';
 
 import React from 'react';
@@ -9,13 +9,12 @@ import { fromPairs } from 'lodash';
 interface LoadUserDataActionComponentProps<T>
   extends UserDataManagerRendererProps<T> {
   onEdit(id: string): void;
-  label: string;
 }
 
 export function LoadUserDataActionComponent<T>(
   props: LoadUserDataActionComponentProps<T>,
 ) {
-  const { data, label, onLoad, onEdit } = props;
+  const { data, onLoad, onEdit, canSave } = props;
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
 
   const dictionary = React.useMemo(() => {
@@ -33,51 +32,56 @@ export function LoadUserDataActionComponent<T>(
     );
   }, [data]);
 
+  const selectedData = selectedId ? dictionary[selectedId] : undefined;
+
   const renderOption = useDescriptionBasedRenderOption(dictionary);
 
   return (
-    <Fieldset legend={`Load ${label}`}>
-      <Select
-        value={selectedId}
-        data={data.map((item) => {
-          return {
-            label: item.name,
-            value: item.id,
-          };
-        })}
-        onChange={setSelectedId}
-        renderOption={renderOption}
-        className="flex-1"
-        description={`Pick an item to perform an action on. You can either apply/use the selected item by pressing the "Apply" button or delete the filter by pressing the "Delete" button.`}
-        inputContainer={(children) => {
-          return (
-            <Group align="start">
-              {children}
-              <Button
-                leftSection={<Download />}
-                disabled={!selectedId}
-                onClick={() => {
-                  if (!selectedId) return;
-                  onLoad(selectedId);
-                }}
-              >
-                Apply
-              </Button>
-              <Button
-                variant="outline"
-                leftSection={<PencilSimple />}
-                disabled={!selectedId}
-                onClick={() => {
-                  if (!selectedId) return;
-                  onEdit(selectedId);
-                }}
-              >
-                Edit
-              </Button>
-            </Group>
-          );
-        }}
-      />
-    </Fieldset>
+    <Select
+      value={selectedId}
+      data={data.map((item) => {
+        return {
+          label: item.name,
+          value: item.id,
+        };
+      })}
+      disabled={data.length === 0}
+      onChange={setSelectedId}
+      renderOption={renderOption}
+      styles={{
+        input: {
+          minWidth: 448,
+        },
+      }}
+      description={`Pick an item to perform an action on. You can either apply/use the selected item by pressing the "Apply" button or delete the filter by pressing the "Delete" button.`}
+      inputContainer={(children) => {
+        return (
+          <Group align="start" className="flex-1">
+            {children}
+            <Button
+              leftSection={<Download />}
+              disabled={!selectedData}
+              onClick={() => {
+                if (!selectedId) return;
+                onLoad(selectedId);
+              }}
+            >
+              Apply
+            </Button>
+            <Button
+              variant="outline"
+              leftSection={<PencilSimple />}
+              disabled={!selectedData || !canSave}
+              onClick={() => {
+                if (!selectedId) return;
+                onEdit(selectedId);
+              }}
+            >
+              Edit
+            </Button>
+          </Group>
+        );
+      }}
+    />
   );
 }

@@ -21,6 +21,7 @@ import {
 } from '@/components/standard/fields/adapter';
 import React from 'react';
 import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
+import { SelectedComboboxWrapper } from '@/components/visual/select';
 
 export interface TopicComboboxItem extends ComboboxItem {
   data: TopicModel;
@@ -38,24 +39,32 @@ export const OUTLIER_TOPIC: TopicModel = {
 function TopicComboboxItemRenderer(
   combobox: ComboboxLikeRenderOptionInput<TopicComboboxItem>,
 ) {
-  const { option } = combobox;
+  const { option, checked } = combobox;
   if (!option.data) {
     if (option.value === '-1') {
       return (
-        <div>
+        <SelectedComboboxWrapper checked={checked}>
           <Text size="sm" c="gray" fw={500}>
             {OUTLIER_TOPIC.label}
           </Text>
           <Text size="xs" c="gray">
             {OUTLIER_TOPIC.description}
           </Text>
-        </div>
+        </SelectedComboboxWrapper>
       );
     }
-    return option.label;
+    return (
+      <SelectedComboboxWrapper checked={checked}>
+        {option.label}
+      </SelectedComboboxWrapper>
+    );
   }
 
-  return <TopicInfo {...option.data} />;
+  return (
+    <SelectedComboboxWrapper checked={checked}>
+      <TopicInfo {...option.data} />
+    </SelectedComboboxWrapper>
+  );
 }
 
 const topicFilterFunction: OptionsFilter = (input) => {

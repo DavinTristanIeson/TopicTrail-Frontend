@@ -1,23 +1,27 @@
 import {
   Badge,
-  CheckIcon,
   Group,
   Stack,
   Text,
+  useMantineTheme,
   type ComboboxItem,
   type ComboboxLikeRenderOptionInput,
 } from '@mantine/core';
+import { Check } from '@phosphor-icons/react';
 import React from 'react';
 
 interface SelectedComboboxWrapperProps {
-  checked: boolean;
+  checked: boolean | undefined;
   children?: React.ReactNode;
 }
 
 export function SelectedComboboxWrapper(props: SelectedComboboxWrapperProps) {
+  const { colors } = useMantineTheme();
   return (
     <Group flex="1" gap="xs" align="start">
-      {props.checked && <CheckIcon />}
+      {props.checked && (
+        <Check color={colors.gray[6]} size={14} className="mt-0.5" />
+      )}
       {props.children}
     </Group>
   );
@@ -46,7 +50,7 @@ export function useDescriptionBasedRenderOption(
       }
       return (
         <SelectedComboboxWrapper checked={!!combobox.checked}>
-          <Stack>
+          <Stack gap={4}>
             <Text size="sm">{props.label}</Text>
             {props.tags && (
               <Group>

@@ -11,6 +11,7 @@ import { merge } from 'lodash';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
 import { UserDataModel } from '@/api/userdata';
+import { queryClient } from '@/common/api/query-client';
 
 function useUserDataManagerHookRequestBoilerplate() {
   const project = React.useContext(ProjectContext);
@@ -70,6 +71,16 @@ export function useBaseUserDataManager<T>(
     },
   );
   const data = query.data?.data;
+
+  const invalidateQuery = React.useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: client.queryOptions(
+        'get',
+        `/userdata/{project_id}/${pathname}`,
+        sharedParams,
+      ).queryKey,
+    });
+  }, [pathname, sharedParams]);
 
   const { mutateAsync: createUserData } = client.useMutation(
     'post',
@@ -136,11 +147,12 @@ export function useBaseUserDataManager<T>(
           message: `The ${label} has been successfully loaded.`,
           color: 'green',
         });
+        invalidateQuery();
       } catch (e) {
         handleError(e);
       }
     },
-    [data, label, onApply],
+    [data, invalidateQuery, label, onApply],
   );
 
   const onDelete = React.useCallback(
@@ -155,14 +167,16 @@ export function useBaseUserDataManager<T>(
             color: 'green',
           });
         }
+        invalidateQuery();
       } catch (e) {
         handleError(e);
       }
     },
-    [deleteUserData, getSharedParamsWithId],
+    [deleteUserData, getSharedParamsWithId, invalidateQuery],
   );
 
   return {
+    canSave: state != null,
     onSave,
     onDelete,
     onLoad,

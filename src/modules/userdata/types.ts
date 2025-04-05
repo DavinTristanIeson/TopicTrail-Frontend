@@ -17,6 +17,7 @@ export interface UserDataInput {
 export interface UserDataManagerRendererProps<T> {
   // A list of all options
   data: UserDataModel<T>[];
+  canSave: boolean;
   // The renderer only needs to give the metadata. The hook should handle passing the data.
   onSave(data: UserDataInput): Promise<void>;
   // A callback to apply the state. This will call ``UserDataManagerHookProps.onApply``.
