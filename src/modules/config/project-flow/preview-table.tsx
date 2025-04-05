@@ -10,7 +10,7 @@ import {
   Alert,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Warning } from '@phosphor-icons/react';
+import { Warning, EyeSlash, Eye } from '@phosphor-icons/react';
 import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ProjectConfigFormType } from '../form-type';
@@ -53,8 +53,13 @@ function ProjectConfigPreviewTable(props: DatasetPreviewModel) {
 
   return (
     <Stack>
-      <Button onClick={toggle} fullWidth variant="subtle">
-        Show Dataset Preview
+      <Button
+        onClick={toggle}
+        fullWidth
+        variant="subtle"
+        leftSection={opened ? <EyeSlash /> : <Eye />}
+      >
+        {opened ? 'Hide' : 'Show'} Dataset Preview
       </Button>
       <Collapse in={opened}>
         <Title order={4} ta="center">

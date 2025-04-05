@@ -23,19 +23,19 @@ const TEMPORAL_COLUMN_FEATURE_DICTIONARY = {
       "Enabling this feature will create an additional column that shows only the date (without the time part) of the data in this column. For example, the following time 1st April 2025, 20:30 will be transformed into 1st April 2025. Disable this if you don't care about date information.",
   },
   [TemporalColumnFeatureEnum.DayOfWeek]: {
-    label: 'Day of Week',
+    label: 'Day of Week (Aggregate)',
     value: TemporalColumnFeatureEnum.DayOfWeek,
     description:
       "Enabling this feature will create an additional column that shows the day of week of each column. This may be useful if you want to see data differences between weekends and weekdays. Disable this if you don't care about day-of-week information.",
   },
   [TemporalColumnFeatureEnum.Monthly]: {
-    label: 'Month',
+    label: 'Month (Aggregate)',
     value: TemporalColumnFeatureEnum.Monthly,
     description:
       "Enabling this feature will create an additional column that shows ONLY the month part of each column. For example, the following time 1st April 2025, 20:30 will be transformed into April. This may be useful if you want to see data differences between seasons/months. Disable this if you don't care about seasonal information.",
   },
   [TemporalColumnFeatureEnum.Hour]: {
-    label: 'Hour',
+    label: 'Hour (Aggregate)',
     value: TemporalColumnFeatureEnum.Hour,
     description:
       "Enabling this feature will create an additional column that shows the hour part of each column. For example, the following time 1st April 2025, 20:30 will be transformed into 20:00. This may be useful if you want to see data differences between mornings, afternoons, and nights. Disable this if you don't have/care about time information.",
@@ -56,7 +56,7 @@ export function ProjectConfigColumnTemporalForm(
         description={
           <Text size="xs">
             The datetime format used for the column. You can find the reference
-            for the format in here:
+            for the format in here:{' '}
             <Anchor href="https://strftime.org/">https://strftime.org/</Anchor>
           </Text>
         }

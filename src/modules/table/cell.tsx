@@ -35,6 +35,9 @@ interface HighlightedCellProps {
 
 const HighlightedCell = React.forwardRef<HTMLDivElement, HighlightedCellProps>(
   function HighlightedCell(props, ref) {
+    if (!props.children) {
+      return null;
+    }
     return (
       <Box
         bg={props.color ? props.color : props.dull ? 'gray.6' : 'brand.6'}
@@ -60,10 +63,10 @@ export function TextualColumnCell(props: React.PropsWithChildren) {
 
 interface TemporalColumnCellProps {
   date: Date;
-  precision: TemporalPrecisionEnum;
+  precision: TemporalPrecisionEnum | null;
 }
 
-function TemporalColumnCellProps(props: TemporalColumnCellProps) {
+function TemporalColumnCell(props: TemporalColumnCellProps) {
   let value: string;
   switch (props.precision) {
     case TemporalPrecisionEnum.Year: {
@@ -246,10 +249,8 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
     }
     case SchemaColumnTypeEnum.Temporal: {
       const temporalPrecision = (column as TemporalSchemaColumnModel)
-        .temporal_precision as TemporalPrecisionEnum | null;
-      return (
-        <TemporalColumnCellProps date={value} precision={temporalPrecision} />
-      );
+        .temporal_precision as TemporalPrecisionEnum;
+      return <TemporalColumnCell date={value} precision={temporalPrecision} />;
     }
     case SchemaColumnTypeEnum.Topic: {
       return (
