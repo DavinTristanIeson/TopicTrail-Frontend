@@ -11,6 +11,8 @@ import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { client } from '@/common/api/client';
 import { DisclosureTrigger } from '@/hooks/disclosure';
+import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
+import { ProjectModel } from '@/api/project';
 
 interface ProjectsListRendererProps {
   q: string | undefined;
@@ -25,18 +27,22 @@ function ProjectsListRenderer(props: ProjectsListRendererProps) {
       loadingComponent={<Loader type="dots" size={48} />}
     >
       {(data) => {
-        const projects =
-          q == null
-            ? data.data
-            : data.data.filter((project) => {
-                const meta = project.config.metadata;
-                return (
-                  meta.name.toLowerCase().includes(q.toLowerCase()) ||
-                  !!meta.tags?.find(
-                    (tag) => tag.toLowerCase() === q.toLowerCase(),
-                  )
-                );
-              });
+        const fullProjects = data.data;
+        let projects: ProjectModel[];
+        if (q) {
+          const indices = filterByString(
+            q,
+            fullProjects.map((project) => {
+              return {
+                name: project.config.metadata.name,
+                tags: project.config.metadata.tags,
+              };
+            }),
+          );
+          projects = pickArrayByIndex(fullProjects, indices);
+        } else {
+          projects = fullProjects;
+        }
         return (
           <ul className="flex flex-col gap-2 w-full">
             {projects.map((project) => (

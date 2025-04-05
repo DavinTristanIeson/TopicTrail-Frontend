@@ -4,7 +4,7 @@ import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { Button, Drawer, Group, Indicator } from '@mantine/core';
 import { Funnel, Warning, X } from '@phosphor-icons/react';
 import React from 'react';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import {
   defaultTableFilterFormValues,
   tableFilterFormSchema,
@@ -16,9 +16,39 @@ import FormWrapper from '@/components/utility/form/wrapper';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 import { showNotification } from '@mantine/notifications';
-import TableFilterManagementSection from '../management';
 import { useCheckFilterValidity } from '../management/hooks';
 import { FilterStateContext } from '@/modules/table/context';
+import { useFilterDataManager } from '@/modules/userdata/data-manager';
+import { useDebouncedValue } from '@mantine/hooks';
+import UserDataManager from '@/modules/userdata';
+
+interface TableFilterUserDataManagerProps {
+  setFilter: React.Dispatch<TableFilterModel | null>;
+}
+
+function TableFilterUserDataManager(props: TableFilterUserDataManagerProps) {
+  const values = useWatch<TableFilterFormType>();
+  const [debouncedFormValues] = useDebouncedValue(values, 800, {
+    leading: false,
+  });
+  const validatedValues = React.useMemo(() => {
+    try {
+      return tableFilterFormSchema.validateSync(debouncedFormValues, {
+        stripUnknown: true,
+      }) as TableFilterFormType;
+    } catch {
+      return null;
+    }
+  }, [debouncedFormValues]);
+
+  console.log(values, debouncedFormValues, validatedValues);
+
+  const rendererProps = useFilterDataManager({
+    state: validatedValues as TableFilterModel | null,
+    onApply: props.setFilter,
+  });
+  return <UserDataManager {...rendererProps} label="Filter" />;
+}
 
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
@@ -36,14 +66,8 @@ export function TableFilterDrawerFormBody(
   props: TableFilterDrawerComponentProps,
 ) {
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { reset, setValue, getValues } = useFormContext();
+  const { reset, setValue } = useFormContext();
   const { setFilter, close, AboveForm, name } = props;
-
-  const getFilter = React.useCallback(() => {
-    return tableFilterFormSchema.cast(name ? getValues(name) : getValues(), {
-      stripUnknown: true,
-    }) as TableFilterModel;
-  }, [getValues, name]);
 
   return (
     <>
@@ -87,10 +111,7 @@ export function TableFilterDrawerFormBody(
         </Group>
       </Drawer.Header>
       {AboveForm}
-      <TableFilterManagementSection
-        getFilter={getFilter}
-        setFilter={setFilter}
-      />
+      <TableFilterUserDataManager setFilter={setFilter} />
       <TableFilterComponent name={name} />
     </>
   );

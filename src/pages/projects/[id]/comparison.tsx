@@ -1,14 +1,12 @@
 import { type NamedTableFilterModel } from '@/api/comparison';
-import { SessionStorageKeys } from '@/common/constants/browser-storage-keys';
 import { GridSkeleton } from '@/components/visual/loading';
 import { NamedFiltersContext } from '@/modules/comparison/context';
 import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
 import AppProjectLayout from '@/modules/project/layout';
 import { ProjectAllTopicsProvider } from '@/modules/topics/components/context';
-import { AddTableVisualizationButton } from '@/modules/visualization/dashboard/add-visualization-dialog';
+import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { Alert, Stack, Tabs } from '@mantine/core';
-import { useSessionStorage } from '@mantine/hooks';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
 import React from 'react';
@@ -28,10 +26,7 @@ enum ComparisonPageTab {
 }
 
 function ComparisonPageStateManager() {
-  const [filters, setFilters] = useSessionStorage<NamedTableFilterModel[]>({
-    key: SessionStorageKeys.ComparisonParams,
-    defaultValue: [],
-  });
+  const [filters, setFilters] = React.useState<NamedTableFilterModel[]>([]);
   const [tab, setTab] = React.useState<string | null>(
     ComparisonPageTab.GroupsManager,
   );
@@ -76,7 +71,7 @@ function ComparisonPageStateManager() {
           <NamedFiltersManager />
         ) : tab === ComparisonPageTab.Visualization ? (
           <Stack>
-            <AddTableVisualizationButton />
+            <DashboardControls />
             <GridstackDashboard />
           </Stack>
         ) : tab === ComparisonPageTab.StatisticTest ? (

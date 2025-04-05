@@ -4,11 +4,13 @@ import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import ComparisonFilterDrawer from './drawer';
-import { Button, Stack, Title } from '@mantine/core';
+import { Button, Stack } from '@mantine/core';
 import { NamedFiltersContext } from '../context';
 import { Plus } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { NamedTableFilterModel } from '@/api/comparison';
+import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
+import UserDataManager from '@/modules/userdata';
 
 const SortableNamedTableFilterDndContext = dynamic(
   () => import('./sortable-filter-context'),
@@ -20,6 +22,25 @@ const SortableNamedTableFilterDndContext = dynamic(
   },
 );
 
+function ComparisonStateDataManager() {
+  const { filters, setFilters } = React.useContext(NamedFiltersContext);
+  const rendererProps = useComparisonStateDataManager({
+    onApply(state) {
+      setFilters(state.groups);
+    },
+    state: React.useMemo(() => {
+      if (!filters || filters.length === 0) {
+        return null;
+      }
+      return {
+        groups: filters,
+      };
+    }, [filters]),
+  });
+
+  return <UserDataManager {...rendererProps} label="Comparison Groups" />;
+}
+
 export default function NamedFiltersManager() {
   const editRemote =
     React.useRef<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>(
@@ -29,9 +50,7 @@ export default function NamedFiltersManager() {
   return (
     <>
       <Stack>
-        <Title order={2} className="pb-3">
-          Groups
-        </Title>
+        <ComparisonStateDataManager />
         <SortableNamedTableFilterDndContext editRemote={editRemote} />
         <Button
           leftSection={<Plus />}
