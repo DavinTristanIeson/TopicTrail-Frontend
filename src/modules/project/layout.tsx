@@ -1,11 +1,15 @@
-import { ProjectConfigModel } from '@/api/project';
+import {
+  invalidateProjectDependencyQueries,
+  ProjectConfigModel,
+} from '@/api/project';
 import NavigationRoutes from '@/common/constants/routes';
 import AppLayout from '@/components/layout/app';
 import AppHeader from '@/components/layout/header';
 import { AppSidebarLinkRenderer } from '@/components/layout/sidebar';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
-import { Divider, Stack } from '@mantine/core';
+import { Button, Divider, Stack } from '@mantine/core';
 import {
+  ArrowCounterClockwise,
   ArrowsLeftRight,
   FileMagnifyingGlass,
   Gear,
@@ -123,11 +127,28 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
     },
     {
       enabled: !!id,
+      // We'll assume that only one person is using this at a time.
+      staleTime: Infinity,
     },
   );
   return (
     <AppLayout
-      Header={<AppHeader title={query.data?.data.config.metadata.name} />}
+      Header={
+        <AppHeader
+          title={query.data?.data.config.metadata.name}
+          Right={
+            <Button
+              variant="subtle"
+              leftSection={<ArrowCounterClockwise />}
+              onClick={() => {
+                invalidateProjectDependencyQueries(id);
+              }}
+            >
+              Refresh
+            </Button>
+          }
+        />
+      }
       Sidebar={<ProjectNavbar config={query.data?.data.config} />}
     >
       <UseQueryWrapperComponent query={query}>

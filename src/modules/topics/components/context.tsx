@@ -20,13 +20,21 @@ export function useTopicModelingResultOfColumn(
 export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
   const { children } = props;
   const project = React.useContext(ProjectContext);
-  const query = client.useQuery('get', '/topic/{project_id}/', {
-    params: {
-      path: {
-        project_id: project.id,
+  const query = client.useQuery(
+    'get',
+    '/topic/{project_id}/',
+    {
+      params: {
+        path: {
+          project_id: project.id,
+        },
       },
     },
-  });
+    {
+      // We'll assume that only one person is using this at a time.
+      staleTime: Infinity,
+    },
+  );
   return (
     <UseQueryWrapperComponent query={query}>
       {(data) => (

@@ -1,73 +1,83 @@
 import { PaginationParams } from '@/api/table';
-import { ComparisonStateModel, DashboardModel } from '@/api/userdata';
-import { useRouter } from 'next/router';
+import { DashboardItemModel } from '@/api/userdata';
 import React from 'react';
-import { createContext } from 'use-context-selector';
+import { createContext, useContextSelector } from 'use-context-selector';
 import { ProjectAllTopicsProvider } from '../topics/components/context';
 import AppProjectLayout from './layout';
+import { NamedTableFilterModel } from '@/api/comparison';
+import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 
 interface DashboardStateContextType {
-  dashboard: DashboardModel;
-  setDashboard: React.Dispatch<React.SetStateAction<DashboardModel>>;
+  dashboard: {
+    state: DashboardItemModel[];
+    handlers: UseListStateHandlers<DashboardItemModel>;
+  };
 }
 
 interface ProjectAppStateContextType {
   table: DashboardStateContextType & {
-    state: PaginationParams;
-    setState: React.Dispatch<React.SetStateAction<PaginationParams>>;
+    params: {
+      state: PaginationParams;
+      setState: React.Dispatch<React.SetStateAction<PaginationParams>>;
+    };
   };
   comparison: DashboardStateContextType & {
-    state: ComparisonStateModel;
-    setState: React.Dispatch<React.SetStateAction<ComparisonStateModel>>;
+    groups: {
+      state: NamedTableFilterModel[];
+      handlers: UseListStateHandlers<NamedTableFilterModel>;
+    };
   };
   correlation: DashboardStateContextType;
 }
 
-export const ProjectAppStateContext = createContext<ProjectAppStateContextType>(
+const ProjectAppStateContext = createContext<ProjectAppStateContextType>(
   null as any,
 );
 
 export function ProjectAppStateProvider(props: React.PropsWithChildren) {
-  const [tableState, setTableState] = React.useState<PaginationParams>({
+  const [tableParams, setTableParams] = React.useState<PaginationParams>({
     limit: 25,
     page: 0,
     filter: null,
     sort: null,
   });
-  const [comparisonState, setComparisonState] =
-    React.useState<ComparisonStateModel>({
-      groups: [],
-    });
-  const [tableDashboard, setTableDashboard] = React.useState<DashboardModel>({
-    items: [],
-  });
-  const [comparisonDashboard, setComparisonDashboard] =
-    React.useState<DashboardModel>({
-      items: [],
-    });
-  const [correlationDashboard, setCorrelationDashboard] =
-    React.useState<DashboardModel>({
-      items: [],
-    });
+  const [comparisonState, comparisonStateHandlers] =
+    useListState<NamedTableFilterModel>();
+  const [tableDashboard, tableDashboardHandlers] =
+    useListState<DashboardItemModel>([]);
+  const [comparisonDashboard, comparisonDashboardHandlers] =
+    useListState<DashboardItemModel>([]);
+  const [correlationDashboard, correlationDashboardHandlers] =
+    useListState<DashboardItemModel>([]);
 
   return (
     <ProjectAppStateContext.Provider
       value={{
         table: {
-          state: tableState,
-          setState: setTableState,
-          dashboard: tableDashboard,
-          setDashboard: setTableDashboard,
+          params: {
+            state: tableParams,
+            setState: setTableParams,
+          },
+          dashboard: {
+            state: tableDashboard,
+            handlers: tableDashboardHandlers,
+          },
         },
         comparison: {
-          state: comparisonState,
-          setState: setComparisonState,
-          dashboard: comparisonDashboard,
-          setDashboard: setComparisonDashboard,
+          groups: {
+            state: comparisonState,
+            handlers: comparisonStateHandlers,
+          },
+          dashboard: {
+            state: comparisonDashboard,
+            handlers: comparisonDashboardHandlers,
+          },
         },
         correlation: {
-          dashboard: correlationDashboard,
-          setDashboard: setCorrelationDashboard,
+          dashboard: {
+            state: correlationDashboard,
+            handlers: correlationDashboardHandlers,
+          },
         },
       }}
     >
@@ -76,24 +86,24 @@ export function ProjectAppStateProvider(props: React.PropsWithChildren) {
   );
 }
 
-export function ProjectAppStateProviderLayout(props: React.PropsWithChildren) {
-  const router = useRouter();
-  const projectId = router.query.id as string;
-  return (
-    <ProjectAppStateProvider key={projectId}>
-      {props.children}
-    </ProjectAppStateProvider>
-  );
+export function useProjectAppState<T>(
+  selector: (value: ProjectAppStateContextType) => T,
+): T {
+  return useContextSelector(ProjectAppStateContext, selector);
 }
+
+// Helpers
 
 export function ProjectCommonDependencyProvider(
   props: React.PropsWithChildren,
 ) {
   return (
-    <ProjectAppStateProvider>
+    <AppProjectLayout>
       <ProjectAllTopicsProvider>
-        <AppProjectLayout>{props.children}</AppProjectLayout>
+        {/* If project or topics is invalidated, ProjectAppStateProvider will be remounted, which resets the state.
+        That's the behavior that we want.*/}
+        <ProjectAppStateProvider>{props.children}</ProjectAppStateProvider>
       </ProjectAllTopicsProvider>
-    </ProjectAppStateProvider>
+    </AppProjectLayout>
   );
 }

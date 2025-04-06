@@ -23,9 +23,9 @@ import {
   X,
 } from '@phosphor-icons/react';
 import {
-  invalidateProjectDependencyQueries,
   ProjectModel,
   ProjectMutationInput,
+  removeProjectDependencyQueries,
 } from '@/api/project';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
@@ -115,7 +115,7 @@ export const DeleteProjectModal = React.forwardRef<
     '/projects/{project_id}',
     {
       onSuccess(data, variables) {
-        invalidateProjectDependencyQueries(variables.params.path.project_id);
+        removeProjectDependencyQueries(variables.params.path.project_id);
       },
     },
   );
