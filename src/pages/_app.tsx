@@ -18,10 +18,13 @@ import dayjs from 'dayjs';
 import dayjsRelativeTimePlugin from 'dayjs/plugin/relativeTime';
 import GlobalConfig from '@/common/constants/global';
 import { IconContext } from '@phosphor-icons/react';
+import { NextPageWithLayout } from '@/common/utils/types';
+import identity from 'lodash/identity';
 
 dayjs.extend(dayjsRelativeTimePlugin);
 
 export default function App({ Component, pageProps }: AppProps) {
+  const getLayout = (Component as NextPageWithLayout).getLayout ?? identity;
   return (
     <>
       <Head>
@@ -42,7 +45,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <QueryClientProvider client={queryClient}>
             {/* Enable this if you need to debug react query */}
             {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-            <Component {...pageProps} />
+            {getLayout(<Component {...pageProps} />)}
           </QueryClientProvider>
         </MantineProvider>
       </IconContext.Provider>

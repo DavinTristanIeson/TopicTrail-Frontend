@@ -1,10 +1,10 @@
 import { type NamedTableFilterModel } from '@/api/comparison';
+import { NextPageWithLayout } from '@/common/utils/types';
 import { GridSkeleton } from '@/components/visual/loading';
 import { NamedFiltersContext } from '@/modules/comparison/context';
 import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
-import AppProjectLayout from '@/modules/project/layout';
-import { ProjectAllTopicsProvider } from '@/modules/topics/components/context';
+import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { Alert, Stack, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
@@ -25,7 +25,7 @@ enum ComparisonPageTab {
   StatisticTest = 'statistic-test',
 }
 
-function ComparisonPageStateManager() {
+const ComparisonPage: NextPageWithLayout = function () {
   const [filters, setFilters] = React.useState<NamedTableFilterModel[]>([]);
   const [tab, setTab] = React.useState<string | null>(
     ComparisonPageTab.GroupsManager,
@@ -80,14 +80,14 @@ function ComparisonPageStateManager() {
       </div>
     </NamedFiltersContext.Provider>
   );
-}
+};
 
-export default function ComparisonPage() {
+ComparisonPage.getLayout = (children) => {
   return (
-    <AppProjectLayout>
-      <ProjectAllTopicsProvider>
-        <ComparisonPageStateManager />
-      </ProjectAllTopicsProvider>
-    </AppProjectLayout>
+    <ProjectCommonDependencyProvider>
+      {children}
+    </ProjectCommonDependencyProvider>
   );
-}
+};
+
+export default ComparisonPage;

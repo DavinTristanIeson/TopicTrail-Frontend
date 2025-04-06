@@ -1,8 +1,6 @@
-import AppProjectLayout from '@/modules/project/layout';
 import { ProjectColumnSelectInput } from '@/modules/project/select-column-input';
 import {
   AllTopicModelingResultContext,
-  ProjectAllTopicsProvider,
   useTopicModelingResultOfColumn,
 } from '@/modules/topics/components/context';
 import { Alert, Group, Paper, Text } from '@mantine/core';
@@ -14,6 +12,8 @@ import { SchemaColumnContext } from '@/modules/project/context';
 import { useRouter } from 'next/router';
 import TopicResultsPageControls from '@/modules/topics/results/controls';
 import { Warning } from '@phosphor-icons/react';
+import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
+import { NextPageWithLayout } from '@/common/utils/types';
 
 interface ProjectTopicSwitcherProps {
   column: string;
@@ -46,7 +46,7 @@ function ProjectTopicPageSwitcher(props: ProjectTopicSwitcherProps) {
   );
 }
 
-function ProjectTopicColumnManager() {
+const ProjectTopicsPage: NextPageWithLayout = function () {
   const topicModelingResults = React.useContext(AllTopicModelingResultContext);
 
   const queryColumn = useRouter().query.column as string;
@@ -108,14 +108,14 @@ function ProjectTopicColumnManager() {
       </div>
     </div>
   );
-}
+};
 
-export default function ProjectTopics() {
+ProjectTopicsPage.getLayout = (children) => {
   return (
-    <AppProjectLayout withPadding={false}>
-      <ProjectAllTopicsProvider>
-        <ProjectTopicColumnManager />
-      </ProjectAllTopicsProvider>
-    </AppProjectLayout>
+    <ProjectCommonDependencyProvider>
+      {children}
+    </ProjectCommonDependencyProvider>
   );
-}
+};
+
+export default ProjectTopicsPage;

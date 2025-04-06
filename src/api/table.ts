@@ -52,3 +52,5 @@ export type DescriptiveStatisticsModel =
   components['schemas']['DescriptiveStatisticsResource'];
 export type DatasetPreviewModel =
   components['schemas']['DatasetPreviewResource'];
+
+export type PaginationParams = components['schemas']['PaginationParams'];

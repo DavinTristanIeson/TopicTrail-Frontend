@@ -1,15 +1,13 @@
 import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import NavigationRoutes from '@/common/constants/routes';
+import { NextPageWithLayout } from '@/common/utils/types';
 import { ProjectPageLinks } from '@/components/utility/links';
 import { GridSkeleton } from '@/components/visual/loading';
+import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { ProjectContext } from '@/modules/project/context';
-import AppProjectLayout from '@/modules/project/layout';
 import TopicCorrelationColumnControls from '@/modules/topic-correlation/controls';
-import {
-  AllTopicModelingResultContext,
-  ProjectAllTopicsProvider,
-} from '@/modules/topics/components/context';
+import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
 import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { Alert, Group, Stack } from '@mantine/core';
@@ -25,7 +23,7 @@ const GridstackDashboard = dynamic(
   },
 );
 
-function TopicCorrelationStateManager() {
+const TopicCorrelationPage: NextPageWithLayout = function () {
   const [column1, setColumn1] = React.useState<SchemaColumnModel | null>(null);
   const [column2, setColumn2] = React.useState<SchemaColumnModel | null>(null);
 
@@ -71,14 +69,14 @@ function TopicCorrelationStateManager() {
       )}
     </Stack>
   );
-}
+};
 
-export default function TopicCorrelationPage() {
+TopicCorrelationPage.getLayout = (children) => {
   return (
-    <AppProjectLayout>
-      <ProjectAllTopicsProvider>
-        <TopicCorrelationStateManager />
-      </ProjectAllTopicsProvider>
-    </AppProjectLayout>
+    <ProjectCommonDependencyProvider>
+      {children}
+    </ProjectCommonDependencyProvider>
   );
-}
+};
+
+export default TopicCorrelationPage;
