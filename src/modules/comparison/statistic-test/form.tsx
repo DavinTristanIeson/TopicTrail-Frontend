@@ -1,5 +1,4 @@
 import React from 'react';
-import { NamedFiltersContext } from '../context';
 import { useForm, useFormContext } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { statisticTestFormSchema, StatisticTestFormType } from './form-type';
@@ -17,10 +16,13 @@ import RHFField from '@/components/standard/fields';
 import { SUPPORTED_COLUMN_TYPES_FOR_STATISTIC_TEST } from './dictionary';
 import SubmitButton from '@/components/standard/button/submit';
 import { TestTube } from '@phosphor-icons/react';
+import { useProjectAppState } from '@/modules/project/app-state';
 
 function StatisticTestFormBody() {
   const project = React.useContext(ProjectContext);
-  const { filters } = React.useContext(NamedFiltersContext);
+  const comparisonGroups = useProjectAppState(
+    (store) => store.comparison.groups.state,
+  );
   const { setValue } = useFormContext<StatisticTestFormType>();
   const [columnType, setColumnType] =
     React.useState<SchemaColumnTypeEnum | null>(null);
@@ -54,13 +56,13 @@ function StatisticTestFormBody() {
       <Group gap={8} className="w-full">
         <NamedFilterSelectField
           name="group1"
-          data={filters}
+          data={comparisonGroups}
           className="flex-1"
           label="Group 1"
         />
         <NamedFilterSelectField
           name="group2"
-          data={filters}
+          data={comparisonGroups}
           className="flex-1"
           label="Group 2"
         />

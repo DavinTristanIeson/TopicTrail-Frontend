@@ -131,11 +131,12 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
       staleTime: Infinity,
     },
   );
+  const data = query.data?.data;
   return (
     <AppLayout
       Header={
         <AppHeader
-          title={query.data?.data.config.metadata.name}
+          title={data?.config.metadata.name}
           Right={
             <Button
               variant="subtle"
@@ -149,11 +150,11 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
           }
         />
       }
-      Sidebar={<ProjectNavbar config={query.data?.data.config} />}
+      Sidebar={<ProjectNavbar config={data?.config} />}
     >
       <UseQueryWrapperComponent query={query}>
-        {(data) => (
-          <ProjectContext.Provider value={data.data}>
+        {data && (
+          <ProjectContext.Provider value={data}>
             <div className={withPadding ? 'pt-3 px-3 h-full' : undefined}>
               {children}
             </div>

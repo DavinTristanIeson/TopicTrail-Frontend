@@ -20,32 +20,45 @@ import {
   ComparisonFilterFormType,
 } from './form-type';
 import { useCheckFilterValidity } from '@/modules/filter/management/hooks';
-import { NamedFiltersContext } from '../context';
 import RHFField from '@/components/standard/fields';
 import { NamedTableFilterModel } from '@/api/comparison';
+import { useProjectAppState } from '@/modules/project/app-state';
 
 interface ComparisonFilterDrawerContentsProps {
-  appliedFilter: NamedTableFilterModel;
+  appliedGroup: NamedTableFilterModel;
   onClose(): void;
 }
 
 function ComparisonFilterDrawerContents(
   props: ComparisonFilterDrawerContentsProps,
 ) {
-  const { appliedFilter, onClose } = props;
-  const { filters: appliedFilters, setFilters: setAppliedFilters } =
-    React.useContext(NamedFiltersContext);
+  const { appliedGroup: appliedGroup, onClose } = props;
+  const {
+    state: comparisonGroups,
+    handlers: { setItem: setComparisonGroup, append: addComparisonGroup },
+  } = useProjectAppState((store) => store.comparison.groups);
+
+  const currentComparisonGroupIndex = React.useMemo(() => {
+    const index = comparisonGroups.findIndex(
+      (group) => group.name === appliedGroup.name,
+    );
+    if (index === -1) {
+      return null;
+    } else {
+      return index;
+    }
+  }, [appliedGroup.name, comparisonGroups]);
 
   const defaultValues = React.useMemo(() => {
     const defaultComparisonFilterValues: ComparisonFilterFormType = {
-      name: `Group ${appliedFilters.length + 1}`,
+      name: `Group ${comparisonGroups.length + 1}`,
       filter: defaultTableFilterFormValues,
     };
     return (
-      (appliedFilter as ComparisonFilterFormType | undefined) ??
+      (appliedGroup as ComparisonFilterFormType | undefined) ??
       defaultComparisonFilterValues
     );
-  }, [appliedFilter, appliedFilters.length]);
+  }, [appliedGroup, comparisonGroups.length]);
 
   const form = useForm({
     mode: 'onChange',
@@ -58,31 +71,32 @@ function ComparisonFilterDrawerContents(
 
   const onSubmit = React.useCallback(
     async (formValues: ComparisonFilterFormType) => {
-      if (!appliedFilter) return;
+      if (!appliedGroup) return;
       const payload = comparisonFilterFormSchema.cast(formValues, {
         stripUnknown: true,
       }) as NamedTableFilterModel;
       payload.filter = await checkFilter(payload.filter);
 
-      setAppliedFilters((prev) => {
-        const next = prev.slice();
-        const index = next.findIndex(
-          (item) => item.name === appliedFilter.name,
-        );
-        if (index === -1) {
-          next.push(payload);
-        } else {
-          next[index] = payload;
-        }
-        return next;
-      });
+      if (currentComparisonGroupIndex == null) {
+        addComparisonGroup(payload);
+      } else {
+        setComparisonGroup(currentComparisonGroupIndex, payload);
+      }
+
       onClose();
       showNotification({
         message: 'Filter has been updated successfully',
         color: 'green',
       });
     },
-    [appliedFilter, checkFilter, onClose, setAppliedFilters],
+    [
+      addComparisonGroup,
+      appliedGroup,
+      checkFilter,
+      currentComparisonGroupIndex,
+      onClose,
+      setComparisonGroup,
+    ],
   );
 
   const loadFilter = React.useCallback(
@@ -122,18 +136,18 @@ const ComparisonFilterDrawer = React.forwardRef<
   ParametrizedDisclosureTrigger<NamedTableFilterModel> | null,
   object
 >(function TableFilterDrawer(props, ref) {
-  const [appliedFilter, { close }] = useParametrizedDisclosureTrigger(ref);
+  const [appliedGroup, { close }] = useParametrizedDisclosureTrigger(ref);
   return (
     <Drawer
       title="Filter"
-      opened={appliedFilter != null}
+      opened={appliedGroup != null}
       onClose={close}
       closeOnClickOutside={false}
       closeOnEscape={false}
     >
-      {appliedFilter && (
+      {appliedGroup && (
         <ComparisonFilterDrawerContents
-          appliedFilter={appliedFilter}
+          appliedGroup={appliedGroup}
           onClose={close}
         />
       )}

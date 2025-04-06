@@ -35,10 +35,11 @@ export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
       staleTime: Infinity,
     },
   );
+  const data = query.data?.data;
   return (
     <UseQueryWrapperComponent query={query}>
-      {(data) => (
-        <AllTopicModelingResultContext.Provider value={data.data}>
+      {data && (
+        <AllTopicModelingResultContext.Provider value={data}>
           {children}
         </AllTopicModelingResultContext.Provider>
       )}
