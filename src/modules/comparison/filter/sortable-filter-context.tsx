@@ -10,7 +10,7 @@ import { Button, Group, Paper, Text } from '@mantine/core';
 import { Eye, PencilSimple } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { useProjectAppState } from '@/modules/project/app-state';
+import { useComparisonAppState } from '../app-state';
 
 interface SortableNamedTableFilterDndContextProps {
   editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>;
@@ -63,7 +63,7 @@ export default function SortableNamedTableFilterDndContext(
   const {
     state: comparisonGroups,
     handlers: { setState },
-  } = useProjectAppState((store) => store.comparison.groups);
+  } = useComparisonAppState((store) => store.groups);
   const { id, grid, gridElements } = useControlledGridstack({
     gridItems: comparisonGroups.map((group) => group.name),
     options: SortableGridStackDefaultOptions({

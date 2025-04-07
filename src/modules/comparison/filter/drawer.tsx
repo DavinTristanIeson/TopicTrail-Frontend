@@ -22,7 +22,7 @@ import {
 import { useCheckFilterValidity } from '@/modules/filter/management/hooks';
 import RHFField from '@/components/standard/fields';
 import { NamedTableFilterModel } from '@/api/comparison';
-import { useProjectAppState } from '@/modules/project/app-state';
+import { useComparisonAppState } from '../app-state';
 
 interface ComparisonFilterDrawerContentsProps {
   appliedGroup: NamedTableFilterModel;
@@ -36,7 +36,7 @@ function ComparisonFilterDrawerContents(
   const {
     state: comparisonGroups,
     handlers: { setItem: setComparisonGroup, append: addComparisonGroup },
-  } = useProjectAppState((store) => store.comparison.groups);
+  } = useComparisonAppState((store) => store.groups);
 
   const currentComparisonGroupIndex = React.useMemo(() => {
     const index = comparisonGroups.findIndex(

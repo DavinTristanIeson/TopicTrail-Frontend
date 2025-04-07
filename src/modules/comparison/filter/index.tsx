@@ -10,7 +10,7 @@ import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type'
 import { NamedTableFilterModel } from '@/api/comparison';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
 import UserDataManager from '@/modules/userdata';
-import { useProjectAppState } from '@/modules/project/app-state';
+import { useComparisonAppState } from '../app-state';
 
 const SortableNamedTableFilterDndContext = dynamic(
   () => import('./sortable-filter-context'),
@@ -26,7 +26,7 @@ function ComparisonStateDataManager() {
   const {
     state: comparisonGroups,
     handlers: { setState: setComparisonGroups },
-  } = useProjectAppState((store) => store.comparison.groups);
+  } = useComparisonAppState((store) => store.groups);
 
   const rendererProps = useComparisonStateDataManager({
     onApply(state) {
@@ -50,9 +50,7 @@ export default function NamedFiltersManager() {
     React.useRef<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>(
       null,
     );
-  const comparisonGroups = useProjectAppState(
-    (store) => store.comparison.groups.state,
-  );
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   return (
     <>
       <Stack>

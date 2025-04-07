@@ -16,13 +16,11 @@ import RHFField from '@/components/standard/fields';
 import { SUPPORTED_COLUMN_TYPES_FOR_STATISTIC_TEST } from './dictionary';
 import SubmitButton from '@/components/standard/button/submit';
 import { TestTube } from '@phosphor-icons/react';
-import { useProjectAppState } from '@/modules/project/app-state';
+import { useComparisonAppState } from '../app-state';
 
 function StatisticTestFormBody() {
   const project = React.useContext(ProjectContext);
-  const comparisonGroups = useProjectAppState(
-    (store) => store.comparison.groups.state,
-  );
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const { setValue } = useFormContext<StatisticTestFormType>();
   const [columnType, setColumnType] =
     React.useState<SchemaColumnTypeEnum | null>(null);

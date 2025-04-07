@@ -1,11 +1,9 @@
 import { NextPageWithLayout } from '@/common/utils/types';
 import { GridSkeleton } from '@/components/visual/loading';
+import { useComparisonAppState } from '@/modules/comparison/app-state';
 import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
-import {
-  ProjectCommonDependencyProvider,
-  useProjectAppState,
-} from '@/modules/project/app-state';
+import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { Alert, Stack, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
@@ -27,9 +25,7 @@ enum ComparisonPageTab {
 }
 
 const ComparisonPage: NextPageWithLayout = function () {
-  const comparisonGroups = useProjectAppState(
-    (store) => store.comparison.groups.state,
-  );
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const [tab, setTab] = React.useState<string | null>(
     ComparisonPageTab.GroupsManager,
   );

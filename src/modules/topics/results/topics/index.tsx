@@ -11,7 +11,7 @@ import {
 import { TopicVisualizationWordCloudRenderer } from './word-cloud';
 import { Info } from '@phosphor-icons/react';
 
-enum TopicVisualizationMethod {
+export enum TopicVisualizationMethod {
   InterTopicRelationship = 'inter-topic-relationship',
   DocumentScatterPlot = 'document-scatter-plot',
   TopicsBarchart = 'topic-barchart',

@@ -6,13 +6,11 @@ import { Warning } from '@phosphor-icons/react';
 import { ProjectContext } from '@/modules/project/context';
 import { client } from '@/common/api/client';
 import { StatisticTestFormType } from './form-type';
-import { useProjectAppState } from '@/modules/project/app-state';
+import { useComparisonAppState } from '../app-state';
 
 export default function ComparisonStatisticTest() {
   const project = React.useContext(ProjectContext);
-  const comparisonGroups = useProjectAppState(
-    (store) => store.comparison.groups.state,
-  );
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const { data, error, isPending, mutateAsync } = client.useMutation(
     'post',
     '/table/{project_id}/statistic-test',
