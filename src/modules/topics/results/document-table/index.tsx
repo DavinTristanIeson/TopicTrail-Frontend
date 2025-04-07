@@ -9,7 +9,7 @@ import { TopicModel } from '@/api/topic';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
 import { Alert, Group, Stack, TextInput } from '@mantine/core';
-import { TableStateContext, useTableStateSetup } from '@/modules/table/context';
+import { TableStateContext } from '@/modules/table/context';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import {
   getPreprocessedDocumentsColumnName,
@@ -21,6 +21,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { useTopicModelingResultOfColumn } from '../../components/context';
 import { TopicMultiSelectInput } from '../../components/select-topic-input';
 import { DocumentsPerTopicTableRenderer } from './renderer';
+import { useTopicAppState } from '../../app-state';
 interface UseDocumentsPerTopicTableFilterStateProps {
   columnName: string;
   filter: TableFilterModel | null;
@@ -74,7 +75,7 @@ export default function DocumentsPerTopicTable() {
   const column = useCurrentTextualColumn();
   const topicModelingResult = useTopicModelingResultOfColumn(column.name);
 
-  const tableState = useTableStateSetup();
+  const tableState = useTopicAppState((store) => store.documents.params);
   const { page, limit, sort, filter: localFilter } = tableState;
   const { filter, setSearch, setTopics, topics, search } =
     useDocumentsPerTopicTableFilterState({

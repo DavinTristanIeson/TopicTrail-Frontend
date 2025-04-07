@@ -1,8 +1,8 @@
 import { TableFilterModel } from '@/api/table';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-import { Button, Drawer, Group, Indicator } from '@mantine/core';
-import { Funnel, Warning, X } from '@phosphor-icons/react';
+import { Button, Drawer, Group } from '@mantine/core';
+import { Warning, X } from '@phosphor-icons/react';
 import React from 'react';
 import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import {
@@ -17,7 +17,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 import { showNotification } from '@mantine/notifications';
 import { useCheckFilterValidity } from '../management/hooks';
-import { FilterStateContext } from '@/modules/table/context';
 import { useFilterDataManager } from '@/modules/userdata/data-manager';
 import { useDebouncedValue } from '@mantine/hooks';
 import UserDataManager from '@/modules/userdata';
@@ -188,26 +187,3 @@ const TableFilterDrawer = React.forwardRef<
 });
 
 export default TableFilterDrawer;
-
-export function TableFilterButton() {
-  const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { filter, setFilter } = React.useContext(FilterStateContext);
-  return (
-    <Indicator disabled={!filter} color="red" zIndex={2}>
-      <TableFilterDrawer
-        ref={tableFilterRemote}
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Button
-        variant="outline"
-        onClick={() => {
-          tableFilterRemote.current?.open();
-        }}
-        leftSection={<Funnel />}
-      >
-        Filter
-      </Button>
-    </Indicator>
-  );
-}

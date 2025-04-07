@@ -1,4 +1,3 @@
-import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import NavigationRoutes from '@/common/constants/routes';
 import { NextPageWithLayout } from '@/common/utils/types';
@@ -6,6 +5,7 @@ import { ProjectPageLinks } from '@/components/utility/links';
 import { GridSkeleton } from '@/components/visual/loading';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { ProjectContext } from '@/modules/project/context';
+import { useTopicCorrelationAppState } from '@/modules/topic-correlation/app-state';
 import TopicCorrelationColumnControls from '@/modules/topic-correlation/controls';
 import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
@@ -24,8 +24,8 @@ const GridstackDashboard = dynamic(
 );
 
 const TopicCorrelationPage: NextPageWithLayout = function () {
-  const [column1, setColumn1] = React.useState<SchemaColumnModel | null>(null);
-  const [column2, setColumn2] = React.useState<SchemaColumnModel | null>(null);
+  const { column1, column2, setColumn1, setColumn2 } =
+    useTopicCorrelationAppState((store) => store.params);
 
   const project = React.useContext(ProjectContext);
   const textualColumns = project.config.data_schema.columns.filter(

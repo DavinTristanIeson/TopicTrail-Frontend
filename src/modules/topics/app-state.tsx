@@ -1,14 +1,15 @@
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
-import { TopicVisualizationMethod } from './results/topics';
-import { TableStateType } from '../table/app-state';
-import { useTableStateSetup } from '../table/context';
+import { TopicVisualizationMethodEnum } from './results/topics';
+import { useTableStateSetup, TableStateType } from '../table/app-state';
 
 interface TopicAppStateContextType {
   topics: {
     topicVisualizationMethod: {
-      state: TopicVisualizationMethod;
-      setState: React.Dispatch<React.SetStateAction<TopicVisualizationMethod>>;
+      state: TopicVisualizationMethodEnum;
+      setState: React.Dispatch<
+        React.SetStateAction<TopicVisualizationMethodEnum>
+      >;
     };
   };
   documents: {
@@ -28,8 +29,8 @@ export default function TopicAppStateProvider(props: React.PropsWithChildren) {
   const documentTableState = useTableStateSetup();
   const [topics, setTopics] = React.useState<number[]>([]);
   const [topicVisualizationMethod, setTopicVisualizationMethod] =
-    React.useState<TopicVisualizationMethod>(
-      TopicVisualizationMethod.InterTopicRelationship,
+    React.useState<TopicVisualizationMethodEnum>(
+      TopicVisualizationMethodEnum.InterTopicRelationship,
     );
 
   return (

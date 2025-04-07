@@ -11,9 +11,11 @@ import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RefineTopicsDocumentTable } from './document-table';
-import { FilterStateProvider } from '../table/context';
 import { Button, Group } from '@mantine/core';
-import { TableFilterButton } from '../filter/drawer';
+import {
+  TableFilterButton,
+  FilterStateProvider,
+} from '@/modules/filter/context';
 import { RefineTopicsTopicList } from './topic-list';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import { RefineTopicsSortTopicsDrawer } from './topic-list/dialogs';
@@ -131,7 +133,8 @@ export default function RefineTopicsForm(props: RefineTopicsFormProps) {
           >
             Sort Topics
           </Button>
-          <TableFilterButton />
+          {/* Use context */}
+          <TableFilterButton state={null} />
           <SubmitButton>Save</SubmitButton>
         </Group>
 

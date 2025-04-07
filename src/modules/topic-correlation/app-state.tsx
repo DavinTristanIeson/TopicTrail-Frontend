@@ -1,3 +1,4 @@
+import { SchemaColumnModel } from '@/api/project';
 import { DashboardItemModel } from '@/api/userdata';
 import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 import React from 'react';
@@ -9,10 +10,10 @@ interface TopicCorrelationAppStateContextType {
     handlers: UseListStateHandlers<DashboardItemModel>;
   };
   params: {
-    column1: string | null;
-    column2: string | null;
-    setColumn1: React.Dispatch<React.SetStateAction<string | null>>;
-    setColumn2: React.Dispatch<React.SetStateAction<string | null>>;
+    column1: SchemaColumnModel | null;
+    column2: SchemaColumnModel | null;
+    setColumn2: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
+    setColumn1: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
   };
 }
 
@@ -22,8 +23,8 @@ const TopicCorrelationAppStateContext =
 export default function TopicCorrelationAppStateProvider(
   props: React.PropsWithChildren,
 ) {
-  const [column1, setColumn1] = React.useState<string | null>(null);
-  const [column2, setColumn2] = React.useState<string | null>(null);
+  const [column1, setColumn1] = React.useState<SchemaColumnModel | null>(null);
+  const [column2, setColumn2] = React.useState<SchemaColumnModel | null>(null);
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
 
   return (

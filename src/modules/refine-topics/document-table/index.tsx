@@ -1,7 +1,7 @@
 import { TopicModel } from '@/api/topic';
 import React from 'react';
 import { TextualSchemaColumnModel } from '@/api/project';
-import { TableStateContext, useTableStateSetup } from '@/modules/table/context';
+import { TableStateContext } from '@/modules/table/context';
 import { client } from '@/common/api/client';
 import { ProjectContext } from '@/modules/project/context';
 import { RefineTopicsDocumentTableRenderer } from './renderer';
@@ -10,6 +10,8 @@ import { TableSkeleton } from '@/components/visual/loading';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Alert, Text } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
+import { useTableStateSetup } from '@/modules/table/app-state';
+import { FilterStateContext } from '@/modules/filter/context';
 
 interface RefineTopicsDocumentTableProps {
   column: TextualSchemaColumnModel;
@@ -23,7 +25,8 @@ export function RefineTopicsDocumentTable(
   const project = React.useContext(ProjectContext);
 
   const tableState = useTableStateSetup();
-  const { page, limit, filter, sort } = tableState;
+  const { filter } = React.useContext(FilterStateContext);
+  const { page, limit, sort } = tableState;
 
   const { data, isFetching, error, refetch } = client.useQuery(
     'post',
