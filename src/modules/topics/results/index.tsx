@@ -3,17 +3,20 @@ import DocumentsPerTopicTable from './document-table';
 import React from 'react';
 import { Cards, Files } from '@phosphor-icons/react';
 import TopicVisualizationRenderer from './topics';
+import { useTopicAppState } from '../app-state';
 
-enum TopicsPageTab {
+export enum TopicsPageTab {
   Topics = 'topics',
   Documents = 'documents',
 }
 
 export default function ProjectTopicResultsPage() {
-  const [tab, setTab] = React.useState<string | null>(TopicsPageTab.Topics);
+  const { state: tab, setState: setTab } = useTopicAppState(
+    (store) => store.tab,
+  );
   return (
     <Stack className="w-full pt-3">
-      <Tabs value={tab} onChange={setTab} allowTabDeactivation={false}>
+      <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>
         <Tabs.List>
           <Tabs.Tab value={TopicsPageTab.Topics} leftSection={<Cards />}>
             Topics

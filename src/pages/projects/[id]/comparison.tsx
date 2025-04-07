@@ -1,6 +1,9 @@
 import { NextPageWithLayout } from '@/common/utils/types';
 import { GridSkeleton } from '@/components/visual/loading';
-import { useComparisonAppState } from '@/modules/comparison/app-state';
+import {
+  ComparisonPageTab,
+  useComparisonAppState,
+} from '@/modules/comparison/app-state';
 import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
@@ -18,17 +21,14 @@ const GridstackDashboard = dynamic(
   },
 );
 
-enum ComparisonPageTab {
-  GroupsManager = 'group-manager',
-  Visualization = 'visualization',
-  StatisticTest = 'statistic-test',
-}
-
 const ComparisonPage: NextPageWithLayout = function () {
-  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
-  const [tab, setTab] = React.useState<string | null>(
-    ComparisonPageTab.GroupsManager,
-  );
+  const { comparisonGroups, tab, setTab } = useComparisonAppState((store) => {
+    return {
+      comparisonGroups: store.groups.state,
+      tab: store.tab.state,
+      setTab: store.tab.setState,
+    };
+  });
 
   return (
     <>
@@ -41,7 +41,7 @@ const ComparisonPage: NextPageWithLayout = function () {
         </Alert>
       )}
 
-      <Tabs value={tab} onChange={setTab} allowTabDeactivation={false}>
+      <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>
         <Tabs.List>
           <Tabs.Tab
             value={ComparisonPageTab.GroupsManager}

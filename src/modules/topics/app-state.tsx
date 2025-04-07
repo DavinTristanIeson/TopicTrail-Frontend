@@ -2,8 +2,18 @@ import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
 import { TopicVisualizationMethodEnum } from './results/topics';
 import { useTableStateSetup, TableStateType } from '../table/app-state';
+import { TopicModel } from '@/api/topic';
+import { TopicsPageTab } from './results';
 
 interface TopicAppStateContextType {
+  column: {
+    state: string | null;
+    setState: React.Dispatch<React.SetStateAction<string | null>>;
+  };
+  tab: {
+    state: TopicsPageTab;
+    setState: React.Dispatch<React.SetStateAction<TopicsPageTab>>;
+  };
   topics: {
     topicVisualizationMethod: {
       state: TopicVisualizationMethodEnum;
@@ -15,8 +25,8 @@ interface TopicAppStateContextType {
   documents: {
     params: TableStateType;
     topics: {
-      state: number[];
-      setState: React.Dispatch<React.SetStateAction<number[]>>;
+      state: TopicModel[];
+      setState: React.Dispatch<React.SetStateAction<TopicModel[]>>;
     };
   };
 }
@@ -27,15 +37,29 @@ const TopicAppStateContext = createContext<TopicAppStateContextType>(
 
 export default function TopicAppStateProvider(props: React.PropsWithChildren) {
   const documentTableState = useTableStateSetup();
-  const [topics, setTopics] = React.useState<number[]>([]);
+  const [column, setColumn] = React.useState<string | null>(null);
+  const [tab, setTab] = React.useState<TopicsPageTab>(TopicsPageTab.Topics);
+  const [topics, setTopics] = React.useState<TopicModel[]>([]);
   const [topicVisualizationMethod, setTopicVisualizationMethod] =
     React.useState<TopicVisualizationMethodEnum>(
       TopicVisualizationMethodEnum.InterTopicRelationship,
     );
 
+  React.useEffect(() => {
+    setTopics([]);
+  }, [column]);
+
   return (
     <TopicAppStateContext.Provider
       value={{
+        column: {
+          state: column,
+          setState: setColumn,
+        },
+        tab: {
+          state: tab,
+          setState: setTab,
+        },
         topics: {
           topicVisualizationMethod: {
             state: topicVisualizationMethod,

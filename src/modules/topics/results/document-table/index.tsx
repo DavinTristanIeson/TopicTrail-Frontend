@@ -5,7 +5,6 @@ import {
 } from '@/modules/project/context';
 import React from 'react';
 import { TableFilterModel } from '@/api/table';
-import { TopicModel } from '@/api/topic';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
 import { Alert, Group, Stack, TextInput } from '@mantine/core';
@@ -31,7 +30,9 @@ function useDocumentsPerTopicTableFilterState(
   props: UseDocumentsPerTopicTableFilterStateProps,
 ) {
   const { columnName, filter } = props;
-  const [topics, setTopics] = React.useState<TopicModel[]>([]);
+  const { state: topics, setState: setTopics } = useTopicAppState(
+    (store) => store.documents.topics,
+  );
   const [search, setSearch] = React.useState('');
   const [debouncedTopics] = useDebouncedValue(topics, 1000);
   const [debouncedSearch] = useDebouncedValue(search, 1000);

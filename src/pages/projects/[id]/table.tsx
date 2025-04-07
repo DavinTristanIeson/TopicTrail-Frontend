@@ -7,6 +7,7 @@ import { Shapes, Table } from '@phosphor-icons/react';
 import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { NextPageWithLayout } from '@/common/utils/types';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
+import { TablePageTab, useTableAppState } from '@/modules/table/app-state';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -16,16 +17,13 @@ const GridstackDashboard = dynamic(
   },
 );
 
-enum TablePageTab {
-  Table = 'table',
-  Dashboard = 'dashboard',
-}
-
 const TablePage: NextPageWithLayout = function TablePage() {
-  const [tab, setTab] = React.useState<string | null>(TablePageTab.Table);
+  const { state: tab, setState: setTab } = useTableAppState(
+    (store) => store.tab,
+  );
   return (
     <>
-      <Tabs value={tab} onChange={setTab} allowTabDeactivation={false}>
+      <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>
         <Tabs.List>
           <Tabs.Tab value={TablePageTab.Table} leftSection={<Table />}>
             Table

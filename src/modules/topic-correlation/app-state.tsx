@@ -26,6 +26,11 @@ export default function TopicCorrelationAppStateProvider(
   const [column1, setColumn1] = React.useState<SchemaColumnModel | null>(null);
   const [column2, setColumn2] = React.useState<SchemaColumnModel | null>(null);
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
+  const { setState } = dashboardHandlers;
+
+  React.useEffect(() => {
+    setState([]);
+  }, [column1, column2, setState]);
 
   return (
     <TopicCorrelationAppStateContext.Provider

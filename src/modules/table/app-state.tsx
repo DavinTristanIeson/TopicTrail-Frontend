@@ -5,6 +5,11 @@ import { createContext, useContextSelector } from 'use-context-selector';
 
 import { TableFilterModel, TableSortModel } from '@/api/table';
 
+export enum TablePageTab {
+  Table = 'table',
+  Dashboard = 'dashboard',
+}
+
 export interface TableStateType {
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
@@ -44,6 +49,10 @@ interface TableAppStateContextType {
     handlers: UseListStateHandlers<DashboardItemModel>;
   };
   params: TableStateType;
+  tab: {
+    state: TablePageTab;
+    setState: React.Dispatch<React.SetStateAction<TablePageTab>>;
+  };
 }
 
 const TableAppStateContext = createContext<TableAppStateContextType>(
@@ -51,12 +60,17 @@ const TableAppStateContext = createContext<TableAppStateContextType>(
 );
 
 export default function TableAppStateProvider(props: React.PropsWithChildren) {
+  const [tab, setTab] = React.useState(TablePageTab.Table);
   const tableState = useTableStateSetup();
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
 
   return (
     <TableAppStateContext.Provider
       value={{
+        tab: {
+          state: tab,
+          setState: setTab,
+        },
         params: tableState,
         dashboard: {
           state: dashboard,

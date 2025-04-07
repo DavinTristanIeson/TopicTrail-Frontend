@@ -36,8 +36,6 @@ export type SchemaColumnDataTableColumnType = MRT_ColumnDef<
   Record<string, any>
 >;
 
-type MantineReactTableProps = Partial<MRT_TableOptions<any>>;
-
 export const MantineReactTableStylingProps = {};
 
 export const MantineReactTableBehaviors = {
@@ -50,38 +48,38 @@ export const MantineReactTableBehaviors = {
     enableFilters: false,
     enableStickyHeader: true,
     enableGlobalFilter: false,
-  } satisfies MantineReactTableProps,
+  },
   Resizable: {
     enableColumnResizing: true,
-    layoutMode: 'grid-no-grow',
-    columnResizeMode: 'onEnd',
-  } satisfies MantineReactTableProps,
+    layoutMode: 'grid-no-grow' as const,
+    columnResizeMode: 'onEnd' as const,
+  },
   Sortable: {
     enableSorting: false,
     enableMultiSort: false,
     manualSorting: true,
     enableSortingRemoval: true,
     sortDescFirst: false,
-  } satisfies MantineReactTableProps,
+  },
   WithPagination: {
     mantinePaginationProps: {
       rowsPerPageOptions: [10, 25, 50, 100].map(String),
     },
     enablePagination: true,
     manualPagination: true,
-  } satisfies MantineReactTableProps,
+  },
   ColumnActions: {
     enableColumnDragging: true,
     enableColumnOrdering: true,
     enableColumnFilters: false,
     enableColumnPinning: true,
     enableColumnResizing: true,
-  } satisfies MantineReactTableProps,
+  },
   Virtualized(rows: any[], columns: any[]) {
     return {
       enableColumnVirtualization: columns.length > 12,
       enableRowVirtualization: rows.length > 50,
-    } satisfies MantineReactTableProps;
+    };
   },
 };
 

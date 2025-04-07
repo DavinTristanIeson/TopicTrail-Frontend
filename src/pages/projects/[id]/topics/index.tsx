@@ -9,11 +9,11 @@ import ProjectTopicsEmptyPage from '@/modules/topics/empty';
 import ProjectTopicResultsPage from '@/modules/topics/results';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
 import { SchemaColumnContext } from '@/modules/project/context';
-import { useRouter } from 'next/router';
 import TopicResultsPageControls from '@/modules/topics/results/controls';
 import { Warning } from '@phosphor-icons/react';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { NextPageWithLayout } from '@/common/utils/types';
+import { useTopicAppState } from '@/modules/topics/app-state';
 
 interface ProjectTopicSwitcherProps {
   column: string;
@@ -49,21 +49,17 @@ function ProjectTopicPageSwitcher(props: ProjectTopicSwitcherProps) {
 const ProjectTopicsPage: NextPageWithLayout = function () {
   const topicModelingResults = React.useContext(AllTopicModelingResultContext);
 
-  const queryColumn = useRouter().query.column as string;
-  const [columnName, setColumn] = React.useState<string | null>(
-    queryColumn ?? null,
+  const { state: columnName, setState: setColumn } = useTopicAppState(
+    (store) => store.column,
   );
 
   const columns = topicModelingResults.map((result) => result.column);
   const firstColumn = columns[0];
   // Focus on the first column
-  const hasInitializedColumn = React.useRef(!!queryColumn);
   React.useEffect(() => {
-    if (hasInitializedColumn.current) return;
-    if (!firstColumn) return;
+    if (columnName || !firstColumn) return;
     setColumn(firstColumn.name);
-    hasInitializedColumn.current = true;
-  }, [firstColumn]);
+  }, [columnName, firstColumn, setColumn]);
 
   const focusedTopicModelingResult = topicModelingResults
     ? topicModelingResults.find((result) => result.column.name === columnName)
