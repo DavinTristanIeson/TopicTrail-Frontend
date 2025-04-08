@@ -5,6 +5,7 @@ import {
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import { SelectFieldProps } from '@/components/standard/fields/wrapper';
+import { SelectedComboboxWrapper } from '@/components/visual/select';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import {
   type ComboboxItem,
@@ -24,15 +25,19 @@ export interface ProjectColumnComboboxItem extends ComboboxItem {
 function ProjectColumnComboboxItemRenderer(
   combobox: ComboboxLikeRenderOptionInput<ProjectColumnComboboxItem>,
 ) {
-  const { option } = combobox;
+  const { option, checked } = combobox;
   return (
-    <Group>
-      <ProjectSchemaTypeIcon type={option.data.type as SchemaColumnTypeEnum} />
-      <Text size="sm">{option.label}</Text>
-      <Text size="xs" c="gray">
-        {capitalize(option.data.type)}
-      </Text>
-    </Group>
+    <SelectedComboboxWrapper checked={checked}>
+      <Group>
+        <ProjectSchemaTypeIcon
+          type={option.data.type as SchemaColumnTypeEnum}
+        />
+        <Text size="sm">{option.label}</Text>
+        <Text size="xs" c="gray">
+          {capitalize(option.data.type)}
+        </Text>
+      </Group>
+    </SelectedComboboxWrapper>
   );
 }
 
@@ -89,17 +94,19 @@ interface ProjectColumnTypeComboboxItem extends ComboboxItem {
 function ProjectColumnTypeComboboxItemRenderer(
   combobox: ComboboxLikeRenderOptionInput<ProjectColumnTypeComboboxItem>,
 ) {
-  const { option } = combobox;
+  const { option, checked } = combobox;
   return (
-    <Stack gap={4}>
-      <Group>
-        <ProjectSchemaTypeIcon type={option.value} />
-        <Text size="sm">{option.label}</Text>
-      </Group>
-      <Text size="xs" c="gray">
-        {option.description}
-      </Text>
-    </Stack>
+    <SelectedComboboxWrapper checked={checked}>
+      <Stack>
+        <Group>
+          <ProjectSchemaTypeIcon type={option.value} />
+          <Text size="sm">{option.label}</Text>
+        </Group>
+        <Text size="xs" c="gray">
+          {option.description}
+        </Text>
+      </Stack>
+    </SelectedComboboxWrapper>
   );
 }
 

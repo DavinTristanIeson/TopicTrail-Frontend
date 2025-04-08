@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { GridSkeleton } from '@/components/visual/loading';
 import { Shapes, Table } from '@phosphor-icons/react';
 import { FilterStateProvider } from '@/modules/table/context';
+import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -41,7 +42,10 @@ export default function TablePage() {
             {tab === TablePageTab.Table ? (
               <TableQueryComponent />
             ) : tab === TablePageTab.Dashboard ? (
-              <GridstackDashboard />
+              <>
+                <DashboardControls />
+                <GridstackDashboard />
+              </>
             ) : null}
           </FilterStateProvider>
         </div>
