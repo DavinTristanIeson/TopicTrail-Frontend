@@ -67,22 +67,29 @@ interface TemporalColumnCellProps {
 }
 
 function TemporalColumnCell(props: TemporalColumnCellProps) {
+  if (!props.date) {
+    return null;
+  }
+  const date = dayjs(props.date);
+  if (!date.isValid()) {
+    return null;
+  }
   let value: string;
   switch (props.precision) {
     case TemporalPrecisionEnum.Year: {
-      value = dayjs(props.date).format('YYYY');
+      value = date.format('YYYY');
       break;
     }
     case TemporalPrecisionEnum.Month: {
-      value = dayjs(props.date).format('MMMM YYYY');
+      value = date.format('MMMM YYYY');
       break;
     }
     case TemporalPrecisionEnum.Date: {
-      value = dayjs(props.date).format('DD MMMM YYYY');
+      value = date.format('DD MMMM YYYY');
       break;
     }
     default: {
-      value = dayjs(props.date).format('DD MMMM YYYY, HH:mm:ss');
+      value = date.format('DD MMMM YYYY, HH:mm:ss');
       break;
     }
   }
@@ -197,6 +204,9 @@ interface CategoricalColumnCellProps {
 }
 
 function CategoricalColumnCell(props: CategoricalColumnCellProps) {
+  if (!props.category) {
+    return null;
+  }
   const order = props.categoryOrder
     ? props.categoryOrder.findIndex((category) => category === props.category)
     : -1;
@@ -218,6 +228,9 @@ interface NumericColumnCellProps {
 
 function NumericColumnCell(props: NumericColumnCellProps) {
   const { value } = props;
+  if (value == null) {
+    return null;
+  }
 
   return (
     <DefaultColumnCell>

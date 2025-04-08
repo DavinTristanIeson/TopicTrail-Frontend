@@ -12,6 +12,7 @@ import {
   type MRT_PaginationState,
 } from 'mantine-react-table';
 import { Text, HoverCard } from '@mantine/core';
+import { AllTopicModelingResultContext } from '../topics/components/context';
 
 const SORTABLE_COLUMNS = [
   SchemaColumnTypeEnum.OrderedCategorical,
@@ -77,9 +78,10 @@ export const MantineReactTableBehaviors = {
     enableColumnPinning: true,
     enableColumnResizing: true,
   } satisfies MantineReactTableProps,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Virtualized(rows: any[], columns: any[]) {
     return {
-      enableColumnVirtualization: columns.length > 12,
+      // enableColumnVirtualization: columns.length > 12,
       enableRowVirtualization: rows.length > 50,
     } satisfies MantineReactTableProps;
   },
@@ -88,45 +90,57 @@ export const MantineReactTableBehaviors = {
 export function useSchemaColumnToMantineReactTableAdapter(
   columns: SchemaColumnModel[],
 ): SchemaColumnDataTableColumnType[] {
+  const topicModelingResults = React.useContext(AllTopicModelingResultContext);
   return React.useMemo<SchemaColumnDataTableColumnType[]>(() => {
-    const tableColumns = columns.map<SchemaColumnDataTableColumnType>(
+    const tableColumns = columns.flatMap<SchemaColumnDataTableColumnType>(
       (column: SchemaColumnModel) => {
-        return {
-          accessorKey: column.name,
-          header: column.name,
-          Header() {
-            if (!column.description) {
-              return column.name;
-            }
-            return (
-              <HoverCard>
-                <HoverCard.Target>
-                  <Text fw="bold" size="sm">
-                    {column.name}
-                  </Text>
-                </HoverCard.Target>
-                <HoverCard.Dropdown className="max-w-md">
-                  <Text size="sm">{column.description}</Text>
-                </HoverCard.Dropdown>
-              </HoverCard>
-            );
+        if (column.internal) {
+          const topicModelingResult = topicModelingResults.find(
+            (tmColumn) => tmColumn.column.name === column.source_name!,
+          );
+          // If this column is either (Preprocessed) or (Topic), but topic modeling has not been executed yet.
+          if (topicModelingResult && !topicModelingResult.result) {
+            return [];
+          }
+        }
+        return [
+          {
+            accessorKey: column.name,
+            header: column.name,
+            Header() {
+              if (!column.description) {
+                return column.name;
+              }
+              return (
+                <HoverCard>
+                  <HoverCard.Target>
+                    <Text fw="bold" size="sm">
+                      {column.name}
+                    </Text>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown className="max-w-md">
+                    <Text size="sm">{column.description}</Text>
+                  </HoverCard.Dropdown>
+                </HoverCard>
+              );
+            },
+            size: DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
+            enableSorting: SORTABLE_COLUMNS.includes(
+              column.type as SchemaColumnTypeEnum,
+            ),
+            Cell({ cell: { getValue } }) {
+              return (
+                <div className="h-full">
+                  <ColumnCellRenderer column={column} value={getValue()} />
+                </div>
+              );
+            },
           },
-          size: DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
-          enableSorting: SORTABLE_COLUMNS.includes(
-            column.type as SchemaColumnTypeEnum,
-          ),
-          Cell({ cell: { getValue } }) {
-            return (
-              <div className="h-full">
-                <ColumnCellRenderer column={column} value={getValue()} />
-              </div>
-            );
-          },
-        };
+        ];
       },
     );
     return tableColumns;
-  }, [columns]);
+  }, [columns, topicModelingResults]);
 }
 
 interface UseTableStateToMantineReactTableAdapterProps {
