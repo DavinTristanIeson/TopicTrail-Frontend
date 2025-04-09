@@ -2,6 +2,7 @@ import { queryClient } from '@/common/api/query-client';
 import { components } from './openapi';
 import { Query } from '@tanstack/react-query';
 import { client } from '@/common/api/client';
+import { get, isObject } from 'lodash';
 
 export type ProjectModel = components['schemas']['ProjectResource'];
 export type ProjectMetadataModel = components['schemas']['ProjectMetadata'];
@@ -46,23 +47,23 @@ export type ProjectMutationInput =
 export type ProjectCheckDatasetInput =
   components['schemas']['CheckDatasetSchema'];
 
-function projectDependencyPredicate(query: Query): boolean {
-  const secondPart = query.queryKey?.[1];
-  const hasSecondPart = !!secondPart;
-  if (!hasSecondPart) {
-    return false;
-  }
-  const secondPartIsString = typeof secondPart === 'string';
-  if (!secondPartIsString) {
-    return false;
-  }
-  const mentionsProjectId = secondPart.includes('projectId');
-  return mentionsProjectId;
+function projectDependencyPredicateBuilder(projectId: string) {
+  return function predicate(query: Query) {
+    const paramsPart = query.queryKey?.[2];
+    if (!paramsPart) {
+      return false;
+    }
+    if (!isObject(paramsPart)) {
+      return false;
+    }
+    const queryProjectId = get(paramsPart, 'params.path.project_id');
+    return projectId === queryProjectId;
+  };
 }
 
 export function invalidateProjectDependencyQueries(projectId: string) {
   queryClient.invalidateQueries({
-    predicate: projectDependencyPredicate,
+    predicate: projectDependencyPredicateBuilder(projectId),
   });
   queryClient.invalidateQueries({
     queryKey: client.queryOptions('get', '/projects/').queryKey,
@@ -70,7 +71,7 @@ export function invalidateProjectDependencyQueries(projectId: string) {
 }
 export function removeProjectDependencyQueries(projectId: string) {
   queryClient.removeQueries({
-    predicate: projectDependencyPredicate,
+    predicate: projectDependencyPredicateBuilder(projectId),
   });
   queryClient.invalidateQueries({
     queryKey: client.queryOptions('get', '/projects/').queryKey,

@@ -1,5 +1,8 @@
 import { useFormContext, useWatch } from 'react-hook-form';
-import { ProjectConfigFormType } from '../form-type';
+import {
+  DefaultProjectSchemaColumnValues,
+  ProjectConfigFormType,
+} from '../form-type';
 import { Divider, Stack } from '@mantine/core';
 import React from 'react';
 import RHFField from '@/components/standard/fields';
@@ -9,10 +12,10 @@ import { ProjectConfigColumnOrderedCategoricalForm } from './ordered-categorical
 import {
   ProjectConfigColumnGeospatialForm,
   ProjectConfigColumnMulticategoricalForm,
-  ProjectConfigColumnTemporalForm,
 } from './other-columns';
 import { ProjectConfigColumnTextualForm } from './textual-column';
 import { ProjectColumnTypeSelectField } from '@/modules/project/select-column-input';
+import { ProjectConfigColumnTemporalForm } from './temporal-column';
 
 interface ProjectConfigColumnFormItemProps {
   index: number;
@@ -75,7 +78,8 @@ export function ProjectConfigColumnFormItem(
   props: ProjectConfigColumnFormItemProps,
 ) {
   const { index } = props;
-  const parentName = `columns.${index}`;
+  const parentName = `columns.${index}` as const;
+  const { setValue, getValues } = useFormContext<ProjectConfigFormType>();
   return (
     <Stack className="pt-5">
       <ProjectColumnTypeSelectField
@@ -83,6 +87,16 @@ export function ProjectConfigColumnFormItem(
         type="select"
         className="flex-1"
         required
+        onChange={(type) => {
+          if (!type) return;
+          setValue(
+            parentName,
+            DefaultProjectSchemaColumnValues(
+              getValues(`${parentName}.name`),
+              type as SchemaColumnTypeEnum,
+            ),
+          );
+        }}
       />
       <RHFField
         name={`${parentName}.description`}

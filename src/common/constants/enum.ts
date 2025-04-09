@@ -27,9 +27,19 @@ export enum DocumentPreprocessingMethodEnum {
   English = 'en_core_web_sm',
 }
 
-export enum TemporalPrecisionEnum {
+export enum TemporalColumnFeatureEnum {
+  Year = 'year',
+  Month = 'month',
   Date = 'date',
-  DateTime = 'date-time',
+  Monthly = 'monthly',
+  DayOfWeek = 'day_of_week',
+  Hour = 'hour',
+}
+
+export enum TemporalPrecisionEnum {
+  Year = 'year',
+  Month = 'month',
+  Date = 'date',
 }
 
 export enum DataSourceTypeEnum {
@@ -56,18 +66,18 @@ export enum TableFilterTypeEnum {
   Only = 'only',
 }
 
-export enum StatisticTestMethodEnum {
-  T = 't',
-  MannWhitneyU = 'mann-whitney-u',
-  ChiSquared = 'chi-squared',
-}
-
 export enum EffectSizeMethodEnum {
   MeanDifference = 'mean-difference',
   MedianDifference = 'median-difference',
   CohensD = 'cohen-d',
   RankBiserialCorrelation = 'rank-biserial-correlation',
   CramerV = 'cramer-v',
+}
+
+export enum StatisticTestMethodEnum {
+  T = 't',
+  MannWhitneyU = 'mann-whitney-u',
+  ChiSquared = 'chi-squared',
 }
 
 export enum TaskStatusEnum {
@@ -82,10 +92,11 @@ export enum EnumList {
   GeospatialRoleEnum = 'GeospatialRoleEnum',
   DocumentEmbeddingMethodEnum = 'DocumentEmbeddingMethodEnum',
   DocumentPreprocessingMethodEnum = 'DocumentPreprocessingMethodEnum',
+  TemporalColumnFeatureEnum = 'TemporalColumnFeatureEnum',
   TemporalPrecisionEnum = 'TemporalPrecisionEnum',
   DataSourceTypeEnum = 'DataSourceTypeEnum',
   TableFilterTypeEnum = 'TableFilterTypeEnum',
-  StatisticTestMethodEnum = 'StatisticTestMethodEnum',
   EffectSizeMethodEnum = 'EffectSizeMethodEnum',
+  StatisticTestMethodEnum = 'StatisticTestMethodEnum',
   TaskStatusEnum = 'TaskStatusEnum',
 }

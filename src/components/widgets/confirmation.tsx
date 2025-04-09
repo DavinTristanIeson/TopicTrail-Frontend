@@ -37,7 +37,12 @@ const ConfirmationDialog = React.forwardRef<
         >
           {props.positiveAction ?? 'Confirm'}
         </PromiseButton>
-        <Button variant="outline" leftSection={<X />} onClick={close}>
+        <Button
+          variant="outline"
+          leftSection={<X />}
+          onClick={close}
+          color="red"
+        >
           Cancel
         </Button>
       </Flex>

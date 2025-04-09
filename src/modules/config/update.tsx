@@ -9,14 +9,19 @@ import { DisclosureTrigger } from '@/hooks/disclosure';
 import ProjectConfigForm from '@/modules/config/form';
 import { DeleteProjectModal } from '@/modules/project/actions';
 import { ProjectContext } from '@/modules/project/context';
-import { Button, Group, Stack } from '@mantine/core';
+import { Text, Button, Group, Stack } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { PencilSimple, TrashSimple } from '@phosphor-icons/react';
+import {
+  ArrowCounterClockwise,
+  PencilSimple,
+  TrashSimple,
+} from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import ProjectConfigFormPhaseSwitcher from './project-flow';
 import { FormEditableContext } from '@/components/standard/fields/context';
 import { CancelButton } from '@/components/standard/button/variants';
+import ConfirmationDialog from '@/components/widgets/confirmation';
 
 function UpdateProjectDeleteButton() {
   const deleteRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -47,6 +52,86 @@ function UpdateProjectDeleteButton() {
   );
 }
 
+function UpdateProjectReloadDatasetButton() {
+  const { mutateAsync: reloadDataset } = client.useMutation(
+    'patch',
+    '/projects/{project_id}/reload',
+    {
+      onSuccess(data, variables) {
+        invalidateProjectDependencyQueries(variables.params.path.project_id);
+      },
+    },
+  );
+  const confirmationRemote = React.useRef<DisclosureTrigger | null>(null);
+  const project = React.useContext(ProjectContext);
+  const router = useRouter();
+  return (
+    <>
+      <ConfirmationDialog
+        ref={confirmationRemote}
+        dangerous
+        title="Reload dataset?"
+        icon={<ArrowCounterClockwise />}
+        message={
+          <Stack>
+            <Text inherit>
+              <Text fw={500} span inherit>
+                Are you sure you want to reload the dataset?
+              </Text>{' '}
+              This is helpful when your data is corrupted or when you need to
+              load the newest data from the dataset as long as the schema of the
+              dataset hasn&apos;t changed yet.{' '}
+              <Text span inherit c="gray" size="sm">
+                If you want to load a dataset with a different schema, please
+                change the dataset in Step 2/3 instead.
+              </Text>
+            </Text>
+            <Text inherit>
+              Please note that by reloading the dataset, all cached data such as
+              the topic modeling results and document vectors{' '}
+              <Text inherit span c="red" fw={500}>
+                will be deleted
+              </Text>{' '}
+              because the cached data will become outdated. You will be forced
+              to run the topic modeling algorithm again once the dataset has
+              been reloaded
+            </Text>
+          </Stack>
+        }
+        onConfirm={async () => {
+          const res = await reloadDataset({
+            params: {
+              path: {
+                project_id: project.id,
+              },
+            },
+          });
+          if (res.message) {
+            showNotification({
+              message: res.message,
+              color: 'green',
+            });
+          }
+          router.replace({
+            pathname: NavigationRoutes.ProjectTopics,
+            query: {
+              id: project.id,
+            },
+          });
+        }}
+      />
+      <Button
+        leftSection={<ArrowCounterClockwise />}
+        onClick={() => confirmationRemote.current?.open()}
+        color="red"
+        variant="outline"
+      >
+        Reload Dataset
+      </Button>
+    </>
+  );
+}
+
 interface UpdateProjectFormButtonsProps {
   editable: boolean;
   setEditable: React.Dispatch<React.SetStateAction<boolean>>;
@@ -65,6 +150,7 @@ function UpdateProjectFormButtons(props: UpdateProjectFormButtonsProps) {
             Edit
           </Button>
           <UpdateProjectDeleteButton />
+          <UpdateProjectReloadDatasetButton />
         </>
       ) : (
         <>
