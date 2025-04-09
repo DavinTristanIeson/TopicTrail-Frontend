@@ -1,50 +1,7 @@
 import RHFField from '@/components/standard/fields';
-import {
-  GeospatialRoleEnum,
-  TemporalPrecisionEnum,
-} from '@/common/constants/enum';
+import { GeospatialRoleEnum } from '@/common/constants/enum';
 import FieldWatcher from '@/components/standard/fields/watcher';
 import { ProjectConfigColumnFormProps } from './utils';
-import { Anchor, Text } from '@mantine/core';
-
-export function ProjectConfigColumnTemporalForm(
-  props: ProjectConfigColumnFormProps,
-) {
-  const { index } = props;
-
-  return (
-    <>
-      <RHFField
-        type="text"
-        name={`columns.${index}.datetime_format`}
-        label="Datetime Format"
-        description={
-          <Text size="xs">
-            The datetime format used for the column. You can find the reference
-            for the format in here:
-            <Anchor href="https://strftime.org/">https://strftime.org/</Anchor>
-          </Text>
-        }
-      />
-      <RHFField
-        type="select"
-        name={`columns.${index}.temporal_precision`}
-        data={[
-          {
-            label: 'Date',
-            value: TemporalPrecisionEnum.Date,
-          },
-          {
-            label: 'Date & Time',
-            value: TemporalPrecisionEnum.DateTime,
-          },
-        ]}
-        label="Precision"
-        description={`The level of detail used for the date-time values. Choose "Date" if you don't care about the hours/minutes/seconds; otherwise, choose "Date-Time".`}
-      />
-    </>
-  );
-}
 
 export function ProjectConfigColumnGeospatialForm(
   props: ProjectConfigColumnFormProps,

@@ -5,12 +5,12 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import ComparisonFilterDrawer from './drawer';
 import { Button, Stack } from '@mantine/core';
-import { NamedFiltersContext } from '../context';
 import { Plus } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { NamedTableFilterModel } from '@/api/comparison';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
 import UserDataManager from '@/modules/userdata';
+import { useComparisonAppState } from '../app-state';
 
 const SortableNamedTableFilterDndContext = dynamic(
   () => import('./sortable-filter-context'),
@@ -23,19 +23,23 @@ const SortableNamedTableFilterDndContext = dynamic(
 );
 
 function ComparisonStateDataManager() {
-  const { filters, setFilters } = React.useContext(NamedFiltersContext);
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const setComparisonGroups = useComparisonAppState(
+    (store) => store.groups.handlers.setState,
+  );
+
   const rendererProps = useComparisonStateDataManager({
     onApply(state) {
-      setFilters(state.groups);
+      setComparisonGroups(state.groups);
     },
     state: React.useMemo(() => {
-      if (!filters || filters.length === 0) {
+      if (!comparisonGroups || comparisonGroups.length === 0) {
         return null;
       }
       return {
-        groups: filters,
+        groups: comparisonGroups,
       };
-    }, [filters]),
+    }, [comparisonGroups]),
   });
 
   return <UserDataManager {...rendererProps} label="Comparison Groups" />;
@@ -46,7 +50,7 @@ export default function NamedFiltersManager() {
     React.useRef<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>(
       null,
     );
-  const { filters } = React.useContext(NamedFiltersContext);
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   return (
     <>
       <Stack>
@@ -57,7 +61,7 @@ export default function NamedFiltersManager() {
           className="max-w-md"
           onClick={() => {
             editRemote.current?.open({
-              name: `Group ${filters.length + 1}`,
+              name: `Group ${comparisonGroups.length + 1}`,
               filter: defaultTableFilterFormValues as TableFilterModel,
             });
           }}

@@ -7,6 +7,8 @@ import {
 import {
   DateTimeField,
   DateTimeFieldProps,
+  MultiSelectField,
+  MultiSelectFieldProps,
   NumberField,
   NumberFieldProps,
   PercentageField,
@@ -29,6 +31,7 @@ type RHFFieldProps =
   | PercentageFieldProps
   | TagsFieldProps
   | SelectFieldProps
+  | MultiSelectFieldProps
   | SwitchFieldProps
   | TextareaFieldProps
   | DateTimeFieldProps
@@ -49,6 +52,8 @@ export default function RHFField(props: RHFFieldProps) {
       return <SwitchField {...props} />;
     case 'select':
       return <SelectField {...props} />;
+      case 'multi-select':
+      return <MultiSelectField {...props} />;
     case 'textarea':
       return <TextareaField {...props} />;
     case 'datetime':

@@ -40,12 +40,13 @@ export function TopicVisualizationDataProvider(
       },
     },
   );
+  const data = query.data?.data;
   return (
     <UseQueryWrapperComponent
       query={query}
       loadingComponent={<WidePlotSkeleton />}
     >
-      {(data) => <Child data={data.data} column={column} />}
+      {data && <Child data={data} column={column} />}
     </UseQueryWrapperComponent>
   );
 }
@@ -81,12 +82,14 @@ export function DocumentTopicsVisualizationDataProvider(
       },
     },
   );
+  const data = query.data?.data;
+
   return (
     <UseQueryWrapperComponent
       query={query}
       loadingComponent={<WidePlotSkeleton />}
     >
-      {(data) => <Child data={data.data} column={column} />}
+      {data && <Child data={data} column={column} />}
     </UseQueryWrapperComponent>
   );
 }

@@ -11,6 +11,7 @@ import {
   type SelectProps,
   Textarea,
   type TextareaProps,
+  MultiSelect,
 } from '@mantine/core';
 import { DateTimePicker, type DateTimePickerProps } from '@mantine/dates';
 
@@ -110,6 +111,20 @@ export function SelectField(props: SelectFieldProps) {
     },
   });
   return <Select {...mergedProps} />;
+}
+
+export type MultiSelectFieldProps = IRHFField<
+  SelectProps & IRHFMantineAdaptable<SelectProps>,
+  'multi-select'
+>;
+
+export function MultiSelectField(props: MultiSelectFieldProps) {
+  const { mergedProps } = useRHFMantineAdapter(props, {
+    extractEventValue(e) {
+      return e;
+    },
+  });
+  return <MultiSelect {...mergedProps} />;
 }
 
 export type TextareaFieldProps = IRHFField<

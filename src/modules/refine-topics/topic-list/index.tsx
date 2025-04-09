@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Drawer, Stack, TextInput, Text } from '@mantine/core';
 import { useDebouncedState, useDebouncedValue } from '@mantine/hooks';
 import { getTopicColumnName, TextualSchemaColumnModel } from '@/api/project';
-import { FilterStateContext } from '@/modules/table/context';
+import { FilterStateContext } from '@/modules/filter/context';
 import {
   DisclosureTrigger,
   ParametrizedDisclosureTrigger,

@@ -6,13 +6,14 @@ import {
   invalidateProjectDependencyQueries,
   SchemaColumnModel,
 } from '@/api/project';
-import { ArrowClockwise, DoorOpen } from '@phosphor-icons/react';
+import { ArrowClockwise, CheckCircle, DoorOpen } from '@phosphor-icons/react';
 import { Text, Group, Button, Modal, Tooltip } from '@mantine/core';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { queryClient } from '@/common/api/query-client';
 import { client } from '@/common/api/client';
+import { CancelButton } from '@/components/standard/button/variants';
 
 interface RediscoverTopicsModalProps {
   column: SchemaColumnModel;
@@ -25,10 +26,9 @@ const RediscoverTopicsModal = React.forwardRef<
   const { column } = props;
   const [opened, { close }] = useDisclosureTrigger(ref);
   const project = React.useContext(ProjectContext);
-  const { replace } = useRouter();
 
   const startActions = useStartTopicModeling(column.name);
-  const { onStartTopicModeling, urlParams } = startActions;
+  const { onStartTopicModeling } = startActions;
 
   const onStart = React.useCallback(async () => {
     await onStartTopicModeling();
@@ -42,24 +42,8 @@ const RediscoverTopicsModal = React.forwardRef<
         },
       }).queryKey,
     });
-    replace({
-      pathname: NavigationRoutes.ProjectTopics,
-      query: {
-        id: project.id,
-        column: column.name,
-        ongoing: '1',
-        ...urlParams,
-      },
-    });
     close();
-  }, [
-    close,
-    column.name,
-    onStartTopicModeling,
-    project.id,
-    replace,
-    urlParams,
-  ]);
+  }, [close, onStartTopicModeling, project.id]);
 
   return (
     <Modal opened={opened} onClose={close} title="Re-discover Topics">
@@ -69,10 +53,10 @@ const RediscoverTopicsModal = React.forwardRef<
       </Text>
       <TopicModelingOptionFlagCheckboxes {...startActions} />
       <Group mt="md" pr="md" style={{ justifyContent: 'flex-end' }}>
-        <Button variant="outline" onClick={close}>
-          Cancel
+        <CancelButton onClick={close}>Cancel</CancelButton>
+        <Button onClick={onStart} leftSection={<CheckCircle />}>
+          Confirm
         </Button>
-        <Button onClick={onStart}>Confirm</Button>
       </Group>
     </Modal>
   );

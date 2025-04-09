@@ -22,7 +22,7 @@ export function SelectedComboboxWrapper(props: SelectedComboboxWrapperProps) {
       {props.checked && (
         <Check color={colors.gray[6]} size={14} className="mt-0.5" />
       )}
-      {props.children}
+      <div className="flex-1">{props.children}</div>
     </Group>
   );
 }

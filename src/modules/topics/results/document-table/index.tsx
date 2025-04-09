@@ -5,11 +5,10 @@ import {
 } from '@/modules/project/context';
 import React from 'react';
 import { TableFilterModel } from '@/api/table';
-import { TopicModel } from '@/api/topic';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
 import { Alert, Group, Stack, TextInput } from '@mantine/core';
-import { TableStateContext, useTableStateSetup } from '@/modules/table/context';
+import { TableStateContext } from '@/modules/table/context';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import {
   getPreprocessedDocumentsColumnName,
@@ -21,6 +20,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { useTopicModelingResultOfColumn } from '../../components/context';
 import { TopicMultiSelectInput } from '../../components/select-topic-input';
 import { DocumentsPerTopicTableRenderer } from './renderer';
+import { useTopicAppState } from '../../app-state';
 interface UseDocumentsPerTopicTableFilterStateProps {
   columnName: string;
   filter: TableFilterModel | null;
@@ -30,7 +30,8 @@ function useDocumentsPerTopicTableFilterState(
   props: UseDocumentsPerTopicTableFilterStateProps,
 ) {
   const { columnName, filter } = props;
-  const [topics, setTopics] = React.useState<TopicModel[]>([]);
+  const topics = useTopicAppState((store) => store.documents.topics);
+  const setTopics = useTopicAppState((store) => store.documents.setTopics);
   const [search, setSearch] = React.useState('');
   const [debouncedTopics] = useDebouncedValue(topics, 1000);
   const [debouncedSearch] = useDebouncedValue(search, 1000);
@@ -74,7 +75,7 @@ export default function DocumentsPerTopicTable() {
   const column = useCurrentTextualColumn();
   const topicModelingResult = useTopicModelingResultOfColumn(column.name);
 
-  const tableState = useTableStateSetup();
+  const tableState = useTopicAppState((store) => store.documents.params);
   const { page, limit, sort, filter: localFilter } = tableState;
   const { filter, setSearch, setTopics, topics, search } =
     useDocumentsPerTopicTableFilterState({

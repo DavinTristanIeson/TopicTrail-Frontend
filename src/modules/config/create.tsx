@@ -5,12 +5,12 @@ import { queryClient } from '@/common/api/query-client';
 import { client } from '@/common/api/client';
 import { ProjectMutationInput } from '@/api/project';
 import { showNotification } from '@mantine/notifications';
-import { Button, Group, Stack } from '@mantine/core';
-import { X } from '@phosphor-icons/react';
+import { Group, Stack } from '@mantine/core';
 import NavigationRoutes from '@/common/constants/routes';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import React from 'react';
 import ConfirmationDialog from '@/components/widgets/confirmation';
+import { CancelButton } from '@/components/standard/button/variants';
 
 export default function ProjectConfigCreateForm() {
   const { mutateAsync: create } = client.useMutation('post', '/projects/', {
@@ -53,16 +53,13 @@ export default function ProjectConfigCreateForm() {
       <ProjectConfigForm onSubmit={onSubmit}>
         <Stack>
           <Group justify="end">
-            <Button
-              leftSection={<X />}
-              color="red"
-              variant="outline"
+            <CancelButton
               onClick={() => {
                 confirmRemote.current?.open();
               }}
             >
               Cancel
-            </Button>
+            </CancelButton>
           </Group>
           <ProjectConfigFormPhaseSwitcher />
         </Stack>

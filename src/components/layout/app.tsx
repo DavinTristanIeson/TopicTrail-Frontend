@@ -44,7 +44,9 @@ export default function AppLayout(props: AppLayoutProps) {
         </AppShell.Navbar>
       )}
       <AppShell.Main>
-        <div className="relative">{children}</div>
+        <div className="relative" style={{ height: `calc(100dvh - 60px)` }}>
+          {children}
+        </div>
       </AppShell.Main>
     </AppShell>
   );

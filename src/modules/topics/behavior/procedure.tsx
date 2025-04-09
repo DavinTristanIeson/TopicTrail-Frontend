@@ -5,9 +5,9 @@ import { usePolling } from '@/hooks/polling';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
 import { TaskStatusEnum } from '@/common/constants/enum';
-import { useRouter } from 'next/router';
+import { useTopicAppState } from '../app-state';
 
-function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
+function usePeriodicTopicModelingStatusCheck() {
   const project = React.useContext(ProjectContext);
   const column = React.useContext(SchemaColumnContext);
   const { data, isRefetching, dataUpdatedAt, refetch, error } = client.useQuery(
@@ -23,17 +23,11 @@ function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
         },
       },
     },
-    {
-      enabled,
-    },
   );
 
   React.useEffect(() => {
     if (error) {
-      showNotification({
-        message: error.message,
-        color: 'red',
-      });
+      console.error(error);
     }
   }, [error]);
 
@@ -42,9 +36,7 @@ function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
     !error &&
     // Data is not success or failed; which means that operation is still in Idle/Pending state.
     data?.status !== TaskStatusEnum.Success &&
-    data?.status !== TaskStatusEnum.Failed &&
-    // After user has pressed the start topic modeling button
-    enabled;
+    data?.status !== TaskStatusEnum.Failed;
   usePolling({
     fn: refetch,
     interval: 5000,
@@ -59,34 +51,97 @@ function usePeriodicTopicModelingStatusCheck(enabled: boolean) {
   };
 }
 
+function useTopicModelingOptions() {
+  const {
+    shouldUseCachedDocumentVectors,
+    shouldUseCachedUMAPVectors,
+    shouldUseCachedPreprocessedDocuments,
+  } = useTopicAppState((store) => store.topicModelingOptions.current);
+  const resetCurrentTopicModelingOptions = useTopicAppState(
+    (store) => store.topicModelingOptions.resetCurrent,
+  );
+  const setCurrentTopicModelingOptions = useTopicAppState(
+    (store) => store.topicModelingOptions.setCurrent,
+  );
+  const setTopicModelingOptions = useTopicAppState(
+    (store) => store.topicModelingOptions.setState,
+  );
+
+  const setShouldUseCachedDocumentVectors = React.useCallback(
+    (checked: boolean) => {
+      setCurrentTopicModelingOptions((prev) => {
+        return {
+          ...prev,
+          shouldUseCachedDocumentVectors: checked,
+        };
+      });
+    },
+    [setCurrentTopicModelingOptions],
+  );
+
+  const setShouldUseCachedUMAPVectors = React.useCallback(
+    (checked: boolean) => {
+      setCurrentTopicModelingOptions((prev) => {
+        return {
+          ...prev,
+          shouldUseCachedUMAPVectors: checked,
+        };
+      });
+    },
+    [setCurrentTopicModelingOptions],
+  );
+
+  const setShouldUseCachedPreprocessedDocuments = React.useCallback(
+    (checked: boolean) => {
+      setCurrentTopicModelingOptions((prev) => {
+        return {
+          ...prev,
+          shouldUseCachedPreprocessedDocuments: checked,
+        };
+      });
+    },
+    [setCurrentTopicModelingOptions],
+  );
+
+  return {
+    shouldUseCachedDocumentVectors,
+    shouldUseCachedUMAPVectors,
+    shouldUseCachedPreprocessedDocuments,
+    setShouldUseCachedDocumentVectors,
+    setShouldUseCachedUMAPVectors,
+    setShouldUseCachedPreprocessedDocuments,
+
+    setCurrentTopicModelingOptions,
+    setTopicModelingOptions,
+    resetCurrentTopicModelingOptions,
+  };
+}
+
 export function useStartTopicModeling(column: string) {
   const project = React.useContext(ProjectContext);
   const {
     mutateAsync: startTopicModeling,
     isPending: isStartingTopicModeling,
-    data: hasStarted,
   } = client.useMutation('post', '/topic/{project_id}/start');
 
-  const router = useRouter();
-
-  const [shouldUseCachedDocumentVectors, setUseCachedDocumentVectors] =
-    React.useState(router.query.use_cached_document_vectors !== '0');
-  const [shouldUseCachedUMAPVectors, setUseCachedUMAPVectors] = React.useState(
-    router.query.use_cached_umap_vectors !== '0',
-  );
-  const [shouldUsePreprocessedDocuments, setUsePreprocessedDocuments] =
-    React.useState(router.query.use_preprocessed_documents !== '0');
-
+  const topicModelingOptions = useTopicModelingOptions();
+  const {
+    shouldUseCachedDocumentVectors,
+    shouldUseCachedUMAPVectors,
+    shouldUseCachedPreprocessedDocuments,
+  } = topicModelingOptions;
   const urlParams = React.useMemo(() => {
     return {
       use_cached_document_vectors: shouldUseCachedDocumentVectors ? '1' : '0',
       use_cached_umap_vectors: shouldUseCachedUMAPVectors ? '1' : '0',
-      use_preprocessed_documents: shouldUsePreprocessedDocuments ? '1' : '0',
+      use_preprocessed_documents: shouldUseCachedPreprocessedDocuments
+        ? '1'
+        : '0',
     };
   }, [
     shouldUseCachedDocumentVectors,
     shouldUseCachedUMAPVectors,
-    shouldUsePreprocessedDocuments,
+    shouldUseCachedPreprocessedDocuments,
   ]);
 
   const onStartTopicModeling = React.useCallback(async () => {
@@ -103,7 +158,7 @@ export function useStartTopicModeling(column: string) {
         body: {
           use_cached_document_vectors: shouldUseCachedDocumentVectors,
           use_cached_umap_vectors: shouldUseCachedUMAPVectors,
-          use_preprocessed_documents: shouldUsePreprocessedDocuments,
+          use_preprocessed_documents: shouldUseCachedPreprocessedDocuments,
         },
       });
       if (res.message) {
@@ -119,37 +174,25 @@ export function useStartTopicModeling(column: string) {
     column,
     project.id,
     shouldUseCachedDocumentVectors,
+    shouldUseCachedPreprocessedDocuments,
     shouldUseCachedUMAPVectors,
-    shouldUsePreprocessedDocuments,
     startTopicModeling,
   ]);
+
   return {
     onStartTopicModeling,
-    shouldUseCachedDocumentVectors,
-    setUseCachedDocumentVectors,
-    shouldUseCachedUMAPVectors,
-    setUseCachedUMAPVectors,
-    shouldUsePreprocessedDocuments,
-    setUsePreprocessedDocuments,
+    ...topicModelingOptions,
     isStartingTopicModeling,
-    hasStarted: !!hasStarted,
     urlParams,
   };
 }
 
 export default function useTopicModelingActions(column: string) {
   const startActions = useStartTopicModeling(column);
-  const {
-    isStartingTopicModeling,
-    hasStarted,
-    onStartTopicModeling: startTopicModeling,
-  } = startActions;
+  const { isStartingTopicModeling, onStartTopicModeling: startTopicModeling } =
+    startActions;
 
-  const isInitialOngoing = useRouter().query.ongoing === '1';
-
-  const status = usePeriodicTopicModelingStatusCheck(
-    !!hasStarted || isInitialOngoing,
-  );
+  const status = usePeriodicTopicModelingStatusCheck();
   const { checkAgain, isStillPolling } = status;
 
   const onStartTopicModeling = React.useCallback(async () => {

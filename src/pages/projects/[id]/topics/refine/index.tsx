@@ -1,18 +1,16 @@
 import NavigationRoutes from '@/common/constants/routes';
+import { NextPageWithLayout } from '@/common/utils/types';
+import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { ProjectContext } from '@/modules/project/context';
-import AppProjectLayout from '@/modules/project/layout';
 import RefineTopicsForm from '@/modules/refine-topics/form';
-import {
-  ProjectAllTopicsProvider,
-  useTopicModelingResultOfColumn,
-} from '@/modules/topics/components/context';
+import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { Alert, Anchor, Divider, List, Text } from '@mantine/core';
 import { QuestionMark, XCircle } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-function TopicsAvailabilitySafeguard() {
+const RefineTopicsPage: NextPageWithLayout = function () {
   const router = useRouter();
   const project = React.useContext(ProjectContext);
   const column = decodeURIComponent(router.query.column as string);
@@ -119,14 +117,10 @@ function TopicsAvailabilitySafeguard() {
       <RefineTopicsForm topicModelingResult={topicModelingResult} />
     </>
   );
-}
+};
 
-export default function RefineTopicsPage() {
-  return (
-    <AppProjectLayout>
-      <ProjectAllTopicsProvider>
-        <TopicsAvailabilitySafeguard />
-      </ProjectAllTopicsProvider>
-    </AppProjectLayout>
-  );
-}
+RefineTopicsPage.getLayout = (children) => (
+  <ProjectCommonDependencyProvider>{children}</ProjectCommonDependencyProvider>
+);
+
+export default RefineTopicsPage;

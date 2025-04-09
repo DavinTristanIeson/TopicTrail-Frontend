@@ -14,6 +14,7 @@ import { uniq } from 'lodash';
 
 interface UseTableUniqueValueSelectPropsProps {
   column: string;
+  value?: string | string[] | null;
   projectId: string;
   error?: React.ReactNode;
   disabled?: boolean;
@@ -24,6 +25,7 @@ function useTableUniqueValueSelectProps(
 ) {
   const {
     column,
+    value,
     projectId,
     error: controlledError,
     disabled: controlledDisabled,
@@ -48,25 +50,31 @@ function useTableUniqueValueSelectProps(
       ? "Oops, this column doesn't contain any values at all!"
       : undefined;
 
+  const selectData = uniqueValues?.filter(Boolean).map(String) ?? [];
+  if (value) {
+    if (Array.isArray(value)) {
+      selectData.push(...value);
+    } else {
+      selectData.push(value);
+    }
+  }
   return {
-    data: uniqueValues?.map(String) ?? [],
+    data: uniq(selectData),
     disabled: controlledDisabled ?? isLoading,
     rightSection: isFetching ? <Loader size={14} /> : undefined,
     error: controlledError ?? error?.message ?? noValueError,
   };
 }
 
-interface TableUniqueValueSelectProps
-  extends UseTableUniqueValueSelectPropsProps,
-    Omit<SelectProps, 'data'> {}
+type TableUniqueValueSelectProps = Omit<
+  UseTableUniqueValueSelectPropsProps,
+  'value'
+> &
+  Omit<SelectProps, 'data'>;
 
 export function TableUniqueValueSelect(props: TableUniqueValueSelectProps) {
   const selectProps = useTableUniqueValueSelectProps(props);
-  const data = selectProps.data;
-  if (props.value && !data.includes(props.value)) {
-    data.push(props.value);
-  }
-  return <Select {...props} {...selectProps} data={data} />;
+  return <Select {...props} {...selectProps} />;
 }
 
 type TableUniqueValueSelectFieldProps = TableUniqueValueSelectProps &
@@ -85,18 +93,17 @@ export function TableUniqueValueSelectField(
   return <TableUniqueValueSelect {...mergedProps} />;
 }
 
-interface TableUniqueValueMultiSelectProps
-  extends UseTableUniqueValueSelectPropsProps,
-    Omit<MultiSelectProps, 'data'> {}
+type TableUniqueValueMultiSelectProps = Omit<
+  UseTableUniqueValueSelectPropsProps,
+  'value'
+> &
+  Omit<MultiSelectProps, 'data'>;
 
 export function TableUniqueValueMultiSelect(
   props: TableUniqueValueMultiSelectProps,
 ) {
   const selectProps = useTableUniqueValueSelectProps(props);
-  const data = props.value
-    ? uniq([...props.value, ...selectProps.data])
-    : selectProps.data;
-  return <MultiSelect {...props} {...selectProps} data={data} />;
+  return <MultiSelect {...props} {...selectProps} />;
 }
 
 type TableUniqueValueMultiSelectFieldProps = TableUniqueValueMultiSelectProps &

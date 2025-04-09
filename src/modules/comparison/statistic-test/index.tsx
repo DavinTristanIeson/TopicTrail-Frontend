@@ -6,11 +6,11 @@ import { Warning } from '@phosphor-icons/react';
 import { ProjectContext } from '@/modules/project/context';
 import { client } from '@/common/api/client';
 import { StatisticTestFormType } from './form-type';
-import { NamedFiltersContext } from '../context';
+import { useComparisonAppState } from '../app-state';
 
 export default function ComparisonStatisticTest() {
   const project = React.useContext(ProjectContext);
-  const { filters } = React.useContext(NamedFiltersContext);
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const { data, error, isPending, mutateAsync } = client.useMutation(
     'post',
     '/table/{project_id}/statistic-test',
@@ -20,8 +20,12 @@ export default function ComparisonStatisticTest() {
       await mutateAsync({
         body: {
           ...values,
-          group1: filters.find((filter) => values.group1 === filter.name)!,
-          group2: filters.find((filter) => values.group2 === filter.name)!,
+          group1: comparisonGroups.find(
+            (group) => values.group1 === group.name,
+          )!,
+          group2: comparisonGroups.find(
+            (group) => values.group2 === group.name,
+          )!,
         },
         params: {
           path: {
@@ -30,7 +34,7 @@ export default function ComparisonStatisticTest() {
         },
       });
     },
-    [filters, mutateAsync, project.id],
+    [comparisonGroups, mutateAsync, project.id],
   );
   return (
     <Stack className="relative">

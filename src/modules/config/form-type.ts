@@ -9,7 +9,7 @@ import {
   DocumentPreprocessingMethodEnum,
   GeospatialRoleEnum,
   SchemaColumnTypeEnum,
-  TemporalPrecisionEnum,
+  TemporalColumnFeatureEnum,
 } from '@/common/constants/enum';
 import * as Yup from 'yup';
 import {
@@ -47,10 +47,16 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     is: SchemaColumnTypeEnum.Temporal,
     otherwise: (schema) => schema.strip(),
   }),
-  temporal_precision: yupNullableString.when('type', {
+  temporal_features: yupNullableArray.when('type', {
     is: SchemaColumnTypeEnum.Temporal,
     then: (schema) =>
-      schema.required().oneOf(Object.values(TemporalPrecisionEnum)),
+      schema
+        .of(
+          Yup.string()
+            .oneOf(Object.values(TemporalColumnFeatureEnum))
+            .required(),
+        )
+        .required(),
     otherwise: (schema) => schema.strip(),
   }),
 
@@ -216,7 +222,14 @@ export function DefaultProjectSchemaColumnValues(
           : GeospatialRoleEnum.Latitude
         : undefined,
     datetime_format: null,
-    temporal_precision: TemporalPrecisionEnum.DateTime,
+    temporal_features:
+      type === SchemaColumnTypeEnum.Temporal
+        ? [
+            TemporalColumnFeatureEnum.Year,
+            TemporalColumnFeatureEnum.Month,
+            TemporalColumnFeatureEnum.Monthly,
+          ]
+        : null,
   } as ProjectConfigColumnFormType;
 }
 

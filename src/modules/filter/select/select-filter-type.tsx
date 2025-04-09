@@ -119,7 +119,6 @@ const ALLOWED_FILTER_TYPES_FOR_COLUMNS = {
     TableFilterTypeEnum.IsOneOf,
   ],
   [SchemaColumnTypeEnum.OrderedCategorical]: [
-    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
     ...ALLOWED_FILTER_TYPES_FOR_ORDERED_COLUMNS,
     TableFilterTypeEnum.IsOneOf,
   ],

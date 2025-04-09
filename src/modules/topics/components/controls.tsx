@@ -2,6 +2,7 @@ import Colors from '@/common/constants/colors';
 import { HoverCard, Group, Checkbox, Stack, Text } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 import { useStartTopicModeling } from '../behavior/procedure';
+import React from 'react';
 
 interface TopicModelingOptionFlagCheckboxProps {
   checked: boolean;
@@ -16,7 +17,7 @@ function TopicModelingOptionFlagCheckbox(
   return (
     <HoverCard position="left">
       <HoverCard.Target>
-        <Group gap={4}>
+        <Group gap={4} className="w-fit">
           <Checkbox
             label={props.label}
             checked={props.checked}
@@ -47,34 +48,44 @@ export function TopicModelingOptionFlagCheckboxes(
   const {
     shouldUseCachedDocumentVectors,
     shouldUseCachedUMAPVectors,
-    shouldUsePreprocessedDocuments,
-    setUseCachedDocumentVectors,
-    setUseCachedUMAPVectors,
-    setUsePreprocessedDocuments,
+    shouldUseCachedPreprocessedDocuments,
+    setShouldUseCachedDocumentVectors,
+    setShouldUseCachedPreprocessedDocuments,
+    setShouldUseCachedUMAPVectors,
   } = props;
-  const options: TopicModelingOptionFlagCheckboxProps[] = [
-    {
-      checked: shouldUsePreprocessedDocuments,
-      onChange: setUsePreprocessedDocuments,
-      label: 'Use cached preprocessed documents',
-      tooltip:
-        'The preprocessing stage can be time-consuming, so we recommend that you reuse the cached preprocessed documents (if they exist). Only uncheck this checkbox if you have changed the preprocessing configuration for this column; otherwise, leave it be.',
-    },
-    {
-      checked: shouldUseCachedDocumentVectors,
-      onChange: setUseCachedDocumentVectors,
-      label: 'Use cached document vectors',
-      tooltip:
-        'Computing document vectors (especially with SBERT) can be time-consuming, so we recommend that you reuse cached document vectors. Only uncheck this checkbox if you have changed the topic modeling configuration for this column; otherwise, leave it be.',
-    },
-    {
-      checked: shouldUseCachedUMAPVectors,
-      onChange: setUseCachedUMAPVectors,
-      label: 'Use cached UMAP vectors',
-      tooltip:
-        'Reducing the dimensionality of the document vectors can take a long time, so we recommend that you reuse cached UMAP vectors. Only uncheck this checkbox if you have changed the topic modeling configuration for this column; otherwise, leave it be.',
-    },
-  ];
+  const options: TopicModelingOptionFlagCheckboxProps[] = React.useMemo(
+    () => [
+      {
+        checked: shouldUseCachedPreprocessedDocuments,
+        onChange: setShouldUseCachedPreprocessedDocuments,
+        label: 'Use cached preprocessed documents',
+        tooltip:
+          'The preprocessing stage can be time-consuming, so we recommend that you reuse the cached preprocessed documents (if they exist). Only uncheck this checkbox if you have changed the preprocessing configuration for this column; otherwise, leave it be.',
+      },
+      {
+        checked: shouldUseCachedDocumentVectors,
+        onChange: setShouldUseCachedDocumentVectors,
+        label: 'Use cached document vectors',
+        tooltip:
+          'Computing document vectors (especially with SBERT) can be time-consuming, so we recommend that you reuse cached document vectors. Only uncheck this checkbox if you have changed the topic modeling configuration for this column; otherwise, leave it be.',
+      },
+      {
+        checked: shouldUseCachedUMAPVectors,
+        onChange: setShouldUseCachedUMAPVectors,
+        label: 'Use cached UMAP vectors',
+        tooltip:
+          'Reducing the dimensionality of the document vectors can take a long time, so we recommend that you reuse cached UMAP vectors. Only uncheck this checkbox if you have changed the topic modeling configuration for this column; otherwise, leave it be.',
+      },
+    ],
+    [
+      setShouldUseCachedDocumentVectors,
+      setShouldUseCachedPreprocessedDocuments,
+      setShouldUseCachedUMAPVectors,
+      shouldUseCachedDocumentVectors,
+      shouldUseCachedPreprocessedDocuments,
+      shouldUseCachedUMAPVectors,
+    ],
+  );
   return (
     <Stack>
       {options.map((option) => (
