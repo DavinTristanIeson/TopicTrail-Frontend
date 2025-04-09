@@ -141,6 +141,7 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
             <Button
               variant="subtle"
               leftSection={<ArrowCounterClockwise />}
+              loading={query.isRefetching}
               onClick={() => {
                 invalidateProjectDependencyQueries(id);
               }}
@@ -153,7 +154,7 @@ export default function AppProjectLayout(props: AppProjectLayoutProps) {
       Sidebar={<ProjectNavbar config={data?.config} />}
     >
       <UseQueryWrapperComponent query={query}>
-        {data && (
+        {data && !query.isFetching && (
           <ProjectContext.Provider value={data}>
             <div className={withPadding ? 'pt-3 px-3 h-full' : undefined}>
               {children}

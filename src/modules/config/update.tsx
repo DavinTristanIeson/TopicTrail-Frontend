@@ -22,6 +22,7 @@ import ProjectConfigFormPhaseSwitcher from './project-flow';
 import { FormEditableContext } from '@/components/standard/fields/context';
 import { CancelButton } from '@/components/standard/button/variants';
 import ConfirmationDialog from '@/components/widgets/confirmation';
+import { handleErrorFn } from '@/common/utils/error';
 
 function UpdateProjectDeleteButton() {
   const deleteRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -98,7 +99,7 @@ function UpdateProjectReloadDatasetButton() {
             </Text>
           </Stack>
         }
-        onConfirm={async () => {
+        onConfirm={handleErrorFn(async () => {
           const res = await reloadDataset({
             params: {
               path: {
@@ -118,7 +119,7 @@ function UpdateProjectReloadDatasetButton() {
               id: project.id,
             },
           });
-        }}
+        })}
       />
       <Button
         leftSection={<ArrowCounterClockwise />}

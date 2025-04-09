@@ -38,7 +38,7 @@ export function MaybeFC<T extends object>(props: MaybeFCProps<T>) {
   if (
     typeof props.children === 'function' ||
     /* Type of react element can be {$$typeof: ..., render() {}} */
-    'render' in (props.children as any)
+    (typeof props.children === 'object' && 'render' in (props.children as any))
   ) {
     const Children = props.children as any;
     return <Children {...props.props} />;

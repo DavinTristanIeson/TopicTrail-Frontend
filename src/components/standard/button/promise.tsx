@@ -6,10 +6,10 @@ const PromiseButton = React.forwardRef<
   ButtonProps & React.ComponentPropsWithoutRef<'button'>
 >(function PromiseButton(props, ref) {
   const [loading, setLoading] = React.useState(false);
-  const onClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+  const onClick: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
     setLoading(true);
     try {
-      props.onClick?.(e);
+      await props.onClick?.(e);
       setLoading(false);
     } catch (e) {
       setLoading(false);

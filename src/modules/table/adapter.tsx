@@ -56,7 +56,7 @@ export const MantineReactTableBehaviors = {
     columnResizeMode: 'onEnd' as const,
   },
   Sortable: {
-    enableSorting: false,
+    enableSorting: true,
     enableMultiSort: false,
     manualSorting: true,
     enableSortingRemoval: true,

@@ -21,24 +21,26 @@ function ProjectConfigColumnContinuousFormBinsPreview(
       name: `columns.${index}.bins`,
       control,
     }) ?? [];
-  const bins = binEdges.reduce((acc, cur, index, arr) => {
-    const digitLength = Math.ceil(Math.log10(acc.length));
-    const binNumber = (acc.length + 1).toString().padStart(digitLength, '0');
-    const isFirst = index === 0;
-    const isLast = index === arr.length - 1;
-    if (isFirst) {
-      acc.push(`Bin ${binNumber}: (-inf, ${cur})`);
-    }
-    if (isLast) {
-      acc.push(`Bin ${binNumber}: (${cur}, inf)`);
-    }
-    if (isFirst || isLast) {
+  const bins = binEdges
+    .toSorted((a, b) => a - b)
+    .reduce((acc, cur, index, arr) => {
+      const digitLength = Math.ceil(Math.log10(acc.length));
+      const binNumber = (acc.length + 1).toString().padStart(digitLength, '0');
+      const isFirst = index === 0;
+      const isLast = index === arr.length - 1;
+      if (isFirst) {
+        acc.push(`Bin ${binNumber}: (-inf, ${cur})`);
+      }
+      if (isLast) {
+        acc.push(`Bin ${binNumber}: (${cur}, inf)`);
+      }
+      if (isFirst || isLast) {
+        return acc;
+      }
+      const prev = arr[index - 1]!;
+      acc.push(`Bin ${binNumber}: (${prev}, ${cur})`);
       return acc;
-    }
-    const prev = arr[index - 1]!;
-    acc.push(`Bin ${binNumber}: (${prev}, ${cur})`);
-    return acc;
-  }, [] as string[]);
+    }, [] as string[]);
   return (
     <>
       {bins.length === 0 ? (
@@ -71,6 +73,7 @@ function ProjectConfigColumnContinuousFormBinsInput(
       <RHFField
         type="multiple-number"
         name={NAME}
+        ordered
         label="Bin Edges"
         description="Specify the edges of the bins here. For example: if you want to define the bins to be 3 - 18, 18 - 65, and 65 - 99. Then the bin edges should be 3, 18, 65, and 99."
       />
