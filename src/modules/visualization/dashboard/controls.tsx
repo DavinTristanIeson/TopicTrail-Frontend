@@ -1,8 +1,9 @@
+import { CancelButton } from '@/components/standard/button/variants';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import UserDataManager from '@/modules/userdata';
 import { useTableDashboardDataManager } from '@/modules/userdata/data-manager';
 import { Alert, Button, Group, Modal, Stack } from '@mantine/core';
-import { Info, Plus, X } from '@phosphor-icons/react';
+import { Info, Plus } from '@phosphor-icons/react';
 import React from 'react';
 
 const AddTableVisualizationDialog = React.forwardRef<DisclosureTrigger, object>(
@@ -26,9 +27,7 @@ const AddTableVisualizationDialog = React.forwardRef<DisclosureTrigger, object>(
           filters you have set on your dataset.
         </Alert>
         <Group justify="end">
-          <Button leftSection={<X />} color="red" onClick={close}>
-            Cancel
-          </Button>
+          <CancelButton onClick={close} />
           <Button leftSection={<Plus />} onClick={() => {}}>
             Add
           </Button>

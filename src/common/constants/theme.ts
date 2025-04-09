@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Badge,
+  Button,
   Checkbox,
   createTheme,
   Drawer,
@@ -54,6 +55,11 @@ const mantineTheme = createTheme({
     deg: 45,
   },
   components: {
+    Button: Button.extend({
+      defaultProps: {
+        type: 'button',
+      } as any,
+    }),
     LoadingOverlay: LoadingOverlay.extend({
       defaultProps: {
         overlayProps: { radius: 'sm', blur: 2 },

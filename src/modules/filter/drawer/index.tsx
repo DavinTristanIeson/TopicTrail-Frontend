@@ -2,7 +2,7 @@ import { TableFilterModel } from '@/api/table';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { Button, Drawer, Group } from '@mantine/core';
-import { Warning, X } from '@phosphor-icons/react';
+import { Warning } from '@phosphor-icons/react';
 import React from 'react';
 import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import {
@@ -20,6 +20,7 @@ import { useCheckFilterValidity } from '../management/hooks';
 import { useFilterDataManager } from '@/modules/userdata/data-manager';
 import { useDebouncedValue } from '@mantine/hooks';
 import UserDataManager from '@/modules/userdata';
+import { CancelButton } from '@/components/standard/button/variants';
 
 interface TableFilterUserDataManagerProps {
   setFilter: React.Dispatch<TableFilterModel | null>;
@@ -98,14 +99,7 @@ export function TableFilterDrawerFormBody(
             Reset
           </Button>
           <div className="flex-1" />
-          <Button
-            onClick={close}
-            color="red"
-            variant="outline"
-            leftSection={<X />}
-          >
-            Cancel
-          </Button>
+          <CancelButton onClick={close} />
           <SubmitButton>Apply</SubmitButton>
         </Group>
       </Drawer.Header>

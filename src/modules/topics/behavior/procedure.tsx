@@ -27,10 +27,7 @@ function usePeriodicTopicModelingStatusCheck() {
 
   React.useEffect(() => {
     if (error) {
-      showNotification({
-        message: error.message,
-        color: 'red',
-      });
+      console.error(error);
     }
   }, [error]);
 

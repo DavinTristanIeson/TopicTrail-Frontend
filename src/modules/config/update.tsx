@@ -11,11 +11,12 @@ import { DeleteProjectModal } from '@/modules/project/actions';
 import { ProjectContext } from '@/modules/project/context';
 import { Button, Group, Stack } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { PencilSimple, TrashSimple, X } from '@phosphor-icons/react';
+import { PencilSimple, TrashSimple } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import ProjectConfigFormPhaseSwitcher from './project-flow';
 import { FormEditableContext } from '@/components/standard/fields/context';
+import { CancelButton } from '@/components/standard/button/variants';
 
 function UpdateProjectDeleteButton() {
   const deleteRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -67,16 +68,13 @@ function UpdateProjectFormButtons(props: UpdateProjectFormButtonsProps) {
         </>
       ) : (
         <>
-          <Button
-            variant="outline"
-            color="red"
-            leftSection={<X />}
+          <CancelButton
             onClick={() => {
               setEditable(false);
             }}
           >
             Cancel
-          </Button>
+          </CancelButton>
         </>
       )}
     </Group>

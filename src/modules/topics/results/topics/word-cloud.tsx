@@ -1,10 +1,11 @@
 import React from 'react';
 import { TopicVisualizationRendererProps } from './data-providers';
 import ReactWordcloud, { type Word } from 'react-wordcloud';
-import { Stack, Title } from '@mantine/core';
+import { Button, Group, Stack, Title } from '@mantine/core';
 import { TopicSelectInput } from '../../components/select-topic-input';
 import chroma from 'chroma-js';
 import { getTopicLabel } from '@/api/topic';
+import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 
 export function TopicVisualizationWordCloudRenderer(
   props: TopicVisualizationRendererProps,
@@ -27,6 +28,16 @@ export function TopicVisualizationWordCloudRenderer(
     });
   }, [topic]);
 
+  const topicIdx = React.useMemo(
+    () =>
+      !topic ? null : data.findIndex((item) => item.topic.id === topic.id),
+    [data, topic],
+  );
+  const canGoLeft = topicIdx == null || topicIdx > 0;
+  const canGoRight = topicIdx == null || topicIdx < data.length - 1;
+
+  console.log('Rerender Topic Word Cloud');
+
   return (
     <Stack>
       <TopicSelectInput
@@ -37,6 +48,33 @@ export function TopicVisualizationWordCloudRenderer(
         label="Topic"
         description="Choose a topic to view its topic words as a word cloud."
         maw={512}
+        inputContainer={(children) => (
+          <Group>
+            <Button
+              leftSection={<ArrowLeft />}
+              disabled={!canGoLeft}
+              onClick={() => {
+                const newIdx = topicIdx == null ? 0 : topicIdx - 1;
+                return setTopic(data[newIdx]?.topic ?? null);
+              }}
+              variant="subtle"
+            >
+              Previous
+            </Button>
+            {children}
+            <Button
+              rightSection={<ArrowRight />}
+              disabled={!canGoRight}
+              onClick={() => {
+                const newIdx = topicIdx == null ? 0 : topicIdx + 1;
+                return setTopic(data[newIdx]?.topic ?? null);
+              }}
+              variant="subtle"
+            >
+              Next
+            </Button>
+          </Group>
+        )}
       />
       {words && (
         <>

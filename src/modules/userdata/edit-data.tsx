@@ -13,9 +13,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { yupNullableArray, yupNullableString } from '@/common/utils/form';
 import RHFField from '@/components/standard/fields';
 import SubmitButton from '@/components/standard/button/submit';
-import { TrashSimple, Warning, X } from '@phosphor-icons/react';
+import { TrashSimple, Warning } from '@phosphor-icons/react';
 import PromiseButton from '@/components/standard/button/promise';
 import { useDisclosure } from '@mantine/hooks';
+import { CancelButton } from '@/components/standard/button/variants';
 
 const EditUserDataFormSchema = Yup.object({
   id: yupNullableString,
@@ -105,14 +106,7 @@ function EditUserDataForm(props: EditUserDataFormProps) {
             </Button>
           )}
           <div className="flex-1" />
-          <Button
-            color="red"
-            variant="outline"
-            leftSection={<X />}
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
+          <CancelButton onClick={onClose} />
           <SubmitButton disabled={!canSave}>Save</SubmitButton>
         </Group>
       </Stack>

@@ -54,7 +54,7 @@ export function RefineTopicsDocumentTable(
 
   return (
     <TableStateContext.Provider value={tableState}>
-      <Alert color="blue" icon={<Info />}>
+      <Alert color="blue" icon={<Info />} className="mb-3">
         You can view how the documents are grouped into topics in this tab in
         order to help you figure out why the topic modeling algorithm assumes
         that these documents are part of the same topic. To find get a quick
