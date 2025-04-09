@@ -39,17 +39,19 @@ export function useTableStateSetup(): TableStateType {
     setFilter(null);
   }, []);
 
-  return {
-    limit,
-    setLimit,
-    page,
-    setPage,
-    sort,
-    setSort,
-    filter,
-    setFilter,
-    reset,
-  };
+  return React.useMemo(() => {
+    return {
+      limit,
+      setLimit,
+      page,
+      setPage,
+      sort,
+      setSort,
+      filter,
+      setFilter,
+      reset,
+    };
+  }, [filter, limit, page, reset, sort]);
 }
 
 interface TableAppStateContextType {
@@ -58,10 +60,8 @@ interface TableAppStateContextType {
     handlers: UseListStateHandlers<DashboardItemModel>;
   };
   params: TableStateType;
-  tab: {
-    state: TablePageTab;
-    setState: React.Dispatch<React.SetStateAction<TablePageTab>>;
-  };
+  tab: TablePageTab;
+  setTab: React.Dispatch<React.SetStateAction<TablePageTab>>;
 }
 
 const TableAppStateContext = createContext<TableAppStateContextType>(
@@ -76,10 +76,8 @@ export default function TableAppStateProvider(props: React.PropsWithChildren) {
   return (
     <TableAppStateContext.Provider
       value={{
-        tab: {
-          state: tab,
-          setState: setTab,
-        },
+        tab,
+        setTab,
         params: tableState,
         dashboard: {
           state: dashboard,

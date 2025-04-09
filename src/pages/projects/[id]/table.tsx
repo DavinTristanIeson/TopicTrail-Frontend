@@ -18,9 +18,8 @@ const GridstackDashboard = dynamic(
 );
 
 const TablePage: NextPageWithLayout = function TablePage() {
-  const { state: tab, setState: setTab } = useTableAppState(
-    (store) => store.tab,
-  );
+  const tab = useTableAppState((store) => store.tab);
+  const setTab = useTableAppState((store) => store.setTab);
   return (
     <>
       <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>

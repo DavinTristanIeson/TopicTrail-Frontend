@@ -60,10 +60,11 @@ export default function SortableNamedTableFilterDndContext(
   props: SortableNamedTableFilterDndContextProps,
 ) {
   const { editRemote } = props;
-  const {
-    state: comparisonGroups,
-    handlers: { setState },
-  } = useComparisonAppState((store) => store.groups);
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const setComparisonGroups = useComparisonAppState(
+    (store) => store.groups.handlers.setState,
+  );
+
   const { id, grid, gridElements } = useControlledGridstack({
     gridItems: comparisonGroups.map((group) => group.name),
     options: SortableGridStackDefaultOptions({
@@ -73,7 +74,7 @@ export default function SortableNamedTableFilterDndContext(
   useSortableGridStack({
     grid,
     onSort(gridstackIds) {
-      setState((prev) => {
+      setComparisonGroups((prev) => {
         return gridstackIds.map((id) => {
           return prev.find((namedFilter) => namedFilter.name === id)!;
         });

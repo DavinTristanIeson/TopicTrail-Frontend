@@ -49,9 +49,8 @@ function ProjectTopicPageSwitcher(props: ProjectTopicSwitcherProps) {
 const ProjectTopicsPage: NextPageWithLayout = function () {
   const topicModelingResults = React.useContext(AllTopicModelingResultContext);
 
-  const { state: columnName, setState: setColumn } = useTopicAppState(
-    (store) => store.column,
-  );
+  const columnName = useTopicAppState((store) => store.column);
+  const setColumn = useTopicAppState((store) => store.setColumn);
 
   const columns = topicModelingResults.map((result) => result.column);
   const firstColumn = columns[0];

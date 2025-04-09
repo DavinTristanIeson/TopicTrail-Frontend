@@ -41,8 +41,6 @@ function TableFilterUserDataManager(props: TableFilterUserDataManagerProps) {
     }
   }, [debouncedFormValues]);
 
-  console.log(values, debouncedFormValues, validatedValues);
-
   const rendererProps = useFilterDataManager({
     state: validatedValues as TableFilterModel | null,
     onApply: props.setFilter,

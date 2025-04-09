@@ -23,10 +23,10 @@ const SortableNamedTableFilterDndContext = dynamic(
 );
 
 function ComparisonStateDataManager() {
-  const {
-    state: comparisonGroups,
-    handlers: { setState: setComparisonGroups },
-  } = useComparisonAppState((store) => store.groups);
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const setComparisonGroups = useComparisonAppState(
+    (store) => store.groups.handlers.setState,
+  );
 
   const rendererProps = useComparisonStateDataManager({
     onApply(state) {

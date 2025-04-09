@@ -11,10 +11,8 @@ export enum ComparisonPageTab {
 }
 
 interface ComparisonAppStateContextType {
-  tab: {
-    state: ComparisonPageTab;
-    setState: React.Dispatch<React.SetStateAction<ComparisonPageTab>>;
-  };
+  tab: ComparisonPageTab;
+  setTab: React.Dispatch<React.SetStateAction<ComparisonPageTab>>;
   dashboard: {
     state: DashboardItemModel[];
     handlers: UseListStateHandlers<DashboardItemModel>;
@@ -43,10 +41,8 @@ export default function ComparisonAppStateProvider(
   return (
     <ComparisonAppStateContext.Provider
       value={{
-        tab: {
-          state: tab,
-          setState: setTab,
-        },
+        tab,
+        setTab,
         groups: {
           state: groups,
           handlers: groupHandlers,

@@ -30,9 +30,8 @@ function useDocumentsPerTopicTableFilterState(
   props: UseDocumentsPerTopicTableFilterStateProps,
 ) {
   const { columnName, filter } = props;
-  const { state: topics, setState: setTopics } = useTopicAppState(
-    (store) => store.documents.topics,
-  );
+  const topics = useTopicAppState((store) => store.documents.topics);
+  const setTopics = useTopicAppState((store) => store.documents.setTopics);
   const [search, setSearch] = React.useState('');
   const [debouncedTopics] = useDebouncedValue(topics, 1000);
   const [debouncedSearch] = useDebouncedValue(search, 1000);

@@ -24,8 +24,10 @@ const GridstackDashboard = dynamic(
 );
 
 const TopicCorrelationPage: NextPageWithLayout = function () {
-  const { column1, column2, setColumn1, setColumn2 } =
-    useTopicCorrelationAppState((store) => store.params);
+  const column1 = useTopicCorrelationAppState((store) => store.column1);
+  const column2 = useTopicCorrelationAppState((store) => store.column2);
+  const setColumn1 = useTopicCorrelationAppState((store) => store.setColumn1);
+  const setColumn2 = useTopicCorrelationAppState((store) => store.setColumn2);
 
   const project = React.useContext(ProjectContext);
   const textualColumns = project.config.data_schema.columns.filter(

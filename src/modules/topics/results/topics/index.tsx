@@ -54,11 +54,12 @@ const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
 };
 
 export default function TopicVisualizationRenderer() {
-  const { state: method, setState: setMethod } = useTopicAppState(
+  const method = useTopicAppState(
     (store) => store.topics.topicVisualizationMethod,
   );
-
-  console.log('Rerender Topic Visualization Renderer');
+  const setMethod = useTopicAppState(
+    (store) => store.topics.setTopicVisualizationMethod,
+  );
 
   const renderOption = useDescriptionBasedRenderOption(
     TOPIC_VISUALIZATION_METHOD_DICTIONARY,

@@ -9,12 +9,10 @@ interface TopicCorrelationAppStateContextType {
     state: DashboardItemModel[];
     handlers: UseListStateHandlers<DashboardItemModel>;
   };
-  params: {
-    column1: SchemaColumnModel | null;
-    column2: SchemaColumnModel | null;
-    setColumn2: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
-    setColumn1: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
-  };
+  column1: SchemaColumnModel | null;
+  column2: SchemaColumnModel | null;
+  setColumn2: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
+  setColumn1: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
 }
 
 const TopicCorrelationAppStateContext =
@@ -35,12 +33,10 @@ export default function TopicCorrelationAppStateProvider(
   return (
     <TopicCorrelationAppStateContext.Provider
       value={{
-        params: {
-          column1,
-          column2,
-          setColumn1,
-          setColumn2,
-        },
+        column1,
+        column2,
+        setColumn1,
+        setColumn2,
         dashboard: {
           state: dashboard,
           handlers: dashboardHandlers,

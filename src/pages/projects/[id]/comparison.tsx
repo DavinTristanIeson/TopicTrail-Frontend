@@ -22,13 +22,9 @@ const GridstackDashboard = dynamic(
 );
 
 const ComparisonPage: NextPageWithLayout = function () {
-  const { comparisonGroups, tab, setTab } = useComparisonAppState((store) => {
-    return {
-      comparisonGroups: store.groups.state,
-      tab: store.tab.state,
-      setTab: store.tab.setState,
-    };
-  });
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const tab = useComparisonAppState((store) => store.tab);
+  const setTab = useComparisonAppState((store) => store.setTab);
 
   return (
     <>

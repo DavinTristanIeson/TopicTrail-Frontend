@@ -11,9 +11,9 @@ export enum TopicsPageTab {
 }
 
 export default function ProjectTopicResultsPage() {
-  const { state: tab, setState: setTab } = useTopicAppState(
-    (store) => store.tab,
-  );
+  const tab = useTopicAppState((store) => store.tab);
+  const setTab = useTopicAppState((store) => store.setTab);
+
   return (
     <Stack className="w-full pt-3">
       <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>

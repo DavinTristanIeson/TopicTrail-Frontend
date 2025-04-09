@@ -41,7 +41,6 @@ export function TopicVisualizationDataProvider(
     },
   );
   const data = query.data?.data;
-  console.log('Rerender Topic Visualization Data Provider');
   return (
     <UseQueryWrapperComponent
       query={query}

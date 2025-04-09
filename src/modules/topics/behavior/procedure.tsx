@@ -53,17 +53,19 @@ function usePeriodicTopicModelingStatusCheck() {
 
 function useTopicModelingOptions() {
   const {
-    current: {
-      shouldUseCachedDocumentVectors,
-      shouldUseCachedUMAPVectors,
-      shouldUseCachedPreprocessedDocuments,
-    },
-    resetCurrent: resetCurrentTopicModelingOptions,
-    setCurrent: setCurrentTopicModelingOptions,
-    setState: setTopicModelingOptions,
-  } = useTopicAppState((store) => {
-    return store.topicModelingOptions;
-  });
+    shouldUseCachedDocumentVectors,
+    shouldUseCachedUMAPVectors,
+    shouldUseCachedPreprocessedDocuments,
+  } = useTopicAppState((store) => store.topicModelingOptions.current);
+  const resetCurrentTopicModelingOptions = useTopicAppState(
+    (store) => store.topicModelingOptions.resetCurrent,
+  );
+  const setCurrentTopicModelingOptions = useTopicAppState(
+    (store) => store.topicModelingOptions.setCurrent,
+  );
+  const setTopicModelingOptions = useTopicAppState(
+    (store) => store.topicModelingOptions.setState,
+  );
 
   const setShouldUseCachedDocumentVectors = React.useCallback(
     (checked: boolean) => {

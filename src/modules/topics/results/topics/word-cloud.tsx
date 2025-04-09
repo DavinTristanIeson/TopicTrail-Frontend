@@ -36,8 +36,6 @@ export function TopicVisualizationWordCloudRenderer(
   const canGoLeft = topicIdx == null || topicIdx > 0;
   const canGoRight = topicIdx == null || topicIdx < data.length - 1;
 
-  console.log('Rerender Topic Word Cloud');
-
   return (
     <Stack>
       <TopicSelectInput

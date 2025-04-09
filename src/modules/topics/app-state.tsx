@@ -13,28 +13,22 @@ interface TopicModelingOptionsData {
 }
 
 interface TopicAppStateContextType {
-  column: {
-    state: string | null;
-    setState: React.Dispatch<React.SetStateAction<string | null>>;
-  };
-  tab: {
-    state: TopicsPageTab;
-    setState: React.Dispatch<React.SetStateAction<TopicsPageTab>>;
-  };
+  column: string | null;
+  setColumn: React.Dispatch<React.SetStateAction<string | null>>;
+
+  tab: TopicsPageTab;
+  setTab: React.Dispatch<React.SetStateAction<TopicsPageTab>>;
+
   topics: {
-    topicVisualizationMethod: {
-      state: TopicVisualizationMethodEnum;
-      setState: React.Dispatch<
-        React.SetStateAction<TopicVisualizationMethodEnum>
-      >;
-    };
+    topicVisualizationMethod: TopicVisualizationMethodEnum;
+    setTopicVisualizationMethod: React.Dispatch<
+      React.SetStateAction<TopicVisualizationMethodEnum>
+    >;
   };
   documents: {
     params: TableStateType;
-    topics: {
-      state: TopicModel[];
-      setState: React.Dispatch<React.SetStateAction<TopicModel[]>>;
-    };
+    topics: TopicModel[];
+    setTopics: React.Dispatch<React.SetStateAction<TopicModel[]>>;
   };
   topicModelingOptions: {
     state: Record<string, TopicModelingOptionsData>;
@@ -113,26 +107,18 @@ export default function TopicAppStateProvider(props: React.PropsWithChildren) {
   return (
     <TopicAppStateContext.Provider
       value={{
-        column: {
-          state: column,
-          setState: setColumn,
-        },
-        tab: {
-          state: tab,
-          setState: setTab,
-        },
+        column,
+        setColumn,
+        tab,
+        setTab,
         topics: {
-          topicVisualizationMethod: {
-            state: topicVisualizationMethod,
-            setState: setTopicVisualizationMethod,
-          },
+          topicVisualizationMethod,
+          setTopicVisualizationMethod,
         },
         documents: {
           params: documentTableState,
-          topics: {
-            state: topics,
-            setState: setTopics,
-          },
+          topics,
+          setTopics,
         },
         topicModelingOptions,
       }}

@@ -33,10 +33,14 @@ function ComparisonFilterDrawerContents(
   props: ComparisonFilterDrawerContentsProps,
 ) {
   const { appliedGroup: appliedGroup, onClose } = props;
-  const {
-    state: comparisonGroups,
-    handlers: { setItem: setComparisonGroup, append: addComparisonGroup },
-  } = useComparisonAppState((store) => store.groups);
+
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const setComparisonGroup = useComparisonAppState(
+    (store) => store.groups.handlers.setItem,
+  );
+  const addComparisonGroup = useComparisonAppState(
+    (store) => store.groups.handlers.append,
+  );
 
   const currentComparisonGroupIndex = React.useMemo(() => {
     const index = comparisonGroups.findIndex(
