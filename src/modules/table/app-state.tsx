@@ -19,6 +19,7 @@ export interface TableStateType {
   setSort: React.Dispatch<React.SetStateAction<TableSortModel | null>>;
   filter: TableFilterModel | null;
   setFilter: React.Dispatch<React.SetStateAction<TableFilterModel | null>>;
+  reset(): void;
 }
 
 export function useTableStateSetup(): TableStateType {
@@ -31,6 +32,13 @@ export function useTableStateSetup(): TableStateType {
     setPage(0);
   }, [sort, filter, limit]);
 
+  const reset = React.useCallback(() => {
+    setLimit(25);
+    setPage(0);
+    setSort(null);
+    setFilter(null);
+  }, []);
+
   return {
     limit,
     setLimit,
@@ -40,6 +48,7 @@ export function useTableStateSetup(): TableStateType {
     setSort,
     filter,
     setFilter,
+    reset,
   };
 }
 

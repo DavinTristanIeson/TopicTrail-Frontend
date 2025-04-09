@@ -33,7 +33,6 @@ export default function ProjectTopicsEmptyPage() {
       color: 'green',
       autoClose: 5000,
     });
-    invalidateProjectDependencyQueries(project.id);
     queryClient.invalidateQueries({
       queryKey: client.queryOptions('get', '/topic/{project_id}/', {
         params: {
@@ -43,8 +42,10 @@ export default function ProjectTopicsEmptyPage() {
         },
       }).queryKey,
     });
+    invalidateProjectDependencyQueries(project.id);
+    topicModelingActions.resetCurrentTopicModelingOptions();
     hasAcknowledgedSuccessfulTopicModeling.current = column.name;
-  }, [column.name, progress?.data, project.id]);
+  }, [column.name, progress?.data, project.id, topicModelingActions]);
   return (
     <Stack className="pb-8">
       <ProjectTopicsEmptyPageControls {...topicModelingActions} />
