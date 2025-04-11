@@ -6,7 +6,7 @@ import { BaseVisualizationConfig, VisualizationConfigEntry } from './types';
 export const VALID_VISUALIZATION_COMPONENTS_FOR_TABLE_DASHBOARD: VisualizationConfigEntry<
   any,
   any
-> = [
+>[] = [
   {
     component: DescriptiveStatisticsTable,
     dataProvider: useDescriptiveStatisticsDataProvider,

@@ -1,42 +1,136 @@
-import { useControlledGridstack } from '@/hooks/gridstack';
+import {
+  useControlledGridstack,
+  useSubscribedGridStackChanges,
+} from '@/hooks/gridstack';
 import { type GridStackWidget } from 'gridstack';
 import React from 'react';
 import DashboardGridItem from './grid-item';
+import { DashboardItemModel } from '@/api/userdata';
+import { fromPairs } from 'lodash';
+import {
+  DashboardGridItemDeleteModal,
+  DashboardGridItemEditModal,
+  DashboardGridItemFullScreenModal,
+} from './grid-item-controls';
+import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
+import { type UseListStateHandlers } from '@mantine/hooks';
 
-export default function GridstackDashboard() {
-  const ids = React.useMemo(() => {
-    return Array.from({ length: 10 }, () =>
-      Math.random().toString(16).substring(2),
-    );
-  }, []);
-  const makeWidget = React.useCallback((id: string) => {
-    return {
-      id,
-      minH: 3,
-      minW: 3,
-    } as GridStackWidget;
-  }, []);
-  const { id, gridElements } = useControlledGridstack({
-    gridItems: ids,
+interface GridstackDashboardProps {
+  dashboard: DashboardItemModel[];
+  dashboardHandlers: UseListStateHandlers<DashboardItemModel>;
+}
+
+export default function GridstackDashboard(props: GridstackDashboardProps) {
+  const { dashboard, dashboardHandlers } = props;
+
+  const { setState: setDashboard } = dashboardHandlers;
+  const dashboardMap = React.useMemo(() => {
+    return fromPairs(dashboard.map((item) => [item.id, item]));
+  }, [dashboard]);
+  const makeWidget = React.useCallback(
+    (id: string) => {
+      const commonProps = {
+        id,
+        minH: 3,
+        minW: 3,
+      };
+      if (!dashboardMap[id]) {
+        return commonProps;
+      }
+      return {
+        ...commonProps,
+        w: Math.max(3, dashboardMap[id].rect.width),
+        h: Math.max(3, dashboardMap[id].rect.height),
+        x: dashboardMap[id].rect.x,
+        y: dashboardMap[id].rect.y,
+      } as GridStackWidget;
+    },
+    [dashboardMap],
+  );
+  const { id, grid, gridElements } = useControlledGridstack({
+    gridItems: dashboard.map((item) => item.id),
     options: {
       removable: false,
       margin: 4,
     },
     makeWidget,
   });
+
+  useSubscribedGridStackChanges({
+    grid,
+    onChange: React.useCallback(
+      (changes) => {
+        setDashboard((dashboard) => {
+          const changesMap = fromPairs(
+            changes.map((change) => [change.id, change]),
+          );
+          const newDashboardItems = dashboard.map((item) => {
+            const change = changesMap[item.id];
+            if (!change) return item;
+            return {
+              ...item,
+              rect: {
+                x: change.x,
+                height: change.h,
+                width: change.w,
+                y: change.y,
+              },
+            };
+          });
+          return {
+            ...dashboard,
+            items: newDashboardItems,
+          };
+        });
+      },
+      [setDashboard],
+    ),
+  });
+
+  const fullScreenRemote =
+    React.useRef<ParametrizedDisclosureTrigger<DashboardItemModel> | null>(
+      null,
+    );
+  const editRemote =
+    React.useRef<ParametrizedDisclosureTrigger<DashboardItemModel> | null>(
+      null,
+    );
+  const deleteRemote =
+    React.useRef<ParametrizedDisclosureTrigger<DashboardItemModel> | null>(
+      null,
+    );
+
   return (
-    <div className="rounded color-gray-100">
-      <div className="grid-stack" id={id}>
-        {ids.map((id) => (
-          <div
-            className="grid-stack-item"
-            ref={gridElements.current[id]}
-            key={id}
-          >
-            <DashboardGridItem />
-          </div>
-        ))}
+    <>
+      <DashboardGridItemFullScreenModal ref={fullScreenRemote} />
+      <DashboardGridItemDeleteModal
+        ref={deleteRemote}
+        items={dashboard}
+        removeDashboardItem={dashboardHandlers.remove}
+      />
+      <DashboardGridItemEditModal
+        ref={editRemote}
+        items={dashboard}
+        setDashboardItem={dashboardHandlers.setItem}
+      />
+      <div className="rounded color-gray-100">
+        <div className="grid-stack" id={id}>
+          {dashboard.map((item) => (
+            <div
+              className="grid-stack-item"
+              ref={gridElements.current[item.id]}
+              key={item.id}
+            >
+              <DashboardGridItem
+                item={item}
+                onFullScreen={fullScreenRemote.current?.open}
+                onEdit={editRemote.current?.open}
+                onDelete={deleteRemote.current?.open}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

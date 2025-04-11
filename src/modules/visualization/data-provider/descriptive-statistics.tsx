@@ -8,10 +8,11 @@ import {
 } from '../types';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries } from './utils';
+import { DashboardItemModel } from '@/api/userdata';
 
 export const useDescriptiveStatisticsDataProvider: BaseVisualizationDataProviderHook<
   DescriptiveStatisticsModel,
-  BaseVisualizationConfig
+  DashboardItemModel
 > = function (config) {
   const project = React.useContext(ProjectContext);
   const queries = useQueries({

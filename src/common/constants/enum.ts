@@ -87,6 +87,13 @@ export enum TaskStatusEnum {
   Failed = 'failed',
 }
 
+export enum DashboardTypeEnum {
+  Histogram = 'histogram',
+  LinePlot = 'line-plot',
+  DescriptiveStatistics = 'descriptive-statistics',
+  BoxPlot = 'box-plot',
+}
+
 export enum EnumList {
   SchemaColumnTypeEnum = 'SchemaColumnTypeEnum',
   GeospatialRoleEnum = 'GeospatialRoleEnum',
@@ -99,4 +106,5 @@ export enum EnumList {
   EffectSizeMethodEnum = 'EffectSizeMethodEnum',
   StatisticTestMethodEnum = 'StatisticTestMethodEnum',
   TaskStatusEnum = 'TaskStatusEnum',
+  DashboardTypeEnum = 'DashboardTypeEnum',
 }

@@ -1,59 +1,46 @@
-import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-import { ActionIcon, Group, Modal, Paper, Text } from '@mantine/core';
+import { DashboardItemModel } from '@/api/userdata';
+import { ActionIcon, Group, Paper } from '@mantine/core';
 import { CornersOut, PencilSimple, TrashSimple } from '@phosphor-icons/react';
 import React from 'react';
 
-const DashboardGridItemFullScreen = React.forwardRef<
-  DisclosureTrigger | null,
-  React.PropsWithChildren
->(function DashboardGridItemFullScreen(props, ref) {
-  const [opened, { close }] = useDisclosureTrigger(ref);
-  return (
-    <Modal
-      size="xl"
-      opened={opened}
-      onClose={close}
-      transitionProps={{ transition: 'fade', duration: 200 }}
-      fullScreen
-      radius={0}
-    >
-      {opened && props.children}
-    </Modal>
-  );
-});
-
-function DashboardGridItemRenderer() {
-  return <Text>Dashboard Item</Text>;
+interface DashboardGridItemProps {
+  item: DashboardItemModel;
+  onEdit: ((item: DashboardItemModel) => void) | undefined;
+  onDelete: ((item: DashboardItemModel) => void) | undefined;
+  onFullScreen: ((item: DashboardItemModel) => void) | undefined;
 }
 
-export default function DashboardGridItem() {
-  const children = <DashboardGridItemRenderer />;
-  const fullScreenRemote = React.useRef<DisclosureTrigger | null>(null);
+export default function DashboardGridItem(props: DashboardGridItemProps) {
+  const { item, onEdit, onDelete, onFullScreen } = props;
   return (
-    <>
-      <DashboardGridItemFullScreen ref={fullScreenRemote}>
-        {children}
-      </DashboardGridItemFullScreen>
-      <Paper className="grid-stack-item-content p-2 select-none">
-        <Group className="pb-2">
+    <Paper className="grid-stack-item-content p-2 select-none">
+      <Group className="pb-2">
+        {onFullScreen && (
           <ActionIcon
             variant="subtle"
             color="gray"
-            onClick={() => fullScreenRemote.current?.open()}
+            onClick={() => onFullScreen(item)}
           >
             <CornersOut size={24} />
           </ActionIcon>
-          <div className="flex-1" />
-          <ActionIcon color="red" variant="subtle">
-            <TrashSimple size={24} />
-          </ActionIcon>
-          <ActionIcon variant="subtle">
+        )}
+        <div className="flex-1" />
+        {onEdit && (
+          <ActionIcon variant="subtle" onClick={() => onEdit(item)}>
             <PencilSimple size={24} />
           </ActionIcon>
-        </Group>
-        {children}
-      </Paper>
-      <DashboardGridItemFullScreen />
-    </>
+        )}
+        {onDelete && (
+          <ActionIcon
+            color="red"
+            variant="subtle"
+            onClick={() => onDelete(item)}
+          >
+            <TrashSimple size={24} />
+          </ActionIcon>
+        )}
+      </Group>
+      Renderer
+    </Paper>
   );
 }

@@ -1,5 +1,5 @@
-import { NamedTableFilterModel } from '@/api/comparison';
-import { SchemaColumnModel } from '@/api/project';
+import { DashboardItemModel } from '@/api/userdata';
+import { DashboardTypeEnum } from '@/common/constants/enum';
 import React from 'react';
 
 export interface NamedData<TData> {
@@ -7,12 +7,10 @@ export interface NamedData<TData> {
   name: string;
 }
 
-export interface BaseVisualizationConfig {
-  column: SchemaColumnModel;
-  groups: NamedTableFilterModel[];
-}
-
-export interface BaseVisualizationComponentProps<TData, TConfig> {
+export interface BaseVisualizationComponentProps<
+  TData,
+  TConfig extends DashboardItemModel,
+> {
   data: NamedData<TData>[];
   config: TConfig;
 }
@@ -25,16 +23,13 @@ export type BaseVisualizationDataProviderHook<TData, TConfig> = (
   error: string | undefined;
 };
 
-export interface BaseVisualizationConfigManagerProps<TConfig> {
-  config: TConfig;
-  onSubmit(config: TConfig): void;
-}
-
-export interface VisualizationConfigEntry<TData, TConfig> {
-  type: string;
+export interface VisualizationConfigEntry<
+  TData,
+  TConfig extends DashboardItemModel,
+> {
+  type: DashboardTypeEnum;
   label: string;
   description: string;
-  configManager: React.FC<BaseVisualizationConfigManagerProps<TConfig>> | null;
   dataProvider: React.FC<BaseVisualizationDataProviderHook<TData, TConfig>>;
   component: React.FC<BaseVisualizationComponentProps<TData, TConfig>>;
 }

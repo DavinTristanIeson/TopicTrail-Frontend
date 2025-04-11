@@ -969,6 +969,8 @@ export interface components {
         };
         /** BoxPlotDashboardItem */
         BoxPlotDashboardItem: {
+            /** Id */
+            id: string;
             /** Column */
             column: string;
             rect: components["schemas"]["DashboardItemRect"];
@@ -1139,6 +1141,8 @@ export interface components {
         };
         /** DescriptiveStatisticsDashboardItem */
         DescriptiveStatisticsDashboardItem: {
+            /** Id */
+            id: string;
             /** Column */
             column: string;
             rect: components["schemas"]["DashboardItemRect"];
@@ -1367,6 +1371,8 @@ export interface components {
         };
         /** HistogramDashboardItem */
         HistogramDashboardItem: {
+            /** Id */
+            id: string;
             /** Column */
             column: string;
             rect: components["schemas"]["DashboardItemRect"];
@@ -1441,6 +1447,8 @@ export interface components {
         };
         /** LinePlotDashboardItem */
         LinePlotDashboardItem: {
+            /** Id */
+            id: string;
             /** Column */
             column: string;
             rect: components["schemas"]["DashboardItemRect"];

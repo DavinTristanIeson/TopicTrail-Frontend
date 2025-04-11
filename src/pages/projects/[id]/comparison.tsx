@@ -4,10 +4,11 @@ import {
   ComparisonPageTab,
   useComparisonAppState,
 } from '@/modules/comparison/app-state';
+import ComparisonDashboard from '@/modules/comparison/dashboard';
 import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
-import { DashboardControls } from '@/modules/visualization/dashboard/controls';
+import { DashboardControls } from '@/modules/visualization/configuration/controls';
 import { Alert, Stack, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
@@ -65,10 +66,7 @@ const ComparisonPage: NextPageWithLayout = function () {
         {tab === ComparisonPageTab.GroupsManager ? (
           <NamedFiltersManager />
         ) : tab === ComparisonPageTab.Visualization ? (
-          <Stack>
-            <DashboardControls />
-            <GridstackDashboard />
-          </Stack>
+          <ComparisonDashboard />
         ) : tab === ComparisonPageTab.StatisticTest ? (
           <ComparisonStatisticTest />
         ) : null}

@@ -9,10 +9,8 @@ interface TopicCorrelationAppStateContextType {
     state: DashboardItemModel[];
     handlers: UseListStateHandlers<DashboardItemModel>;
   };
-  column1: SchemaColumnModel | null;
-  column2: SchemaColumnModel | null;
-  setColumn2: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
-  setColumn1: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
+  column: SchemaColumnModel | null;
+  setColumn: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
 }
 
 const TopicCorrelationAppStateContext =
@@ -21,22 +19,19 @@ const TopicCorrelationAppStateContext =
 export default function TopicCorrelationAppStateProvider(
   props: React.PropsWithChildren,
 ) {
-  const [column1, setColumn1] = React.useState<SchemaColumnModel | null>(null);
-  const [column2, setColumn2] = React.useState<SchemaColumnModel | null>(null);
+  const [column, setColumn] = React.useState<SchemaColumnModel | null>(null);
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
   const { setState } = dashboardHandlers;
 
   React.useEffect(() => {
     setState([]);
-  }, [column1, column2, setState]);
+  }, [column, setState]);
 
   return (
     <TopicCorrelationAppStateContext.Provider
       value={{
-        column1,
-        column2,
-        setColumn1,
-        setColumn2,
+        column,
+        setColumn,
         dashboard: {
           state: dashboard,
           handlers: dashboardHandlers,
