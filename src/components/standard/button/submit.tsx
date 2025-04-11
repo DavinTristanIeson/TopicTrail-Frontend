@@ -16,6 +16,8 @@ export default function SubmitButton(props: ButtonProps) {
     >
       <Button
         leftSection={<FloppyDisk />}
+        // eslint-disable-next-line react/no-children-prop
+        children="Save"
         {...props}
         type="submit"
         loading={isSubmitting}

@@ -2,17 +2,18 @@ import { client } from '@/common/api/client';
 import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
 import TableRendererComponent from './table';
-import { TableStateContext, useTableStateSetup } from './context';
+import { TableStateContext } from './context';
 import { Group, Stack, Title } from '@mantine/core';
 import { TableSkeleton } from '@/components/visual/loading';
 import { keepPreviousData } from '@tanstack/react-query';
-import { TableFilterButton } from '../filter/drawer';
+import { TableFilterButton } from '@/modules/filter/context';
 import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
+import { useTableAppState } from './app-state';
 
 export default function TableQueryComponent() {
   const project = React.useContext(ProjectContext);
-  const tableState = useTableStateSetup();
-  const { limit, page, sort, filter } = tableState;
+  const tableState = useTableAppState((store) => store.params);
+  const { limit, page, sort, filter, setFilter } = tableState;
   const { data, error, isFetching, refetch } = client.useQuery(
     'post',
     '/table/{project_id}/',
@@ -40,7 +41,7 @@ export default function TableQueryComponent() {
       <Stack>
         <Group justify="space-between">
           <Title order={2}>Dataset of {project.config.metadata.name}</Title>
-          <TableFilterButton />
+          <TableFilterButton state={{ filter, setFilter }} />
         </Group>
         <FetchWrapperComponent
           isLoading={isFetching && !data}

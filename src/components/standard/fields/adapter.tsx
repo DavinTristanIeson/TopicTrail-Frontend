@@ -1,6 +1,6 @@
 import { getAnyError } from '@/common/utils/error';
 import { ReplaceKeys } from '@/common/utils/types';
-import React, { RefCallback } from 'react';
+import React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { FormEditableContext } from './context';
 
@@ -48,7 +48,6 @@ interface RHFMantineAdapterReturn {
   disabled: boolean;
   required: boolean;
   error: string | undefined;
-  ref: RefCallback<any> | undefined;
 }
 
 interface UseRHFMantineAdapterReturn<
@@ -79,7 +78,7 @@ export function useRHFMantineAdapter<
   const restProps = unusedProps as T;
   const { control } = useFormContext<any>();
   const {
-    field: { onChange, value, ref, disabled: fieldDisabled },
+    field: { onChange, value, disabled: fieldDisabled },
     fieldState: { error: fieldStateError },
     formState: { isSubmitting: formIsSubmitting },
   } = useController({ name, control });
@@ -107,7 +106,6 @@ export function useRHFMantineAdapter<
     error,
     name,
     required: !readOnly && !disabled ? !!required : false,
-    ref,
   };
 
   return {

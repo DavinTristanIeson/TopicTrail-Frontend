@@ -4,7 +4,8 @@ export type ComparisonStatisticTestInput =
   components['schemas']['ComparisonStatisticTestSchema'];
 export type TableComparisonResultModel =
   components['schemas']['TableComparisonResult'];
-export type NamedTableFilterModel = components['schemas']['NamedTableFilter'];
+export type NamedTableFilterModel =
+  components['schemas']['NamedTableFilter-Output'];
 export type TableComparisonGroupInfoModel =
   components['schemas']['TableComparisonGroupInfo'];
 export type SignificanceResultModel =

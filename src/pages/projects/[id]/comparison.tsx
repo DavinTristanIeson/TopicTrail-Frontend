@@ -1,14 +1,14 @@
-import { type NamedTableFilterModel } from '@/api/comparison';
-import { SessionStorageKeys } from '@/common/constants/browser-storage-keys';
+import { NextPageWithLayout } from '@/common/utils/types';
 import { GridSkeleton } from '@/components/visual/loading';
-import { NamedFiltersContext } from '@/modules/comparison/context';
+import {
+  ComparisonPageTab,
+  useComparisonAppState,
+} from '@/modules/comparison/app-state';
 import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
-import AppProjectLayout from '@/modules/project/layout';
-import { ProjectAllTopicsProvider } from '@/modules/topics/components/context';
-import { AddTableVisualizationButton } from '@/modules/visualization/dashboard/add-visualization-dialog';
+import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
+import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { Alert, Stack, Tabs } from '@mantine/core';
-import { useSessionStorage } from '@mantine/hooks';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
 import React from 'react';
@@ -21,24 +21,14 @@ const GridstackDashboard = dynamic(
   },
 );
 
-enum ComparisonPageTab {
-  GroupsManager = 'group-manager',
-  Visualization = 'visualization',
-  StatisticTest = 'statistic-test',
-}
-
-function ComparisonPageStateManager() {
-  const [filters, setFilters] = useSessionStorage<NamedTableFilterModel[]>({
-    key: SessionStorageKeys.ComparisonParams,
-    defaultValue: [],
-  });
-  const [tab, setTab] = React.useState<string | null>(
-    ComparisonPageTab.GroupsManager,
-  );
+const ComparisonPage: NextPageWithLayout = function () {
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const tab = useComparisonAppState((store) => store.tab);
+  const setTab = useComparisonAppState((store) => store.setTab);
 
   return (
-    <NamedFiltersContext.Provider value={{ filters, setFilters }}>
-      {filters.length < 2 && (
+    <>
+      {comparisonGroups.length < 2 && (
         <Alert color="yellow" icon={<Warning size={20} />} className="mb-3">
           First things first, create at least two groups to be compared. Each
           group represents a subset of your dataset, which is defined by a name
@@ -47,7 +37,7 @@ function ComparisonPageStateManager() {
         </Alert>
       )}
 
-      <Tabs value={tab} onChange={setTab} allowTabDeactivation={false}>
+      <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>
         <Tabs.List>
           <Tabs.Tab
             value={ComparisonPageTab.GroupsManager}
@@ -58,14 +48,14 @@ function ComparisonPageStateManager() {
           <Tabs.Tab
             value={ComparisonPageTab.Visualization}
             leftSection={<Shapes />}
-            disabled={filters.length === 0}
+            disabled={comparisonGroups.length === 0}
           >
             Visualization
           </Tabs.Tab>
           <Tabs.Tab
             value={ComparisonPageTab.StatisticTest}
             leftSection={<TestTube />}
-            disabled={filters.length === 0}
+            disabled={comparisonGroups.length === 0}
           >
             Statistic Test
           </Tabs.Tab>
@@ -76,23 +66,23 @@ function ComparisonPageStateManager() {
           <NamedFiltersManager />
         ) : tab === ComparisonPageTab.Visualization ? (
           <Stack>
-            <AddTableVisualizationButton />
+            <DashboardControls />
             <GridstackDashboard />
           </Stack>
         ) : tab === ComparisonPageTab.StatisticTest ? (
           <ComparisonStatisticTest />
         ) : null}
       </div>
-    </NamedFiltersContext.Provider>
+    </>
   );
-}
+};
 
-export default function ComparisonPage() {
+ComparisonPage.getLayout = (children) => {
   return (
-    <AppProjectLayout>
-      <ProjectAllTopicsProvider>
-        <ComparisonPageStateManager />
-      </ProjectAllTopicsProvider>
-    </AppProjectLayout>
+    <ProjectCommonDependencyProvider>
+      {children}
+    </ProjectCommonDependencyProvider>
   );
-}
+};
+
+export default ComparisonPage;

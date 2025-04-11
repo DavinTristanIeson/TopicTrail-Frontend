@@ -5,6 +5,7 @@ import {
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import { SelectFieldProps } from '@/components/standard/fields/wrapper';
+import { SelectedComboboxWrapper } from '@/components/visual/select';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import {
   type ComboboxItem,
@@ -24,15 +25,19 @@ export interface ProjectColumnComboboxItem extends ComboboxItem {
 function ProjectColumnComboboxItemRenderer(
   combobox: ComboboxLikeRenderOptionInput<ProjectColumnComboboxItem>,
 ) {
-  const { option } = combobox;
+  const { option, checked } = combobox;
   return (
-    <Group>
-      <ProjectSchemaTypeIcon type={option.data.type as SchemaColumnTypeEnum} />
-      <Text size="sm">{option.label}</Text>
-      <Text size="xs" c="gray">
-        {capitalize(option.data.type)}
-      </Text>
-    </Group>
+    <SelectedComboboxWrapper checked={checked}>
+      <Group>
+        <ProjectSchemaTypeIcon
+          type={option.data.type as SchemaColumnTypeEnum}
+        />
+        <Text size="sm">{option.label}</Text>
+        <Text size="xs" c="gray">
+          {capitalize(option.data.type)}
+        </Text>
+      </Group>
+    </SelectedComboboxWrapper>
   );
 }
 
@@ -89,15 +94,19 @@ interface ProjectColumnTypeComboboxItem extends ComboboxItem {
 function ProjectColumnTypeComboboxItemRenderer(
   combobox: ComboboxLikeRenderOptionInput<ProjectColumnTypeComboboxItem>,
 ) {
-  const { option } = combobox;
+  const { option, checked } = combobox;
   return (
-    <Stack>
-      <Group>
-        <ProjectSchemaTypeIcon type={option.value} />
-        <Text>{option.label}</Text>
-      </Group>
-      <Text>{option.description}</Text>
-    </Stack>
+    <SelectedComboboxWrapper checked={checked}>
+      <Stack>
+        <Group>
+          <ProjectSchemaTypeIcon type={option.value} />
+          <Text size="sm">{option.label}</Text>
+        </Group>
+        <Text size="xs" c="gray">
+          {option.description}
+        </Text>
+      </Stack>
+    </SelectedComboboxWrapper>
   );
 }
 
@@ -115,42 +124,49 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
           {
             value: SchemaColumnTypeEnum.Textual,
             label: 'Textual',
-            description: 'TODO',
+            description:
+              'This column contains textual data that needs to be analyzed. We will run a topic modeling algorithm on columns of type "Textual" to automatically extract common topics/themes.',
           },
           {
             value: SchemaColumnTypeEnum.Continuous,
             label: 'Continuous',
-            description: 'TODO',
+            description: 'This column contains numeric data.',
           },
           {
             value: SchemaColumnTypeEnum.Categorical,
             label: 'Categorical',
-            description: 'TODO',
+            description:
+              'This column consists of a few unique unordered categories.',
           },
           {
             value: SchemaColumnTypeEnum.OrderedCategorical,
             label: 'Ordered Categorical',
-            description: 'TODO',
+            description:
+              'This column consists of a few unique ordered categories.',
           },
           {
             value: SchemaColumnTypeEnum.Temporal,
             label: 'Temporal',
-            description: 'TODO',
+            description:
+              'This column contains date-time data that follows a strict format (e.g.: YYYY/MM/DD).',
           },
           {
             value: SchemaColumnTypeEnum.MultiCategorical,
             label: 'Multi-Categorical',
-            description: 'TODO',
+            description:
+              'Each row of this column can contain one or more categories.',
           },
           {
             value: SchemaColumnTypeEnum.Geospatial,
             label: 'Geospatial',
-            description: 'TODO',
+            description:
+              'This column contains either the latitude or longitude values of a coordinate.',
           },
           {
             value: SchemaColumnTypeEnum.Unique,
             label: 'Unique',
-            description: 'TODO',
+            description:
+              'This column contains data that will not be used in the analysis.',
           },
         ] as ProjectColumnTypeComboboxItem[]
       }

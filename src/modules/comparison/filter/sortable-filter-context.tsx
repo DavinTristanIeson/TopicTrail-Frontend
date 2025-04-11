@@ -10,7 +10,7 @@ import { Button, Group, Paper, Text } from '@mantine/core';
 import { Eye, PencilSimple } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { NamedFiltersContext } from '../context';
+import { useComparisonAppState } from '../app-state';
 
 interface SortableNamedTableFilterDndContextProps {
   editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>;
@@ -60,17 +60,21 @@ export default function SortableNamedTableFilterDndContext(
   props: SortableNamedTableFilterDndContextProps,
 ) {
   const { editRemote } = props;
-  const { filters, setFilters } = React.useContext(NamedFiltersContext);
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const setComparisonGroups = useComparisonAppState(
+    (store) => store.groups.handlers.setState,
+  );
+
   const { id, grid, gridElements } = useControlledGridstack({
-    gridItems: filters.map((filter) => filter.name),
+    gridItems: comparisonGroups.map((group) => group.name),
     options: SortableGridStackDefaultOptions({
-      itemsCount: filters.length,
+      itemsCount: comparisonGroups.length,
     }),
   });
   useSortableGridStack({
     grid,
     onSort(gridstackIds) {
-      setFilters((prev) => {
+      setComparisonGroups((prev) => {
         return gridstackIds.map((id) => {
           return prev.find((namedFilter) => namedFilter.name === id)!;
         });
@@ -80,14 +84,14 @@ export default function SortableNamedTableFilterDndContext(
 
   return (
     <div className="grid-stack" id={id}>
-      {filters.map((filter) => (
+      {comparisonGroups.map((group) => (
         <div
           className="grid-stack-item"
-          key={filter.name}
-          ref={gridElements.current[filter.name]}
+          key={group.name}
+          ref={gridElements.current[group.name]}
         >
           <Paper className="p-3 select-none grid-stack-item-content">
-            <NamedFilterItemComponent item={filter} editRemote={editRemote} />
+            <NamedFilterItemComponent item={group} editRemote={editRemote} />
           </Paper>
         </div>
       ))}

@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Badge,
+  Button,
   Checkbox,
   createTheme,
   Drawer,
@@ -10,6 +11,7 @@ import {
   Modal,
   Paper,
   ScrollArea,
+  Select,
   Tooltip,
 } from '@mantine/core';
 import Colors from './colors';
@@ -53,6 +55,11 @@ const mantineTheme = createTheme({
     deg: 45,
   },
   components: {
+    Button: Button.extend({
+      defaultProps: {
+        type: 'button',
+      } as any,
+    }),
     LoadingOverlay: LoadingOverlay.extend({
       defaultProps: {
         overlayProps: { radius: 'sm', blur: 2 },
@@ -111,6 +118,11 @@ const mantineTheme = createTheme({
     HoverCard: HoverCard.extend({
       defaultProps: {
         position: 'right',
+      },
+    }),
+    Select: Select.extend({
+      defaultProps: {
+        searchable: true,
       },
     }),
   },

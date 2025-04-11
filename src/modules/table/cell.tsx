@@ -35,6 +35,9 @@ interface HighlightedCellProps {
 
 const HighlightedCell = React.forwardRef<HTMLDivElement, HighlightedCellProps>(
   function HighlightedCell(props, ref) {
+    if (!props.children) {
+      return null;
+    }
     return (
       <Box
         bg={props.color ? props.color : props.dull ? 'gray.6' : 'brand.6'}
@@ -60,17 +63,37 @@ export function TextualColumnCell(props: React.PropsWithChildren) {
 
 interface TemporalColumnCellProps {
   date: Date;
-  precision: TemporalPrecisionEnum;
+  precision: TemporalPrecisionEnum | null;
 }
 
-function TemporalColumnCellProps(props: TemporalColumnCellProps) {
-  return (
-    <DefaultColumnCell>
-      {props.precision === TemporalPrecisionEnum.Date
-        ? dayjs(props.date).format('DD MMMM YYYY')
-        : dayjs(props.date).format('DD MMMM YYYY, HH:mm:ss')}
-    </DefaultColumnCell>
-  );
+function TemporalColumnCell(props: TemporalColumnCellProps) {
+  if (!props.date) {
+    return null;
+  }
+  const date = dayjs(props.date);
+  if (!date.isValid()) {
+    return null;
+  }
+  let value: string;
+  switch (props.precision) {
+    case TemporalPrecisionEnum.Year: {
+      value = date.format('YYYY');
+      break;
+    }
+    case TemporalPrecisionEnum.Month: {
+      value = date.format('MMMM YYYY');
+      break;
+    }
+    case TemporalPrecisionEnum.Date: {
+      value = date.format('DD MMMM YYYY');
+      break;
+    }
+    default: {
+      value = date.format('DD MMMM YYYY, HH:mm:ss');
+      break;
+    }
+  }
+  return <DefaultColumnCell>{value}</DefaultColumnCell>;
 }
 
 interface TopicColumnCellProps {
@@ -181,6 +204,9 @@ interface CategoricalColumnCellProps {
 }
 
 function CategoricalColumnCell(props: CategoricalColumnCellProps) {
+  if (!props.category) {
+    return null;
+  }
   const order = props.categoryOrder
     ? props.categoryOrder.findIndex((category) => category === props.category)
     : -1;
@@ -202,6 +228,9 @@ interface NumericColumnCellProps {
 
 function NumericColumnCell(props: NumericColumnCellProps) {
   const { value } = props;
+  if (value == null) {
+    return null;
+  }
 
   return (
     <DefaultColumnCell>
@@ -234,9 +263,7 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
     case SchemaColumnTypeEnum.Temporal: {
       const temporalPrecision = (column as TemporalSchemaColumnModel)
         .temporal_precision as TemporalPrecisionEnum;
-      return (
-        <TemporalColumnCellProps date={value} precision={temporalPrecision} />
-      );
+      return <TemporalColumnCell date={value} precision={temporalPrecision} />;
     }
     case SchemaColumnTypeEnum.Topic: {
       return (

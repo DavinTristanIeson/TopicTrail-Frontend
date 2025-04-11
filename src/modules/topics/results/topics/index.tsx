@@ -10,8 +10,9 @@ import {
 } from './data-providers';
 import { TopicVisualizationWordCloudRenderer } from './word-cloud';
 import { Info } from '@phosphor-icons/react';
+import { useTopicAppState } from '../../app-state';
 
-enum TopicVisualizationMethod {
+export enum TopicVisualizationMethodEnum {
   InterTopicRelationship = 'inter-topic-relationship',
   DocumentScatterPlot = 'document-scatter-plot',
   TopicsBarchart = 'topic-barchart',
@@ -20,42 +21,46 @@ enum TopicVisualizationMethod {
 }
 
 const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
-  [TopicVisualizationMethod.InterTopicRelationship]: {
+  [TopicVisualizationMethodEnum.InterTopicRelationship]: {
     label: 'Inter-Topic Relationship (Bubble Chart)',
     description:
       'Visualize the relationship between topics as a bubble chart. Topics with a higher frequency is represented with a larger bubble. Topics that have similar meanings are represented as bubbles that are close to each other.',
-    value: TopicVisualizationMethod.InterTopicRelationship,
+    value: TopicVisualizationMethodEnum.InterTopicRelationship,
   },
-  [TopicVisualizationMethod.DocumentScatterPlot]: {
+  [TopicVisualizationMethodEnum.DocumentScatterPlot]: {
     label: 'Document Semantic Space (Scatter-Plot)',
     description:
       'Visualize the meanings of the documents as a scatter plot. Documents with similar meanings are represented as points that are close to each other. Each document is colored according to its topic.',
-    value: TopicVisualizationMethod.DocumentScatterPlot,
+    value: TopicVisualizationMethodEnum.DocumentScatterPlot,
   },
-  [TopicVisualizationMethod.TopicsBarchart]: {
+  [TopicVisualizationMethodEnum.TopicsBarchart]: {
     label: 'Topic Frequencies (Bar Chart)',
     description:
       'Visualize the frequencies of each topic as a bar chart. Each topic is represented with a bar, and the frequency of the topic is represented by the length of the bar.',
-    value: TopicVisualizationMethod.TopicsBarchart,
+    value: TopicVisualizationMethodEnum.TopicsBarchart,
   },
-  [TopicVisualizationMethod.TopicWordsBarchart]: {
+  [TopicVisualizationMethodEnum.TopicWordsBarchart]: {
     label: 'Topic Words (Bar Chart)',
     description:
       'Visualize the topic words of each topic as a bar chart. Each word is represented with a bar, and the significance of the word (how the word differentiates this topic compared to the other topics) is represented by the length of the bar.',
-    value: TopicVisualizationMethod.TopicWordsBarchart,
+    value: TopicVisualizationMethodEnum.TopicWordsBarchart,
   },
-  [TopicVisualizationMethod.TopicWordsWordCloud]: {
+  [TopicVisualizationMethodEnum.TopicWordsWordCloud]: {
     label: 'Topic Words (Word Cloud)',
     description:
       'Visualize the topic words of each topic as a word cloud. The significance of the word (how the word differentiates this topic compared to the other topics) is represented by the size of the word.',
-    value: TopicVisualizationMethod.TopicWordsWordCloud,
+    value: TopicVisualizationMethodEnum.TopicWordsWordCloud,
   },
 };
 
 export default function TopicVisualizationRenderer() {
-  const [method, setMethod] = React.useState<string | null>(
-    TopicVisualizationMethod.InterTopicRelationship,
+  const method = useTopicAppState(
+    (store) => store.topics.topicVisualizationMethod,
   );
+  const setMethod = useTopicAppState(
+    (store) => store.topics.setTopicVisualizationMethod,
+  );
+
   const renderOption = useDescriptionBasedRenderOption(
     TOPIC_VISUALIZATION_METHOD_DICTIONARY,
   );
@@ -75,27 +80,27 @@ export default function TopicVisualizationRenderer() {
         label="Visualization method"
         renderOption={renderOption}
         value={method}
-        onChange={setMethod}
+        onChange={setMethod as any}
         allowDeselect={false}
         maw={512}
       />
-      {method === TopicVisualizationMethod.InterTopicRelationship ? (
+      {method === TopicVisualizationMethodEnum.InterTopicRelationship ? (
         <TopicVisualizationDataProvider>
           {TopicVisualizationBubbleChartRenderer}
         </TopicVisualizationDataProvider>
-      ) : method === TopicVisualizationMethod.DocumentScatterPlot ? (
+      ) : method === TopicVisualizationMethodEnum.DocumentScatterPlot ? (
         <DocumentTopicsVisualizationDataProvider>
           {TopicVisualizationScatterPlotRenderer}
         </DocumentTopicsVisualizationDataProvider>
-      ) : method === TopicVisualizationMethod.TopicWordsBarchart ? (
+      ) : method === TopicVisualizationMethodEnum.TopicWordsBarchart ? (
         <TopicVisualizationDataProvider>
           {TopicWordsBarChartRenderer}
         </TopicVisualizationDataProvider>
-      ) : method === TopicVisualizationMethod.TopicsBarchart ? (
+      ) : method === TopicVisualizationMethodEnum.TopicsBarchart ? (
         <TopicVisualizationDataProvider>
           {TopicBarChartRenderer}
         </TopicVisualizationDataProvider>
-      ) : method === TopicVisualizationMethod.TopicWordsWordCloud ? (
+      ) : method === TopicVisualizationMethodEnum.TopicWordsWordCloud ? (
         <TopicVisualizationDataProvider>
           {TopicVisualizationWordCloudRenderer}
         </TopicVisualizationDataProvider>

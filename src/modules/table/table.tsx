@@ -34,5 +34,9 @@ export default function TableRendererComponent(
     ...tableProps,
   });
 
-  return <MantineReactTable table={table} />;
+  return (
+    <React.Suspense>
+      <MantineReactTable table={table} />
+    </React.Suspense>
+  );
 }

@@ -9,8 +9,9 @@ import {
 import { Button, Flex, LoadingOverlay, Modal, Stack } from '@mantine/core';
 import { ProjectConfigDataSourceFormBody } from './form-body';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { CheckCircle, X } from '@phosphor-icons/react';
+import { CheckCircle } from '@phosphor-icons/react';
 import FormWrapper from '@/components/utility/form/wrapper';
+import { CancelButton } from '@/components/standard/button/variants';
 
 export const ProjectConfigDataSourceUpdateModal = React.forwardRef<
   DisclosureTrigger | null,
@@ -46,15 +47,7 @@ export const ProjectConfigDataSourceUpdateModal = React.forwardRef<
             >
               Verify Dataset
             </Button>
-            <Button
-              leftSection={<X />}
-              variant="outline"
-              color="red"
-              onClick={close}
-              type="button"
-            >
-              Cancel
-            </Button>
+            <CancelButton onClick={close}>Cancel</CancelButton>
           </Flex>
         </Stack>
       </FormWrapper>

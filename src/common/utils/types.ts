@@ -1,3 +1,5 @@
+import { type NextPage } from 'next';
+
 /** Remove optionality, null, and undefined from specific properties in a type.
 
 Usage:
@@ -45,3 +47,7 @@ export type UnknownKeysOfType<T extends Record<any, any>> = {
 
 export type Promisable<T> = T | Promise<T>;
 export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
+
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
+};

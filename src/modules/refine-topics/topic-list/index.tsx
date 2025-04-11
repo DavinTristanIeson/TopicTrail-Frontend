@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Drawer, Stack, TextInput, Text } from '@mantine/core';
 import { useDebouncedState, useDebouncedValue } from '@mantine/hooks';
 import { getTopicColumnName, TextualSchemaColumnModel } from '@/api/project';
-import { FilterStateContext } from '@/modules/table/context';
+import { FilterStateContext } from '@/modules/filter/context';
 import {
   DisclosureTrigger,
   ParametrizedDisclosureTrigger,
@@ -21,6 +21,7 @@ import { RefineTopicsFormType, TopicUpdateFormType } from '../form-type';
 import { getTopicLabel } from '@/api/topic';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import { OUTLIER_TOPIC } from '@/modules/topics/components/select-topic-input';
+import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
 
 interface TopicListRendererProps {
   column: TextualSchemaColumnModel;
@@ -128,22 +129,17 @@ function RefineTopicsTopicListBody(props: RefineTopicsTopicListProps) {
 
   const filteredTopics = React.useMemo(() => {
     if (!q) return topics;
-    return topics.filter((topic) => {
-      const matchesLabel =
-        topic.label && topic.label.toLowerCase().includes(q.toLowerCase());
-      if (!topic.original) {
-        return matchesLabel;
-      }
-      const matchesTopicWords = topic.original.words
-        .map((word) => word[0].toLowerCase())
-        .includes(q.toLowerCase());
-      const matchesTags =
-        !!topic.original.tags &&
-        topic.original.tags
-          .map((tag) => tag.toLowerCase())
-          .includes(q.toLowerCase());
-      return matchesLabel || matchesTopicWords || matchesTags;
-    });
+    const indices = filterByString(
+      q,
+      topics.map((topic) => {
+        return {
+          label: topic.label,
+          words: topic.original?.words?.map((word) => word[0]),
+          tags: topic.original?.tags,
+        };
+      }),
+    );
+    return pickArrayByIndex(topics, indices);
   }, [topics, q]);
 
   const createNewTopicRemote = React.useRef<DisclosureTrigger | null>(null);

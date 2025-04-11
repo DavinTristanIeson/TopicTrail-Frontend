@@ -20,12 +20,11 @@ import {
   Info,
   PencilSimple,
   TrashSimple,
-  X,
 } from '@phosphor-icons/react';
 import {
-  invalidateProjectDependencyQueries,
   ProjectModel,
   ProjectMutationInput,
+  removeProjectDependencyQueries,
 } from '@/api/project';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
@@ -34,6 +33,7 @@ import { showNotification } from '@mantine/notifications';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { client } from '@/common/api/client';
 import { queryClient } from '@/common/api/query-client';
+import { CancelButton } from '@/components/standard/button/variants';
 
 export function ProjectListItem(props: ProjectModel) {
   const router = useRouter();
@@ -115,7 +115,7 @@ export const DeleteProjectModal = React.forwardRef<
     '/projects/{project_id}',
     {
       onSuccess(data, variables) {
-        invalidateProjectDependencyQueries(variables.params.path.project_id);
+        removeProjectDependencyQueries(variables.params.path.project_id);
       },
     },
   );
@@ -158,14 +158,7 @@ export const DeleteProjectModal = React.forwardRef<
             >
               Delete Project
             </Button>
-            <Button
-              variant="outline"
-              color="gray"
-              leftSection={<X />}
-              onClick={close}
-            >
-              Cancel
-            </Button>
+            <CancelButton onClick={close} />
           </Flex>
         </Stack>
       )}

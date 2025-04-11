@@ -92,6 +92,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/projects/{project_id}/reload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Reload  Project */
+        patch: operations["reload__project_projects__project_id__reload_patch"];
+        trace?: never;
+    };
     "/enums": {
         parameters: {
             query?: never;
@@ -171,6 +188,23 @@ export interface paths {
         put?: never;
         /** Post  Get Table Column  Frequency Distribution */
         post: operations["post__get_table_column__frequency_distribution_table__project_id__column_frequency_distribution_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/table/{project_id}/column/aggregate-totals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Table Column  Aggregate Totals */
+        post: operations["post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -466,6 +500,271 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/userdata/{project_id}/filters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  All Filters */
+        get: operations["get__all_filters_userdata__project_id__filters_get"];
+        put?: never;
+        /** Post  Filters */
+        post: operations["post__filters_userdata__project_id__filters_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/filters/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Filters */
+        get: operations["get__filters_userdata__project_id__filters__name__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/filters/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put  Filters */
+        put: operations["put__filters_userdata__project_id__filters__id__put"];
+        post?: never;
+        /** Delete  Filters */
+        delete: operations["delete__filters_userdata__project_id__filters__id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/comparison-state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  All Comparison State */
+        get: operations["get__all_comparison_state_userdata__project_id__comparison_state_get"];
+        put?: never;
+        /** Post  Comparison State */
+        post: operations["post__comparison_state_userdata__project_id__comparison_state_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/comparison-state/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Comparison State */
+        get: operations["get__comparison_state_userdata__project_id__comparison_state__name__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/comparison-state/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put  Comparison State */
+        put: operations["put__comparison_state_userdata__project_id__comparison_state__id__put"];
+        post?: never;
+        /** Delete  Comparison State */
+        delete: operations["delete__comparison_state_userdata__project_id__comparison_state__id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/table": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  All Table Dashboard */
+        get: operations["get__all_table_dashboard_userdata__project_id__dashboard_table_get"];
+        put?: never;
+        /** Post  Table Dashboard */
+        post: operations["post__table_dashboard_userdata__project_id__dashboard_table_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/table/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Table Dashboard */
+        get: operations["get__table_dashboard_userdata__project_id__dashboard_table__name__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/table/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put  Table Dashboard */
+        put: operations["put__table_dashboard_userdata__project_id__dashboard_table__id__put"];
+        post?: never;
+        /** Delete  Table Dashboard */
+        delete: operations["delete__table_dashboard_userdata__project_id__dashboard_table__id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/comparison": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  All Comparison Dashboard */
+        get: operations["get__all_comparison_dashboard_userdata__project_id__dashboard_comparison_get"];
+        put?: never;
+        /** Post  Comparison Dashboard */
+        post: operations["post__comparison_dashboard_userdata__project_id__dashboard_comparison_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/comparison/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Comparison Dashboard */
+        get: operations["get__comparison_dashboard_userdata__project_id__dashboard_comparison__name__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/comparison/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put  Comparison Dashboard */
+        put: operations["put__comparison_dashboard_userdata__project_id__dashboard_comparison__id__put"];
+        post?: never;
+        /** Delete  Comparison Dashboard */
+        delete: operations["delete__comparison_dashboard_userdata__project_id__dashboard_comparison__id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/correlation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  All Correlation Dashboard */
+        get: operations["get__all_correlation_dashboard_userdata__project_id__dashboard_correlation_get"];
+        put?: never;
+        /** Post  Correlation Dashboard */
+        post: operations["post__correlation_dashboard_userdata__project_id__dashboard_correlation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/correlation/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Correlation Dashboard */
+        get: operations["get__correlation_dashboard_userdata__project_id__dashboard_correlation__name__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/userdata/{project_id}/dashboard/correlation/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put  Correlation Dashboard */
+        put: operations["put__correlation_dashboard_userdata__project_id__dashboard_correlation__id__put"];
+        post?: never;
+        /** Delete  Correlation Dashboard */
+        delete: operations["delete__correlation_dashboard_userdata__project_id__dashboard_correlation__id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -541,6 +840,12 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[TableColumnAggregateTotalsResource] */
+        ApiResult_TableColumnAggregateTotalsResource_: {
+            data: components["schemas"]["TableColumnAggregateTotalsResource"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[TableColumnCountsResource] */
         ApiResult_TableColumnCountsResource_: {
             data: components["schemas"]["TableColumnCountsResource"];
@@ -595,6 +900,24 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]]] */
+        ApiResult_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator___: {
+            data: components["schemas"]["UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[UserDataResource[ComparisonState]] */
+        ApiResult_UserDataResource_ComparisonState__: {
+            data: components["schemas"]["UserDataResource_ComparisonState_"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[UserDataResource[Dashboard]] */
+        ApiResult_UserDataResource_Dashboard__: {
+            data: components["schemas"]["UserDataResource_Dashboard_"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[list[ColumnTopicModelingResultResource]] */
         ApiResult_list_ColumnTopicModelingResultResource__: {
             /** Data */
@@ -616,12 +939,46 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[list[UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]]]] */
+        ApiResult_list_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator____: {
+            /** Data */
+            data: components["schemas"]["UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"][];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[list[UserDataResource[ComparisonState]]] */
+        ApiResult_list_UserDataResource_ComparisonState___: {
+            /** Data */
+            data: components["schemas"]["UserDataResource_ComparisonState_"][];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[list[UserDataResource[Dashboard]]] */
+        ApiResult_list_UserDataResource_Dashboard___: {
+            /** Data */
+            data: components["schemas"]["UserDataResource_Dashboard_"][];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[list[int]] */
         ApiResult_list_int__: {
             /** Data */
             data: number[];
             /** Message */
             message: string | null;
+        };
+        /** BoxPlotDashboardItem */
+        BoxPlotDashboardItem: {
+            /** Column */
+            column: string;
+            rect: components["schemas"]["DashboardItemRect"];
+            /** Config */
+            config: unknown;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "box-plot";
         };
         /** CSVDataSource */
         CSVDataSource: {
@@ -680,14 +1037,24 @@ export interface components {
         /** ComparisonGroupWordsSchema */
         ComparisonGroupWordsSchema: {
             /** Groups */
-            groups: components["schemas"]["NamedTableFilter"][];
+            groups: components["schemas"]["NamedTableFilter-Input"][];
             /** Column */
             column: string;
         };
+        /** ComparisonState */
+        "ComparisonState-Input": {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter-Input"][];
+        };
+        /** ComparisonState */
+        "ComparisonState-Output": {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter-Output"][];
+        };
         /** ComparisonStatisticTestSchema */
         ComparisonStatisticTestSchema: {
-            group1: components["schemas"]["NamedTableFilter"];
-            group2: components["schemas"]["NamedTableFilter"];
+            group1: components["schemas"]["NamedTableFilter-Input"];
+            group2: components["schemas"]["NamedTableFilter-Input"];
             /** Column */
             column: string;
             statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
@@ -735,6 +1102,27 @@ export interface components {
              */
             bin_count: number;
         };
+        /** Dashboard */
+        "Dashboard-Input": {
+            /** Items */
+            items: (components["schemas"]["HistogramDashboardItem"] | components["schemas"]["LinePlotDashboardItem"] | components["schemas"]["DescriptiveStatisticsDashboardItem"] | components["schemas"]["BoxPlotDashboardItem"])[];
+        };
+        /** Dashboard */
+        "Dashboard-Output": {
+            /** Items */
+            items: (components["schemas"]["HistogramDashboardItem"] | components["schemas"]["LinePlotDashboardItem"] | components["schemas"]["DescriptiveStatisticsDashboardItem"] | components["schemas"]["BoxPlotDashboardItem"])[];
+        };
+        /** DashboardItemRect */
+        DashboardItemRect: {
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+            /** Width */
+            width: number;
+            /** Height */
+            height: number;
+        };
         /** DatasetFilterSchema */
         DatasetFilterSchema: {
             /** Filter */
@@ -748,6 +1136,19 @@ export interface components {
             preview_rows: Record<string, never>[];
             /** Total Rows */
             total_rows: number;
+        };
+        /** DescriptiveStatisticsDashboardItem */
+        DescriptiveStatisticsDashboardItem: {
+            /** Column */
+            column: string;
+            rect: components["schemas"]["DashboardItemRect"];
+            /** Config */
+            config: unknown;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "descriptive-statistics";
         };
         /** DescriptiveStatisticsResource */
         DescriptiveStatisticsResource: {
@@ -904,6 +1305,14 @@ export interface components {
             type: "geospatial";
             role: components["schemas"]["GeospatialRoleEnum"];
         };
+        /** GetTableColumnAggregateTotalsSchema */
+        GetTableColumnAggregateTotalsSchema: {
+            /** Column */
+            column: string;
+            /** Filter */
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            grouped_by: components["schemas"]["TableSort"];
+        };
         /** GetTableColumnSchema */
         GetTableColumnSchema: {
             /** Column */
@@ -955,6 +1364,21 @@ export interface components {
             type: "has_text";
             /** Value */
             value: string;
+        };
+        /** HistogramDashboardItem */
+        HistogramDashboardItem: {
+            /** Column */
+            column: string;
+            rect: components["schemas"]["DashboardItemRect"];
+            /** Config */
+            config: unknown;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "histogram";
+            /** Bins */
+            bins: number | null;
         };
         /** IncludesTableFilter */
         IncludesTableFilter: {
@@ -1015,6 +1439,20 @@ export interface components {
             /** Value */
             value: string | number;
         };
+        /** LinePlotDashboardItem */
+        LinePlotDashboardItem: {
+            /** Column */
+            column: string;
+            rect: components["schemas"]["DashboardItemRect"];
+            /** Config */
+            config: unknown;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "line-plot";
+            sort: components["schemas"]["TableSort"] | null;
+        };
         /** MultiCategoricalSchemaColumn */
         MultiCategoricalSchemaColumn: {
             /** Name */
@@ -1045,11 +1483,18 @@ export interface components {
             type: "multi-categorical";
         };
         /** NamedTableFilter */
-        NamedTableFilter: {
+        "NamedTableFilter-Input": {
             /** Name */
             name: string;
             /** Filter */
             filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+        };
+        /** NamedTableFilter */
+        "NamedTableFilter-Output": {
+            /** Name */
+            name: string;
+            /** Filter */
+            filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
         };
         /** NotEmptyTableFilter */
         NotEmptyTableFilter: {
@@ -1236,6 +1681,15 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
+        /** TableColumnAggregateTotalsResource */
+        TableColumnAggregateTotalsResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Values */
+            values: string[];
+            /** Totals */
+            totals: number[];
+        };
         /** TableColumnCountsResource */
         TableColumnCountsResource: {
             /** Column */
@@ -1382,10 +1836,15 @@ export interface components {
          */
         TaskStatusEnum: "idle" | "pending" | "success" | "failed";
         /**
+         * TemporalColumnFeatureEnum
+         * @enum {string}
+         */
+        TemporalColumnFeatureEnum: "year" | "month" | "date" | "monthly" | "day_of_week" | "hour";
+        /**
          * TemporalPrecisionEnum
          * @enum {string}
          */
-        TemporalPrecisionEnum: "date" | "date-time";
+        TemporalPrecisionEnum: "year" | "month" | "date";
         /** TemporalSchemaColumn */
         TemporalSchemaColumn: {
             /** Name */
@@ -1406,8 +1865,9 @@ export interface components {
             type: "temporal";
             /** Datetime Format */
             datetime_format: string | null;
-            /** @default date-time */
-            temporal_precision: components["schemas"]["TemporalPrecisionEnum"];
+            /** Temporal Features */
+            temporal_features: components["schemas"]["TemporalColumnFeatureEnum"][];
+            temporal_precision?: components["schemas"]["TemporalPrecisionEnum"] | null;
         };
         /** TextPreprocessingConfig */
         TextPreprocessingConfig: {
@@ -1645,6 +2105,74 @@ export interface components {
              * @enum {string}
              */
             type: "unique";
+        };
+        /** UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
+        UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Tags */
+            tags: string[] | null;
+            /** Description */
+            description: string | null;
+            /** Data */
+            data: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+        };
+        /** UserDataResource[ComparisonState] */
+        UserDataResource_ComparisonState_: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Tags */
+            tags: string[] | null;
+            /** Description */
+            description: string | null;
+            data: components["schemas"]["ComparisonState-Output"];
+        };
+        /** UserDataResource[Dashboard] */
+        UserDataResource_Dashboard_: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Tags */
+            tags: string[] | null;
+            /** Description */
+            description: string | null;
+            data: components["schemas"]["Dashboard-Output"];
+        };
+        /** UserDataSchema[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
+        UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
+            /** Name */
+            name: string;
+            /** Tags */
+            tags: string[] | null;
+            /** Description */
+            description: string | null;
+            /** Data */
+            data: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+        };
+        /** UserDataSchema[ComparisonState] */
+        UserDataSchema_ComparisonState_: {
+            /** Name */
+            name: string;
+            /** Tags */
+            tags: string[] | null;
+            /** Description */
+            description: string | null;
+            data: components["schemas"]["ComparisonState-Input"];
+        };
+        /** UserDataSchema[Dashboard] */
+        UserDataSchema_Dashboard_: {
+            /** Name */
+            name: string;
+            /** Tags */
+            tags: string[] | null;
+            /** Description */
+            description: string | null;
+            data: components["schemas"]["Dashboard-Input"];
         };
     };
     responses: never;
@@ -2201,6 +2729,73 @@ export interface operations {
             };
         };
     };
+    reload__project_projects__project_id__reload_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
     get__enums_enums_get: {
         parameters: {
             query?: never;
@@ -2501,6 +3096,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_TableColumnFrequencyDistributionResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetTableColumnAggregateTotalsSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TableColumnAggregateTotalsResource_"];
                 };
             };
             /** @description Bad Request */
@@ -3706,6 +4372,1736 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_DocumentTopicsVisualizationResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__all_filters_userdata__project_id__filters_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator____"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__filters_userdata__project_id__filters_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__filters_userdata__project_id__filters__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator___"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    put__filters_userdata__project_id__filters__id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    delete__filters_userdata__project_id__filters__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__all_comparison_state_userdata__project_id__comparison_state_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_ComparisonState___"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__comparison_state_userdata__project_id__comparison_state_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_ComparisonState_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__comparison_state_userdata__project_id__comparison_state__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_UserDataResource_ComparisonState__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    put__comparison_state_userdata__project_id__comparison_state__id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_ComparisonState_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    delete__comparison_state_userdata__project_id__comparison_state__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__all_table_dashboard_userdata__project_id__dashboard_table_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Dashboard___"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__table_dashboard_userdata__project_id__dashboard_table_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__table_dashboard_userdata__project_id__dashboard_table__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_UserDataResource_Dashboard__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    put__table_dashboard_userdata__project_id__dashboard_table__id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    delete__table_dashboard_userdata__project_id__dashboard_table__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__all_comparison_dashboard_userdata__project_id__dashboard_comparison_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Dashboard___"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__comparison_dashboard_userdata__project_id__dashboard_comparison_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__comparison_dashboard_userdata__project_id__dashboard_comparison__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_UserDataResource_Dashboard__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    put__comparison_dashboard_userdata__project_id__dashboard_comparison__id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    delete__comparison_dashboard_userdata__project_id__dashboard_comparison__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__all_correlation_dashboard_userdata__project_id__dashboard_correlation_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Dashboard___"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__correlation_dashboard_userdata__project_id__dashboard_correlation_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__correlation_dashboard_userdata__project_id__dashboard_correlation__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_UserDataResource_Dashboard__"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    put__correlation_dashboard_userdata__project_id__dashboard_correlation__id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    delete__correlation_dashboard_userdata__project_id__dashboard_correlation__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
                 };
             };
             /** @description Bad Request */

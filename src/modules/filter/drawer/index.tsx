@@ -1,10 +1,10 @@
 import { TableFilterModel } from '@/api/table';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-import { Button, Drawer, Group, Indicator } from '@mantine/core';
-import { Funnel, Warning, X } from '@phosphor-icons/react';
+import { Button, Drawer, Group } from '@mantine/core';
+import { Warning } from '@phosphor-icons/react';
 import React from 'react';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import {
   defaultTableFilterFormValues,
   tableFilterFormSchema,
@@ -16,9 +16,37 @@ import FormWrapper from '@/components/utility/form/wrapper';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
 import { showNotification } from '@mantine/notifications';
-import TableFilterManagementSection from '../management';
 import { useCheckFilterValidity } from '../management/hooks';
-import { FilterStateContext } from '@/modules/table/context';
+import { useFilterDataManager } from '@/modules/userdata/data-manager';
+import { useDebouncedValue } from '@mantine/hooks';
+import UserDataManager from '@/modules/userdata';
+import { CancelButton } from '@/components/standard/button/variants';
+
+interface TableFilterUserDataManagerProps {
+  setFilter: React.Dispatch<TableFilterModel | null>;
+}
+
+function TableFilterUserDataManager(props: TableFilterUserDataManagerProps) {
+  const values = useWatch<TableFilterFormType>();
+  const [debouncedFormValues] = useDebouncedValue(values, 800, {
+    leading: false,
+  });
+  const validatedValues = React.useMemo(() => {
+    try {
+      return tableFilterFormSchema.validateSync(debouncedFormValues, {
+        stripUnknown: true,
+      }) as TableFilterFormType;
+    } catch {
+      return null;
+    }
+  }, [debouncedFormValues]);
+
+  const rendererProps = useFilterDataManager({
+    state: validatedValues as TableFilterModel | null,
+    onApply: props.setFilter,
+  });
+  return <UserDataManager {...rendererProps} label="Filter" />;
+}
 
 interface TableFilterDrawerProps {
   filter: TableFilterModel | null;
@@ -36,14 +64,8 @@ export function TableFilterDrawerFormBody(
   props: TableFilterDrawerComponentProps,
 ) {
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { reset, setValue, getValues } = useFormContext();
+  const { reset, setValue } = useFormContext();
   const { setFilter, close, AboveForm, name } = props;
-
-  const getFilter = React.useCallback(() => {
-    return tableFilterFormSchema.cast(name ? getValues(name) : getValues(), {
-      stripUnknown: true,
-    }) as TableFilterModel;
-  }, [getValues, name]);
 
   return (
     <>
@@ -75,22 +97,12 @@ export function TableFilterDrawerFormBody(
             Reset
           </Button>
           <div className="flex-1" />
-          <Button
-            onClick={close}
-            color="red"
-            variant="outline"
-            leftSection={<X />}
-          >
-            Cancel
-          </Button>
+          <CancelButton onClick={close} />
           <SubmitButton>Apply</SubmitButton>
         </Group>
       </Drawer.Header>
       {AboveForm}
-      <TableFilterManagementSection
-        getFilter={getFilter}
-        setFilter={setFilter}
-      />
+      <TableFilterUserDataManager setFilter={setFilter} />
       <TableFilterComponent name={name} />
     </>
   );
@@ -167,26 +179,3 @@ const TableFilterDrawer = React.forwardRef<
 });
 
 export default TableFilterDrawer;
-
-export function TableFilterButton() {
-  const tableFilterRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { filter, setFilter } = React.useContext(FilterStateContext);
-  return (
-    <Indicator disabled={!filter} color="red" zIndex={2}>
-      <TableFilterDrawer
-        ref={tableFilterRemote}
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Button
-        variant="outline"
-        onClick={() => {
-          tableFilterRemote.current?.open();
-        }}
-        leftSection={<Funnel />}
-      >
-        Filter
-      </Button>
-    </Indicator>
-  );
-}

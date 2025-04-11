@@ -47,6 +47,7 @@ export function TopicVisualizationScatterPlotRenderer(
         {
           x,
           y,
+          type: 'scattergl',
           mode: 'markers',
           hovertemplate: `<b>Content</b>: %{customdata[0]}<br>${topicsHovertemplate}`,
           customdata,
