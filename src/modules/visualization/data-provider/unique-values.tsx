@@ -1,12 +1,7 @@
 import { client } from '@/common/api/client';
-import { ProjectContext } from '@/modules/project/context';
-import React from 'react';
-import {
-  BaseVisualizationConfig,
-  BaseVisualizationDataProviderHook,
-} from '../types';
+import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
-import { useAdaptDataProviderQueries } from './utils';
+import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { getTopicLabel } from '@/api/topic';
@@ -18,32 +13,28 @@ export interface TableValuesDataProvider {
 
 export const useTableValuesDataProvider: BaseVisualizationDataProviderHook<
   (string | number)[],
-  BaseVisualizationConfig
-> = function (config) {
-  const project = React.useContext(ProjectContext);
+  object
+> = function (item) {
+  const { groups, column, params } = usePrepareDataProvider(item);
   const topicModelingResult = useTopicModelingResultOfColumn(
-    config.column.source_name ?? '',
+    column?.source_name ?? '',
   );
 
   const queries = useQueries({
-    queries: config.groups.map((group) =>
+    queries: groups.map((group) =>
       client.queryOptions('post', '/table/{project_id}/column/unique', {
         body: {
-          column: config.column.name,
+          column: item.column,
           filter: group.filter,
         },
-        params: {
-          path: {
-            project_id: project.id,
-          },
-        },
+        params,
       }),
     ),
   });
 
   return useAdaptDataProviderQueries({
     queries,
-    groups: config.groups,
+    groups,
     extract: (data) => {
       const topicLabelMap = new Map(
         topicModelingResult?.result?.topics.map((topic) => [
@@ -51,7 +42,7 @@ export const useTableValuesDataProvider: BaseVisualizationDataProviderHook<
           getTopicLabel(topic),
         ]) ?? [],
       );
-      if (config.column.type === SchemaColumnTypeEnum.Topic) {
+      if (column.type === SchemaColumnTypeEnum.Topic) {
         return data.data.values.map((value) => {
           return (
             topicLabelMap.get(value as number) ??

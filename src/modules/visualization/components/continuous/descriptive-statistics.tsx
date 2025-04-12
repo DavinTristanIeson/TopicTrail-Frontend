@@ -2,7 +2,7 @@ import { DescriptiveStatisticsModel } from '@/api/table';
 import Colors from '@/common/constants/colors';
 import { Group, Tooltip } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import { BaseVisualizationComponentProps } from '../../types';
+import { BaseVisualizationComponentProps } from '../../types/base';
 import {
   MantineReactTable,
   type MRT_ColumnDef,

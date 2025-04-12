@@ -967,21 +967,6 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** BoxPlotDashboardItem */
-        BoxPlotDashboardItem: {
-            /** Id */
-            id: string;
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "box-plot";
-        };
         /** CSVDataSource */
         CSVDataSource: {
             /** Path */
@@ -1107,12 +1092,26 @@ export interface components {
         /** Dashboard */
         "Dashboard-Input": {
             /** Items */
-            items: (components["schemas"]["HistogramDashboardItem"] | components["schemas"]["LinePlotDashboardItem"] | components["schemas"]["DescriptiveStatisticsDashboardItem"] | components["schemas"]["BoxPlotDashboardItem"])[];
+            items: components["schemas"]["DashboardItem"][];
         };
         /** Dashboard */
         "Dashboard-Output": {
             /** Items */
-            items: (components["schemas"]["HistogramDashboardItem"] | components["schemas"]["LinePlotDashboardItem"] | components["schemas"]["DescriptiveStatisticsDashboardItem"] | components["schemas"]["BoxPlotDashboardItem"])[];
+            items: components["schemas"]["DashboardItem"][];
+        };
+        /** DashboardItem */
+        DashboardItem: {
+            /** Id */
+            id: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string | null;
+            /** Column */
+            column: string;
+            rect: components["schemas"]["DashboardItemRect"];
+            /** Config */
+            config: Record<string, never>;
         };
         /** DashboardItemRect */
         DashboardItemRect: {
@@ -1138,21 +1137,6 @@ export interface components {
             preview_rows: Record<string, never>[];
             /** Total Rows */
             total_rows: number;
-        };
-        /** DescriptiveStatisticsDashboardItem */
-        DescriptiveStatisticsDashboardItem: {
-            /** Id */
-            id: string;
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "descriptive-statistics";
         };
         /** DescriptiveStatisticsResource */
         DescriptiveStatisticsResource: {
@@ -1369,23 +1353,6 @@ export interface components {
             /** Value */
             value: string;
         };
-        /** HistogramDashboardItem */
-        HistogramDashboardItem: {
-            /** Id */
-            id: string;
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "histogram";
-            /** Bins */
-            bins: number | null;
-        };
         /** IncludesTableFilter */
         IncludesTableFilter: {
             /** Target */
@@ -1444,22 +1411,6 @@ export interface components {
             type: "less_than";
             /** Value */
             value: string | number;
-        };
-        /** LinePlotDashboardItem */
-        LinePlotDashboardItem: {
-            /** Id */
-            id: string;
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "line-plot";
-            sort: components["schemas"]["TableSort"] | null;
         };
         /** MultiCategoricalSchemaColumn */
         MultiCategoricalSchemaColumn: {

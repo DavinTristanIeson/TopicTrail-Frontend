@@ -1,8 +1,8 @@
-import { DashboardControls } from '@/modules/visualization/configuration/controls';
-import { Stack } from '@mantine/core';
+import { Group, Stack } from '@mantine/core';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
 import { useTopicCorrelationAppState } from './app-state';
+import { AddVisualizationConfigurationButton } from '../visualization/configuration/dialog';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -19,9 +19,12 @@ export default function TopicCorrelationDashboard() {
   const handlers = useTopicCorrelationAppState(
     (store) => store.dashboard.handlers,
   );
+  const { append } = handlers;
   return (
     <Stack>
-      <DashboardControls />
+      <Group justify="end">
+        <AddVisualizationConfigurationButton onSubmit={append} />
+      </Group>
       <GridstackDashboard dashboard={dashboard} dashboardHandlers={handlers} />
     </Stack>
   );

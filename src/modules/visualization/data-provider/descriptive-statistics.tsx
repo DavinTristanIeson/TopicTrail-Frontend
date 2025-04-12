@@ -2,27 +2,26 @@ import { DescriptiveStatisticsModel } from '@/api/table';
 import { client } from '@/common/api/client';
 import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
-import {
-  BaseVisualizationConfig,
-  BaseVisualizationDataProviderHook,
-} from '../types';
+import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries } from './utils';
 import { DashboardItemModel } from '@/api/userdata';
+import { DashboardGroupsContext } from '../types/context';
 
 export const useDescriptiveStatisticsDataProvider: BaseVisualizationDataProviderHook<
   DescriptiveStatisticsModel,
   DashboardItemModel
 > = function (config) {
   const project = React.useContext(ProjectContext);
+  const groups = React.useContext(DashboardGroupsContext);
   const queries = useQueries({
-    queries: config.groups.map((group) =>
+    queries: groups.map((group) =>
       client.queryOptions(
         'post',
         '/table/{project_id}/column/descriptive-statistics',
         {
           body: {
-            column: config.column.name,
+            column: config.column,
             filter: group.filter,
           },
           params: {
@@ -37,7 +36,7 @@ export const useDescriptiveStatisticsDataProvider: BaseVisualizationDataProvider
 
   return useAdaptDataProviderQueries({
     queries,
-    groups: config.groups,
+    groups,
     extract: (data) => data.data.statistics,
   });
 };

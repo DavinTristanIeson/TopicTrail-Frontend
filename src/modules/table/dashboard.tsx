@@ -1,8 +1,9 @@
-import { Stack } from '@mantine/core';
-import { DashboardControls } from '../visualization/configuration/controls';
+import { Group, Stack } from '@mantine/core';
 import { useTableAppState } from './app-state';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
+import { AddVisualizationConfigurationButton } from '../visualization/configuration/dialog';
+import { TableFilterButton } from '../filter/context';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -15,9 +16,20 @@ const GridstackDashboard = dynamic(
 export function TableDashboard() {
   const dashboard = useTableAppState((store) => store.dashboard.state);
   const handlers = useTableAppState((store) => store.dashboard.handlers);
+  const { append } = handlers;
+  const filter = useTableAppState((store) => store.params.filter);
+  const setFilter = useTableAppState((store) => store.params.setFilter);
   return (
     <Stack>
-      <DashboardControls />
+      <Group justify="end">
+        <TableFilterButton
+          state={{
+            filter,
+            setFilter,
+          }}
+        />
+        <AddVisualizationConfigurationButton onSubmit={append} />
+      </Group>
       <GridstackDashboard dashboard={dashboard} dashboardHandlers={handlers} />
     </Stack>
   );

@@ -1,8 +1,12 @@
 import { UseQueryResult } from '@tanstack/react-query';
-import { BaseVisualizationDataProviderHook } from '../types';
+import { BaseVisualizationDataProviderHook } from '../types/base';
 import { ApiError } from '@/api/common';
 import { zip } from 'lodash';
 import { NamedTableFilterModel } from '@/api/comparison';
+import React from 'react';
+import { ProjectContext } from '@/modules/project/context';
+import { DashboardGroupsContext } from '../types/context';
+import { DashboardItemModel } from '@/api/userdata';
 
 interface UseAdaptDataProviderQueriesParams<TQuery, TData> {
   groups: NamedTableFilterModel[];
@@ -24,5 +28,28 @@ export function useAdaptDataProviderQueries<TQuery, TData>(
       }),
     loading: props.queries.some((query) => query.isFetching),
     error: props.queries.find((query) => !!query.error)?.error?.message,
+  };
+}
+
+export function usePrepareDataProvider(props: DashboardItemModel) {
+  const project = React.useContext(ProjectContext);
+  const groups = React.useContext(DashboardGroupsContext);
+  const column = project.config.data_schema.columns.find(
+    (column) => column.name === props.column,
+  );
+  if (!column) {
+    throw Error(
+      `Oops, we weren't able to find this column: ${props.column}. Perhaps this dashboard item is associated with an old dataset version.`,
+    );
+  }
+  return {
+    column,
+    groups,
+    project,
+    params: {
+      path: {
+        project_id: project.id,
+      },
+    },
   };
 }
