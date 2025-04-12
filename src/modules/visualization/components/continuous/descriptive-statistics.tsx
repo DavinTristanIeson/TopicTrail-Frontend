@@ -2,7 +2,7 @@ import { DescriptiveStatisticsModel } from '@/api/table';
 import Colors from '@/common/constants/colors';
 import { Group, Tooltip } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import { BaseVisualizationComponentProps } from '../../types/base';
+import { BaseVisualizationComponentProps, NamedData } from '../../types/base';
 import {
   MantineReactTable,
   type MRT_ColumnDef,
@@ -11,8 +11,8 @@ import {
 import React from 'react';
 import { MantineReactTableBehaviors } from '@/modules/table/adapter';
 
-interface DescriptiveStatisticsTableProps
-  extends BaseVisualizationComponentProps<DescriptiveStatisticsModel, object> {
+interface DescriptiveStatisticsTableProps {
+  data: NamedData<DescriptiveStatisticsModel>[];
   loading?: boolean;
 }
 
@@ -118,7 +118,7 @@ function useDescriptiveStatisticsTableColumns(
   }, [data]);
 }
 
-export function DescriptiveStatisticsTable(
+export function DescriptiveStatisticsTableComponent(
   props: DescriptiveStatisticsTableProps,
 ) {
   const { loading } = props;
@@ -137,4 +137,12 @@ export function DescriptiveStatisticsTable(
   });
 
   return <MantineReactTable table={table} />;
+}
+
+export function DescriptiveStatisticsTableDashboardComponent(
+  props: BaseVisualizationComponentProps<DescriptiveStatisticsModel, object>,
+) {
+  return (
+    <DescriptiveStatisticsTableComponent data={props.data} loading={false} />
+  );
 }

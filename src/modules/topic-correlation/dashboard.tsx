@@ -2,7 +2,7 @@ import { Group, Stack } from '@mantine/core';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
 import { useTopicCorrelationAppState } from './app-state';
-import { AddVisualizationConfigurationButton } from '../visualization/configuration/dialog';
+import { AddVisualizationConfigurationButton } from '../visualization/dashboard/modals';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),

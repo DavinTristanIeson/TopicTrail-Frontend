@@ -1,5 +1,10 @@
 import { Alert, Button, Text } from '@mantine/core';
 import { XCircle, ArrowClockwise } from '@phosphor-icons/react';
+import {
+  ErrorBoundary,
+  ErrorComponent,
+} from 'next/dist/client/components/error-boundary';
+import React from 'react';
 
 interface ErrorViewComponentProps {
   title?: string;
@@ -17,17 +22,34 @@ export function ErrorViewComponent(props: ErrorViewComponentProps) {
       icon={<XCircle />}
     >
       <Text inherit>{message}</Text>
-      {refetch && <Button
-        className="max-w-md mt-3"
-        fullWidth
-        size="md"
-        variant="filled"
-        onClick={refetch}
-        color="red"
-        leftSection={<ArrowClockwise />}
-      >
-        Retry
-      </Button>}
+      {refetch && (
+        <Button
+          className="max-w-md mt-3"
+          fullWidth
+          size="md"
+          variant="filled"
+          onClick={refetch}
+          color="red"
+          leftSection={<ArrowClockwise />}
+        >
+          Retry
+        </Button>
+      )}
     </Alert>
+  );
+}
+
+function DefaultErrorViewBoundaryRenderer(
+  props: React.ComponentProps<ErrorComponent>,
+) {
+  const { error, reset } = props;
+  return <ErrorViewComponent message={error.message} refetch={reset} />;
+}
+
+export function DefaultErrorViewBoundary(props: React.PropsWithChildren) {
+  return (
+    <ErrorBoundary errorComponent={DefaultErrorViewBoundaryRenderer}>
+      {props.children}
+    </ErrorBoundary>
   );
 }

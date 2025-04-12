@@ -5,7 +5,6 @@ import { ColumnCellRenderer } from './cell';
 import { PaginationMetaModel } from '@/api/table';
 import { TableStateContext } from './context';
 import {
-  type MRT_TableOptions,
   type MRT_ColumnDef,
   type MRT_SortingState,
   type MRT_Updater,
@@ -148,7 +147,7 @@ interface UseTableStateToMantineReactTableAdapterProps {
 
 export function useTableStateToMantineReactTableAdapter(
   props: UseTableStateToMantineReactTableAdapterProps,
-): Partial<MRT_TableOptions<any>> {
+) {
   const { meta, isFetching } = props;
   const { sort, setSort, page, setPage, limit, setLimit } =
     React.useContext(TableStateContext);

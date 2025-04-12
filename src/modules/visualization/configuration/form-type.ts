@@ -6,7 +6,6 @@ import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configurat
 export const visualizationConfigFormSchema = Yup.object({
   type: Yup.string().oneOf(Object.values(DashboardItemTypeEnum)).required(),
   column: Yup.string().required(),
-  title: Yup.string().required(),
   description: yupNullableString,
   config: Yup.lazy((value, options) => {
     const type = options.context.type;

@@ -9,9 +9,9 @@ import { DashboardItemModel } from '@/api/userdata';
 import { fromPairs } from 'lodash';
 import {
   DashboardGridItemDeleteModal,
-  DashboardGridItemEditModal,
   DashboardGridItemFullScreenModal,
-} from './grid-item-controls';
+  VisualizationConfigurationDialog,
+} from './modals';
 import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import { type UseListStateHandlers } from '@mantine/hooks';
 
@@ -100,18 +100,32 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
       null,
     );
 
+  const setDashboardItem = React.useCallback(
+    (newItem: DashboardItemModel) => {
+      const index = dashboard.findIndex((item) => item.id === newItem.id);
+      if (index === -1) {
+        dashboardHandlers.append(newItem);
+      } else {
+        dashboardHandlers.setItem(index, newItem);
+      }
+    },
+    [dashboard, dashboardHandlers],
+  );
+
   return (
     <>
-      <DashboardGridItemFullScreenModal ref={fullScreenRemote} />
+      <DashboardGridItemFullScreenModal
+        ref={fullScreenRemote}
+        onSubmit={setDashboardItem}
+      />
       <DashboardGridItemDeleteModal
         ref={deleteRemote}
         items={dashboard}
         removeDashboardItem={dashboardHandlers.remove}
       />
-      <DashboardGridItemEditModal
+      <VisualizationConfigurationDialog
         ref={editRemote}
-        items={dashboard}
-        setDashboardItem={dashboardHandlers.setItem}
+        onSubmit={setDashboardItem}
       />
       <div className="rounded color-gray-100">
         <div className="grid-stack" id={id}>

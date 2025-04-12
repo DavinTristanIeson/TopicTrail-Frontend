@@ -1103,8 +1103,6 @@ export interface components {
         DashboardItem: {
             /** Id */
             id: string;
-            /** Title */
-            title: string;
             /** Description */
             description: string | null;
             /** Column */

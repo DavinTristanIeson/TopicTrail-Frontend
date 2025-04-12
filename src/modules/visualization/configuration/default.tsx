@@ -12,8 +12,6 @@ import RHFField from '@/components/standard/fields';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { fromPairs } from 'lodash';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { VisualizationConfigFormType } from './form-type';
 
 interface ColumnDashboardItemSelectInputProps {
   column: SchemaColumnModel | null;
@@ -79,29 +77,6 @@ function ColumnDashboardItemSelectInput(
   );
 }
 
-interface DefaultTitleObserverProps {
-  column: SchemaColumnModel | null;
-}
-
-// Separate this into a leaf component to prevent unnecessary rerenders of its children
-function DefaultTitleObserver(props: DefaultTitleObserverProps) {
-  const { column } = props;
-  const { control, setValue } = useFormContext<VisualizationConfigFormType>();
-  const type = useWatch({
-    name: 'type',
-    control,
-  });
-
-  React.useEffect(() => {
-    if (!column || !type) return;
-    const dashboardConfig = DASHBOARD_ITEM_CONFIGURATION[type];
-    const dashboardItemLabel = dashboardConfig.label;
-    setValue('title', `${dashboardItemLabel} of ${column.name}`);
-  }, [column, setValue, type]);
-
-  return <></>;
-}
-
 export function DefaultVisualizationConfigurationForm() {
   const project = React.useContext(ProjectContext);
   const columns = project.config.data_schema.columns.filter((column) => {
@@ -111,33 +86,26 @@ export function DefaultVisualizationConfigurationForm() {
   });
   const [column, setColumn] = React.useState<SchemaColumnModel | null>(null);
   return (
-    <>
-      <Stack>
-        <Group align="start">
-          <RHFField name="title" label="Title" type="text" required />
-          <div className="flex-1" />
-        </Group>
-        <Group align="start">
-          <ProjectColumnSelectField
-            data={columns}
-            name="column"
-            label="Column"
-            required
-            allowDeselect={false}
-            onChange={setColumn}
-            className="flex-1"
-            description="The column that contains the data to be visualized."
-          />
-          {column != null && <ColumnDashboardItemSelectInput column={column} />}
-        </Group>
-        <RHFField
-          name="description"
-          label="Description"
-          type="textarea"
-          className="max-w-3/4"
+    <Stack>
+      <Group align="start">
+        <ProjectColumnSelectField
+          data={columns}
+          name="column"
+          label="Column"
+          required
+          allowDeselect={false}
+          onChange={setColumn}
+          className="flex-1"
+          description="The column that contains the data to be visualized."
         />
-      </Stack>
-      <DefaultTitleObserver column={column} />
-    </>
+        {column != null && <ColumnDashboardItemSelectInput column={column} />}
+      </Group>
+      <RHFField
+        name="description"
+        label="Description"
+        type="textarea"
+        className="max-w-3/4"
+      />
+    </Stack>
   );
 }

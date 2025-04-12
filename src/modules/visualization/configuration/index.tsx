@@ -46,7 +46,6 @@ export default function VisualizationConfigurationForm(
     resolver: yupResolver(visualizationConfigFormSchema),
     mode: 'onChange',
     defaultValues: {
-      title: data?.title ?? '',
       description: data?.description ?? '',
       column: data?.column ?? '',
       type: (data?.type ?? '') as DashboardItemTypeEnum,

@@ -8,7 +8,7 @@ import {
   useInferProjectDatasetColumn,
 } from './utils';
 import RHFField from '@/components/standard/fields';
-import { DescriptiveStatisticsTable } from '@/modules/visualization/components/continuous/descriptive-statistics';
+import { DescriptiveStatisticsTableComponent } from '@/modules/visualization/components/continuous/descriptive-statistics';
 import { FormEditableContext } from '@/components/standard/fields/context';
 
 function ProjectConfigColumnContinuousFormBinsPreview(
@@ -91,6 +91,12 @@ export function ProjectConfigColumnContinuousForm(
 
   const { editable } = React.useContext(FormEditableContext);
 
+  const columnName = useWatch({
+    name: `columns.${index}.name`,
+    control,
+    defaultValue: 'Value',
+  });
+
   const BIN_COUNT_NAME = `columns.${index}.bin_count` as const;
   const BIN_NAME = `columns.${index}.bins` as const;
   const rawBinCountValue = useWatch({
@@ -129,9 +135,18 @@ export function ProjectConfigColumnContinuousForm(
         <Text fw="bold" ta="center">
           Descriptive Statistics of this Column
         </Text>
-        <DescriptiveStatisticsTable
+        <DescriptiveStatisticsTableComponent
           loading={loading}
-          {...column?.descriptive_statistics}
+          data={
+            column?.descriptive_statistics
+              ? [
+                  {
+                    name: columnName,
+                    data: column.descriptive_statistics,
+                  },
+                ]
+              : []
+          }
         />
       </Spoiler>
       {isUsingBinCount && (

@@ -7,7 +7,6 @@ export type DashboardItemRect = components['schemas']['DashboardItemRect'];
 
 export interface DashboardItemModel<T = unknown> {
   id: string;
-  title: string;
   description: string | null;
   type: string;
   column: string;

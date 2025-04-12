@@ -3,7 +3,10 @@ import Script, { ScriptProps } from 'next/script';
 import React from 'react';
 
 import { MaybeFC, MaybeFCType } from '@/components/utility/maybe';
-import { ErrorViewComponent } from '@/components/visual/error';
+import {
+  DefaultErrorViewBoundary,
+  ErrorViewComponent,
+} from '@/components/visual/error';
 import { LoadingOverlay } from '@mantine/core';
 import transform from 'lodash/transform';
 import { ApiError } from '@/api/common';
@@ -14,7 +17,7 @@ interface FetchWrapperSharedProps {
 }
 export interface WrapperProps extends FetchWrapperSharedProps {
   isLoading?: boolean;
-  error?: ApiError | boolean | null;
+  error?: ApiError | string | boolean | null;
   onRetry?: () => void;
   children: React.ReactNode;
 }
@@ -58,9 +61,12 @@ export default function FetchWrapperComponent(props: WrapperProps) {
       return errorComponent;
     }
 
-    const errorMessage = Object.prototype.hasOwnProperty.call(error, 'message')
-      ? (error as ApiError).message
-      : undefined;
+    const errorMessage =
+      typeof error === 'string'
+        ? error
+        : Object.prototype.hasOwnProperty.call(error, 'message')
+          ? (error as ApiError).message
+          : undefined;
 
     return <ErrorViewComponent refetch={onRetry} message={errorMessage} />;
   }
@@ -83,7 +89,9 @@ export function UseQueryWrapperComponent<T extends object>(
       errorComponent={errorComponent}
       {...rest}
     >
-      {!!query?.data && <MaybeFC props={query.data}>{children}</MaybeFC>}
+      <DefaultErrorViewBoundary>
+        {!!query?.data && <MaybeFC props={query.data}>{children}</MaybeFC>}
+      </DefaultErrorViewBoundary>
     </FetchWrapperComponent>
   );
 }

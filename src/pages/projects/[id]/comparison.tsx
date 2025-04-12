@@ -1,5 +1,4 @@
 import { NextPageWithLayout } from '@/common/utils/types';
-import { GridSkeleton } from '@/components/visual/loading';
 import {
   ComparisonPageTab,
   useComparisonAppState,
@@ -8,19 +7,9 @@ import ComparisonDashboard from '@/modules/comparison/dashboard';
 import NamedFiltersManager from '@/modules/comparison/filter';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
-import { DashboardControls } from '@/modules/visualization/configuration/controls';
-import { Alert, Stack, Tabs } from '@mantine/core';
+import { Alert, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
-import dynamic from 'next/dynamic';
 import React from 'react';
-
-const GridstackDashboard = dynamic(
-  () => import('@/modules/visualization/dashboard'),
-  {
-    ssr: false,
-    loading: GridSkeleton,
-  },
-);
 
 const ComparisonPage: NextPageWithLayout = function () {
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);

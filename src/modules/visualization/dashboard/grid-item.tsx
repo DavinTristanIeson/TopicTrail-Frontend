@@ -1,16 +1,64 @@
 import { DashboardItemModel } from '@/api/userdata';
-import { ActionIcon, Alert, Button, Group, Paper, Stack } from '@mantine/core';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 import {
-  ArrowCounterClockwise,
+  ActionIcon,
+  Alert,
+  Group,
+  HoverCard,
+  Paper,
+  useMantineTheme,
+  Text,
+} from '@mantine/core';
+import {
   CornersOut,
+  Info,
   PencilSimple,
   TrashSimple,
+  X,
 } from '@phosphor-icons/react';
-import {
-  ErrorBoundary,
-  ErrorComponent,
-} from 'next/dist/client/components/error-boundary';
 import React from 'react';
+import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
+import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
+import { VisualizationConfigEntry } from '../types/base';
+import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
+
+interface DashboardItemRendererInternalProps {
+  item: DashboardItemModel;
+  config: VisualizationConfigEntry<any, any>;
+}
+
+function DashboardItemRendererInternal(
+  props: DashboardItemRendererInternalProps,
+) {
+  const {
+    item,
+    config: { component: Component, dataProvider: useDataProvider },
+  } = props;
+
+  const { data, error, loading } = useDataProvider(item);
+  return (
+    <FetchWrapperComponent error={error} isLoading={loading}>
+      {data && <Component data={data} item={item} />}
+    </FetchWrapperComponent>
+  );
+}
+
+export function DashboardItemRenderer(props: DashboardItemModel) {
+  const { type: rawType } = props;
+  const type = rawType as DashboardItemTypeEnum;
+  const dashboardConfig = DASHBOARD_ITEM_CONFIGURATION[type];
+  if (!dashboardConfig) {
+    return (
+      <Alert color="gray" icon={<X />}>
+        This is no longer a valid dashboard item. Please reconfigure or delete
+        this item from your dashboard.
+      </Alert>
+    );
+  }
+  return (
+    <DashboardItemRendererInternal config={dashboardConfig} item={props} />
+  );
+}
 
 interface DashboardGridItemProps {
   item: DashboardItemModel;
@@ -19,27 +67,12 @@ interface DashboardGridItemProps {
   onFullScreen: ((item: DashboardItemModel) => void) | undefined;
 }
 
-function DashboardGridItemErrorBoundary(
-  props: React.ComponentProps<ErrorComponent>,
-) {
-  const { error, reset } = props;
-  return (
-    <Alert color="red" title="Oops, an unexpected error has occurred!">
-      <Stack>
-        {error.message}
-        <Button onClick={reset} leftSection={<ArrowCounterClockwise />}>
-          Refresh
-        </Button>
-      </Stack>
-    </Alert>
-  );
-}
-
 export default function DashboardGridItem(props: DashboardGridItemProps) {
   const { item, onEdit, onDelete, onFullScreen } = props;
+  const { colors } = useMantineTheme();
   return (
     <Paper className="grid-stack-item-content p-2 select-none">
-      <ErrorBoundary errorComponent={DashboardGridItemErrorBoundary}>
+      <DefaultErrorViewBoundary>
         <Group className="pb-2">
           {onFullScreen && (
             <ActionIcon
@@ -51,6 +84,14 @@ export default function DashboardGridItem(props: DashboardGridItemProps) {
             </ActionIcon>
           )}
           <div className="flex-1" />
+          <HoverCard>
+            <HoverCard.Target>
+              <Info size={24} color={colors.brand[6]} />
+            </HoverCard.Target>
+            <HoverCard.Dropdown className="max-w-md">
+              <Text>{item.description}</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
           {onEdit && (
             <ActionIcon variant="subtle" onClick={() => onEdit(item)}>
               <PencilSimple size={24} />
@@ -66,8 +107,8 @@ export default function DashboardGridItem(props: DashboardGridItemProps) {
             </ActionIcon>
           )}
         </Group>
-        Renderer
-      </ErrorBoundary>
+        <DashboardItemRenderer {...item} />
+      </DefaultErrorViewBoundary>
     </Paper>
   );
 }
