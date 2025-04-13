@@ -40,7 +40,7 @@ const ComparisonPage: NextPageWithLayout = function () {
             leftSection={<Shapes />}
             disabled={comparisonGroups.length === 0}
           >
-            Visualization
+            Dashboard
           </Tabs.Tab>
           <Tabs.Tab
             value={ComparisonPageTab.StatisticTest}

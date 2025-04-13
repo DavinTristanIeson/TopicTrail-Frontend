@@ -10,7 +10,7 @@ import { showNotification } from '@mantine/notifications';
 import { formSetErrors } from '@/common/utils/form';
 import { useFormContext, type UseFormReturn } from 'react-hook-form';
 import React from 'react';
-import fromPairs from 'lodash/fromPairs';
+import { fromPairs } from 'lodash-es';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { ProjectDataSourceModel } from '@/api/project';
 

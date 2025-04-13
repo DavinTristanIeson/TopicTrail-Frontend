@@ -1,7 +1,7 @@
 import { getTopicLabel } from '@/api/topic';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
-import { zip } from 'lodash';
+import { zip } from 'lodash-es';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';

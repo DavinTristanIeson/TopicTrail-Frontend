@@ -15,7 +15,7 @@ import { client } from '@/common/api/client';
 import PromiseButton from '@/components/standard/button/promise';
 import { ProjectContext } from '@/modules/project/context';
 import { FilterStateContext } from '@/modules/filter/context';
-import { fromPairs } from 'lodash';
+import { fromPairs } from 'lodash-es';
 import { handleErrorFn } from '@/common/utils/error';
 
 type RefineTopicsSelectTopicInputProps = Omit<

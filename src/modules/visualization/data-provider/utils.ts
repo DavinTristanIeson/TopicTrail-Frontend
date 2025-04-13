@@ -1,7 +1,7 @@
 import { UseQueryResult } from '@tanstack/react-query';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { ApiError } from '@/api/common';
-import { zip } from 'lodash';
+import { zip } from 'lodash-es';
 import { NamedTableFilterModel } from '@/api/comparison';
 import React from 'react';
 import { ProjectContext } from '@/modules/project/context';

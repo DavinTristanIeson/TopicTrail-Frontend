@@ -1,4 +1,4 @@
-import { fromPairs } from 'lodash';
+import { fromPairs } from 'lodash-es';
 
 export function pickArrayById<T>(
   array: T[],

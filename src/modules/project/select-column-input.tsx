@@ -16,7 +16,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import capitalize from 'lodash/capitalize';
+import { capitalize } from 'lodash-es';
 
 export interface ProjectColumnComboboxItem extends ComboboxItem {
   data: SchemaColumnModel;

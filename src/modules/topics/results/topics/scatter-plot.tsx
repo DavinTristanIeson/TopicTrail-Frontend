@@ -1,6 +1,6 @@
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer, { plotlyWrapText } from '@/components/widgets/plotly';
-import { zip } from 'lodash';
+import { zip } from 'lodash-es';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { useTopicModelingResultOfColumn } from '../../components/context';

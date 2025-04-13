@@ -4,7 +4,7 @@ import { Download, PencilSimple } from '@phosphor-icons/react';
 import React from 'react';
 import { UserDataManagerRendererProps } from './types';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { fromPairs } from 'lodash';
+import { fromPairs } from 'lodash-es';
 
 interface LoadUserDataActionComponentProps<T>
   extends UserDataManagerRendererProps<T> {

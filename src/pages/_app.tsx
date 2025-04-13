@@ -19,7 +19,7 @@ import dayjsRelativeTimePlugin from 'dayjs/plugin/relativeTime';
 import GlobalConfig from '@/common/constants/global';
 import { IconContext } from '@phosphor-icons/react';
 import { NextPageWithLayout } from '@/common/utils/types';
-import identity from 'lodash/identity';
+import { identity } from 'lodash-es';
 
 dayjs.extend(dayjsRelativeTimePlugin);
 

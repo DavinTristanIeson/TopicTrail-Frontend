@@ -6,7 +6,7 @@ import { type GridStackWidget } from 'gridstack';
 import React from 'react';
 import DashboardGridItem from './grid-item';
 import { DashboardItemModel } from '@/api/userdata';
-import { fromPairs } from 'lodash';
+import { fromPairs } from 'lodash-es';
 import {
   DashboardGridItemDeleteModal,
   DashboardGridItemFullScreenModal,

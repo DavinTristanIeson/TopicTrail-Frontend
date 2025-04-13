@@ -8,7 +8,7 @@ import {
   ErrorViewComponent,
 } from '@/components/visual/error';
 import { LoadingOverlay } from '@mantine/core';
-import transform from 'lodash/transform';
+import { transform } from 'lodash-es';
 import { ApiError } from '@/api/common';
 
 interface FetchWrapperSharedProps {

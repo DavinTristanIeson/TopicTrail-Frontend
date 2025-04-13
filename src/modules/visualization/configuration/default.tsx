@@ -11,7 +11,7 @@ import { SchemaColumnModel } from '@/api/project';
 import RHFField from '@/components/standard/fields';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
-import { fromPairs } from 'lodash';
+import { fromPairs } from 'lodash-es';
 
 interface ColumnDashboardItemSelectInputProps {
   column: SchemaColumnModel | null;

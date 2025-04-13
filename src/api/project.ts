@@ -2,7 +2,7 @@ import { queryClient } from '@/common/api/query-client';
 import { components } from './openapi';
 import { Query } from '@tanstack/react-query';
 import { client } from '@/common/api/client';
-import { get, isObject } from 'lodash';
+import { get, isObject } from 'lodash-es';
 
 export type ProjectModel = components['schemas']['ProjectResource'];
 export type ProjectMetadataModel = components['schemas']['ProjectMetadata'];

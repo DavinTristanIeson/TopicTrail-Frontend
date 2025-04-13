@@ -1,7 +1,7 @@
 import { getAnyError } from '@/common/utils/error';
 import { Alert } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 

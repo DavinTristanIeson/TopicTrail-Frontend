@@ -9,7 +9,7 @@ import { useCheckFilterValidity, useLocallySavedFilters } from './hooks';
 import PromiseButton from '@/components/standard/button/promise';
 import { showNotification } from '@mantine/notifications';
 import { handleErrorFn } from '@/common/utils/error';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 
 export interface FilterManagementActionComponentProps {
   getFilter(): TableFilterModel;

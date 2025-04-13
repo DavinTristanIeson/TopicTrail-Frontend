@@ -51,7 +51,7 @@ export const CreateNewTopicDialog = React.forwardRef<DisclosureTrigger | null>(
 
     return (
       <Modal opened={opened} onClose={close} title="Create a New Topic">
-        <Alert color="blue" icon={<Info />}>
+        <Alert color="blue" icon={<Info />} className="mb-5">
           Perhaps you have noticed that some similar documents should be
           assigned into a new topic that doesn&apos;t exist in the topic list.
           In which case, feel free to create a new topic here. Newly created

@@ -7,7 +7,7 @@ import {
   UserDataManagerRendererProps,
 } from './types';
 
-import { merge } from 'lodash';
+import { merge } from 'lodash-es';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
 import { UserDataModel } from '@/api/userdata';
