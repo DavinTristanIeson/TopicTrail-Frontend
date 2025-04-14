@@ -14,6 +14,7 @@ import {
 } from './modals';
 import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import { type UseListStateHandlers } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 
 interface GridstackDashboardProps {
   dashboard: DashboardItemModel[];
@@ -22,6 +23,8 @@ interface GridstackDashboardProps {
 
 export default function GridstackDashboard(props: GridstackDashboardProps) {
   const { dashboard, dashboardHandlers } = props;
+
+  const dragHandleClassName = 'gridstack-dashboard-drag-handle';
 
   const { setState: setDashboard } = dashboardHandlers;
   const dashboardMap = React.useMemo(() => {
@@ -52,6 +55,9 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
     options: {
       removable: false,
       margin: 4,
+      draggable: {
+        handle: `.${dragHandleClassName}`,
+      },
     },
     makeWidget,
   });
@@ -77,10 +83,7 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
               },
             };
           });
-          return {
-            ...dashboard,
-            items: newDashboardItems,
-          };
+          return newDashboardItems;
         });
       },
       [setDashboard],
@@ -105,8 +108,16 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
       const index = dashboard.findIndex((item) => item.id === newItem.id);
       if (index === -1) {
         dashboardHandlers.append(newItem);
+        showNotification({
+          message: 'Successfully added a new visualization component',
+          color: 'green',
+        });
       } else {
         dashboardHandlers.setItem(index, newItem);
+        showNotification({
+          message: 'Successfully updated the visualization component',
+          color: 'green',
+        });
       }
     },
     [dashboard, dashboardHandlers],
@@ -140,6 +151,7 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
                 onFullScreen={fullScreenRemote.current?.open}
                 onEdit={editRemote.current?.open}
                 onDelete={deleteRemote.current?.open}
+                dragHandleClassName={dragHandleClassName}
               />
             </div>
           ))}

@@ -73,9 +73,7 @@ function useDescriptiveStatisticsTableData(
   const { data } = props;
   return React.useMemo(() => {
     return TABLE_ROW_MAPPING.map((row) => {
-      const rowData: Record<string, any> = {
-        [LABEL_KEY]: row.label,
-      };
+      const rowData: Record<string, any> = {};
       for (const column of data) {
         rowData[column.name] = column.data[row.name];
       }
@@ -94,12 +92,13 @@ function useDescriptiveStatisticsTableColumns(
         accessorKey: LABEL_KEY,
         header: 'Label',
         size: 120,
-        Cell({ row: { original } }) {
+        Cell({ row: { index } }) {
+          const labelData = TABLE_ROW_MAPPING[index]!;
           return (
-            <Group>
-              {original.label}
-              {original.description ? (
-                <Tooltip label={original.description}>
+            <Group gap={4}>
+              {labelData.label}
+              {labelData.description ? (
+                <Tooltip label={labelData.description}>
                   <Info size={16} color={Colors.sentimentInfo} />
                 </Tooltip>
               ) : undefined}
@@ -124,6 +123,7 @@ export function DescriptiveStatisticsTableComponent(
   const { loading } = props;
   const data = useDescriptiveStatisticsTableData(props);
   const columns = useDescriptiveStatisticsTableColumns(props);
+  console.log(data, props.data);
 
   const table = useMantineReactTable<Record<string, any>>({
     data,
@@ -134,6 +134,8 @@ export function DescriptiveStatisticsTableComponent(
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,
+    enablePagination: false,
+    layoutMode: 'grid',
   });
 
   return <MantineReactTable table={table} />;

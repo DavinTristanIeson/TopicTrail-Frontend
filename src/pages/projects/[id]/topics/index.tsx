@@ -65,8 +65,8 @@ const ProjectTopicsPage: NextPageWithLayout = function () {
     : undefined;
 
   return (
-    <div className="relative">
-      <Paper className="p-3 sticky top-0" radius={0}>
+    <>
+      <Paper className="absolute top-0 left-0 w-full p-3" radius={0}>
         <Group justify="space-between">
           <ProjectColumnSelectInput
             data={columns}
@@ -97,11 +97,12 @@ const ProjectTopicsPage: NextPageWithLayout = function () {
           )}
         </Group>
       </Paper>
-      <div className="pt-4 px-3">
+      <div style={{ height: 72 }} />
+      <div>
         {columns.length === 0 && <NoTextualColumnWarning />}
         {columnName && <ProjectTopicPageSwitcher column={columnName} />}
       </div>
-    </div>
+    </>
   );
 };
 

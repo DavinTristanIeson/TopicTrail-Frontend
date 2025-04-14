@@ -9,7 +9,9 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
   DashboardItemTypeEnum[]
 > = {
   [SchemaColumnTypeEnum.Categorical]: [],
-  [SchemaColumnTypeEnum.Continuous]: [],
+  [SchemaColumnTypeEnum.Continuous]: [
+    DashboardItemTypeEnum.DescriptiveStatistics,
+  ],
   [SchemaColumnTypeEnum.Geospatial]: [],
   [SchemaColumnTypeEnum.MultiCategorical]: [],
   [SchemaColumnTypeEnum.OrderedCategorical]: [],

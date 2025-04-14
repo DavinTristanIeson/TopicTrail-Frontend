@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 import {
   CornersOut,
+  DotsSixVertical,
   Info,
   PencilSimple,
   TrashSimple,
@@ -62,51 +63,53 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
 
 interface DashboardGridItemProps {
   item: DashboardItemModel;
+  dragHandleClassName: string;
   onEdit: ((item: DashboardItemModel) => void) | undefined;
   onDelete: ((item: DashboardItemModel) => void) | undefined;
   onFullScreen: ((item: DashboardItemModel) => void) | undefined;
 }
 
 export default function DashboardGridItem(props: DashboardGridItemProps) {
-  const { item, onEdit, onDelete, onFullScreen } = props;
+  const { item, onEdit, onDelete, onFullScreen, dragHandleClassName } = props;
   const { colors } = useMantineTheme();
   return (
     <Paper className="grid-stack-item-content p-2 select-none">
+      <Group className="pb-2">
+        <DotsSixVertical className={dragHandleClassName} />
+        <div className="flex-1" />
+        {onFullScreen && (
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            onClick={() => onFullScreen(item)}
+          >
+            <CornersOut size={24} />
+          </ActionIcon>
+        )}
+        <HoverCard>
+          <HoverCard.Target>
+            <Info size={24} color={colors.brand[6]} />
+          </HoverCard.Target>
+          <HoverCard.Dropdown className="max-w-md">
+            <Text>{item.description}</Text>
+          </HoverCard.Dropdown>
+        </HoverCard>
+        {onEdit && (
+          <ActionIcon variant="subtle" onClick={() => onEdit(item)}>
+            <PencilSimple size={24} />
+          </ActionIcon>
+        )}
+        {onDelete && (
+          <ActionIcon
+            color="red"
+            variant="subtle"
+            onClick={() => onDelete(item)}
+          >
+            <TrashSimple size={24} />
+          </ActionIcon>
+        )}
+      </Group>
       <DefaultErrorViewBoundary>
-        <Group className="pb-2">
-          {onFullScreen && (
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              onClick={() => onFullScreen(item)}
-            >
-              <CornersOut size={24} />
-            </ActionIcon>
-          )}
-          <div className="flex-1" />
-          <HoverCard>
-            <HoverCard.Target>
-              <Info size={24} color={colors.brand[6]} />
-            </HoverCard.Target>
-            <HoverCard.Dropdown className="max-w-md">
-              <Text>{item.description}</Text>
-            </HoverCard.Dropdown>
-          </HoverCard>
-          {onEdit && (
-            <ActionIcon variant="subtle" onClick={() => onEdit(item)}>
-              <PencilSimple size={24} />
-            </ActionIcon>
-          )}
-          {onDelete && (
-            <ActionIcon
-              color="red"
-              variant="subtle"
-              onClick={() => onDelete(item)}
-            >
-              <TrashSimple size={24} />
-            </ActionIcon>
-          )}
-        </Group>
         <DashboardItemRenderer {...item} />
       </DefaultErrorViewBoundary>
     </Paper>

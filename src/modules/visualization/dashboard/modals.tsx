@@ -13,7 +13,9 @@ import {
   Flex,
   Modal,
   Paper,
+  Stack,
   Text,
+  Title,
 } from '@mantine/core';
 import { Faders, Info, Plus, TrashSimple } from '@phosphor-icons/react';
 import React from 'react';
@@ -21,6 +23,8 @@ import VisualizationConfigurationForm from '../configuration';
 import { CancelButton } from '@/components/standard/button/variants';
 import { DashboardItemRenderer } from './grid-item';
 import { useDisclosure } from '@mantine/hooks';
+import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
+import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
 
 interface VisualizationConfigurationDialogProps {
   onSubmit(item: DashboardItemModel): void;
@@ -42,6 +46,7 @@ export const AddVisualizationConfigurationDialog = React.forwardRef<
         color="blue"
         title="What are visualizations for?"
         icon={<Info size={20} />}
+        className="mb-5"
       >
         Humans absorb information more easily with images rather than text or
         numbers. Rather than reading through your dataset row per row, why not
@@ -103,20 +108,26 @@ interface DashboardFullScreenConfigurationProps {
   onSubmit(item: DashboardItemModel): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function DashboardFullScreenConfiguration(
   props: DashboardFullScreenConfigurationProps,
 ) {
   const { onSubmit, item } = props;
   const [opened, { toggle, close }] = useDisclosure();
   return (
-    <Paper>
-      <Button leftSection={<Faders />} fullWidth onClick={toggle}>
+    <Paper className="p-3">
+      <Button
+        leftSection={<Faders />}
+        fullWidth
+        onClick={toggle}
+        variant="subtle"
+      >
         Configure Visualization
       </Button>
       <Collapse in={opened}>
         {opened && (
           <>
-            <Divider />
+            <Divider className="my-4" />
             <VisualizationConfigurationForm
               data={item}
               onClose={close}
@@ -137,8 +148,11 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
   ParametrizedDisclosureTrigger<DashboardItemModel> | null,
   DashboardGridItemFullScreenModalProps
 >(function DashboardGridItemFullScreenModal(props, ref) {
-  const { onSubmit } = props;
+  // const { onSubmit } = props;
   const [item, { close }] = useParametrizedDisclosureTrigger(ref);
+  const dashboardItemConfig = item
+    ? DASHBOARD_ITEM_CONFIGURATION[item.type as DashboardItemTypeEnum]
+    : undefined;
   return (
     <Modal
       size="xl"
@@ -148,9 +162,23 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
       fullScreen
       radius={0}
     >
-      {item && (
+      {/* {item && (
         <DashboardFullScreenConfiguration item={item} onSubmit={onSubmit} />
-      )}
+      )} */}
+      <Stack>
+        {dashboardItemConfig && (
+          <>
+            <Title
+              order={2}
+            >{`${dashboardItemConfig.label} of ${item?.column ?? 'Column'}`}</Title>
+            <Text c="gray" size="sm">
+              {dashboardItemConfig.description}
+            </Text>
+          </>
+        )}
+        {item?.description && <Text>{item.description}</Text>}
+      </Stack>
+      <div style={{ height: 48 }} />
       {item && <DashboardItemRenderer {...item} />}
     </Modal>
   );

@@ -8,7 +8,8 @@ export const visualizationConfigFormSchema = Yup.object({
   column: Yup.string().required(),
   description: yupNullableString,
   config: Yup.lazy((value, options) => {
-    const type = options.context.type;
+    const type = options.context?.type;
+    console.log(options.context);
     const defaultSchema = Yup.object().required();
     if (typeof type !== 'string') {
       return defaultSchema;

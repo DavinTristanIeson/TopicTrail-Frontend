@@ -12,15 +12,20 @@ import RHFField from '@/components/standard/fields';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { fromPairs } from 'lodash-es';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { VisualizationConfigFormType } from './form-type';
 
-interface ColumnDashboardItemSelectInputProps {
-  column: SchemaColumnModel | null;
-}
+function ColumnDashboardItemSelectInput() {
+  const project = React.useContext(ProjectContext);
+  const { control } = useFormContext<VisualizationConfigFormType>();
+  const chosenColumnName = useWatch({
+    name: 'column',
+    control,
+  });
+  const column = project.config.data_schema.columns.find((col) => {
+    return col.name === chosenColumnName;
+  });
 
-function ColumnDashboardItemSelectInput(
-  props: ColumnDashboardItemSelectInputProps,
-) {
-  const { column } = props;
   const supportedTypes = column
     ? SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN[
         column.type as SchemaColumnTypeEnum
@@ -71,6 +76,7 @@ function ColumnDashboardItemSelectInput(
       renderOption={renderOption}
       label="Type"
       required
+      disabled={!column}
       description="The type of the visualization you want to use for this dashboard item."
       className="flex-1"
     />
@@ -84,7 +90,7 @@ export function DefaultVisualizationConfigurationForm() {
       column.type as SchemaColumnTypeEnum,
     );
   });
-  const [column, setColumn] = React.useState<SchemaColumnModel | null>(null);
+
   return (
     <Stack>
       <Group align="start">
@@ -94,11 +100,10 @@ export function DefaultVisualizationConfigurationForm() {
           label="Column"
           required
           allowDeselect={false}
-          onChange={setColumn}
           className="flex-1"
           description="The column that contains the data to be visualized."
         />
-        {column != null && <ColumnDashboardItemSelectInput column={column} />}
+        <ColumnDashboardItemSelectInput />
       </Group>
       <RHFField
         name="description"

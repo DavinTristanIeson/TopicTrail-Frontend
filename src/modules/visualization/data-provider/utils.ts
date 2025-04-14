@@ -19,7 +19,7 @@ export function useAdaptDataProviderQueries<TQuery, TData>(
 ): ReturnType<BaseVisualizationDataProviderHook<TData, any>> {
   return {
     data: zip(props.groups, props.queries)
-      .filter((item) => !item[1]?.data)
+      .filter((item) => !!item[1]?.data)
       .map((item) => {
         return {
           name: item[0]!.name,
