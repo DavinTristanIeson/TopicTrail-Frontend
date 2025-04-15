@@ -52,5 +52,14 @@ export type DescriptiveStatisticsModel =
   components['schemas']['DescriptiveStatisticsResource'];
 export type DatasetPreviewModel =
   components['schemas']['DatasetPreviewResource'];
+export type TableColumnCountsModel =
+  components['schemas']['TableColumnCountsResource'];
+export type TableColumnFrequencyDistributionModel =
+  components['schemas']['TableColumnFrequencyDistributionResource'];
+export type TableColumnAggregatedTotalsModel =
+  components['schemas']['TableColumnAggregateTotalsResource'];
+export type TabelColumnGeographicalPointsModel =
+  components['schemas']['TableColumnGeographicalPointsResource'];
+export type TableWordsModel = components['schemas']['TableWordsResource'];
 
 export type PaginationParams = components['schemas']['PaginationParams'];

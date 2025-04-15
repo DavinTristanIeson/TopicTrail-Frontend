@@ -8,7 +8,7 @@ import { useAdaptDataProviderQueries } from './utils';
 import { DashboardItemModel } from '@/api/userdata';
 import { DashboardGroupsContext } from '../types/context';
 
-export const useDescriptiveStatisticsDataProvider: BaseVisualizationDataProviderHook<
+export const useVisualizationDescriptiveStatisticsDataProvider: BaseVisualizationDataProviderHook<
   DescriptiveStatisticsModel,
   DashboardItemModel
 > = function (config) {

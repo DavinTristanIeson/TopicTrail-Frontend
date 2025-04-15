@@ -1,21 +1,17 @@
 import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
-import {
-  useAdaptDataProviderQueries,
-  usePrepareDataProvider,
-  useStringifyTableValues,
-} from './utils';
+import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
+import { TableColumnCountsModel } from '@/api/table';
 
-export const useVisualizationUniqueValuesDataProvider: BaseVisualizationDataProviderHook<
-  (string | number)[],
+export const useVisualizationValueCountsDataProvider: BaseVisualizationDataProviderHook<
+  TableColumnCountsModel,
   object
 > = function (item) {
-  const { groups, column, params } = usePrepareDataProvider(item);
-
+  const { groups, params } = usePrepareDataProvider(item);
   const queries = useQueries({
     queries: groups.map((group) =>
-      client.queryOptions('post', '/table/{project_id}/column/unique', {
+      client.queryOptions('post', '/table/{project_id}/column/counts', {
         body: {
           column: item.column,
           filter: group.filter,
@@ -25,13 +21,11 @@ export const useVisualizationUniqueValuesDataProvider: BaseVisualizationDataProv
     ),
   });
 
-  const stringify = useStringifyTableValues(column);
-
   return useAdaptDataProviderQueries({
     queries,
     groups,
     extract: (data) => {
-      return stringify(data.data.values as any);
+      return data.data;
     },
   });
 };
