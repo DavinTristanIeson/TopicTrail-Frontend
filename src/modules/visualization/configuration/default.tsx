@@ -7,7 +7,6 @@ import {
   ALLOWED_DASHBOARD_ITEM_COLUMNS,
   SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN,
 } from '../types/dashboard-item-types';
-import { SchemaColumnModel } from '@/api/project';
 import RHFField from '@/components/standard/fields';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';

@@ -123,7 +123,6 @@ export function DescriptiveStatisticsTableComponent(
   const { loading } = props;
   const data = useDescriptiveStatisticsTableData(props);
   const columns = useDescriptiveStatisticsTableColumns(props);
-  console.log(data, props.data);
 
   const table = useMantineReactTable<Record<string, any>>({
     data,

@@ -10,7 +10,7 @@ import {
   visualizationConfigFormSchema,
   VisualizationConfigFormType,
 } from './form-type';
-import { Divider, Group, Stack } from '@mantine/core';
+import { Divider, Group, Stack, Text } from '@mantine/core';
 import { CancelButton } from '@/components/standard/button/variants';
 import SubmitButton from '@/components/standard/button/submit';
 
@@ -32,6 +32,9 @@ function ExtendedVisualizationConfigurationFormBody() {
   return (
     <>
       <Divider />
+      <Text size="lg" fw={500}>
+        Additional Configuration
+      </Text>
       {config.configForm}
     </>
   );

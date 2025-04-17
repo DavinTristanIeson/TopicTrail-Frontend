@@ -1,13 +1,13 @@
 import { getTopicLabel } from '@/api/topic';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
-import { merge, zip } from 'lodash-es';
+import { zip } from 'lodash-es';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { Alert, Anchor, Input, Select, Slider, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import { useCategoricalDataFrequencyMode } from '@/modules/visualization/components/categorical/utils';
+import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/categorical/utils';
 import { useDebouncedState } from '@mantine/hooks';
 import { TopicVisualizationRendererProps } from './data-providers';
 
@@ -117,7 +117,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
     selectProps,
     transformFrequencies,
     needsPercentage,
-  } = useCategoricalDataFrequencyMode();
+  } = useCategoricalDataFrequencyModeState();
   const plot: PlotParams = React.useMemo(() => {
     const topics = data.map((item) => item.topic);
     const y = topics.map((topic) => getTopicLabel(topic));
@@ -147,11 +147,10 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
         },
       ],
       layout: {
-        ...merge(plotlyLayoutProps, {
-          xaxis: {
-            minallowed: 0,
-          },
-        }),
+        xaxis: {
+          ...plotlyLayoutProps,
+          minallowed: 0,
+        },
         height: 720,
         title: {
           text: `Topic Frequencies of "${column.name}"`,

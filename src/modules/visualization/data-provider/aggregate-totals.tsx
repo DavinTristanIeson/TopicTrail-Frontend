@@ -3,29 +3,21 @@ import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
 import { TableColumnAggregatedTotalsModel } from '@/api/table';
-import * as Yup from 'yup';
-import React from 'react';
 
-const VisualizationAggregatedTotalsDataProviderConfigSchema = Yup.object({
-  groupedBy: Yup.object({
-    name: Yup.string().required(),
-    asc: Yup.boolean().required(),
-  }),
-});
-export type VisualizationAggregatedTotalsDataProviderConfigType = Yup.InferType<
-  typeof VisualizationAggregatedTotalsDataProviderConfigSchema
->;
+import React from 'react';
+import {
+  VisualizationAggregateTotalsConfigSchema,
+  VisualizationAggregateTotalsConfigType,
+} from '../configuration/aggregate-totals';
 
 export const useVisualizationAggregatedTotalsDataProvider: BaseVisualizationDataProviderHook<
   TableColumnAggregatedTotalsModel,
-  VisualizationAggregatedTotalsDataProviderConfigType
+  VisualizationAggregateTotalsConfigType
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);
 
   const config = React.useMemo(() => {
-    return VisualizationAggregatedTotalsDataProviderConfigSchema.validateSync(
-      item.config,
-    );
+    return VisualizationAggregateTotalsConfigSchema.validateSync(item.config);
   }, [item.config]);
 
   const queries = useQueries({
@@ -37,10 +29,7 @@ export const useVisualizationAggregatedTotalsDataProvider: BaseVisualizationData
           body: {
             column: item.column,
             filter: group.filter,
-            grouped_by: config?.groupedBy ?? {
-              name: item.column,
-              asc: true,
-            },
+            grouped_by: config?.grouped_by,
           },
           params,
         },

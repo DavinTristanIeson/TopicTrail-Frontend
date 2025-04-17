@@ -1,5 +1,5 @@
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import PlotRenderer, { plotlyWrapText } from '@/components/widgets/plotly';
+import PlotRenderer from '@/components/widgets/plotly';
 import { zip } from 'lodash-es';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
@@ -7,6 +7,7 @@ import { useTopicModelingResultOfColumn } from '../../components/context';
 import { useMantineTheme } from '@mantine/core';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { DocumentTopicsVisualizationRendererProps } from './data-providers';
+import { plotlyWrapText } from '@/modules/visualization/components/utils';
 
 export function TopicVisualizationScatterPlotRenderer(
   props: DocumentTopicsVisualizationRendererProps,

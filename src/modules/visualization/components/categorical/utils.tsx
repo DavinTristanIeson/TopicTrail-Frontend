@@ -1,13 +1,14 @@
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { type SelectProps } from '@mantine/core';
+import { sum } from 'lodash-es';
 import React from 'react';
 
-enum CategoricalDataFrequencyMode {
+export enum CategoricalDataFrequencyMode {
   Frequency = 'frequency',
   Proportion = 'proportion',
 }
 
-const CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY = {
+export const CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY = {
   [CategoricalDataFrequencyMode.Frequency]: {
     value: CategoricalDataFrequencyMode.Frequency,
     label: 'Frequency',
@@ -20,30 +21,13 @@ const CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY = {
   },
 };
 
-export function useCategoricalDataFrequencyMode() {
-  const [mode, setMode] = React.useState<string>(
-    CategoricalDataFrequencyMode.Frequency,
-  );
-  const renderOption = useDescriptionBasedRenderOption(
-    CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY,
-  );
-  const selectProps: SelectProps = {
-    label: 'Frequency Mode',
-    required: true,
-    data: Object.values(CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY),
-    value: mode,
-    onChange(newMode) {
-      if (!newMode) return;
-      setMode(newMode);
-    },
-    allowDeselect: false,
-    renderOption,
-  };
-
+export function useCategoricalDataFrequencyMode(
+  mode: CategoricalDataFrequencyMode,
+) {
   const transformFrequencies = React.useCallback(
     (frequencies: number[]) => {
       if (mode === CategoricalDataFrequencyMode.Proportion) {
-        const totalFrequency = frequencies.reduce((acc, cur) => acc + cur);
+        const totalFrequency = sum(frequencies);
         const proportions = frequencies.map(
           (frequency) => frequency / totalFrequency,
         );
@@ -59,15 +43,42 @@ export function useCategoricalDataFrequencyMode() {
   const plotlyLayoutProps = React.useMemo(() => {
     if (mode === CategoricalDataFrequencyMode.Proportion) {
       return {
-        xaxis: {
-          range: [0, 100],
-          ticksuffix: '%',
-        },
+        range: [0, 100],
+        ticksuffix: '%',
+        minallowed: 0,
       };
     } else {
-      return undefined;
+      return {
+        minallowed: 0,
+      };
     }
   }, [mode]);
+
+  return { plotlyLayoutProps, transformFrequencies };
+}
+
+export function useCategoricalDataFrequencyModeState() {
+  const [mode, setMode] = React.useState(
+    CategoricalDataFrequencyMode.Frequency,
+  );
+  const renderOption = useDescriptionBasedRenderOption(
+    CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY,
+  );
+  const selectProps: SelectProps = {
+    label: 'Frequency Mode',
+    required: true,
+    data: Object.values(CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY),
+    value: mode,
+    onChange(newMode) {
+      if (!newMode) return;
+      setMode(newMode as CategoricalDataFrequencyMode);
+    },
+    allowDeselect: false,
+    renderOption,
+  };
+
+  const { transformFrequencies, plotlyLayoutProps } =
+    useCategoricalDataFrequencyMode(mode);
 
   return {
     plotlyLayoutProps,

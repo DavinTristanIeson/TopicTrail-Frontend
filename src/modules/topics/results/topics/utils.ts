@@ -1,5 +1,5 @@
 import { getTopicLabel, TopicModel } from '@/api/topic';
-import { plotlyWrapText } from '@/components/widgets/plotly';
+import { plotlyWrapText } from '@/modules/visualization/components/utils';
 
 interface ExtractTopicCustomdataForPlotlyParams {
   topics: (TopicModel | null)[];
