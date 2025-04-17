@@ -19,8 +19,6 @@ export type ContinuousSchemaColumnModel =
   components['schemas']['ContinuousSchemaColumn'];
 export type GeospatialSchemaColumnModel =
   components['schemas']['GeospatialSchemaColumn'];
-export type MultiCategoricalSchemaColumnModel =
-  components['schemas']['MultiCategoricalSchemaColumn'];
 export type OrderedCategoricalSchemaColumnModel =
   components['schemas']['OrderedCategoricalSchemaColumn'];
 export type TemporalSchemaColumnModel =
@@ -35,7 +33,6 @@ export type SchemaColumnModel =
   | CategoricalSchemaColumnModel
   | ContinuousSchemaColumnModel
   | GeospatialSchemaColumnModel
-  | MultiCategoricalSchemaColumnModel
   | OrderedCategoricalSchemaColumnModel
   | TemporalSchemaColumnModel
   | TextualSchemaColumnModel

@@ -35,8 +35,7 @@ function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
   if (!column) return;
   if (
     column.type === SchemaColumnTypeEnum.Categorical ||
-    column.type === SchemaColumnTypeEnum.OrderedCategorical ||
-    column.type === SchemaColumnTypeEnum.MultiCategorical
+    column.type === SchemaColumnTypeEnum.OrderedCategorical
   ) {
     // NOTE: Topic should have a separate TopicSelect component
     return (
@@ -69,8 +68,7 @@ function ValuesBasedTableFilterComponent(props: TableFilterComponentProps) {
   if (!column) return;
   if (
     column.type === SchemaColumnTypeEnum.Categorical ||
-    column.type === SchemaColumnTypeEnum.OrderedCategorical ||
-    column.type === SchemaColumnTypeEnum.MultiCategorical
+    column.type === SchemaColumnTypeEnum.OrderedCategorical
   ) {
     // NOTE: Topic should have a separate TopicSelect component
     return (

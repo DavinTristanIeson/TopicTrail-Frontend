@@ -13,7 +13,6 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     DashboardItemTypeEnum.DescriptiveStatistics,
   ],
   [SchemaColumnTypeEnum.Geospatial]: [],
-  [SchemaColumnTypeEnum.MultiCategorical]: [],
   [SchemaColumnTypeEnum.OrderedCategorical]: [],
   [SchemaColumnTypeEnum.Temporal]: [],
   [SchemaColumnTypeEnum.Textual]: [],

@@ -9,10 +9,7 @@ import RHFField from '@/components/standard/fields';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { ProjectConfigColumnContinuousForm } from './continuous-column';
 import { ProjectConfigColumnOrderedCategoricalForm } from './ordered-categorical-column';
-import {
-  ProjectConfigColumnGeospatialForm,
-  ProjectConfigColumnMulticategoricalForm,
-} from './other-columns';
+import { ProjectConfigColumnGeospatialForm } from './geospatial-column';
 import { ProjectConfigColumnTextualForm } from './textual-column';
 import { ProjectColumnTypeSelectField } from '@/modules/project/select-column-input';
 import { ProjectConfigColumnTemporalForm } from './temporal-column';
@@ -43,10 +40,6 @@ function ProjectConfigColumnFormSwitcher(
     }
     case SchemaColumnTypeEnum.Geospatial: {
       component = <ProjectConfigColumnGeospatialForm index={index} />;
-      break;
-    }
-    case SchemaColumnTypeEnum.MultiCategorical: {
-      component = <ProjectConfigColumnMulticategoricalForm index={index} />;
       break;
     }
     case SchemaColumnTypeEnum.Temporal: {

@@ -151,12 +151,6 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
               'This column contains date-time data that follows a strict format (e.g.: YYYY/MM/DD).',
           },
           {
-            value: SchemaColumnTypeEnum.MultiCategorical,
-            label: 'Multi-Categorical',
-            description:
-              'Each row of this column can contain one or more categories.',
-          },
-          {
             value: SchemaColumnTypeEnum.Geospatial,
             label: 'Geospatial',
             description:

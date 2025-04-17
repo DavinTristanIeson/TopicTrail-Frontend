@@ -74,8 +74,6 @@ export const STATISTIC_METHOD_CONSTRAINTS: Partial<
     StatisticTestMethodEnum.MannWhitneyU,
   ],
   [SchemaColumnTypeEnum.Categorical]: CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
-  [SchemaColumnTypeEnum.MultiCategorical]:
-    CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
   [SchemaColumnTypeEnum.OrderedCategorical]: [
     StatisticTestMethodEnum.MannWhitneyU,
     StatisticTestMethodEnum.ChiSquared,
@@ -95,7 +93,6 @@ export const EFFECT_SIZE_CONSTRAINTS: Partial<
     EffectSizeMethodEnum.RankBiserialCorrelation,
   ],
   [SchemaColumnTypeEnum.Categorical]: CATEGORICAL_EFFECT_SIZE_CONSTRAINTS,
-  [SchemaColumnTypeEnum.MultiCategorical]: CATEGORICAL_EFFECT_SIZE_CONSTRAINTS,
   [SchemaColumnTypeEnum.OrderedCategorical]: [
     EffectSizeMethodEnum.RankBiserialCorrelation,
     EffectSizeMethodEnum.CramerV,

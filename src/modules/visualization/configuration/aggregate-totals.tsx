@@ -19,7 +19,6 @@ export function VisualizationAggregateTotalsConfigForm() {
       SchemaColumnTypeEnum.Categorical,
       SchemaColumnTypeEnum.Temporal,
       SchemaColumnTypeEnum.OrderedCategorical,
-      SchemaColumnTypeEnum.MultiCategorical,
       SchemaColumnTypeEnum.Topic,
     ];
     return project.config.data_schema.columns.filter((column) =>

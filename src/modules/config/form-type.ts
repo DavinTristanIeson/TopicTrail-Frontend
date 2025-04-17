@@ -60,25 +60,6 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     otherwise: (schema) => schema.strip(),
   }),
 
-  is_json: Yup.boolean()
-    .nullable()
-    .when('type', {
-      is: SchemaColumnTypeEnum.MultiCategorical,
-      then: (schema) => schema.required(),
-      otherwise: (schema) => schema.strip(),
-    }),
-
-  delimiter: yupNullableString.when('type', {
-    is: SchemaColumnTypeEnum.MultiCategorical,
-    then: (schema) =>
-      schema.when('isJson', {
-        is: false,
-        then: (schema) => schema.required(),
-        otherwise: (schema) => schema.strip(),
-      }),
-    otherwise: (schema) => schema.strip(),
-  }),
-
   role: yupNullableString.when('type', {
     is: SchemaColumnTypeEnum.Geospatial,
     then: (schema) => schema.oneOf(Object.values(GeospatialRoleEnum)),
@@ -213,8 +194,6 @@ export function DefaultProjectSchemaColumnValues(
     bins: null,
     category_order:
       type === SchemaColumnTypeEnum.OrderedCategorical ? [] : null,
-    delimiter: type === SchemaColumnTypeEnum.MultiCategorical ? ',' : null,
-    is_json: type === SchemaColumnTypeEnum.MultiCategorical ? false : null,
     role:
       type === SchemaColumnTypeEnum.Geospatial
         ? name.startsWith('long') || name.startsWith('lng')

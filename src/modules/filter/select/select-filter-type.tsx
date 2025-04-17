@@ -137,12 +137,6 @@ const ALLOWED_FILTER_TYPES_FOR_COLUMNS = {
     ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
     TableFilterTypeEnum.IsOneOf,
   ],
-  [SchemaColumnTypeEnum.MultiCategorical]: [
-    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
-    TableFilterTypeEnum.Excludes,
-    TableFilterTypeEnum.Includes,
-    TableFilterTypeEnum.Only,
-  ],
 };
 
 export const COMPOUND_FILTER_TYPES = [

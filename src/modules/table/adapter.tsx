@@ -24,7 +24,6 @@ const DEFAULT_COLUMN_SIZES = {
   [SchemaColumnTypeEnum.Categorical]: 200,
   [SchemaColumnTypeEnum.Continuous]: 150,
   [SchemaColumnTypeEnum.Geospatial]: 150,
-  [SchemaColumnTypeEnum.MultiCategorical]: 300,
   [SchemaColumnTypeEnum.OrderedCategorical]: 200,
   [SchemaColumnTypeEnum.Temporal]: 200,
   [SchemaColumnTypeEnum.Textual]: 400,

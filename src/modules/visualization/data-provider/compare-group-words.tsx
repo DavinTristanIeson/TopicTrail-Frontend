@@ -11,7 +11,7 @@ export const useVisualizationCompareGroupWordsDataProvider: BaseVisualizationDat
   const { groups, params } = usePrepareDataProvider(item);
   const { data, error, isFetching } = client.useQuery(
     'post',
-    '/table/{project_id}/compare-group-words',
+    '/table/{project_id}/comparison/words',
     {
       body: {
         column: item.column,
