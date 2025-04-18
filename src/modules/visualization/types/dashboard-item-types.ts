@@ -2,10 +2,10 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 
 export enum DashboardItemTypeEnum {
   DescriptiveStatistics = 'descriptive-statistics',
-  ColumnCounts = 'column-counts',
+  Counts = 'counts',
   FrequencyDistribution = 'frequency-distribution',
   ContinuousDataDistribution = 'continuous-data-distribution',
-  AggregateTotals = 'aggregate-totals',
+  Aggregate = 'aggregate',
   GeographicalCoordinates = 'geographical-coordinates',
   Calendar = 'calendar',
   WordFrequencies = 'word-frequencies',
@@ -17,7 +17,7 @@ export enum DashboardItemTypeEnum {
   StatisticTestDistribution = 'binary-significance-on-distribution',
 }
 
-const FOR_ALL_TYPES = [DashboardItemTypeEnum.ColumnCounts];
+const FOR_ALL_TYPES = [DashboardItemTypeEnum.Counts];
 const FOR_CATEGORICAL_TYPES = [
   DashboardItemTypeEnum.FrequencyDistribution,
   DashboardItemTypeEnum.ContingencyTable,
@@ -37,7 +37,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     ...FOR_ALL_TYPES,
     DashboardItemTypeEnum.DescriptiveStatistics,
     DashboardItemTypeEnum.ContinuousDataDistribution,
-    DashboardItemTypeEnum.AggregateTotals,
+    DashboardItemTypeEnum.Aggregate,
   ],
   [SchemaColumnTypeEnum.Geospatial]: [
     ...FOR_ALL_TYPES,

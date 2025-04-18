@@ -54,14 +54,33 @@ function DashboardItemRendererInternal(
 }
 
 export function DashboardItemRenderer(props: DashboardItemModel) {
-  const { type: rawType } = props;
+  const { type: rawType, config } = props;
   const type = rawType as DashboardItemTypeEnum;
   const dashboardConfig = DASHBOARD_ITEM_CONFIGURATION[type];
+
+  const error = React.useMemo(() => {
+    try {
+      dashboardConfig.configValidator?.validateSync(config);
+      return false;
+    } catch (e) {
+      console.error(e);
+      return true;
+    }
+  }, [config, dashboardConfig.configValidator]);
+
   if (!dashboardConfig) {
     return (
       <Alert color="gray" icon={<X />}>
         This is no longer a valid dashboard item. Please reconfigure or delete
         this item from your dashboard.
+      </Alert>
+    );
+  }
+  if (error) {
+    return (
+      <Alert color="red" icon={<Warning />}>
+        There&apos;s an error in the configuration of this dashboard item. Try
+        to update the configuration or create a new dashboard item instead.
       </Alert>
     );
   }

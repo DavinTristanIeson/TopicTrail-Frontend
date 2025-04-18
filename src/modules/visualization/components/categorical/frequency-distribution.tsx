@@ -4,13 +4,13 @@ import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { VisualizationFrequencyDistributionConfigType } from '../../configuration/frequency-distribution';
 import {
-  CategoricalDataFrequencyMode,
-  useCategoricalDataFrequencyMode,
-} from './utils';
+  VisualizationFrequencyDistributionConfigType,
+  VisualizationFrequencyDistributonDisplayMode,
+} from '../../configuration/frequency-distribution';
+import { useCategoricalDataFrequencyMode } from './utils';
 
-export function FrequencyDistributionBarChart(
+export function VisualizationFrequencyDistributionBarChart(
   props: BaseVisualizationComponentProps<
     VisualizationFrequencyDistributionModel,
     VisualizationFrequencyDistributionConfigType
@@ -24,11 +24,11 @@ export function FrequencyDistributionBarChart(
       data.map((data) => data.name),
     );
     const subplots: PlotParams['data'] = data.map(
-      ({ name, data: { frequencies, values } }, idx) => {
+      ({ name, data: { frequencies, categories } }, idx) => {
         const y = transformFrequencies(frequencies);
         return {
           name,
-          x: values,
+          x: categories,
           y: y,
           type: 'bar',
           marker: {
@@ -40,36 +40,37 @@ export function FrequencyDistributionBarChart(
     return {
       data: subplots,
       layout: {
-        ...plotlyLayoutProps,
+        title: `Frequency Distribution of ${item.column}`,
+        yaxis: {
+          ...plotlyLayoutProps,
+        },
         barmode: 'group',
       },
     };
-  }, [data, plotlyLayoutProps, transformFrequencies]);
+  }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
   return <PlotRenderer plot={plot} />;
 }
 
 export function VisualizationFrequencyDistributionLinePlot(
   props: BaseVisualizationComponentProps<
     VisualizationFrequencyDistributionModel,
-    Partial<VisualizationFrequencyDistributionConfigType>
+    VisualizationFrequencyDistributionConfigType
   >,
 ) {
   const { data, item } = props;
   const { transformFrequencies, plotlyLayoutProps } =
-    useCategoricalDataFrequencyMode(
-      item.config?.mode ?? CategoricalDataFrequencyMode.Frequency,
-    );
+    useCategoricalDataFrequencyMode(item.config?.mode);
   const plot = React.useMemo<PlotParams>(() => {
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
     );
     const subplots: PlotParams['data'] = data.map(
-      ({ name, data: { frequencies, values } }, idx) => {
+      ({ name, data: { frequencies, categories } }, idx) => {
         const y = transformFrequencies(frequencies);
         return {
           name,
           mode: 'lines+markers',
-          x: values,
+          x: categories,
           y: y,
           type: 'scatter',
           marker: {
@@ -81,11 +82,36 @@ export function VisualizationFrequencyDistributionLinePlot(
     return {
       data: subplots,
       layout: {
-        xaxis: {
+        title: `Frequency Distribution of ${item.column}`,
+        yaxis: {
           ...plotlyLayoutProps,
         },
       },
     };
-  }, [data, plotlyLayoutProps, transformFrequencies]);
+  }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
   return <PlotRenderer plot={plot} />;
+}
+
+export function VisualizationFrequencyDistributionRenderer(
+  props: BaseVisualizationComponentProps<
+    VisualizationFrequencyDistributionModel,
+    VisualizationFrequencyDistributionConfigType
+  >,
+) {
+  const { item } = props;
+  if (
+    item.config.display ===
+    VisualizationFrequencyDistributonDisplayMode.BarChart
+  ) {
+    return <VisualizationFrequencyDistributionBarChart {...props} />;
+  }
+  if (
+    item.config.display ===
+    VisualizationFrequencyDistributonDisplayMode.LinePlot
+  ) {
+    return <VisualizationFrequencyDistributionLinePlot {...props} />;
+  }
+  throw Error(
+    `${item.config.display} is not a valid display mode for frequency distribution`,
+  );
 }

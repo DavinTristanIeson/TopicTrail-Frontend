@@ -48,8 +48,8 @@ export type VisualizationColumnCountsModel =
   components['schemas']['TableColumnCountsResource'];
 export type VisualizationFrequencyDistributionModel =
   components['schemas']['TableColumnFrequencyDistributionResource'];
-export type VisualizationAggregatedTotalsModel =
-  components['schemas']['TableColumnAggregateTotalsResource'];
+export type VisualizationAggregateValuesModel =
+  components['schemas']['TableColumnAggregateValuesResource'];
 export type VisualizationGeographicalPointsModel =
   components['schemas']['TableColumnGeographicalPointsResource'];
 export type VisualizationWordsModel =

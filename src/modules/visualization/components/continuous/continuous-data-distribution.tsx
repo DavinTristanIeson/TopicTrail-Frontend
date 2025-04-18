@@ -3,18 +3,18 @@ import { BaseVisualizationComponentProps } from '../../types/base';
 import { PlotParams } from 'react-plotly.js';
 import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
+import {
+  VisualizationContinuousDataDistributionConfigType,
+  VisualizationContinuousDataDistributionDisplayMode,
+} from '../../configuration/continuous-data-distribution';
 
-type DistributionDifferencesVisualizationProps =
-  BaseVisualizationComponentProps<number[], object>;
-interface DistributionDifferencesBasePlotProps
-  extends DistributionDifferencesVisualizationProps {
-  plotType: 'violin' | 'box';
-}
-
-function DistributionDifferencesBasePlot(
-  props: DistributionDifferencesBasePlotProps,
+function VisualizationContinuousDataDistributionViolinBoxPlot(
+  props: BaseVisualizationComponentProps<
+    number[],
+    VisualizationContinuousDataDistributionConfigType
+  >,
 ) {
-  const { data, plotType } = props;
+  const { data, item } = props;
   const plot = React.useMemo<PlotParams>(() => {
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
@@ -23,7 +23,11 @@ function DistributionDifferencesBasePlot(
       return {
         name,
         y: data,
-        type: plotType,
+        type:
+          item.config.display ===
+          VisualizationContinuousDataDistributionDisplayMode.ViolinPlot
+            ? 'violin'
+            : 'box',
         marker: {
           color: colors[idx],
         },
@@ -31,26 +35,19 @@ function DistributionDifferencesBasePlot(
     });
     return {
       data: subplots,
-      layout: {},
+      layout: {
+        title: `Continuous Data Distribution of ${item.column}`,
+      },
     };
-  }, [data, plotType]);
+  }, [data, item.column, item.config.display]);
   return <PlotRenderer plot={plot} />;
 }
 
-export function DistributionDifferencesBoxPlot(
-  props: DistributionDifferencesVisualizationProps,
-) {
-  return <DistributionDifferencesBasePlot {...props} plotType="box" />;
-}
-
-export function DistributionDifferencesViolinPlot(
-  props: DistributionDifferencesVisualizationProps,
-) {
-  return <DistributionDifferencesBasePlot {...props} plotType="violin" />;
-}
-
-export function DistributionDifferencesHistogram(
-  props: DistributionDifferencesVisualizationProps,
+export function VisualizationContinuousDataDistributionHistogram(
+  props: BaseVisualizationComponentProps<
+    number[],
+    VisualizationContinuousDataDistributionConfigType
+  >,
 ) {
   const { data } = props;
   const plot = React.useMemo<PlotParams>(() => {
@@ -70,9 +67,33 @@ export function DistributionDifferencesHistogram(
     return {
       data: subplots,
       layout: {
+        yaxis: {
+          minallowed: 0,
+        },
         barmode: 'group',
       },
     };
   }, [data]);
   return <PlotRenderer plot={plot} />;
+}
+
+export function VisualizationContinuousDataDistributionRenderer(
+  props: BaseVisualizationComponentProps<
+    number[],
+    VisualizationContinuousDataDistributionConfigType
+  >,
+) {
+  const mode = props.item.config.display;
+  if (mode === VisualizationContinuousDataDistributionDisplayMode.Histogram) {
+    return <VisualizationContinuousDataDistributionHistogram {...props} />;
+  } else if (
+    mode === VisualizationContinuousDataDistributionDisplayMode.BoxPlot ||
+    mode === VisualizationContinuousDataDistributionDisplayMode.ViolinPlot
+  ) {
+    return <VisualizationContinuousDataDistributionViolinBoxPlot {...props} />;
+  } else {
+    throw Error(
+      `${mode} is not a valid display mode for continuous data distribution.`,
+    );
+  }
 }

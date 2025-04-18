@@ -1,6 +1,6 @@
 import { DescriptiveStatisticsModel } from '@/api/table';
 import Colors from '@/common/constants/colors';
-import { Group, Tooltip } from '@mantine/core';
+import { Group, Text, Tooltip } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 import { BaseVisualizationComponentProps, NamedData } from '../../types/base';
 import {
@@ -144,6 +144,11 @@ export function DescriptiveStatisticsTableDashboardComponent(
   props: BaseVisualizationComponentProps<DescriptiveStatisticsModel, object>,
 ) {
   return (
-    <DescriptiveStatisticsTableComponent data={props.data} loading={false} />
+    <>
+      <Text size="lg" fw={500} ta="center" className="mb-3">
+        Descriptive Statistics of {props.item.column}
+      </Text>
+      <DescriptiveStatisticsTableComponent data={props.data} loading={false} />
+    </>
   );
 }

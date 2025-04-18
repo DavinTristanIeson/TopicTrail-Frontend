@@ -2,22 +2,22 @@ import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
-import { VisualizationAggregatedTotalsModel } from '@/api/table';
+import { VisualizationAggregateValuesModel } from '@/api/table';
 
 import React from 'react';
 import {
-  VisualizationAggregateTotalsConfigSchema,
-  VisualizationAggregateTotalsConfigType,
-} from '../configuration/aggregate-totals';
+  VisualizationAggregateValuesConfigSchema,
+  VisualizationAggregateValuesConfigType,
+} from '../configuration/aggregate-values';
 
 export const useVisualizationAggregatedTotalsDataProvider: BaseVisualizationDataProviderHook<
-  VisualizationAggregatedTotalsModel,
-  VisualizationAggregateTotalsConfigType
+  VisualizationAggregateValuesModel,
+  VisualizationAggregateValuesConfigType
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);
 
   const config = React.useMemo(() => {
-    return VisualizationAggregateTotalsConfigSchema.validateSync(item.config);
+    return VisualizationAggregateValuesConfigSchema.validateSync(item.config);
   }, [item.config]);
 
   const queries = useQueries({

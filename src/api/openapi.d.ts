@@ -194,7 +194,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/column/aggregate-totals": {
+    "/table/{project_id}/column/aggregate-values": {
         parameters: {
             query?: never;
             header?: never;
@@ -203,8 +203,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Post  Get Table Column  Aggregate Totals */
-        post: operations["post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post"];
+        /** Post  Get Table Column  Aggregate Values */
+        post: operations["post__get_table_column__aggregate_values_table__project_id__column_aggregate_values_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -891,9 +891,9 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[TableColumnAggregateTotalsResource] */
-        ApiResult_TableColumnAggregateTotalsResource_: {
-            data: components["schemas"]["TableColumnAggregateTotalsResource"];
+        /** ApiResult[TableColumnAggregateValuesResource] */
+        ApiResult_TableColumnAggregateValuesResource_: {
+            data: components["schemas"]["TableColumnAggregateValuesResource"];
             /** Message */
             message: string | null;
         };
@@ -1348,14 +1348,15 @@ export interface components {
             type: "geospatial";
             role: components["schemas"]["GeospatialRoleEnum"];
         };
-        /** GetTableColumnAggregateTotalsSchema */
-        GetTableColumnAggregateTotalsSchema: {
+        /** GetTableColumnAggregateValuesSchema */
+        GetTableColumnAggregateValuesSchema: {
             /** Column */
             column: string;
             /** Filter */
             filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
             /** Grouped By */
             grouped_by: string;
+            method: components["schemas"]["TableColumnAggregateMethodEnum"];
         };
         /** GetTableColumnSchema */
         GetTableColumnSchema: {
@@ -1643,14 +1644,19 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
-        /** TableColumnAggregateTotalsResource */
-        TableColumnAggregateTotalsResource: {
+        /**
+         * TableColumnAggregateMethodEnum
+         * @enum {string}
+         */
+        TableColumnAggregateMethodEnum: "sum" | "mean" | "median" | "std-dev" | "max" | "min";
+        /** TableColumnAggregateValuesResource */
+        TableColumnAggregateValuesResource: {
             /** Column */
             column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Categories */
+            categories: string[];
             /** Values */
-            values: string[];
-            /** Totals */
-            totals: number[];
+            values: number[];
         };
         /** TableColumnCountsResource */
         TableColumnCountsResource: {
@@ -1673,8 +1679,8 @@ export interface components {
         TableColumnFrequencyDistributionResource: {
             /** Column */
             column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
-            /** Values */
-            values: string[];
+            /** Categories */
+            categories: string[];
             /** Frequencies */
             frequencies: number[];
         };
@@ -3151,7 +3157,7 @@ export interface operations {
             };
         };
     };
-    post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post: {
+    post__get_table_column__aggregate_values_table__project_id__column_aggregate_values_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -3162,7 +3168,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["GetTableColumnAggregateTotalsSchema"];
+                "application/json": components["schemas"]["GetTableColumnAggregateValuesSchema"];
             };
         };
         responses: {
@@ -3172,7 +3178,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_TableColumnAggregateTotalsResource_"];
+                    "application/json": components["schemas"]["ApiResult_TableColumnAggregateValuesResource_"];
                 };
             };
             /** @description Bad Request */

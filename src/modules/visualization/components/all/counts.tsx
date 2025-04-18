@@ -56,6 +56,7 @@ export default function VisualizationColumnCountsRingChart(
     return {
       data: subplots,
       layout: {
+        title: `Value Counts of ${item.column}`,
         margin: {
           t: 0,
           b: 0,
@@ -68,7 +69,7 @@ export default function VisualizationColumnCountsRingChart(
         },
       },
     };
-  }, [colors.gray, colors.green, colors.orange, colors.red, data]);
+  }, [colors.gray, colors.green, colors.orange, colors.red, data, item.column]);
   console.log(plot);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }

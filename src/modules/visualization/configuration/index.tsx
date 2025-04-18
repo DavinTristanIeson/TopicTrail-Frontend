@@ -28,7 +28,7 @@ function ExtendedVisualizationConfigurationFormBody() {
   });
   if (!type) return;
   const config = DASHBOARD_ITEM_CONFIGURATION[type];
-  if (!config) return;
+  if (!config || !config.configForm) return;
   return (
     <>
       <Divider />

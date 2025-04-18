@@ -20,7 +20,7 @@ export function ProportionStackedBarChart(
   const plot = React.useMemo<PlotParams>(() => {
     const uniqueValuesTracker: Set<string> = new Set();
     for (const subdataset of data) {
-      for (const value of subdataset.data.values) {
+      for (const value of subdataset.data.categories) {
         uniqueValuesTracker.add(value);
       }
     }
@@ -30,7 +30,7 @@ export function ProportionStackedBarChart(
     const frequenciesPerSubdataset = data.map((subdataset) =>
       fromPairs(
         zip(
-          subdataset.data.values,
+          subdataset.data.categories,
           transformFrequencies(subdataset.data.frequencies),
         ) as [string, number][],
       ),
@@ -57,12 +57,13 @@ export function ProportionStackedBarChart(
     return {
       data: subplots,
       layout: {
+        title: `Proportions of ${item.column}`,
         xaxis: {
           ...plotlyLayoutProps,
         },
         barmode: 'stack',
       },
     };
-  }, [data, plotlyLayoutProps, transformFrequencies]);
+  }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
   return <PlotRenderer plot={plot} />;
 }

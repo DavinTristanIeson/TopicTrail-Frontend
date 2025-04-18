@@ -1,33 +1,43 @@
 import {
   DescriptiveStatisticsModel,
   VisualizationColumnCountsModel,
+  VisualizationFrequencyDistributionModel,
 } from '@/api/table';
 import { DescriptiveStatisticsTableComponent } from '../components/continuous/descriptive-statistics';
 import { useVisualizationDescriptiveStatisticsDataProvider } from '../data-provider/descriptive-statistics';
 import { VisualizationConfigEntry } from './base';
 import { DashboardItemTypeEnum } from './dashboard-item-types';
-import { VisualizationFrequencyDistributionLinePlot } from '../components/categorical/frequency-distribution';
-import { useVisualizationAggregatedTotalsDataProvider } from '../data-provider/aggregate-totals';
 import {
-  VisualizationAggregateTotalsConfigForm,
-  VisualizationAggregateTotalsConfigSchema,
-} from '../configuration/aggregate-totals';
-import VisualizationColumnCountsRingChart from '../components/all/column-counts-ring-chart';
+  VisualizationFrequencyDistributionLinePlot,
+  VisualizationFrequencyDistributionRenderer,
+} from '../components/categorical/frequency-distribution';
+import { useVisualizationAggregatedTotalsDataProvider } from '../data-provider/aggregate';
+import {
+  VisualizationAggregateValuesConfigForm,
+  VisualizationAggregateValuesConfigSchema,
+} from '../configuration/aggregate-values';
+import VisualizationColumnCountsRingChart from '../components/all/counts';
 import { useVisualizationColumnCountsDataProvider } from '../data-provider/counts';
+import { useVisualizationFrequencyDistributionDataProvider } from '../data-provider/frequency-distribution';
+import {
+  VisualizationFrequencyDistributionConfigForm,
+  VisualizationFrequencyDistributionConfigSchema,
+  VisualizationFrequencyDistributionConfigType,
+} from '../configuration/frequency-distribution';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
   VisualizationConfigEntry<any, any>
 > = {
-  [DashboardItemTypeEnum.AggregateTotals]: {
-    type: DashboardItemTypeEnum.AggregateTotals,
-    label: 'Aggregate Totals',
+  [DashboardItemTypeEnum.Aggregate]: {
+    type: DashboardItemTypeEnum.Aggregate,
+    label: 'Aggregate Continuous Data',
     description:
       'Show how the data of this column can be grouped by other data in the dataset (e.g.: grouped by topics or categories).',
     component: VisualizationFrequencyDistributionLinePlot,
     dataProvider: useVisualizationAggregatedTotalsDataProvider,
-    configForm: VisualizationAggregateTotalsConfigForm,
-    configValidator: VisualizationAggregateTotalsConfigSchema,
+    configForm: VisualizationAggregateValuesConfigForm,
+    configValidator: VisualizationAggregateValuesConfigSchema,
   } as any,
   [DashboardItemTypeEnum.Calendar]: {
     type: DashboardItemTypeEnum.Calendar,
@@ -50,9 +60,9 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     configForm: null,
     configValidator: null,
   } as any,
-  [DashboardItemTypeEnum.ColumnCounts]: {
-    type: DashboardItemTypeEnum.ColumnCounts,
-    label: 'Column Counts',
+  [DashboardItemTypeEnum.Counts]: {
+    type: DashboardItemTypeEnum.Counts,
+    label: 'Counts',
     description: 'Show the counts of the valid and invalid data in the column.',
     component: VisualizationColumnCountsRingChart,
     dataProvider: useVisualizationColumnCountsDataProvider,
@@ -84,12 +94,14 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     label: 'Frequency Distribution',
     description:
       'Show the frequency distribution of the discrete data in this column.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
-    configForm: null,
-    configValidator: null,
-  } as any,
+    component: VisualizationFrequencyDistributionRenderer,
+    dataProvider: useVisualizationFrequencyDistributionDataProvider,
+    configForm: VisualizationFrequencyDistributionConfigForm,
+    configValidator: VisualizationFrequencyDistributionConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationFrequencyDistributionModel,
+    VisualizationFrequencyDistributionConfigType
+  >,
   [DashboardItemTypeEnum.GeographicalCoordinates]: {
     type: DashboardItemTypeEnum.GeographicalCoordinates,
     label: 'Geographical Coordinates',
