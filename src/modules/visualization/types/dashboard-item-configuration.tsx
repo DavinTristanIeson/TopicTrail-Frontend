@@ -31,6 +31,7 @@ import {
 } from '../configuration/continuous-data-distribution';
 import { useVisualizationValuesDataProvider } from '../data-provider/values';
 import { VisualizationContinuousDataDistributionRenderer } from '../components/continuous/continuous-data-distribution';
+import VisualizationCalendarComponent from '../components/temporal/calendar';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -53,12 +54,11 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     type: DashboardItemTypeEnum.Calendar,
     label: 'Calendar',
     description: 'Show the frequency of rows per date.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
+    component: VisualizationCalendarComponent,
+    dataProvider: useVisualizationValuesDataProvider,
     configForm: null,
     configValidator: null,
-  } as any,
+  } as VisualizationConfigEntry<string[], object>,
   [DashboardItemTypeEnum.ContingencyTable]: {
     type: DashboardItemTypeEnum.ContingencyTable,
     label: 'Contingency Table',
@@ -79,9 +79,9 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     configForm: null,
     configValidator: null,
   } as VisualizationConfigEntry<VisualizationColumnCountsModel, object>,
-  [DashboardItemTypeEnum.ContinuousDataDistribution]: {
-    type: DashboardItemTypeEnum.ContinuousDataDistribution,
-    label: 'Continuous Data Distribution',
+  [DashboardItemTypeEnum.DataDistribution]: {
+    type: DashboardItemTypeEnum.DataDistribution,
+    label: 'Data Distribution',
     description: 'Show the distribution of the continuous data in this column.',
     component: VisualizationContinuousDataDistributionRenderer,
     dataProvider: useVisualizationValuesDataProvider,

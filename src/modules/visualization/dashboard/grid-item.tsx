@@ -59,16 +59,16 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
   const dashboardConfig = DASHBOARD_ITEM_CONFIGURATION[type];
 
   const dashboardItemInternalConfig = React.useMemo(() => {
-    if (!dashboardConfig.configValidator) {
+    if (!dashboardConfig?.configValidator) {
       return rawConfig;
     }
     try {
-      return dashboardConfig.configValidator?.validateSync(rawConfig);
+      return dashboardConfig?.configValidator?.validateSync(rawConfig);
     } catch (e) {
       console.error(e);
       return null;
     }
-  }, [dashboardConfig.configValidator, rawConfig]);
+  }, [dashboardConfig?.configValidator, rawConfig]);
 
   if (!dashboardConfig) {
     return (

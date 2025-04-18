@@ -4,7 +4,7 @@ export enum DashboardItemTypeEnum {
   DescriptiveStatistics = 'descriptive-statistics',
   Counts = 'counts',
   FrequencyDistribution = 'frequency-distribution',
-  ContinuousDataDistribution = 'continuous-data-distribution',
+  DataDistribution = 'data-distribution',
   Aggregate = 'aggregate',
   GeographicalCoordinates = 'geographical-coordinates',
   Calendar = 'calendar',
@@ -36,7 +36,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
   [SchemaColumnTypeEnum.Continuous]: [
     ...FOR_ALL_TYPES,
     DashboardItemTypeEnum.DescriptiveStatistics,
-    DashboardItemTypeEnum.ContinuousDataDistribution,
+    DashboardItemTypeEnum.DataDistribution,
     DashboardItemTypeEnum.Aggregate,
   ],
   [SchemaColumnTypeEnum.Geospatial]: [
@@ -47,7 +47,12 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     ...FOR_ALL_TYPES,
     ...FOR_CATEGORICAL_TYPES,
   ],
-  [SchemaColumnTypeEnum.Temporal]: [...FOR_ALL_TYPES, ...FOR_CATEGORICAL_TYPES],
+  [SchemaColumnTypeEnum.Temporal]: [
+    ...FOR_ALL_TYPES,
+    ...FOR_CATEGORICAL_TYPES,
+    DashboardItemTypeEnum.Calendar,
+    DashboardItemTypeEnum.DataDistribution,
+  ],
   [SchemaColumnTypeEnum.Textual]: [
     ...FOR_ALL_TYPES,
     DashboardItemTypeEnum.SubdatasetWords,
