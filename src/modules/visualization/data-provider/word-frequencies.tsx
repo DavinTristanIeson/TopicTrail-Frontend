@@ -2,10 +2,10 @@ import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
-import { TableWordsModel } from '@/api/table';
+import { VisualizationWordsModel } from '@/api/table';
 
 export const useVisualizationWordFrequenciesDataProvider: BaseVisualizationDataProviderHook<
-  TableWordsModel,
+  VisualizationWordsModel,
   object
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);

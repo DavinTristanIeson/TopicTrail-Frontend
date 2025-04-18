@@ -2,22 +2,62 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 
 export enum DashboardItemTypeEnum {
   DescriptiveStatistics = 'descriptive-statistics',
+  ColumnCounts = 'column-counts',
+  FrequencyDistribution = 'frequency-distribution',
+  ContinuousDataDistribution = 'continuous-data-distribution',
+  AggregateTotals = 'aggregate-totals',
+  GeographicalCoordinates = 'geographical-coordinates',
+  Calendar = 'calendar',
+  WordFrequencies = 'word-frequencies',
+  TopicWords = 'topic-words',
+  SubdatasetWords = 'subdataset-words',
+
+  ContingencyTable = 'contingency-table',
+  StatisticTestContingencyTable = 'statistic-test-contingency-table',
+  StatisticTestDistribution = 'binary-significance-on-distribution',
 }
+
+const FOR_ALL_TYPES = [DashboardItemTypeEnum.ColumnCounts];
+const FOR_CATEGORICAL_TYPES = [
+  DashboardItemTypeEnum.FrequencyDistribution,
+  DashboardItemTypeEnum.ContingencyTable,
+  DashboardItemTypeEnum.StatisticTestContingencyTable,
+  DashboardItemTypeEnum.StatisticTestDistribution,
+];
 
 export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
   SchemaColumnTypeEnum,
   DashboardItemTypeEnum[]
 > = {
-  [SchemaColumnTypeEnum.Categorical]: [],
-  [SchemaColumnTypeEnum.Continuous]: [
-    DashboardItemTypeEnum.DescriptiveStatistics,
+  [SchemaColumnTypeEnum.Categorical]: [
+    ...FOR_ALL_TYPES,
+    ...FOR_CATEGORICAL_TYPES,
   ],
-  [SchemaColumnTypeEnum.Geospatial]: [],
-  [SchemaColumnTypeEnum.OrderedCategorical]: [],
-  [SchemaColumnTypeEnum.Temporal]: [],
-  [SchemaColumnTypeEnum.Textual]: [],
-  [SchemaColumnTypeEnum.Topic]: [],
-  [SchemaColumnTypeEnum.Unique]: [],
+  [SchemaColumnTypeEnum.Continuous]: [
+    ...FOR_ALL_TYPES,
+    DashboardItemTypeEnum.DescriptiveStatistics,
+    DashboardItemTypeEnum.ContinuousDataDistribution,
+    DashboardItemTypeEnum.AggregateTotals,
+  ],
+  [SchemaColumnTypeEnum.Geospatial]: [
+    ...FOR_ALL_TYPES,
+    DashboardItemTypeEnum.GeographicalCoordinates,
+  ],
+  [SchemaColumnTypeEnum.OrderedCategorical]: [
+    ...FOR_ALL_TYPES,
+    ...FOR_CATEGORICAL_TYPES,
+  ],
+  [SchemaColumnTypeEnum.Temporal]: [...FOR_ALL_TYPES, ...FOR_CATEGORICAL_TYPES],
+  [SchemaColumnTypeEnum.Textual]: [
+    ...FOR_ALL_TYPES,
+    DashboardItemTypeEnum.SubdatasetWords,
+  ],
+  [SchemaColumnTypeEnum.Topic]: [
+    ...FOR_ALL_TYPES,
+    ...FOR_CATEGORICAL_TYPES,
+    DashboardItemTypeEnum.TopicWords,
+  ],
+  [SchemaColumnTypeEnum.Unique]: [...FOR_ALL_TYPES],
 };
 
 export const ALLOWED_DASHBOARD_ITEM_COLUMNS: SchemaColumnTypeEnum[] =

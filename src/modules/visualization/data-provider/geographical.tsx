@@ -2,7 +2,7 @@ import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
-import { TabelColumnGeographicalPointsModel } from '@/api/table';
+import { VisualizationGeographicalPointsModel } from '@/api/table';
 
 import * as Yup from 'yup';
 import React from 'react';
@@ -15,7 +15,7 @@ export type VisualizationGeographicalPointsDataProviderConfigType =
   Yup.InferType<typeof VisualizationGeographicalPointsDataProviderConfigSchema>;
 
 export const useVisualizationGeographicalPointsDataProvider: BaseVisualizationDataProviderHook<
-  TabelColumnGeographicalPointsModel,
+  VisualizationGeographicalPointsModel,
   VisualizationGeographicalPointsDataProviderConfigType
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);

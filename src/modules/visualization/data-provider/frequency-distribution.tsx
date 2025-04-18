@@ -2,10 +2,10 @@ import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
-import { TableColumnFrequencyDistributionModel } from '@/api/table';
+import { VisualizationFrequencyDistributionModel } from '@/api/table';
 
 export const useVisualizationFrequencyDistributionDataProvider: BaseVisualizationDataProviderHook<
-  TableColumnFrequencyDistributionModel,
+  VisualizationFrequencyDistributionModel,
   object
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);

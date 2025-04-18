@@ -1,20 +1,159 @@
-import { DescriptiveStatisticsModel } from '@/api/table';
+import {
+  DescriptiveStatisticsModel,
+  VisualizationColumnCountsModel,
+} from '@/api/table';
 import { DescriptiveStatisticsTableComponent } from '../components/continuous/descriptive-statistics';
 import { useVisualizationDescriptiveStatisticsDataProvider } from '../data-provider/descriptive-statistics';
 import { VisualizationConfigEntry } from './base';
 import { DashboardItemTypeEnum } from './dashboard-item-types';
+import { VisualizationFrequencyDistributionLinePlot } from '../components/categorical/frequency-distribution';
+import { useVisualizationAggregatedTotalsDataProvider } from '../data-provider/aggregate-totals';
+import {
+  VisualizationAggregateTotalsConfigForm,
+  VisualizationAggregateTotalsConfigSchema,
+} from '../configuration/aggregate-totals';
+import VisualizationColumnCountsRingChart from '../components/all/column-counts-ring-chart';
+import { useVisualizationColumnCountsDataProvider } from '../data-provider/counts';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
   VisualizationConfigEntry<any, any>
 > = {
+  [DashboardItemTypeEnum.AggregateTotals]: {
+    type: DashboardItemTypeEnum.AggregateTotals,
+    label: 'Aggregate Totals',
+    description:
+      'Show how the data of this column can be grouped by other data in the dataset (e.g.: grouped by topics or categories).',
+    component: VisualizationFrequencyDistributionLinePlot,
+    dataProvider: useVisualizationAggregatedTotalsDataProvider,
+    configForm: VisualizationAggregateTotalsConfigForm,
+    configValidator: VisualizationAggregateTotalsConfigSchema,
+  } as any,
+  [DashboardItemTypeEnum.Calendar]: {
+    type: DashboardItemTypeEnum.Calendar,
+    label: 'Calendar',
+    description: 'Show the frequency of rows per date.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.ContingencyTable]: {
+    type: DashboardItemTypeEnum.ContingencyTable,
+    label: 'Contingency Table',
+    description:
+      'Show the joint frequencies of two different columns. For example, you might be interested in seeing what other categories occur frequently with the topic.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.ColumnCounts]: {
+    type: DashboardItemTypeEnum.ColumnCounts,
+    label: 'Column Counts',
+    description: 'Show the counts of the valid and invalid data in the column.',
+    component: VisualizationColumnCountsRingChart,
+    dataProvider: useVisualizationColumnCountsDataProvider,
+    configForm: null,
+    configValidator: null,
+  } as VisualizationConfigEntry<VisualizationColumnCountsModel, object>,
+  [DashboardItemTypeEnum.ContinuousDataDistribution]: {
+    type: DashboardItemTypeEnum.ContinuousDataDistribution,
+    label: 'Continuous Data Distribution',
+    description: 'Show the distribution of the continuous data in this column.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
   [DashboardItemTypeEnum.DescriptiveStatistics]: {
     type: DashboardItemTypeEnum.DescriptiveStatistics,
     label: 'Descriptive Statistics',
-    description: '',
+    description:
+      'Show the descriptive statistics of the data in this column, such as its mean, standard deviation, and other statistics.',
     component: DescriptiveStatisticsTableComponent,
     dataProvider: useVisualizationDescriptiveStatisticsDataProvider,
     configForm: null,
     configValidator: null,
   } as VisualizationConfigEntry<DescriptiveStatisticsModel, object>,
+  [DashboardItemTypeEnum.FrequencyDistribution]: {
+    type: DashboardItemTypeEnum.FrequencyDistribution,
+    label: 'Frequency Distribution',
+    description:
+      'Show the frequency distribution of the discrete data in this column.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.GeographicalCoordinates]: {
+    type: DashboardItemTypeEnum.GeographicalCoordinates,
+    label: 'Geographical Coordinates',
+    description:
+      'Show the location indicated by the coordinates of this column (and another column as the longitude column) as a map.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.StatisticTestContingencyTable]: {
+    type: DashboardItemTypeEnum.StatisticTestContingencyTable,
+    label: 'Statistical Test on Contingency Table',
+    description:
+      'Perform a statistic test between the two columns containing discrete data (wherein each "item" is considered a binary variable) to figure out the correlation of each pair of "items" between both columns.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.StatisticTestDistribution]: {
+    type: DashboardItemTypeEnum.StatisticTestDistribution,
+    label: 'Statistical Test on Distribution',
+    description:
+      'Perform a statistic test using the subdatasets (wherein each subdataset is considered as a binary variable: all rows in the subdataset, and all rows outside of the subdataset) to figure out its impact on the data distribution of this column.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.SubdatasetWords]: {
+    type: DashboardItemTypeEnum.SubdatasetWords,
+    label: 'Compare Subdataset Words',
+    description:
+      'Show the most significant words (according to their c-TF-IDF scores) in the subdatasets. Each subdataset is considered as a topic. For best results, the subdatasets should be mutually exclusive.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.TopicWords]: {
+    type: DashboardItemTypeEnum.TopicWords,
+    label: 'Topic Words',
+    description:
+      'Show the topic words for each subdataset. The significance (c-TF-IDF score) of the topic words has been adjusted according to the words that appear in the subdataset, so you can treat this as class-based and/or dynamic topic modeling.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
+  [DashboardItemTypeEnum.WordFrequencies]: {
+    type: DashboardItemTypeEnum.WordFrequencies,
+    label: 'Topic Words',
+    description:
+      'Show the most frequent words (from the preprocessed documents) of each subdataset.',
+    // TODO: Implement this
+    component: null,
+    dataProvider: null,
+    configForm: null,
+    configValidator: null,
+  } as any,
 };

@@ -15,6 +15,7 @@ import {
   Info,
   PencilSimple,
   TrashSimple,
+  Warning,
   X,
 } from '@phosphor-icons/react';
 import React from 'react';
@@ -39,7 +40,15 @@ function DashboardItemRendererInternal(
   const { data, error, loading } = useDataProvider(item);
   return (
     <FetchWrapperComponent error={error} isLoading={loading}>
-      {data && <Component data={data} item={item} />}
+      {data &&
+        (data.length === 0 ? (
+          <Alert color="red" icon={<Warning />} withCloseButton>
+            There is no data to be visualized. Create a subdataset to get
+            started.
+          </Alert>
+        ) : (
+          <Component data={data} item={item} />
+        ))}
     </FetchWrapperComponent>
   );
 }
@@ -86,14 +95,16 @@ export default function DashboardGridItem(props: DashboardGridItemProps) {
             <CornersOut size={24} />
           </ActionIcon>
         )}
-        <HoverCard>
-          <HoverCard.Target>
-            <Info size={24} color={colors.brand[6]} />
-          </HoverCard.Target>
-          <HoverCard.Dropdown className="max-w-md">
-            <Text>{item.description}</Text>
-          </HoverCard.Dropdown>
-        </HoverCard>
+        {item.description && (
+          <HoverCard>
+            <HoverCard.Target>
+              <Info size={24} color={colors.brand[6]} />
+            </HoverCard.Target>
+            <HoverCard.Dropdown className="max-w-md">
+              <Text>{item.description}</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        )}
         {onEdit && (
           <ActionIcon variant="subtle" onClick={() => onEdit(item)}>
             <PencilSimple size={24} />

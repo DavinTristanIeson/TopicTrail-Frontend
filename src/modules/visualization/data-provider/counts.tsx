@@ -2,10 +2,10 @@ import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
-import { TableColumnCountsModel } from '@/api/table';
+import { VisualizationColumnCountsModel } from '@/api/table';
 
-export const useVisualizationValueCountsDataProvider: BaseVisualizationDataProviderHook<
-  TableColumnCountsModel,
+export const useVisualizationColumnCountsDataProvider: BaseVisualizationDataProviderHook<
+  VisualizationColumnCountsModel,
   object
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);
@@ -20,6 +20,8 @@ export const useVisualizationValueCountsDataProvider: BaseVisualizationDataProvi
       }),
     ),
   });
+
+  console.log(queries, groups);
 
   return useAdaptDataProviderQueries({
     queries,

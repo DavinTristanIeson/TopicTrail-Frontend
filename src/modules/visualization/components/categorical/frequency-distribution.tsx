@@ -1,4 +1,4 @@
-import { TableColumnFrequencyDistributionModel } from '@/api/table';
+import { VisualizationFrequencyDistributionModel } from '@/api/table';
 import { BaseVisualizationComponentProps } from '../../types/base';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
@@ -12,7 +12,7 @@ import {
 
 export function FrequencyDistributionBarChart(
   props: BaseVisualizationComponentProps<
-    TableColumnFrequencyDistributionModel,
+    VisualizationFrequencyDistributionModel,
     VisualizationFrequencyDistributionConfigType
   >,
 ) {
@@ -48,9 +48,9 @@ export function FrequencyDistributionBarChart(
   return <PlotRenderer plot={plot} />;
 }
 
-export function FrequencyDistributionLinePlot(
+export function VisualizationFrequencyDistributionLinePlot(
   props: BaseVisualizationComponentProps<
-    TableColumnFrequencyDistributionModel,
+    VisualizationFrequencyDistributionModel,
     Partial<VisualizationFrequencyDistributionConfigType>
   >,
 ) {

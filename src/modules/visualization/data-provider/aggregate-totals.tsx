@@ -2,7 +2,7 @@ import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
-import { TableColumnAggregatedTotalsModel } from '@/api/table';
+import { VisualizationAggregatedTotalsModel } from '@/api/table';
 
 import React from 'react';
 import {
@@ -11,7 +11,7 @@ import {
 } from '../configuration/aggregate-totals';
 
 export const useVisualizationAggregatedTotalsDataProvider: BaseVisualizationDataProviderHook<
-  TableColumnAggregatedTotalsModel,
+  VisualizationAggregatedTotalsModel,
   VisualizationAggregateTotalsConfigType
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);

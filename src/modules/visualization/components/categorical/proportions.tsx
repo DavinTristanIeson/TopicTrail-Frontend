@@ -1,4 +1,4 @@
-import { TableColumnFrequencyDistributionModel } from '@/api/table';
+import { VisualizationFrequencyDistributionModel } from '@/api/table';
 import { BaseVisualizationComponentProps } from '../../types/base';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
@@ -10,7 +10,7 @@ import { fromPairs, zip } from 'lodash-es';
 
 export function ProportionStackedBarChart(
   props: BaseVisualizationComponentProps<
-    TableColumnFrequencyDistributionModel,
+    VisualizationFrequencyDistributionModel,
     VisualizationFrequencyDistributionConfigType
   >,
 ) {

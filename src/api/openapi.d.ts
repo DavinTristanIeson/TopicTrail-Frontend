@@ -1658,6 +1658,10 @@ export interface components {
             column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Total */
             total: number;
+            /** Inside */
+            inside: number;
+            /** Outside */
+            outside: number;
             /** Valid */
             valid: number;
             /** Invalid */

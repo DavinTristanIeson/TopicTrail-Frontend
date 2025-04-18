@@ -1,3 +1,6 @@
+import { DashboardItemModel } from '@/api/userdata';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useId } from 'react';
 import wordwrap from 'wordwrapjs';
 export function plotlyWrapText(text: string) {
   return wordwrap
@@ -7,10 +10,16 @@ export function plotlyWrapText(text: string) {
     .replaceAll('\n', '<br>');
 }
 
-export function plotlyCalculateGrid(width: number, count: number) {
-  const cols = Math.max(3, Math.floor(width / 3));
+export function usePlotRendererHelperProps(item: DashboardItemModel) {
+  const id = useId();
+  const [key] = useDebouncedValue(
+    `${id}-${item.rect.width}-${item.rect.height}`,
+    1000,
+    {
+      leading: false,
+    },
+  );
   return {
-    rows: Math.ceil(count / cols),
-    cols,
+    key,
   };
 }
