@@ -57,7 +57,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     ...FOR_CATEGORICAL_TYPES,
     DashboardItemTypeEnum.TopicWords,
   ],
-  [SchemaColumnTypeEnum.Unique]: [...FOR_ALL_TYPES],
+  [SchemaColumnTypeEnum.Unique]: [],
 };
 
 export const ALLOWED_DASHBOARD_ITEM_COLUMNS: SchemaColumnTypeEnum[] =

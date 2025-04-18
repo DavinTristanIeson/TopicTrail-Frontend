@@ -13,10 +13,11 @@ import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configurat
 import { fromPairs } from 'lodash-es';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { VisualizationConfigFormType } from './form-type';
+import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 
 function ColumnDashboardItemSelectInput() {
   const project = React.useContext(ProjectContext);
-  const { control } = useFormContext<VisualizationConfigFormType>();
+  const { control, setValue } = useFormContext<VisualizationConfigFormType>();
   const chosenColumnName = useWatch({
     name: 'column',
     control,
@@ -75,16 +76,30 @@ function ColumnDashboardItemSelectInput() {
       renderOption={renderOption}
       label="Type"
       required
+      key={column?.name}
       disabled={!column}
       description="The type of the visualization you want to use for this dashboard item."
       className="flex-1"
+      onChange={() => {
+        setValue('config', {});
+      }}
     />
   );
 }
 
 export function DefaultVisualizationConfigurationForm() {
   const project = React.useContext(ProjectContext);
+  const allTopicModelingResults = React.useContext(
+    AllTopicModelingResultContext,
+  );
+  const { reset, setValue } = useFormContext<VisualizationConfigFormType>();
   const columns = project.config.data_schema.columns.filter((column) => {
+    if (column.type === SchemaColumnTypeEnum.Topic) {
+      return !!allTopicModelingResults.find(
+        (topicModelingResult) =>
+          topicModelingResult.column.name === column.source_name!,
+      )?.result;
+    }
     return ALLOWED_DASHBOARD_ITEM_COLUMNS.includes(
       column.type as SchemaColumnTypeEnum,
     );
@@ -101,6 +116,10 @@ export function DefaultVisualizationConfigurationForm() {
           allowDeselect={false}
           className="flex-1"
           description="The column that contains the data to be visualized."
+          onChange={(column) => {
+            reset();
+            setValue('column', column?.name ?? '');
+          }}
         />
         <ColumnDashboardItemSelectInput />
       </Group>

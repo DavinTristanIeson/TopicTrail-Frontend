@@ -1,4 +1,4 @@
-import { Skeleton, useMantineTheme } from '@mantine/core';
+import { Skeleton } from '@mantine/core';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
@@ -15,13 +15,12 @@ interface PlotRendererProps {
 }
 export default function PlotRenderer(props: PlotRendererProps) {
   const { plot } = props;
-  const { colors } = useMantineTheme();
 
   return (
     <Plot
+      className="w-full h-full"
       {...plot}
       layout={{
-        plot_bgcolor: colors.brand[9],
         dragmode: 'pan',
         ...plot.layout,
       }}

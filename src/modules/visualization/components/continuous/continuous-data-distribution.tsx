@@ -7,6 +7,7 @@ import {
   VisualizationContinuousDataDistributionConfigType,
   VisualizationContinuousDataDistributionDisplayMode,
 } from '../../configuration/continuous-data-distribution';
+import { usePlotRendererHelperProps } from '../utils';
 
 function VisualizationContinuousDataDistributionViolinBoxPlot(
   props: BaseVisualizationComponentProps<
@@ -40,7 +41,7 @@ function VisualizationContinuousDataDistributionViolinBoxPlot(
       },
     };
   }, [data, item.column, item.config.display]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
 export function VisualizationContinuousDataDistributionHistogram(
@@ -49,7 +50,7 @@ export function VisualizationContinuousDataDistributionHistogram(
     VisualizationContinuousDataDistributionConfigType
   >,
 ) {
-  const { data } = props;
+  const { data, item } = props;
   const plot = React.useMemo<PlotParams>(() => {
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
@@ -67,6 +68,7 @@ export function VisualizationContinuousDataDistributionHistogram(
     return {
       data: subplots,
       layout: {
+        title: `Continuous Data Distribution of ${item.column}`,
         yaxis: {
           minallowed: 0,
         },
@@ -74,7 +76,7 @@ export function VisualizationContinuousDataDistributionHistogram(
       },
     };
   }, [data]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
 export function VisualizationContinuousDataDistributionRenderer(

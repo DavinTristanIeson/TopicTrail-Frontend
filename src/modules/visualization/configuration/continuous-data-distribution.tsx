@@ -50,7 +50,10 @@ export function VisualizationContinuousDataDistributionConfigForm() {
         type="select"
         name="config.display"
         label="Display as"
-        data={Object.values(renderOption)}
+        renderOption={renderOption}
+        data={Object.values(
+          VISUALIZATION_CONTINUOUS_DATA_DISTRIBUTION_DISPLAY_MODE_DICTIONARY,
+        )}
         required
         allowDeselect={false}
       />

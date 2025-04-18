@@ -54,19 +54,21 @@ function DashboardItemRendererInternal(
 }
 
 export function DashboardItemRenderer(props: DashboardItemModel) {
-  const { type: rawType, config } = props;
+  const { type: rawType, config: rawConfig } = props;
   const type = rawType as DashboardItemTypeEnum;
   const dashboardConfig = DASHBOARD_ITEM_CONFIGURATION[type];
 
-  const error = React.useMemo(() => {
+  const dashboardItemInternalConfig = React.useMemo(() => {
+    if (!dashboardConfig.configValidator) {
+      return rawConfig;
+    }
     try {
-      dashboardConfig.configValidator?.validateSync(config);
-      return false;
+      return dashboardConfig.configValidator?.validateSync(rawConfig);
     } catch (e) {
       console.error(e);
-      return true;
+      return null;
     }
-  }, [config, dashboardConfig.configValidator]);
+  }, [dashboardConfig.configValidator, rawConfig]);
 
   if (!dashboardConfig) {
     return (
@@ -76,7 +78,7 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
       </Alert>
     );
   }
-  if (error) {
+  if (!dashboardItemInternalConfig) {
     return (
       <Alert color="red" icon={<Warning />}>
         There&apos;s an error in the configuration of this dashboard item. Try
@@ -85,7 +87,13 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
     );
   }
   return (
-    <DashboardItemRendererInternal config={dashboardConfig} item={props} />
+    <DashboardItemRendererInternal
+      config={dashboardConfig}
+      item={{
+        ...props,
+        config: dashboardItemInternalConfig,
+      }}
+    />
   );
 }
 

@@ -42,7 +42,7 @@ function ComparisonStateDataManager() {
     }, [comparisonGroups]),
   });
 
-  return <UserDataManager {...rendererProps} label="Comparison Groups" />;
+  return <UserDataManager {...rendererProps} label="Subdatasets" />;
 }
 
 export default function NamedFiltersManager() {

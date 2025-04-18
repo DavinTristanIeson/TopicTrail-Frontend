@@ -6,6 +6,8 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { VisualizationFrequencyDistributonDisplayMode } from '../../configuration/frequency-distribution';
 import { VisualizationAggregateValuesConfigType } from '../../configuration/aggregate-values';
+import { usePlotRendererHelperProps } from '../utils';
+import { capitalize } from 'lodash-es';
 
 export function VisualizationAggregateValuesBarChart(
   props: BaseVisualizationComponentProps<
@@ -25,6 +27,7 @@ export function VisualizationAggregateValuesBarChart(
           x: categories,
           y: values,
           type: 'bar',
+          hovertemplate: `<b>${capitalize(item.config.method)} of ${item.column}</b>: %{y}<br><b>${item.config.grouped_by}</b>: %{x}`,
           marker: {
             color: colors[idx],
           },
@@ -34,12 +37,12 @@ export function VisualizationAggregateValuesBarChart(
     return {
       data: subplots,
       layout: {
-        title: `Values of ${item.column} Grouped By ${item.config.grouped_by}`,
+        title: `Values of ${item.column} Grouped By ${item.config.grouped_by} (${capitalize(item.config.method)})`,
         barmode: 'group',
       },
     };
   }, [data, item.column, item.config.grouped_by]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
 export function VisualizationAggregateValuesLinePlot(
@@ -61,6 +64,7 @@ export function VisualizationAggregateValuesLinePlot(
           x: categories,
           y: values,
           type: 'scatter',
+          hovertemplate: `<b>${capitalize(item.config.method)} of ${item.column}</b>: %{y}<br><b>${item.config.grouped_by}</b>: %{x}`,
           marker: {
             color: colors[idx],
           },
@@ -70,11 +74,11 @@ export function VisualizationAggregateValuesLinePlot(
     return {
       data: subplots,
       layout: {
-        title: `Values of ${item.column} Grouped By ${item.config.grouped_by}`,
+        title: `Values of ${item.column} Grouped By ${item.config.grouped_by} (${capitalize(item.config.method)})`,
       },
     };
   }, [data, item.column, item.config.grouped_by]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
 export function VisualizationAggregateValuesRenderer(

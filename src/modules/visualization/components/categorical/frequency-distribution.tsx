@@ -8,7 +8,18 @@ import {
   VisualizationFrequencyDistributionConfigType,
   VisualizationFrequencyDistributonDisplayMode,
 } from '../../configuration/frequency-distribution';
-import { useCategoricalDataFrequencyMode } from './utils';
+import {
+  CategoricalDataFrequencyMode,
+  useCategoricalDataFrequencyMode,
+} from './utils';
+import { usePlotRendererHelperProps } from '../utils';
+import { DashboardItemModel } from '@/api/userdata';
+
+function getHoverTemplate(
+  item: DashboardItemModel<VisualizationFrequencyDistributionConfigType>,
+) {
+  return `<b>${item.column}</b>: %{x}<br><b>${item.config.mode === CategoricalDataFrequencyMode.Proportion ? 'Proportion' : 'Frequency'}</b>: %{y}`;
+}
 
 export function VisualizationFrequencyDistributionBarChart(
   props: BaseVisualizationComponentProps<
@@ -30,6 +41,7 @@ export function VisualizationFrequencyDistributionBarChart(
           name,
           x: categories,
           y: y,
+          hovertemplate: getHoverTemplate(item),
           type: 'bar',
           marker: {
             color: colors[idx],
@@ -48,7 +60,7 @@ export function VisualizationFrequencyDistributionBarChart(
       },
     };
   }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
 export function VisualizationFrequencyDistributionLinePlot(
@@ -73,6 +85,7 @@ export function VisualizationFrequencyDistributionLinePlot(
           x: categories,
           y: y,
           type: 'scatter',
+          hovertemplate: getHoverTemplate(item),
           marker: {
             color: colors[idx],
           },
@@ -89,7 +102,7 @@ export function VisualizationFrequencyDistributionLinePlot(
       },
     };
   }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
 export function VisualizationFrequencyDistributionRenderer(

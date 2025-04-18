@@ -17,14 +17,21 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { Faders, Info, Plus, TrashSimple } from '@phosphor-icons/react';
+import {
+  Faders,
+  Info,
+  Plus,
+  TrashSimple,
+  Warning,
+} from '@phosphor-icons/react';
 import React from 'react';
 import VisualizationConfigurationForm from '../configuration';
 import { CancelButton } from '@/components/standard/button/variants';
 import { DashboardItemRenderer } from './grid-item';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useElementSize } from '@mantine/hooks';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
+import ConfirmationDialog from '@/components/widgets/confirmation';
 
 interface VisualizationConfigurationDialogProps {
   onSubmit(item: DashboardItemModel): void;
@@ -153,6 +160,7 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
   const dashboardItemConfig = item
     ? DASHBOARD_ITEM_CONFIGURATION[item.type as DashboardItemTypeEnum]
     : undefined;
+  const { height, ref: elementRef } = useElementSize();
   return (
     <Modal
       size="xl"
@@ -165,7 +173,7 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
       {/* {item && (
         <DashboardFullScreenConfiguration item={item} onSubmit={onSubmit} />
       )} */}
-      <Stack>
+      <Stack ref={elementRef} className="pb-5">
         {dashboardItemConfig && (
           <>
             <Title
@@ -178,8 +186,9 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
         )}
         {item?.description && <Text>{item.description}</Text>}
       </Stack>
-      <div style={{ height: 48 }} />
-      {item && <DashboardItemRenderer {...item} />}
+      <div style={{ height: `calc(100dvh - 12rem)` }}>
+        {item && <DashboardItemRenderer {...item} />}
+      </div>
     </Modal>
   );
 });
@@ -228,3 +237,29 @@ export const DashboardGridItemDeleteModal = React.forwardRef<
     </Modal>
   );
 });
+
+interface DashboardResetButtonProps {
+  onReset(): void;
+}
+export function DashboardResetButton(props: DashboardResetButtonProps) {
+  const resetRemote = React.useRef<DisclosureTrigger | null>(null);
+  return (
+    <>
+      <ConfirmationDialog
+        title="Reset Dashboard"
+        message="Are you sure you want to reset the dashboard? All unsaved visualization components will be removed!"
+        dangerous
+        ref={resetRemote}
+        onConfirm={props.onReset}
+      />
+      <Button
+        color="red"
+        variant="outline"
+        leftSection={<Warning />}
+        onClick={() => resetRemote.current?.open()}
+      >
+        Reset
+      </Button>
+    </>
+  );
+}

@@ -7,6 +7,7 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import { VisualizationFrequencyDistributionConfigType } from '../../configuration/frequency-distribution';
 import { useCategoricalDataFrequencyMode } from './utils';
 import { fromPairs, zip } from 'lodash-es';
+import { usePlotRendererHelperProps } from '../utils';
 
 export function ProportionStackedBarChart(
   props: BaseVisualizationComponentProps<
@@ -65,5 +66,5 @@ export function ProportionStackedBarChart(
       },
     };
   }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }

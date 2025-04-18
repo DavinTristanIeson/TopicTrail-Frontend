@@ -57,33 +57,3 @@ export function usePrepareDataProvider(props: DashboardItemModel) {
     },
   };
 }
-
-export function useStringifyTableValues(column: SchemaColumnModel) {
-  const topicModelingResult = useTopicModelingResultOfColumn(
-    column?.source_name ?? '',
-  );
-  const topicLabelMap = React.useMemo(() => {
-    return new Map(
-      topicModelingResult?.result?.topics.map((topic) => [
-        topic.id,
-        getTopicLabel(topic),
-      ]) ?? [],
-    );
-  }, [topicModelingResult?.result?.topics]);
-
-  return React.useCallback(
-    (values: unknown[]): string[] => {
-      if (column.type === SchemaColumnTypeEnum.Topic) {
-        return values.map((value) => {
-          return (
-            topicLabelMap.get(value as number) ??
-            getTopicLabel({ id: value as number })
-          );
-        });
-      } else {
-        return values.map(String);
-      }
-    },
-    [column.type, topicLabelMap],
-  );
-}

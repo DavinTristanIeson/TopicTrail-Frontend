@@ -21,8 +21,6 @@ export const useVisualizationColumnCountsDataProvider: BaseVisualizationDataProv
     ),
   });
 
-  console.log(queries, groups);
-
   return useAdaptDataProviderQueries({
     queries,
     groups,

@@ -8,7 +8,7 @@ interface ConfirmationDialogProps {
   title?: React.ReactNode;
   message: React.ReactNode;
   icon?: React.ReactNode;
-  onConfirm(): Promise<void>;
+  onConfirm(): void;
   dangerous?: boolean;
   positiveAction?: string;
 }
@@ -33,7 +33,10 @@ const ConfirmationDialog = React.forwardRef<
             props.dangerous ? (props.icon ?? <TrashSimple />) : <CheckIcon />
           }
           color={props.dangerous ? 'red' : undefined}
-          onClick={props.onConfirm}
+          onClick={async () => {
+            await props.onConfirm();
+            close();
+          }}
         >
           {props.positiveAction ?? 'Confirm'}
         </PromiseButton>

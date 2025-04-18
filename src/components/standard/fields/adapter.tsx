@@ -1,7 +1,7 @@
 import { getAnyError } from '@/common/utils/error';
 import { ReplaceKeys } from '@/common/utils/types';
 import React from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { FormEditableContext } from './context';
 
 interface IRHFMantineAdaptableGenericConstraint {
@@ -78,10 +78,14 @@ export function useRHFMantineAdapter<
   const restProps = unusedProps as T;
   const { control } = useFormContext<any>();
   const {
-    field: { onChange, value, disabled: fieldDisabled },
+    field: { onChange, disabled: fieldDisabled },
     fieldState: { error: fieldStateError },
     formState: { isSubmitting: formIsSubmitting },
   } = useController({ name, control });
+
+  // UseController sometimes misses updates from setValue
+  const value = useWatch({ name });
+
   const { editable } = React.useContext(FormEditableContext);
   const readOnly =
     !!controlledReadonly || !!fieldDisabled || !editable || formIsSubmitting;

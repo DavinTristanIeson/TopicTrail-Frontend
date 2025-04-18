@@ -1,5 +1,6 @@
 import {
   DescriptiveStatisticsModel,
+  VisualizationAggregateValuesModel,
   VisualizationColumnCountsModel,
   VisualizationFrequencyDistributionModel,
 } from '@/api/table';
@@ -7,14 +8,12 @@ import { DescriptiveStatisticsTableComponent } from '../components/continuous/de
 import { useVisualizationDescriptiveStatisticsDataProvider } from '../data-provider/descriptive-statistics';
 import { VisualizationConfigEntry } from './base';
 import { DashboardItemTypeEnum } from './dashboard-item-types';
-import {
-  VisualizationFrequencyDistributionLinePlot,
-  VisualizationFrequencyDistributionRenderer,
-} from '../components/categorical/frequency-distribution';
+import { VisualizationFrequencyDistributionRenderer } from '../components/categorical/frequency-distribution';
 import { useVisualizationAggregatedTotalsDataProvider } from '../data-provider/aggregate';
 import {
   VisualizationAggregateValuesConfigForm,
   VisualizationAggregateValuesConfigSchema,
+  VisualizationAggregateValuesConfigType,
 } from '../configuration/aggregate-values';
 import VisualizationColumnCountsRingChart from '../components/all/counts';
 import { useVisualizationColumnCountsDataProvider } from '../data-provider/counts';
@@ -24,6 +23,14 @@ import {
   VisualizationFrequencyDistributionConfigSchema,
   VisualizationFrequencyDistributionConfigType,
 } from '../configuration/frequency-distribution';
+import { VisualizationAggregateValuesRenderer } from '../components/continuous/aggregate';
+import {
+  VisualizationContinuousDataDistributionConfigForm,
+  VisualizationContinuousDataDistributionConfigSchema,
+  VisualizationContinuousDataDistributionConfigType,
+} from '../configuration/continuous-data-distribution';
+import { useVisualizationValuesDataProvider } from '../data-provider/values';
+import { VisualizationContinuousDataDistributionRenderer } from '../components/continuous/continuous-data-distribution';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -34,11 +41,14 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     label: 'Aggregate Continuous Data',
     description:
       'Show how the data of this column can be grouped by other data in the dataset (e.g.: grouped by topics or categories).',
-    component: VisualizationFrequencyDistributionLinePlot,
+    component: VisualizationAggregateValuesRenderer,
     dataProvider: useVisualizationAggregatedTotalsDataProvider,
     configForm: VisualizationAggregateValuesConfigForm,
     configValidator: VisualizationAggregateValuesConfigSchema,
-  } as any,
+  } as VisualizationConfigEntry<
+    VisualizationAggregateValuesModel,
+    VisualizationAggregateValuesConfigType
+  >,
   [DashboardItemTypeEnum.Calendar]: {
     type: DashboardItemTypeEnum.Calendar,
     label: 'Calendar',
@@ -73,12 +83,14 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     type: DashboardItemTypeEnum.ContinuousDataDistribution,
     label: 'Continuous Data Distribution',
     description: 'Show the distribution of the continuous data in this column.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
-    configForm: null,
-    configValidator: null,
-  } as any,
+    component: VisualizationContinuousDataDistributionRenderer,
+    dataProvider: useVisualizationValuesDataProvider,
+    configForm: VisualizationContinuousDataDistributionConfigForm,
+    configValidator: VisualizationContinuousDataDistributionConfigSchema,
+  } as VisualizationConfigEntry<
+    number[],
+    VisualizationContinuousDataDistributionConfigType
+  >,
   [DashboardItemTypeEnum.DescriptiveStatistics]: {
     type: DashboardItemTypeEnum.DescriptiveStatistics,
     label: 'Descriptive Statistics',

@@ -29,13 +29,14 @@ function ExtendedVisualizationConfigurationFormBody() {
   if (!type) return;
   const config = DASHBOARD_ITEM_CONFIGURATION[type];
   if (!config || !config.configForm) return;
+  const ConfigForm = config.configForm;
   return (
     <>
       <Divider />
       <Text size="lg" fw={500}>
         Additional Configuration
       </Text>
-      {config.configForm}
+      <ConfigForm />
     </>
   );
 }

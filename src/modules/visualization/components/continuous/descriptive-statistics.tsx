@@ -75,7 +75,11 @@ function useDescriptiveStatisticsTableData(
     return TABLE_ROW_MAPPING.map((row) => {
       const rowData: Record<string, any> = {};
       for (const column of data) {
-        rowData[column.name] = column.data[row.name];
+        if (row.name === 'inlier_range') {
+          rowData[column.name] = column.data.inlier_range.join(' - ');
+        } else {
+          rowData[column.name] = column.data[row.name];
+        }
       }
       return rowData;
     });

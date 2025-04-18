@@ -5,7 +5,6 @@ import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
 import { VisualizationGeographicalPointsModel } from '@/api/table';
 
 import * as Yup from 'yup';
-import React from 'react';
 
 const VisualizationGeographicalPointsDataProviderConfigSchema = Yup.object({
   column2: Yup.string().required(),
@@ -20,11 +19,7 @@ export const useVisualizationGeographicalPointsDataProvider: BaseVisualizationDa
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);
 
-  const config = React.useMemo(() => {
-    return VisualizationGeographicalPointsDataProviderConfigSchema.validateSync(
-      item.config,
-    );
-  }, [item.config]);
+  const config = item.config;
 
   const queries = useQueries({
     queries: groups.map((group) =>
