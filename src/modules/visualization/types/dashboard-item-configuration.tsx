@@ -3,6 +3,7 @@ import {
   VisualizationAggregateValuesModel,
   VisualizationColumnCountsModel,
   VisualizationFrequencyDistributionModel,
+  VisualizationGeographicalPointsModel,
 } from '@/api/table';
 import { DescriptiveStatisticsTableComponent } from '../components/continuous/descriptive-statistics';
 import { useVisualizationDescriptiveStatisticsDataProvider } from '../data-provider/descriptive-statistics';
@@ -32,6 +33,13 @@ import {
 import { useVisualizationValuesDataProvider } from '../data-provider/values';
 import { VisualizationContinuousDataDistributionRenderer } from '../components/continuous/continuous-data-distribution';
 import VisualizationCalendarComponent from '../components/temporal/calendar';
+import VisualizationGeographicalMap from '../components/geographical/geographical-points';
+import { useVisualizationGeographicalPointsDataProvider } from '../data-provider/geographical';
+import {
+  VisualizationGeographicalPointsConfigForm,
+  VisualizationGeographicalPointsConfigSchema,
+  VisualizationGeographicalPointsConfigType,
+} from '../configuration/geographical-points';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -119,12 +127,14 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     label: 'Geographical Coordinates',
     description:
       'Show the location indicated by the coordinates of this column (and another column as the longitude column) as a map.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
-    configForm: null,
-    configValidator: null,
-  } as any,
+    component: VisualizationGeographicalMap,
+    dataProvider: useVisualizationGeographicalPointsDataProvider,
+    configForm: VisualizationGeographicalPointsConfigForm,
+    configValidator: VisualizationGeographicalPointsConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationGeographicalPointsModel,
+    VisualizationGeographicalPointsConfigType
+  >,
   [DashboardItemTypeEnum.StatisticTestContingencyTable]: {
     type: DashboardItemTypeEnum.StatisticTestContingencyTable,
     label: 'Statistical Test on Contingency Table',

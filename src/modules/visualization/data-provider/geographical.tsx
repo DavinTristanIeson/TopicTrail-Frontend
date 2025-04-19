@@ -3,19 +3,11 @@ import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
 import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
 import { VisualizationGeographicalPointsModel } from '@/api/table';
-
-import * as Yup from 'yup';
-
-const VisualizationGeographicalPointsDataProviderConfigSchema = Yup.object({
-  column2: Yup.string().required(),
-});
-
-export type VisualizationGeographicalPointsDataProviderConfigType =
-  Yup.InferType<typeof VisualizationGeographicalPointsDataProviderConfigSchema>;
+import { VisualizationGeographicalPointsConfigType } from '../configuration/geographical-points';
 
 export const useVisualizationGeographicalPointsDataProvider: BaseVisualizationDataProviderHook<
   VisualizationGeographicalPointsModel,
-  VisualizationGeographicalPointsDataProviderConfigType
+  VisualizationGeographicalPointsConfigType
 > = function (item) {
   const { groups, params } = usePrepareDataProvider(item);
 
@@ -25,8 +17,8 @@ export const useVisualizationGeographicalPointsDataProvider: BaseVisualizationDa
     queries: groups.map((group) =>
       client.queryOptions('post', '/table/{project_id}/column/geographical', {
         body: {
-          latitude_column: item.column,
-          longitude_column: config.column2,
+          latitude_column: config.latitude_column,
+          longitude_column: config.longitude_column,
           filter: group.filter,
         },
         params,
