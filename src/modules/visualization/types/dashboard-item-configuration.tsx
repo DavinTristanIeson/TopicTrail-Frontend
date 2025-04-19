@@ -4,6 +4,7 @@ import {
   VisualizationColumnCountsModel,
   VisualizationFrequencyDistributionModel,
   VisualizationGeographicalPointsModel,
+  VisualizationWordsModel,
 } from '@/api/table';
 import { DescriptiveStatisticsTableComponent } from '../components/continuous/descriptive-statistics';
 import { useVisualizationDescriptiveStatisticsDataProvider } from '../data-provider/descriptive-statistics';
@@ -40,6 +41,8 @@ import {
   VisualizationGeographicalPointsConfigSchema,
   VisualizationGeographicalPointsConfigType,
 } from '../configuration/geographical-points';
+import { useVisualizationWordFrequenciesDataProvider } from '../data-provider/word-frequencies';
+import { VisualizationWordFrequencyComponent } from '../components/textual/frequency';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -181,13 +184,12 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
   } as any,
   [DashboardItemTypeEnum.WordFrequencies]: {
     type: DashboardItemTypeEnum.WordFrequencies,
-    label: 'Topic Words',
+    label: 'Word Frequencies',
     description:
       'Show the most frequent words (from the preprocessed documents) of each subdataset.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
+    component: VisualizationWordFrequencyComponent,
+    dataProvider: useVisualizationWordFrequenciesDataProvider,
     configForm: null,
     configValidator: null,
-  } as any,
+  } as VisualizationConfigEntry<VisualizationWordsModel, object>,
 };

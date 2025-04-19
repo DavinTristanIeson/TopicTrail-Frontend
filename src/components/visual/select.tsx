@@ -1,5 +1,6 @@
 import {
   Badge,
+  Button,
   Group,
   Stack,
   Text,
@@ -7,7 +8,7 @@ import {
   type ComboboxItem,
   type ComboboxLikeRenderOptionInput,
 } from '@mantine/core';
-import { Check } from '@phosphor-icons/react';
+import { ArrowLeft, ArrowRight, Check } from '@phosphor-icons/react';
 import React from 'react';
 
 interface SelectedComboboxWrapperProps {
@@ -70,4 +71,61 @@ export function useDescriptionBasedRenderOption(
     },
     [dictionary],
   );
+}
+
+interface UseSelectLeftRightButtonsProps<T> {
+  value: T | null;
+  onChange(value: T | null): void;
+  options: T[];
+}
+
+export function useSelectLeftRightButtons<T>(
+  props: UseSelectLeftRightButtonsProps<T>,
+) {
+  const { value, options, onChange } = props;
+  const index = React.useMemo(() => {
+    if (value == null) return null;
+    const index = options.findIndex((option) => option === value);
+    if (index === -1) return null;
+    return index;
+  }, [options, value]);
+  const canGoLeft = index == null || index > 0;
+  const canGoRight = index == null || index < options.length - 1;
+  const inputContainer = React.useCallback(
+    (children: React.ReactNode) => {
+      return (
+        <Group>
+          <Button
+            leftSection={<ArrowLeft />}
+            disabled={!canGoLeft}
+            onClick={() => {
+              const newIdx = index == null ? 0 : index - 1;
+              const newValue = options[newIdx];
+              if (newValue == null) return;
+              onChange(newValue);
+            }}
+            variant="subtle"
+          >
+            Previous
+          </Button>
+          {children}
+          <Button
+            rightSection={<ArrowRight />}
+            disabled={!canGoRight}
+            onClick={() => {
+              const newIdx = index == null ? 0 : index + 1;
+              const newValue = options[newIdx];
+              if (newValue == null) return;
+              onChange(newValue);
+            }}
+            variant="subtle"
+          >
+            Next
+          </Button>
+        </Group>
+      );
+    },
+    [canGoLeft, canGoRight, index, onChange, options],
+  );
+  return inputContainer;
 }

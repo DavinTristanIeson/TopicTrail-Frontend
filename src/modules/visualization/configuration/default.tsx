@@ -1,19 +1,14 @@
-import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { Group, Stack } from '@mantine/core';
 import React from 'react';
-import {
-  ALLOWED_DASHBOARD_ITEM_COLUMNS,
-  SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN,
-} from '../types/dashboard-item-types';
+import { useAllowedDashboardItemTypes } from '../types/dashboard-item-types';
 import RHFField from '@/components/standard/fields';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { fromPairs } from 'lodash-es';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { VisualizationConfigFormType } from './form-type';
-import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 
 function ColumnDashboardItemSelectInput() {
   const project = React.useContext(ProjectContext);
@@ -26,11 +21,12 @@ function ColumnDashboardItemSelectInput() {
     return col.name === chosenColumnName;
   });
 
-  const supportedTypes = column
-    ? SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN[
-        column.type as SchemaColumnTypeEnum
-      ]
-    : undefined;
+  const getAllowedTypes = useAllowedDashboardItemTypes();
+
+  const supportedTypes = React.useMemo(() => {
+    if (!column) return [];
+    return getAllowedTypes(column);
+  }, [column, getAllowedTypes]);
 
   const selectData =
     supportedTypes
@@ -89,20 +85,10 @@ function ColumnDashboardItemSelectInput() {
 
 export function DefaultVisualizationConfigurationForm() {
   const project = React.useContext(ProjectContext);
-  const allTopicModelingResults = React.useContext(
-    AllTopicModelingResultContext,
-  );
   const { reset, setValue } = useFormContext<VisualizationConfigFormType>();
+  const getAllowedTypes = useAllowedDashboardItemTypes();
   const columns = project.config.data_schema.columns.filter((column) => {
-    if (column.type === SchemaColumnTypeEnum.Topic) {
-      return !!allTopicModelingResults.find(
-        (topicModelingResult) =>
-          topicModelingResult.column.name === column.source_name!,
-      )?.result;
-    }
-    return ALLOWED_DASHBOARD_ITEM_COLUMNS.includes(
-      column.type as SchemaColumnTypeEnum,
-    );
+    return getAllowedTypes(column).length > 0;
   });
 
   return (

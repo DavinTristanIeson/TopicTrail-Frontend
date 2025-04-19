@@ -41,7 +41,7 @@ export function VisualizationAggregateValuesBarChart(
         barmode: 'group',
       },
     };
-  }, [data, item.column, item.config.grouped_by]);
+  }, [data, item.column, item.config.grouped_by, item.config.method]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
@@ -77,7 +77,7 @@ export function VisualizationAggregateValuesLinePlot(
         title: `Values of ${item.column} Grouped By ${item.config.grouped_by} (${capitalize(item.config.method)})`,
       },
     };
-  }, [data, item.column, item.config.grouped_by]);
+  }, [data, item.column, item.config.grouped_by, item.config.method]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
