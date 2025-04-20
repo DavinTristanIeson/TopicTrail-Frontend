@@ -4,7 +4,7 @@ import { usePrepareDataProvider } from './utils';
 import { TopicModel } from '@/api/topic';
 import { zip } from 'lodash-es';
 
-export const useVisualizationCompareGroupWordsDataProvider: BaseVisualizationDataProviderHook<
+export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizationDataProviderHook<
   TopicModel,
   object
 > = function (item) {

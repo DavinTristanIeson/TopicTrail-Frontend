@@ -52,7 +52,7 @@ export default function FetchWrapperComponent(props: WrapperProps) {
     return (
       loadingComponent || (
         <div className="w-full h-full">
-          <LoadingOverlay visible zIndex={1000} />
+          <LoadingOverlay visible />
         </div>
       )
     );

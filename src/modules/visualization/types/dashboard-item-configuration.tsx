@@ -43,6 +43,11 @@ import {
 } from '../configuration/geographical-points';
 import { useVisualizationWordFrequenciesDataProvider } from '../data-provider/word-frequencies';
 import { VisualizationWordFrequencyComponent } from '../components/textual/frequency';
+import { VisualizationTopicWordsComponent } from '../components/textual/topic-words';
+import { useVisualizationTopicWordsDataProvider } from '../data-provider/topic-words';
+import { TopicModel } from '@/api/topic';
+import { VisualizationCompareSubdatasetWords } from '../components/textual/compare-subdataset-words';
+import { useVisualizationCompareSubdatasetWordsDataProvider } from '../data-provider/compare-subdataset-words';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -165,23 +170,21 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     label: 'Compare Subdataset Words',
     description:
       'Show the most significant words (according to their c-TF-IDF scores) in the subdatasets. Each subdataset is considered as a topic. For best results, the subdatasets should be mutually exclusive.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
+    component: VisualizationCompareSubdatasetWords,
+    dataProvider: useVisualizationCompareSubdatasetWordsDataProvider,
     configForm: null,
     configValidator: null,
-  } as any,
+  } as VisualizationConfigEntry<TopicModel, object>,
   [DashboardItemTypeEnum.TopicWords]: {
     type: DashboardItemTypeEnum.TopicWords,
     label: 'Topic Words',
     description:
       'Show the topic words for each subdataset. The significance (c-TF-IDF score) of the topic words has been adjusted according to the words that appear in the subdataset, so you can treat this as class-based and/or dynamic topic modeling.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
+    component: VisualizationTopicWordsComponent,
+    dataProvider: useVisualizationTopicWordsDataProvider,
     configForm: null,
     configValidator: null,
-  } as any,
+  } as VisualizationConfigEntry<TopicModel[], object>,
   [DashboardItemTypeEnum.WordFrequencies]: {
     type: DashboardItemTypeEnum.WordFrequencies,
     label: 'Word Frequencies',

@@ -38,6 +38,7 @@ function DashboardItemRendererInternal(
   } = props;
 
   const { data, error, loading } = useDataProvider(item);
+
   return (
     <FetchWrapperComponent error={error} isLoading={loading}>
       {data &&
@@ -87,13 +88,15 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
     );
   }
   return (
-    <DashboardItemRendererInternal
-      config={dashboardConfig}
-      item={{
-        ...props,
-        config: dashboardItemInternalConfig,
-      }}
-    />
+    <div className="relative">
+      <DashboardItemRendererInternal
+        config={dashboardConfig}
+        item={{
+          ...props,
+          config: dashboardItemInternalConfig,
+        }}
+      />
+    </div>
   );
 }
 

@@ -60,12 +60,9 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     ...FOR_ALL_TYPES,
     DashboardItemTypeEnum.SubdatasetWords,
     DashboardItemTypeEnum.WordFrequencies,
-  ],
-  [SchemaColumnTypeEnum.Topic]: [
-    ...FOR_ALL_TYPES,
-    ...FOR_CATEGORICAL_TYPES,
     DashboardItemTypeEnum.TopicWords,
   ],
+  [SchemaColumnTypeEnum.Topic]: [...FOR_ALL_TYPES, ...FOR_CATEGORICAL_TYPES],
   [SchemaColumnTypeEnum.Unique]: [],
 };
 
