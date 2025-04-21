@@ -3,6 +3,7 @@ import { components } from './openapi';
 import { Query } from '@tanstack/react-query';
 import { client } from '@/common/api/client';
 import { get, isObject } from 'lodash-es';
+import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 
 export type ProjectModel = components['schemas']['ProjectResource'];
 export type ProjectMetadataModel = components['schemas']['ProjectMetadata'];
@@ -82,3 +83,19 @@ export function getTopicColumnName(columnName: string) {
 export function getPreprocessedDocumentsColumnName(columnName: string) {
   return `${columnName} (Preprocessed)`;
 }
+
+export const CATEGORICAL_SCHEMA_COLUMN_TYPES = [
+  SchemaColumnTypeEnum.Categorical,
+  SchemaColumnTypeEnum.OrderedCategorical,
+  SchemaColumnTypeEnum.Temporal,
+  SchemaColumnTypeEnum.Topic,
+];
+export const ORDERED_SCHEMA_COLUMN_TYPES = [
+  SchemaColumnTypeEnum.Temporal,
+  SchemaColumnTypeEnum.Continuous,
+  SchemaColumnTypeEnum.OrderedCategorical,
+];
+export const ORDERED_CATEGORICAL_SCHEMA_COLUMN_TYPES = [
+  SchemaColumnTypeEnum.Temporal,
+  SchemaColumnTypeEnum.OrderedCategorical,
+];

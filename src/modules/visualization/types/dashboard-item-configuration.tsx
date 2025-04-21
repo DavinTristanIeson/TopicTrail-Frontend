@@ -48,6 +48,14 @@ import { useVisualizationTopicWordsDataProvider } from '../data-provider/topic-w
 import { TopicModel } from '@/api/topic';
 import { VisualizationCompareSubdatasetWords } from '../components/textual/compare-subdataset-words';
 import { useVisualizationCompareSubdatasetWordsDataProvider } from '../data-provider/compare-subdataset-words';
+import {
+  VisualizationContingencyTableConfigForm,
+  VisualizationContingencyTableConfigSchema,
+  VisualizationContingencyTableConfigType,
+} from '../configuration/contingency-table';
+import { useVisualizationContingencyTableDataProvider } from '../data-provider/contingency-table';
+import { VisualizationContingencyTableHeatmap } from '../components/categorical/contingency-table';
+import { VisualizationContingencyTableModel } from '@/api/correlation';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -79,13 +87,15 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     type: DashboardItemTypeEnum.ContingencyTable,
     label: 'Contingency Table',
     description:
-      'Show the joint frequencies of two different columns. For example, you might be interested in seeing what other categories occur frequently with the topic.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
-    configForm: null,
-    configValidator: null,
-  } as any,
+      'Show the joint frequencies of two different columns as a heatmap. For example, you might be interested in seeing what other categories occur frequently with the topic. You can also see how much the frequency deviates from expectations to identify abnormalities or outliers in the dataset.',
+    component: VisualizationContingencyTableHeatmap,
+    dataProvider: useVisualizationContingencyTableDataProvider,
+    configForm: VisualizationContingencyTableConfigForm,
+    configValidator: VisualizationContingencyTableConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationContingencyTableModel,
+    VisualizationContingencyTableConfigType
+  >,
   [DashboardItemTypeEnum.Counts]: {
     type: DashboardItemTypeEnum.Counts,
     label: 'Counts',

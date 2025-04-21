@@ -12,6 +12,7 @@ import {
   FrequencyDistributionDisplayModeSelectField,
   VisualizationFrequencyDistributonDisplayMode,
 } from './frequency-distribution';
+import { CATEGORICAL_SCHEMA_COLUMN_TYPES } from '@/api/project';
 
 export const VisualizationAggregateValuesConfigSchema = Yup.object({
   grouped_by: Yup.string().required(),
@@ -30,14 +31,10 @@ export type VisualizationAggregateValuesConfigType = Yup.InferType<
 export function VisualizationAggregateValuesConfigForm() {
   const project = React.useContext(ProjectContext);
   const columns = React.useMemo(() => {
-    const SUPPORTED_COLUMNS = [
-      SchemaColumnTypeEnum.Categorical,
-      SchemaColumnTypeEnum.Temporal,
-      SchemaColumnTypeEnum.OrderedCategorical,
-      SchemaColumnTypeEnum.Topic,
-    ];
     return project.config.data_schema.columns.filter((column) =>
-      SUPPORTED_COLUMNS.includes(column.type as SchemaColumnTypeEnum),
+      CATEGORICAL_SCHEMA_COLUMN_TYPES.includes(
+        column.type as SchemaColumnTypeEnum,
+      ),
     );
   }, [project.config.data_schema.columns]);
   return (

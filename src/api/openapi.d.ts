@@ -765,7 +765,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/correlation/{project_id}/topics/correlation": {
+    "/table/{project_id}/correlation/topics/correlation": {
         parameters: {
             query?: never;
             header?: never;
@@ -775,14 +775,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Topics Correlation */
-        post: operations["post__topics_correlation_correlation__project_id__topics_correlation_post"];
+        post: operations["post__topics_correlation_table__project_id__correlation_topics_correlation_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/correlation/{project_id}/topics/crosstab": {
+    "/table/{project_id}/correlation/contingency-table": {
         parameters: {
             query?: never;
             header?: never;
@@ -791,15 +791,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Post  Topics Crosstab */
-        post: operations["post__topics_crosstab_correlation__project_id__topics_crosstab_post"];
+        /** Post  Topics Contingency Table */
+        post: operations["post__topics_contingency_table_table__project_id__correlation_contingency_table_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/correlation/{project_id}/topics/categorical": {
+    "/table/{project_id}/correlation/topics/categorical": {
         parameters: {
             query?: never;
             header?: never;
@@ -809,7 +809,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Topics Categorical Correlation */
-        post: operations["post__topics_categorical_correlation_correlation__project_id__topics_categorical_post"];
+        post: operations["post__topics_categorical_correlation_table__project_id__correlation_topics_categorical_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -860,6 +860,12 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[ContingencyTableResource] */
+        ApiResult_ContingencyTableResource_: {
+            data: components["schemas"]["ContingencyTableResource"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[DatasetPreviewResource] */
         ApiResult_DatasetPreviewResource_: {
             data: components["schemas"]["DatasetPreviewResource"];
@@ -869,6 +875,12 @@ export interface components {
         /** ApiResult[DocumentTopicsVisualizationResource] */
         ApiResult_DocumentTopicsVisualizationResource_: {
             data: components["schemas"]["DocumentTopicsVisualizationResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[FineGrainedStatisticTestOnCategoriesResource] */
+        ApiResult_FineGrainedStatisticTestOnCategoriesResource_: {
+            data: components["schemas"]["FineGrainedStatisticTestOnCategoriesResource"];
             /** Message */
             message: string | null;
         };
@@ -888,6 +900,12 @@ export interface components {
         /** ApiResult[ProjectResource] */
         ApiResult_ProjectResource_: {
             data: components["schemas"]["ProjectResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[StatisticTestOnDistributionResource] */
+        ApiResult_StatisticTestOnDistributionResource_: {
+            data: components["schemas"]["StatisticTestOnDistributionResource"];
             /** Message */
             message: string | null;
         };
@@ -942,24 +960,6 @@ export interface components {
         /** ApiResult[TableWordsResource] */
         ApiResult_TableWordsResource_: {
             data: components["schemas"]["TableWordsResource"];
-            /** Message */
-            message: string | null;
-        };
-        /** ApiResult[TopicCorrelationCrossTabResource] */
-        ApiResult_TopicCorrelationCrossTabResource_: {
-            data: components["schemas"]["TopicCorrelationCrossTabResource"];
-            /** Message */
-            message: string | null;
-        };
-        /** ApiResult[TopicCorrelationFineGrainedCategoricalResource] */
-        ApiResult_TopicCorrelationFineGrainedCategoricalResource_: {
-            data: components["schemas"]["TopicCorrelationFineGrainedCategoricalResource"];
-            /** Message */
-            message: string | null;
-        };
-        /** ApiResult[TopicCorrelationResource] */
-        ApiResult_TopicCorrelationResource_: {
-            data: components["schemas"]["TopicCorrelationResource"];
             /** Message */
             message: string | null;
         };
@@ -1132,6 +1132,25 @@ export interface components {
             source: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
             data_schema: components["schemas"]["SchemaManager-Output"];
         };
+        /** ContingencyTableResource */
+        ContingencyTableResource: {
+            /** Column1 */
+            column1: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Column2 */
+            column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Rows */
+            rows: string[];
+            /** Columns */
+            columns: string[];
+            /** Observed */
+            observed: number[][];
+            /** Expected */
+            expected: number[][];
+            /** Residuals */
+            residuals: number[][];
+            /** Standardized Residuals */
+            standardized_residuals: number[][];
+        };
         /** ContinuousSchemaColumn */
         ContinuousSchemaColumn: {
             /** Name */
@@ -1174,6 +1193,8 @@ export interface components {
             id: string;
             /** Description */
             description: string | null;
+            /** Type */
+            type: string;
             /** Column */
             column: string;
             rect: components["schemas"]["DashboardItemRect"];
@@ -1322,6 +1343,17 @@ export interface components {
             type: "excel";
             /** Sheet Name */
             sheet_name: string | null;
+        };
+        /** FineGrainedStatisticTestOnCategoriesResource */
+        FineGrainedStatisticTestOnCategoriesResource: {
+            statistic_test_method: components["schemas"]["StatisticTestMethodEnum"];
+            effect_size_method: components["schemas"]["EffectSizeMethodEnum"];
+            /** P Values */
+            p_values: number[][];
+            /** Statistics */
+            statistics: number[][];
+            /** Effect Sizes */
+            effect_sizes: number[][];
         };
         /**
          * GeospatialRoleEnum
@@ -1644,6 +1676,17 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
+        /** StatisticTestOnDistributionResource */
+        StatisticTestOnDistributionResource: {
+            statistic_test_method: components["schemas"]["StatisticTestMethodEnum"];
+            effect_size_method: components["schemas"]["EffectSizeMethodEnum"];
+            /** P Values */
+            p_values: number[];
+            /** Statistics */
+            statistics: number[];
+            /** Effect Sizes */
+            effect_sizes: number[];
+        };
         /**
          * TableColumnAggregateMethodEnum
          * @enum {string}
@@ -1957,39 +2000,6 @@ export interface components {
             description?: string | null;
             /** Tags */
             tags?: string[] | null;
-        };
-        /** TopicCorrelationCrossTabResource */
-        TopicCorrelationCrossTabResource: {
-            /** Observed */
-            observed: number[][];
-            /** Expected */
-            expected: number[][];
-            /** Residuals */
-            residuals: number[][];
-            /** Standardized Residuals */
-            standardized_residuals: number[][];
-        };
-        /** TopicCorrelationFineGrainedCategoricalResource */
-        TopicCorrelationFineGrainedCategoricalResource: {
-            statistic_test_method: components["schemas"]["StatisticTestMethodEnum"];
-            effect_size_method: components["schemas"]["EffectSizeMethodEnum"];
-            /** P Values */
-            p_values: number[][];
-            /** Statistics */
-            statistics: number[][];
-            /** Effect Sizes */
-            effect_sizes: number[][];
-        };
-        /** TopicCorrelationResource */
-        TopicCorrelationResource: {
-            statistic_test_method: components["schemas"]["StatisticTestMethodEnum"];
-            effect_size_method: components["schemas"]["EffectSizeMethodEnum"];
-            /** P Values */
-            p_values: number[];
-            /** Statistics */
-            statistics: number[];
-            /** Effect Sizes */
-            effect_sizes: number[];
         };
         /** TopicCorrelationSchema */
         TopicCorrelationSchema: {
@@ -6163,7 +6173,7 @@ export interface operations {
             };
         };
     };
-    post__topics_correlation_correlation__project_id__topics_correlation_post: {
+    post__topics_correlation_table__project_id__correlation_topics_correlation_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6184,7 +6194,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_TopicCorrelationResource_"];
+                    "application/json": components["schemas"]["ApiResult_StatisticTestOnDistributionResource_"];
                 };
             };
             /** @description Bad Request */
@@ -6234,7 +6244,7 @@ export interface operations {
             };
         };
     };
-    post__topics_crosstab_correlation__project_id__topics_crosstab_post: {
+    post__topics_contingency_table_table__project_id__correlation_contingency_table_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6255,7 +6265,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_TopicCorrelationCrossTabResource_"];
+                    "application/json": components["schemas"]["ApiResult_ContingencyTableResource_"];
                 };
             };
             /** @description Bad Request */
@@ -6305,7 +6315,7 @@ export interface operations {
             };
         };
     };
-    post__topics_categorical_correlation_correlation__project_id__topics_categorical_post: {
+    post__topics_categorical_correlation_table__project_id__correlation_topics_categorical_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6326,7 +6336,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_TopicCorrelationFineGrainedCategoricalResource_"];
+                    "application/json": components["schemas"]["ApiResult_FineGrainedStatisticTestOnCategoriesResource_"];
                 };
             };
             /** @description Bad Request */
