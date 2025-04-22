@@ -8,6 +8,8 @@ import {
   Paper,
   useMantineTheme,
   Text,
+  Stack,
+  Divider,
 } from '@mantine/core';
 import {
   CornersOut,
@@ -100,6 +102,34 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
   );
 }
 
+function DashboardGridItemInfo(props: DashboardItemModel) {
+  const dashboardConfig =
+    DASHBOARD_ITEM_CONFIGURATION[props.type as DashboardItemTypeEnum]!;
+  const { colors } = useMantineTheme();
+
+  if (!dashboardConfig) {
+    return null;
+  }
+
+  return (
+    <HoverCard>
+      <HoverCard.Target>
+        <Info size={24} color={colors.brand[6]} />
+      </HoverCard.Target>
+      <HoverCard.Dropdown className="max-w-md">
+        <Stack>
+          <Text size="lg" fw={500}>
+            {dashboardConfig.label}
+          </Text>
+          <Text>{dashboardConfig.description}</Text>
+          <Divider />
+          <Text>{props.description}</Text>
+        </Stack>
+      </HoverCard.Dropdown>
+    </HoverCard>
+  );
+}
+
 interface DashboardGridItemProps {
   item: DashboardItemModel;
   dragHandleClassName: string;
@@ -110,7 +140,6 @@ interface DashboardGridItemProps {
 
 export default function DashboardGridItem(props: DashboardGridItemProps) {
   const { item, onEdit, onDelete, onFullScreen, dragHandleClassName } = props;
-  const { colors } = useMantineTheme();
   return (
     <Paper className="grid-stack-item-content p-2 select-none">
       <Group className="pb-2">
@@ -125,16 +154,7 @@ export default function DashboardGridItem(props: DashboardGridItemProps) {
             <CornersOut size={24} />
           </ActionIcon>
         )}
-        {item.description && (
-          <HoverCard>
-            <HoverCard.Target>
-              <Info size={24} color={colors.brand[6]} />
-            </HoverCard.Target>
-            <HoverCard.Dropdown className="max-w-md">
-              <Text>{item.description}</Text>
-            </HoverCard.Dropdown>
-          </HoverCard>
-        )}
+        <DashboardGridItemInfo {...item} />
         {onEdit && (
           <ActionIcon variant="subtle" onClick={() => onEdit(item)}>
             <PencilSimple size={24} />

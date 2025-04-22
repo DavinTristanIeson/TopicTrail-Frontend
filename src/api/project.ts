@@ -99,3 +99,10 @@ export const ORDERED_CATEGORICAL_SCHEMA_COLUMN_TYPES = [
   SchemaColumnTypeEnum.Temporal,
   SchemaColumnTypeEnum.OrderedCategorical,
 ];
+export const ANALYZABLE_SCHEMA_COLUMN_TYPES = [
+  SchemaColumnTypeEnum.Continuous,
+  SchemaColumnTypeEnum.Categorical,
+  SchemaColumnTypeEnum.OrderedCategorical,
+  SchemaColumnTypeEnum.Temporal,
+  SchemaColumnTypeEnum.Topic,
+];

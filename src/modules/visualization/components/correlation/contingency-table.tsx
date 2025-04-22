@@ -233,7 +233,7 @@ function VisualizationContingencyTableHeatmapInner(
   const [method, setMethod] = React.useState(
     ContingencyTableVisualizationMethod.Observed,
   );
-  const { data, name } = dataContainer[0]!;
+  const { data } = dataContainer[0]!;
 
   const {
     multiSelectProps: columnsSelectProps,
@@ -289,7 +289,6 @@ function VisualizationContingencyTableHeatmapInner(
     return {
       data: [
         {
-          name,
           type: 'heatmap',
           x: columns,
           y: rows,
@@ -312,7 +311,7 @@ function VisualizationContingencyTableHeatmapInner(
         },
       },
     };
-  }, [columnIndices, columns, data, method, name, rowIndices, rows]);
+  }, [columnIndices, columns, data, method, rowIndices, rows]);
 
   const inputContainer = useSelectLeftRightButtons({
     value: method,

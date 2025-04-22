@@ -1,6 +1,6 @@
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
-import { Group, Stack } from '@mantine/core';
+import { Alert, Group, Stack } from '@mantine/core';
 import React from 'react';
 import { useAllowedDashboardItemTypes } from '../types/dashboard-item-types';
 import RHFField from '@/components/standard/fields';
@@ -9,6 +9,7 @@ import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configurat
 import { fromPairs } from 'lodash-es';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { VisualizationConfigFormType } from './form-type';
+import { Info } from '@phosphor-icons/react';
 
 function ColumnDashboardItemSelectInput() {
   const project = React.useContext(ProjectContext);
@@ -83,6 +84,20 @@ function ColumnDashboardItemSelectInput() {
   );
 }
 
+function DashboardItemTypeDescription() {
+  const { control } = useFormContext<VisualizationConfigFormType>();
+  const dashboardType = useWatch({
+    control,
+    name: 'type',
+  });
+  const dashboardConfig = DASHBOARD_ITEM_CONFIGURATION[dashboardType];
+  return (
+    <Alert title={dashboardConfig.label} color="blue" icon={<Info />}>
+      {dashboardConfig.description}
+    </Alert>
+  );
+}
+
 export function DefaultVisualizationConfigurationForm() {
   const project = React.useContext(ProjectContext);
   const { reset, setValue } = useFormContext<VisualizationConfigFormType>();
@@ -109,6 +124,7 @@ export function DefaultVisualizationConfigurationForm() {
         />
         <ColumnDashboardItemSelectInput />
       </Group>
+      <DashboardItemTypeDescription />
       <RHFField
         name="description"
         label="Description"

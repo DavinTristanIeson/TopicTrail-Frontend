@@ -16,16 +16,16 @@ export enum DashboardItemTypeEnum {
   SubdatasetWords = 'subdataset-words',
 
   ContingencyTable = 'contingency-table',
-  StatisticTestContingencyTable = 'statistic-test-contingency-table',
-  StatisticTestDistribution = 'binary-significance-on-distribution',
+  BinaryStatisticTestOnContingencyTable = 'binary-statistic-test-on-contingency-table',
+  BinaryStatisticTestOnDistribution = 'binary-statistic-test-on-distribution',
 }
 
 const FOR_ALL_TYPES = [DashboardItemTypeEnum.Counts];
 const FOR_CATEGORICAL_TYPES = [
   DashboardItemTypeEnum.FrequencyDistribution,
   DashboardItemTypeEnum.ContingencyTable,
-  DashboardItemTypeEnum.StatisticTestContingencyTable,
-  DashboardItemTypeEnum.StatisticTestDistribution,
+  DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
+  DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
 ];
 
 export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<

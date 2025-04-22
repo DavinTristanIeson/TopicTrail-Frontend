@@ -765,7 +765,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/correlation/topics/correlation": {
+    "/table/{project_id}/correlation/binary/test-distribution": {
         parameters: {
             query?: never;
             header?: never;
@@ -774,8 +774,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Post  Topics Correlation */
-        post: operations["post__topics_correlation_table__project_id__correlation_topics_correlation_post"];
+        /** Post  Test Distribution */
+        post: operations["post__test_distribution_table__project_id__correlation_binary_test_distribution_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -799,7 +799,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/correlation/topics/categorical": {
+    "/table/{project_id}/correlation/binary/test-contingency-table": {
         parameters: {
             query?: never;
             header?: never;
@@ -808,8 +808,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Post  Topics Categorical Correlation */
-        post: operations["post__topics_categorical_correlation_table__project_id__correlation_topics_categorical_post"];
+        /** Post  Test Contingency Table */
+        post: operations["post__test_contingency_table_table__project_id__correlation_binary_test_contingency_table_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -878,12 +878,6 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[FineGrainedStatisticTestOnCategoriesResource] */
-        ApiResult_FineGrainedStatisticTestOnCategoriesResource_: {
-            data: components["schemas"]["FineGrainedStatisticTestOnCategoriesResource"];
-            /** Message */
-            message: string | null;
-        };
         /** ApiResult[InferDatasetColumnResource] */
         ApiResult_InferDatasetColumnResource_: {
             data: components["schemas"]["InferDatasetColumnResource"];
@@ -900,12 +894,6 @@ export interface components {
         /** ApiResult[ProjectResource] */
         ApiResult_ProjectResource_: {
             data: components["schemas"]["ProjectResource"];
-            /** Message */
-            message: string | null;
-        };
-        /** ApiResult[StatisticTestOnDistributionResource] */
-        ApiResult_StatisticTestOnDistributionResource_: {
-            data: components["schemas"]["StatisticTestOnDistributionResource"];
             /** Message */
             message: string | null;
         };
@@ -987,6 +975,20 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[list[BinaryStatisticTestOnContingencyTableResource]] */
+        ApiResult_list_BinaryStatisticTestOnContingencyTableResource__: {
+            /** Data */
+            data: components["schemas"]["BinaryStatisticTestOnContingencyTableResource"][];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[list[BinaryStatisticTestOnDistributionResource]] */
+        ApiResult_list_BinaryStatisticTestOnDistributionResource__: {
+            /** Data */
+            data: components["schemas"]["BinaryStatisticTestOnDistributionResource"][];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[list[ColumnTopicModelingResultResource]] */
         ApiResult_list_ColumnTopicModelingResultResource__: {
             /** Data */
@@ -1035,6 +1037,54 @@ export interface components {
             data: number[];
             /** Message */
             message: string | null;
+        };
+        /** BinaryStatisticTestOnContingencyTableResource */
+        BinaryStatisticTestOnContingencyTableResource: {
+            /** Discriminator1 */
+            discriminator1: string;
+            /** Discriminator2 */
+            discriminator2: string;
+            /** Contingency Table */
+            contingency_table: [
+                [
+                    number,
+                    number
+                ],
+                [
+                    number,
+                    number
+                ]
+            ];
+            /** Invalid Count */
+            invalid_count: number;
+            /** Warnings */
+            warnings: string[];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** BinaryStatisticTestOnDistributionResource */
+        BinaryStatisticTestOnDistributionResource: {
+            /** Discriminator */
+            discriminator: string;
+            /** Yes Count */
+            yes_count: number;
+            /** No Count */
+            no_count: number;
+            /** Invalid Count */
+            invalid_count: number;
+            /** Warnings */
+            warnings: string[];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** BinaryStatisticTestSchema */
+        BinaryStatisticTestSchema: {
+            /** Column1 */
+            column1: string;
+            /** Column2 */
+            column2: string;
+            statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
+            effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
         };
         /** CSVDataSource */
         CSVDataSource: {
@@ -1343,17 +1393,6 @@ export interface components {
             type: "excel";
             /** Sheet Name */
             sheet_name: string | null;
-        };
-        /** FineGrainedStatisticTestOnCategoriesResource */
-        FineGrainedStatisticTestOnCategoriesResource: {
-            statistic_test_method: components["schemas"]["StatisticTestMethodEnum"];
-            effect_size_method: components["schemas"]["EffectSizeMethodEnum"];
-            /** P Values */
-            p_values: number[][];
-            /** Statistics */
-            statistics: number[][];
-            /** Effect Sizes */
-            effect_sizes: number[][];
         };
         /**
          * GeospatialRoleEnum
@@ -1676,17 +1715,6 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
-        /** StatisticTestOnDistributionResource */
-        StatisticTestOnDistributionResource: {
-            statistic_test_method: components["schemas"]["StatisticTestMethodEnum"];
-            effect_size_method: components["schemas"]["EffectSizeMethodEnum"];
-            /** P Values */
-            p_values: number[];
-            /** Statistics */
-            statistics: number[];
-            /** Effect Sizes */
-            effect_sizes: number[];
-        };
         /**
          * TableColumnAggregateMethodEnum
          * @enum {string}
@@ -6173,7 +6201,7 @@ export interface operations {
             };
         };
     };
-    post__topics_correlation_table__project_id__correlation_topics_correlation_post: {
+    post__test_distribution_table__project_id__correlation_binary_test_distribution_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6184,7 +6212,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TopicCorrelationSchema"];
+                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
             };
         };
         responses: {
@@ -6194,7 +6222,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_StatisticTestOnDistributionResource_"];
+                    "application/json": components["schemas"]["ApiResult_list_BinaryStatisticTestOnDistributionResource__"];
                 };
             };
             /** @description Bad Request */
@@ -6315,7 +6343,7 @@ export interface operations {
             };
         };
     };
-    post__topics_categorical_correlation_table__project_id__correlation_topics_categorical_post: {
+    post__test_contingency_table_table__project_id__correlation_binary_test_contingency_table_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6326,7 +6354,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TopicCorrelationSchema"];
+                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
             };
         };
         responses: {
@@ -6336,7 +6364,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_FineGrainedStatisticTestOnCategoriesResource_"];
+                    "application/json": components["schemas"]["ApiResult_list_BinaryStatisticTestOnContingencyTableResource__"];
                 };
             };
             /** @description Bad Request */

@@ -74,6 +74,7 @@ function StatisticTestFormBody() {
             className="flex-1"
             description="What test method do you want to use in this statistic test?"
             columnType={columnType}
+            required
           />
           <EffectSizeSelectField
             name="effect_size_preference"
@@ -82,6 +83,7 @@ function StatisticTestFormBody() {
             label="Effect Size"
             description="What effect size do you want to use in this statistic test?"
             columnType={columnType}
+            required
           />
         </Group>
       )}

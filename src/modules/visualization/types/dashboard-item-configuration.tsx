@@ -54,8 +54,18 @@ import {
   VisualizationContingencyTableConfigType,
 } from '../configuration/contingency-table';
 import { useVisualizationContingencyTableDataProvider } from '../data-provider/contingency-table';
-import { VisualizationContingencyTableHeatmap } from '../components/categorical/contingency-table';
-import { VisualizationContingencyTableModel } from '@/api/correlation';
+import { VisualizationContingencyTableHeatmap } from '../components/correlation/contingency-table';
+import {
+  VisualizationBinaryStatisticTestOnDistributionModel,
+  VisualizationContingencyTableModel,
+} from '@/api/correlation';
+import VisualizationBinaryStatisticTestOnDistributionComponent from '../components/correlation/test-distribution';
+import { useVisualizationBinaryStatisticTestOnDistributionDataProvider } from '../data-provider/binary-statistic-test';
+import {
+  VisualizationBinaryStatisticTestConfigSchema,
+  VisualizationBinaryStatisticTestConfigType,
+  VisualizationBinaryStatisticTestOnDistributionConfigForm,
+} from '../configuration/binary-statistic-test';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -153,8 +163,8 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     VisualizationGeographicalPointsModel,
     VisualizationGeographicalPointsConfigType
   >,
-  [DashboardItemTypeEnum.StatisticTestContingencyTable]: {
-    type: DashboardItemTypeEnum.StatisticTestContingencyTable,
+  [DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable]: {
+    type: DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
     label: 'Statistical Test on Contingency Table',
     description:
       'Perform a statistic test between the two columns containing discrete data (wherein each "item" is considered a binary variable) to figure out the correlation of each pair of "items" between both columns.',
@@ -164,17 +174,19 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     configForm: null,
     configValidator: null,
   } as any,
-  [DashboardItemTypeEnum.StatisticTestDistribution]: {
-    type: DashboardItemTypeEnum.StatisticTestDistribution,
+  [DashboardItemTypeEnum.BinaryStatisticTestOnDistribution]: {
+    type: DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
     label: 'Statistical Test on Distribution',
     description:
       'Perform a statistic test using the subdatasets (wherein each subdataset is considered as a binary variable: all rows in the subdataset, and all rows outside of the subdataset) to figure out its impact on the data distribution of this column.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
-    configForm: null,
-    configValidator: null,
-  } as any,
+    component: VisualizationBinaryStatisticTestOnDistributionComponent,
+    dataProvider: useVisualizationBinaryStatisticTestOnDistributionDataProvider,
+    configForm: VisualizationBinaryStatisticTestOnDistributionConfigForm,
+    configValidator: VisualizationBinaryStatisticTestConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationBinaryStatisticTestOnDistributionModel[],
+    VisualizationBinaryStatisticTestConfigType
+  >,
   [DashboardItemTypeEnum.SubdatasetWords]: {
     type: DashboardItemTypeEnum.SubdatasetWords,
     label: 'Compare Subdataset Words',
