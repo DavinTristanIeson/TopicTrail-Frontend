@@ -2,91 +2,25 @@ import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationBinaryStatisticTestConfigType } from '../../configuration/binary-statistic-test';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
-import { Input, Select, Slider, Stack, useMantineTheme } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { VisualizationBinaryStatisticTestOnDistributionModel } from '@/api/correlation';
+import { Stack, useMantineTheme } from '@mantine/core';
+import { VisualizationBinaryStatisticTestOnContingencyTableMainModel } from '@/api/correlation';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { zip } from 'lodash-es';
 import {
   EFFECT_SIZE_DICTIONARY,
   STATISTIC_TEST_METHOD_DICTIONARY,
 } from '@/modules/comparison/statistic-test/dictionary';
-import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import PlotRenderer from '@/components/widgets/plotly';
+import {
+  useBinaryStatisticTestVisualizationMethodSelect,
+  useVisualizationAlphaSlider,
+} from './test-distribution';
+import { useContingencyTableAxisMultiSelect } from './contingency-table';
+import { useDebouncedValue } from '@mantine/hooks';
 
-export function useVisualizationAlphaSlider() {
-  const [alpha, setAlpha] = React.useState(0);
-  const Component = (
-    <Input.Wrapper
-      label="Alpha"
-      description="The p-value for the results of a statistic test to be considered significant."
-    >
-      <Slider
-        value={alpha}
-        min={0}
-        max={1}
-        step={0.01}
-        onChange={setAlpha}
-        label={`Alpha: ${alpha} | Confidence Level: ${100 - alpha * 100}`}
-      />
-    </Input.Wrapper>
-  );
-
-  const [debouncedAlpha] = useDebouncedValue(alpha, 1000, { leading: false });
-
-  return { Component, alpha: debouncedAlpha };
-}
-
-export enum BinaryStatisticTestVisualizationType {
-  RowCounts = 'row-counts',
-  ConfidenceLevel = 'significance',
-  EffectSize = 'effect-sizes',
-}
-
-const VISUALIZATION_TYPE_DICTIONARY = {
-  [BinaryStatisticTestVisualizationType.RowCounts]: {
-    label: 'Row Counts',
-    value: BinaryStatisticTestVisualizationType.RowCounts,
-    description: 'Show the proportion of rows that contains the categories.',
-  },
-  [BinaryStatisticTestVisualizationType.ConfidenceLevel]: {
-    label: 'Confidence Levels',
-    value: BinaryStatisticTestVisualizationType.ConfidenceLevel,
-    description:
-      'Show the confidence levels of the statistic tests, wherein the category/discriminator is used to split the dataset into two subdatasets that are compared against each other.',
-  },
-  [BinaryStatisticTestVisualizationType.EffectSize]: {
-    label: 'Effect Sizes',
-    value: BinaryStatisticTestVisualizationType.EffectSize,
-    description:
-      'Show the effect sizes of the statistic tests, wherein the category/discriminator is used to split the dataset into two subdatasets that are compared against each other.',
-  },
-};
-
-export function useBinaryStatisticTestVisualizationMethodSelect() {
-  const [type, setType] = React.useState(
-    BinaryStatisticTestVisualizationType.EffectSize,
-  );
-
-  const renderOption = useDescriptionBasedRenderOption(
-    VISUALIZATION_TYPE_DICTIONARY,
-  );
-
-  const Component = (
-    <Select
-      value={type}
-      onChange={setType as any}
-      label="Data to Visualize"
-      renderOption={renderOption}
-    />
-  );
-
-  return { Component, type };
-}
-
-function VisualizationBinaryStatisticTestOnDistributionInternal(
+function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   props: BaseVisualizationComponentProps<
-    VisualizationBinaryStatisticTestOnDistributionModel[],
+    VisualizationBinaryStatisticTestOnContingencyTableMainModel,
     VisualizationBinaryStatisticTestConfigType
   >,
 ) {
@@ -94,28 +28,60 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   const { colors: mantineColors } = useMantineTheme();
   const data = props.data[0]!.data!;
 
+  const {
+    multiSelectProps: columnsSelectProps,
+    chosenIndices: rawColumnIndices,
+  } = useContingencyTableAxisMultiSelect({
+    supportedCategories: data.columns,
+    column: data.column2,
+  });
+  const { multiSelectProps: rowsSelectProps, chosenIndices: rawRowIndices } =
+    useContingencyTableAxisMultiSelect({
+      supportedCategories: data.rows,
+      column: data.column1,
+    });
+
+  const [[rows, columns, rowIndices, columnIndices]] = useDebouncedValue(
+    [
+      rowsSelectProps.value,
+      columnsSelectProps.value,
+      rawRowIndices,
+      rawColumnIndices,
+    ] as const,
+    1000,
+    {
+      leading: false,
+    },
+  );
+
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider();
   const { Component: VisualizationMethodSelect, type: vistype } =
     useBinaryStatisticTestVisualizationMethodSelect();
 
   const values = React.useMemo(() => {
-    const discriminators = data.map((datum) => datum.discriminator);
-    const effectSizes = data.map((datum) => datum.effect_size.value);
-    const pValues = data.map((datum) => datum.significance.p_value);
-    const confidences = data.map(
-      (datum) => (1 - datum.significance.p_value) * 100,
-    );
-    const statistics = data.map((datum) => datum.significance.statistic);
-    const valid = pValues.map((p) => p < alpha);
+    const discriminators = data.results.map((row) => {
+      return row.map((col) => `${col.discriminator1} x ${col.discriminator2}`);
+    });
 
-    const invalidCounts = data.map((datum) => datum.invalid_count);
-    const noCounts = data.map((datum) => datum.no_count);
-    const yesCounts = data.map((datum) => datum.yes_count);
+    const valid = data.results.map((row) => {
+      return row.map((col) => col.significance.p_value < alpha);
+    });
 
-    const { colors: baseColors } = generateColorsFromSequence(discriminators);
-    const plotColors = zip(baseColors, valid).map(([color, valid]) =>
-      valid ? color : mantineColors.gray[2],
-    );
+    const effectSizes = data.results.map((row) => {
+      return row.map((col) => col.effect_size.value);
+    });
+    const pValues = data.results.map((row) => {
+      return row.map((col) => col.significance.p_value);
+    });
+    const confidences = data.results.map((row) => {
+      return row.map((col) => (1 - col.significance.p_value) * 100);
+    });
+    const statistics = data.results.map((row) => {
+      return row.map((col) => col.significance.statistic);
+    });
+    const frequencies = data.results.map((row) => {
+      return row.map((col) => col.frequency);
+    });
 
     const statisticTestMethodLabel =
       STATISTIC_TEST_METHOD_DICTIONARY[item.config.statistic_test_preference]
@@ -129,16 +95,14 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       confidences,
       statistics,
       effectSizes,
-      yesCounts,
-      noCounts,
+      frequencies,
     ];
     const hovertemplate = [
       '<b>P Value</b>: %{customdata[0]}',
       '<b>Confidence</b>: %{customdata[1]}%',
       `<b>${statisticTestMethodLabel} Statistic</b>: %{customdata[2]}`,
       `<b>${effectSizeMethodLabel}</b>: %{customdata[3]}`,
-      '<b>Positive Counts</b>: %{customdata[4]}',
-      '<b>Negative Counts</b>: %{customdata[5]}',
+      '<b>Frequency</b>: %{customdata[4]}',
     ];
 
     return {
@@ -148,14 +112,11 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       confidences,
       statistics,
       valid,
-      invalidCounts,
-      noCounts,
-      yesCounts,
-      plotColors,
+      frequencies,
       customdata,
       hovertemplate,
     };
-  }, [alpha, data, item, mantineColors.gray]);
+  }, [alpha, data, item]);
 
   const rowCountsPlot = React.useMemo<PlotParams>(() => {
     const { discriminators, yesCounts, noCounts, invalidCounts } = values;
@@ -281,9 +242,9 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   }, [item, values]);
 
   let usedPlot: PlotParams;
-  if (vistype === BinaryStatisticTestVisualizationType.RowCounts) {
+  if (vistype === VisualizationType.RowCounts) {
     usedPlot = rowCountsPlot;
-  } else if (vistype === BinaryStatisticTestVisualizationType.ConfidenceLevel) {
+  } else if (vistype === VisualizationType.ConfidenceLevel) {
     usedPlot = confidenceLevelsPlot;
   } else {
     usedPlot = effectSizesPlot;
@@ -291,16 +252,15 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   return (
     <Stack>
       {VisualizationMethodSelect}
-      {vistype !== BinaryStatisticTestVisualizationType.RowCounts &&
-        AlphaSlider}
+      {vistype !== VisualizationType.RowCounts && AlphaSlider}
       <PlotRenderer plot={usedPlot} />
     </Stack>
   );
 }
 
-export default function VisualizationBinaryStatisticTestOnDistributionComponent(
+export default function VisualizationBinaryStatisticTestOnContingencyTableComponent(
   props: BaseVisualizationComponentProps<
-    VisualizationBinaryStatisticTestOnDistributionModel[],
+    VisualizationBinaryStatisticTestOnContingencyTableMainModel,
     VisualizationBinaryStatisticTestConfigType
   >,
 ) {
@@ -311,5 +271,7 @@ export default function VisualizationBinaryStatisticTestOnDistributionComponent(
       `It seems that ${item.column} doesn't contain any categories at all in the dataset so we cannot use them as binary variables.`,
     );
   }
-  return <VisualizationBinaryStatisticTestOnDistributionInternal {...props} />;
+  return (
+    <VisualizationBinaryStatisticTestOnContingencyTableInternal {...props} />
+  );
 }

@@ -10,7 +10,7 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { SchemaColumnModel } from '@/api/project';
 import dayjs from 'dayjs';
 import { fromPairs } from 'lodash-es';
-import { pickArrayByIndex } from '@/common/utils/iterable';
+import { sort2D, zip2D } from '@/common/utils/iterable';
 import { useDebouncedValue } from '@mantine/hooks';
 
 enum ContingencyTableVisualizationMethod {
@@ -65,7 +65,7 @@ interface UseContingencyTableAxisMultiSelectProps {
   column: SchemaColumnModel;
 }
 
-function useContingencyTableAxisMultiSelect(
+export function useContingencyTableAxisMultiSelect(
   props: UseContingencyTableAxisMultiSelectProps,
 ) {
   const { supportedCategories, column } = props;
@@ -158,36 +158,18 @@ function useContingencyTableAxisMultiSelect(
   };
 }
 
-function sort2D(
-  arr: number[][],
-  rowIndices: number[],
-  columnIndices: number[],
-) {
-  const buffer = [];
-  for (let i = 0; i < arr.length; i++) {
-    // Sort by column first
-    buffer.push(pickArrayByIndex(arr[i]!, columnIndices));
-  }
-  // Then sort by row. Order doesn't matter.
-  return pickArrayByIndex(buffer, rowIndices);
-}
-
-function zip2D(arrays: number[][][]) {
-  const rows = arrays[0]!.length;
-  const cols = arrays[0]![0]!.length;
-  const buffer: number[][][] = [];
-  for (let r = 0; r < rows; r++) {
-    const row: number[][] = [];
-    for (let c = 0; c < cols; c++) {
-      const col: number[] = [];
-      for (let i = 0; i < arrays.length; i++) {
-        col.push(arrays[i]![r]![c]!);
+function getHeatmapZRange(Z: number[][][]): [number, number] {
+  let maxZ = 0;
+  let minZ = 0;
+  for (const row of Z) {
+    for (const col of row) {
+      for (const value of col) {
+        maxZ = Math.max(value, maxZ);
+        minZ = Math.min(value, minZ);
       }
-      row.push(col);
     }
-    buffer.push(row);
   }
-  return buffer;
+  return [minZ, maxZ];
 }
 
 function prepareHeatmapData(
@@ -209,16 +191,7 @@ function prepareHeatmapData(
     ]),
   );
   const customdata = zip2D(Object.values(picker));
-  let maxZ = 0,
-    minZ = 0;
-  for (const row of customdata) {
-    for (const col of row) {
-      for (const value of col) {
-        maxZ = Math.max(value, maxZ);
-        minZ = Math.min(value, minZ);
-      }
-    }
-  }
+  const [minZ, maxZ] = getHeatmapZRange(customdata);
   return { picker, customdata, maxZ, minZ };
 }
 
@@ -240,27 +213,26 @@ function VisualizationContingencyTableHeatmapInner(
     chosenIndices: rawColumnIndices,
   } = useContingencyTableAxisMultiSelect({
     supportedCategories: data.columns,
-    column: data.column1,
+    column: data.column2,
   });
   const { multiSelectProps: rowsSelectProps, chosenIndices: rawRowIndices } =
     useContingencyTableAxisMultiSelect({
       supportedCategories: data.rows,
-      column: data.column2,
+      column: data.column1,
     });
 
-  const [columns] = useDebouncedValue(columnsSelectProps.value, 1000, {
-    leading: false,
-  });
-  const [rows] = useDebouncedValue(rowsSelectProps.value, 1000, {
-    leading: false,
-  });
-
-  const [columnIndices] = useDebouncedValue(rawColumnIndices, 1000, {
-    leading: false,
-  });
-  const [rowIndices] = useDebouncedValue(rawRowIndices, 1000, {
-    leading: false,
-  });
+  const [[rows, columns, rowIndices, columnIndices]] = useDebouncedValue(
+    [
+      rowsSelectProps.value,
+      columnsSelectProps.value,
+      rawRowIndices,
+      rawColumnIndices,
+    ] as const,
+    1000,
+    {
+      leading: false,
+    },
+  );
 
   const plot = React.useMemo<PlotParams | undefined>(() => {
     if (rows.length === 0 || columns.length === 0) return undefined;

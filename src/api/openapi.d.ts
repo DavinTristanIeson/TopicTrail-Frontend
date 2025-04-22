@@ -854,6 +854,12 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[BinaryStatisticTestOnContingencyTableMainResource] */
+        ApiResult_BinaryStatisticTestOnContingencyTableMainResource_: {
+            data: components["schemas"]["BinaryStatisticTestOnContingencyTableMainResource"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[CheckDatasetResource] */
         ApiResult_CheckDatasetResource_: {
             data: components["schemas"]["CheckDatasetResource"];
@@ -975,13 +981,6 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[list[BinaryStatisticTestOnContingencyTableResource]] */
-        ApiResult_list_BinaryStatisticTestOnContingencyTableResource__: {
-            /** Data */
-            data: components["schemas"]["BinaryStatisticTestOnContingencyTableResource"][];
-            /** Message */
-            message: string | null;
-        };
         /** ApiResult[list[BinaryStatisticTestOnDistributionResource]] */
         ApiResult_list_BinaryStatisticTestOnDistributionResource__: {
             /** Data */
@@ -1038,25 +1037,27 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** BinaryStatisticTestOnContingencyTableMainResource */
+        BinaryStatisticTestOnContingencyTableMainResource: {
+            /** Rows */
+            rows: string[];
+            /** Columns */
+            columns: string[];
+            /** Column1 */
+            column1: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Column2 */
+            column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Results */
+            results: components["schemas"]["BinaryStatisticTestOnContingencyTableResource"][][];
+        };
         /** BinaryStatisticTestOnContingencyTableResource */
         BinaryStatisticTestOnContingencyTableResource: {
             /** Discriminator1 */
             discriminator1: string;
             /** Discriminator2 */
             discriminator2: string;
-            /** Contingency Table */
-            contingency_table: [
-                [
-                    number,
-                    number
-                ],
-                [
-                    number,
-                    number
-                ]
-            ];
-            /** Invalid Count */
-            invalid_count: number;
+            /** Frequency */
+            frequency: number;
             /** Warnings */
             warnings: string[];
             significance: components["schemas"]["SignificanceResult"];
@@ -6364,7 +6365,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_list_BinaryStatisticTestOnContingencyTableResource__"];
+                    "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnContingencyTableMainResource_"];
                 };
             };
             /** @description Bad Request */
