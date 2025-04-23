@@ -43,6 +43,9 @@ function DefaultErrorViewBoundaryRenderer(
   props: React.ComponentProps<ErrorComponent>,
 ) {
   const { error, reset } = props;
+  React.useEffect(() => {
+    console.error(error);
+  }, [error]);
   return <ErrorViewComponent message={error.message} refetch={reset} />;
 }
 

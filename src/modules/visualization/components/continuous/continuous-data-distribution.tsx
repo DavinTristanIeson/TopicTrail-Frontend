@@ -75,7 +75,7 @@ export function VisualizationContinuousDataDistributionHistogram(
         barmode: 'group',
       },
     };
-  }, [data]);
+  }, [data, item.column]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 

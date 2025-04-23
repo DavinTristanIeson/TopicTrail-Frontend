@@ -80,11 +80,11 @@ export function zip2D<T>(arrays: T[][][]): T[][][] {
   return buffer;
 }
 
-export function sort2D(
-  arr: number[][],
+export function sort2D<T>(
+  arr: T[][],
   rowIndices: number[],
   columnIndices: number[],
-) {
+): T[][] {
   const buffer = [];
   for (let i = 0; i < arr.length; i++) {
     // Sort by column first
@@ -94,11 +94,25 @@ export function sort2D(
   return pickArrayByIndex(buffer, rowIndices);
 }
 
-export function mask2D<T>(arr: T[][], mask: boolean[][], value: T) {
+export function map2D<TSrc, TDist>(
+  arr: TSrc[][],
+  fn: (value: TSrc, row: number, col: number) => TDist,
+) {
+  const buffer: TDist[][] = [];
   for (let i = 0; i < arr.length; i++) {
+    const row: TDist[] = [];
     for (let j = 0; j < arr[i]!.length; j++) {
-      arr[i]![j] = value;
+      const value = fn(arr[i]![j]!, i, j);
+      row.push(value);
     }
+    buffer.push(row);
   }
-  return arr;
+  return buffer;
+}
+
+export function mask2D<T>(arr: T[][], mask: boolean[][], value: T) {
+  return map2D(arr, (original, i, j) => {
+    const valid = !!mask[i]?.[j];
+    return valid ? value : original;
+  });
 }

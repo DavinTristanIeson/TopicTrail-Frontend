@@ -13,9 +13,10 @@ import {
 } from '@/modules/comparison/statistic-test/dictionary';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import PlotRenderer from '@/components/widgets/plotly';
+import { usePlotRendererHelperProps } from '../utils';
 
 export function useVisualizationAlphaSlider() {
-  const [alpha, setAlpha] = React.useState(0);
+  const [alpha, setAlpha] = React.useState(0.05);
   const Component = (
     <Input.Wrapper
       label="Alpha"
@@ -27,7 +28,7 @@ export function useVisualizationAlphaSlider() {
         max={1}
         step={0.01}
         onChange={setAlpha}
-        label={`Alpha: ${alpha} | Confidence Level: ${100 - alpha * 100}`}
+        label={`Alpha: ${alpha} | Confidence Level: ${100 - alpha * 100}%`}
       />
     </Input.Wrapper>
   );
@@ -38,16 +39,17 @@ export function useVisualizationAlphaSlider() {
 }
 
 export enum BinaryStatisticTestVisualizationType {
-  RowCounts = 'row-counts',
+  Frequencies = 'frequencies',
   ConfidenceLevel = 'significance',
   EffectSize = 'effect-sizes',
 }
 
 const VISUALIZATION_TYPE_DICTIONARY = {
-  [BinaryStatisticTestVisualizationType.RowCounts]: {
-    label: 'Row Counts',
-    value: BinaryStatisticTestVisualizationType.RowCounts,
-    description: 'Show the proportion of rows that contains the categories.',
+  [BinaryStatisticTestVisualizationType.Frequencies]: {
+    label: 'Frequencies',
+    value: BinaryStatisticTestVisualizationType.Frequencies,
+    description:
+      'Show the frequencies of the rows that contains the categories.',
   },
   [BinaryStatisticTestVisualizationType.ConfidenceLevel]: {
     label: 'Confidence Levels',
@@ -76,8 +78,10 @@ export function useBinaryStatisticTestVisualizationMethodSelect() {
     <Select
       value={type}
       onChange={setType as any}
+      data={Object.values(VISUALIZATION_TYPE_DICTIONARY)}
       label="Data to Visualize"
       renderOption={renderOption}
+      allowDeselect={false}
     />
   );
 
@@ -106,7 +110,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       (datum) => (1 - datum.significance.p_value) * 100,
     );
     const statistics = data.map((datum) => datum.significance.statistic);
-    const valid = pValues.map((p) => p < alpha);
+    const valid = pValues.map((p) => p <= alpha);
 
     const invalidCounts = data.map((datum) => datum.invalid_count);
     const noCounts = data.map((datum) => datum.no_count);
@@ -117,22 +121,32 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       valid ? color : mantineColors.gray[2],
     );
 
+    const statisticTestMethod =
+      STATISTIC_TEST_METHOD_DICTIONARY[item.config.statistic_test_preference];
     const statisticTestMethodLabel =
-      STATISTIC_TEST_METHOD_DICTIONARY[item.config.statistic_test_preference]
-        ?.label ?? item.config.statistic_test_preference;
+      statisticTestMethod?.label ?? item.config.statistic_test_preference;
+    const effectSizeMethod =
+      EFFECT_SIZE_DICTIONARY[item.config.effect_size_preference];
     const effectSizeMethodLabel =
-      EFFECT_SIZE_DICTIONARY[item.config.effect_size_preference]?.label ??
-      item.config.effect_size_preference;
+      effectSizeMethod?.label ?? item.config.effect_size_preference;
+    const effectSizeMethodYAxis = {
+      range: effectSizeMethod.range.every(Boolean)
+        ? effectSizeMethod.range
+        : undefined,
+      minallowed: effectSizeMethod.range[0],
+      maxallowed: effectSizeMethod.range[1],
+    };
 
-    const customdata = [
+    const customdata = zip(
       pValues,
       confidences,
       statistics,
       effectSizes,
       yesCounts,
       noCounts,
-    ];
+    ) as any;
     const hovertemplate = [
+      `<b>${item.column}</b>: %{x}`,
       '<b>P Value</b>: %{customdata[0]}',
       '<b>Confidence</b>: %{customdata[1]}%',
       `<b>${statisticTestMethodLabel} Statistic</b>: %{customdata[2]}`,
@@ -154,10 +168,11 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       plotColors,
       customdata,
       hovertemplate,
+      effectSizeMethodYAxis,
     };
   }, [alpha, data, item, mantineColors.gray]);
 
-  const rowCountsPlot = React.useMemo<PlotParams>(() => {
+  const frequenciesPlot = React.useMemo<PlotParams>(() => {
     const { discriminators, yesCounts, noCounts, invalidCounts } = values;
     return {
       data: [
@@ -165,6 +180,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
           name: 'Positive Rows',
           x: discriminators,
           y: yesCounts,
+          type: 'bar',
           hovertemplate: `<b>Row contains %{x}</b><br><b>Frequency</b>: %{y}`,
           marker: {
             color: mantineColors.green[6],
@@ -174,6 +190,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
           name: 'Negative Rows',
           x: discriminators,
           y: noCounts,
+          type: 'bar',
           hovertemplate: `<b>Row doesn't contain %{x}</b><br><b>Frequency</b>: %{y}`,
           marker: {
             color: mantineColors.red[6],
@@ -183,6 +200,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
           name: 'Invalid Rows',
           x: discriminators,
           y: invalidCounts,
+          type: 'bar',
           hovertemplate: `<b>Invalid rows for %{x}</b><br><b>Frequency</b>: %{y}`,
           marker: {
             color: mantineColors.gray[6],
@@ -190,9 +208,9 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
         },
       ],
       layout: {
-        title: `Row Counts of ${item.column}`,
+        title: `Frequencies of ${item.column}`,
         barmode: 'stack',
-        xaxis: {
+        yaxis: {
           minallowed: 0,
         },
       },
@@ -210,16 +228,10 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       discriminators,
       effectSizes,
       customdata,
-      hovertemplate,
       plotColors,
+      hovertemplate,
+      effectSizeMethodYAxis,
     } = values;
-
-    const plotHoverTemplate = hovertemplate.slice();
-    const newTemplate = plotHoverTemplate.splice(3, 1);
-    if (newTemplate.length > 0) {
-      plotHoverTemplate.unshift('-'.repeat(15));
-      plotHoverTemplate.unshift(newTemplate[0]!);
-    }
 
     return {
       data: [
@@ -235,7 +247,10 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
         },
       ],
       layout: {
-        title: `Effect Sizes of How ${item.column} Discriminates ${item.config.target}`,
+        title: `Effect Sizes of How ${item.column} Affects ${item.config.target}`,
+        yaxis: {
+          ...effectSizeMethodYAxis,
+        },
       },
     };
   }, [item, values]);
@@ -248,13 +263,6 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       hovertemplate,
       plotColors,
     } = values;
-
-    const plotHoverTemplate = hovertemplate.slice();
-    const newTemplate = plotHoverTemplate.splice(1, 1);
-    if (newTemplate.length > 0) {
-      plotHoverTemplate.unshift('-'.repeat(15));
-      plotHoverTemplate.unshift(newTemplate[0]!);
-    }
 
     return {
       data: [
@@ -270,8 +278,8 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
         },
       ],
       layout: {
-        title: `Confidence Level of How ${item.column} Discriminates ${item.config.target}`,
-        xaxis: {
+        title: `Confidence Level of How ${item.column} Affects ${item.config.target}`,
+        yaxis: {
           range: [0, 100],
           minallowed: 0,
           ticksuffix: '%',
@@ -281,8 +289,8 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   }, [item, values]);
 
   let usedPlot: PlotParams;
-  if (vistype === BinaryStatisticTestVisualizationType.RowCounts) {
-    usedPlot = rowCountsPlot;
+  if (vistype === BinaryStatisticTestVisualizationType.Frequencies) {
+    usedPlot = frequenciesPlot;
   } else if (vistype === BinaryStatisticTestVisualizationType.ConfidenceLevel) {
     usedPlot = confidenceLevelsPlot;
   } else {
@@ -291,9 +299,9 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   return (
     <Stack>
       {VisualizationMethodSelect}
-      {vistype !== BinaryStatisticTestVisualizationType.RowCounts &&
+      {vistype !== BinaryStatisticTestVisualizationType.Frequencies &&
         AlphaSlider}
-      <PlotRenderer plot={usedPlot} />
+      <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
     </Stack>
   );
 }

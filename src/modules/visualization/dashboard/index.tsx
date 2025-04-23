@@ -148,9 +148,9 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
             >
               <DashboardGridItem
                 item={item}
-                onFullScreen={fullScreenRemote.current?.open}
-                onEdit={editRemote.current?.open}
-                onDelete={deleteRemote.current?.open}
+                onFullScreen={() => fullScreenRemote.current?.open(item)}
+                onEdit={() => editRemote.current?.open(item)}
+                onDelete={() => deleteRemote.current?.open(item)}
                 dragHandleClassName={dragHandleClassName}
               />
             </div>

@@ -1,7 +1,6 @@
 import {
   ANALYZABLE_SCHEMA_COLUMN_TYPES,
   CATEGORICAL_SCHEMA_COLUMN_TYPES,
-  SchemaColumnModel,
 } from '@/api/project';
 import {
   EffectSizeMethodEnum,
@@ -72,7 +71,14 @@ function VisualizationBinaryStatisticTestBaseConfigForm(
     );
   }, [project.config.data_schema.columns, type]);
 
-  const [column, setColumn] = React.useState<SchemaColumnModel | null>(null);
+  const columnValue = useWatch({
+    name: 'config.target',
+  });
+  const column = React.useMemo(() => {
+    return project.config.data_schema.columns.find(
+      (column) => column.name === columnValue,
+    );
+  }, [columnValue, project.config.data_schema.columns]);
 
   return (
     <>
@@ -83,12 +89,11 @@ function VisualizationBinaryStatisticTestBaseConfigForm(
         label="Target"
         description="The data of this column will be the distribution that is tested."
         required
-        onChange={setColumn}
       />
       {column && (
         <Group>
           <StatisticMethodSelectField
-            name="statistic_test_preference"
+            name="config.statistic_test_preference"
             type="select"
             label="Statistic Test"
             className="flex-1"
@@ -97,7 +102,7 @@ function VisualizationBinaryStatisticTestBaseConfigForm(
             columnType={column.type as SchemaColumnTypeEnum}
           />
           <EffectSizeSelectField
-            name="effect_size_preference"
+            name="config.effect_size_preference"
             type="select"
             className="flex-1"
             label="Effect Size"

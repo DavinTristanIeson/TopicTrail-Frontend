@@ -3,7 +3,7 @@ import { BaseVisualizationDataProviderHook } from '../types/base';
 import { usePrepareDataProvider } from './utils';
 
 import {
-  VisualizationBinaryStatisticTestOnContingencyTableModel,
+  VisualizationBinaryStatisticTestOnContingencyTableMainModel,
   VisualizationBinaryStatisticTestOnDistributionModel,
 } from '@/api/correlation';
 import { VisualizationBinaryStatisticTestConfigType } from '../configuration/binary-statistic-test';
@@ -43,7 +43,7 @@ export const useVisualizationBinaryStatisticTestOnDistributionDataProvider: Base
 };
 
 export const useVisualizationBinaryStatisticTestOnContingencyTableDataProvider: BaseVisualizationDataProviderHook<
-  VisualizationBinaryStatisticTestOnContingencyTableModel[],
+  VisualizationBinaryStatisticTestOnContingencyTableMainModel,
   VisualizationBinaryStatisticTestConfigType
 > = function (item) {
   const { params } = usePrepareDataProvider(item);

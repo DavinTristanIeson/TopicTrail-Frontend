@@ -2,21 +2,22 @@ import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationBinaryStatisticTestConfigType } from '../../configuration/binary-statistic-test';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
-import { Stack, useMantineTheme } from '@mantine/core';
+import { MultiSelect, Stack } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnContingencyTableMainModel } from '@/api/correlation';
-import { generateColorsFromSequence } from '@/common/utils/colors';
-import { zip } from 'lodash-es';
 import {
   EFFECT_SIZE_DICTIONARY,
   STATISTIC_TEST_METHOD_DICTIONARY,
 } from '@/modules/comparison/statistic-test/dictionary';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
+  BinaryStatisticTestVisualizationType,
   useBinaryStatisticTestVisualizationMethodSelect,
   useVisualizationAlphaSlider,
 } from './test-distribution';
 import { useContingencyTableAxisMultiSelect } from './contingency-table';
 import { useDebouncedValue } from '@mantine/hooks';
+import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
+import { usePlotRendererHelperProps } from '../utils';
 
 function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   props: BaseVisualizationComponentProps<
@@ -25,7 +26,6 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   >,
 ) {
   const { item } = props;
-  const { colors: mantineColors } = useMantineTheme();
   const data = props.data[0]!.data!;
 
   const {
@@ -59,45 +59,53 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
     useBinaryStatisticTestVisualizationMethodSelect();
 
   const values = React.useMemo(() => {
-    const discriminators = data.results.map((row) => {
-      return row.map((col) => `${col.discriminator1} x ${col.discriminator2}`);
-    });
+    const invalid = sort2D(
+      map2D(data.results, (result) => result.significance.p_value > alpha),
+      rowIndices,
+      columnIndices,
+    );
+    const process = (arr: number[][]) =>
+      mask2D(sort2D(arr, rowIndices, columnIndices), invalid, 0);
+    const effectSizes = process(
+      map2D(data.results, (result) => result.effect_size.value),
+    );
+    const pValues = process(
+      map2D(data.results, (result) => result.significance.p_value),
+    );
+    const confidences = process(
+      map2D(data.results, (result) => (1 - result.significance.p_value) * 100),
+    );
+    const statistics = process(
+      map2D(data.results, (result) => result.significance.statistic),
+    );
+    const frequencies = sort2D(
+      map2D(data.results, (result) => result.frequency),
+      rowIndices,
+      columnIndices,
+    );
 
-    const valid = data.results.map((row) => {
-      return row.map((col) => col.significance.p_value < alpha);
-    });
-
-    const effectSizes = data.results.map((row) => {
-      return row.map((col) => col.effect_size.value);
-    });
-    const pValues = data.results.map((row) => {
-      return row.map((col) => col.significance.p_value);
-    });
-    const confidences = data.results.map((row) => {
-      return row.map((col) => (1 - col.significance.p_value) * 100);
-    });
-    const statistics = data.results.map((row) => {
-      return row.map((col) => col.significance.statistic);
-    });
-    const frequencies = data.results.map((row) => {
-      return row.map((col) => col.frequency);
-    });
-
+    const statisticTestMethod =
+      STATISTIC_TEST_METHOD_DICTIONARY[item.config.statistic_test_preference];
     const statisticTestMethodLabel =
-      STATISTIC_TEST_METHOD_DICTIONARY[item.config.statistic_test_preference]
-        ?.label ?? item.config.statistic_test_preference;
+      statisticTestMethod?.label ?? item.config.statistic_test_preference;
+    const effectSizeMethod =
+      EFFECT_SIZE_DICTIONARY[item.config.effect_size_preference];
     const effectSizeMethodLabel =
-      EFFECT_SIZE_DICTIONARY[item.config.effect_size_preference]?.label ??
-      item.config.effect_size_preference;
-
-    const customdata = [
+      effectSizeMethod?.label ?? item.config.effect_size_preference;
+    const effectSizeMethodConstraints = {
+      zmin: effectSizeMethod.range[0],
+      zmax: effectSizeMethod.range[1],
+    };
+    const customdata = zip2D([
       pValues,
       confidences,
       statistics,
       effectSizes,
       frequencies,
-    ];
+    ]);
     const hovertemplate = [
+      `<b>${item.column}</b>: %{x}`,
+      `<b>${item.config.target}</b>: %{y}`,
       '<b>P Value</b>: %{customdata[0]}',
       '<b>Confidence</b>: %{customdata[1]}%',
       `<b>${statisticTestMethodLabel} Statistic</b>: %{customdata[2]}`,
@@ -106,145 +114,99 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
     ];
 
     return {
-      discriminators,
       effectSizes,
       pValues,
       confidences,
       statistics,
-      valid,
+      valid: invalid,
       frequencies,
       customdata,
       hovertemplate,
+      effectSizeMethodConstraints,
     };
-  }, [alpha, data, item]);
+  }, [
+    alpha,
+    columnIndices,
+    data.results,
+    item.column,
+    item.config.effect_size_preference,
+    item.config.statistic_test_preference,
+    item.config.target,
+    rowIndices,
+  ]);
 
-  const rowCountsPlot = React.useMemo<PlotParams>(() => {
-    const { discriminators, yesCounts, noCounts, invalidCounts } = values;
+  const frequenciesPlot = React.useMemo<PlotParams>(() => {
+    const { frequencies, customdata, hovertemplate } = values;
+
     return {
       data: [
         {
-          name: 'Positive Rows',
-          x: discriminators,
-          y: yesCounts,
-          hovertemplate: `<b>Row contains %{x}</b><br><b>Frequency</b>: %{y}`,
-          marker: {
-            color: mantineColors.green[6],
-          },
-        },
-        {
-          name: 'Negative Rows',
-          x: discriminators,
-          y: noCounts,
-          hovertemplate: `<b>Row doesn't contain %{x}</b><br><b>Frequency</b>: %{y}`,
-          marker: {
-            color: mantineColors.red[6],
-          },
-        },
-        {
-          name: 'Invalid Rows',
-          x: discriminators,
-          y: invalidCounts,
-          hovertemplate: `<b>Invalid rows for %{x}</b><br><b>Frequency</b>: %{y}`,
-          marker: {
-            color: mantineColors.gray[6],
-          },
+          type: 'heatmap',
+          x: columns,
+          y: rows,
+          z: frequencies,
+          customdata: customdata as any,
+          hovertemplate: hovertemplate.join('<br>'),
         },
       ],
       layout: {
-        title: `Row Counts of ${item.column}`,
-        barmode: 'stack',
-        xaxis: {
-          minallowed: 0,
-        },
+        title: `Frequencies of ${item.column}`,
       },
     };
-  }, [
-    item.column,
-    mantineColors.gray,
-    mantineColors.green,
-    mantineColors.red,
-    values,
-  ]);
+  }, [columns, item.column, rows, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
     const {
-      discriminators,
       effectSizes,
       customdata,
       hovertemplate,
-      plotColors,
+      effectSizeMethodConstraints,
     } = values;
-
-    const plotHoverTemplate = hovertemplate.slice();
-    const newTemplate = plotHoverTemplate.splice(3, 1);
-    if (newTemplate.length > 0) {
-      plotHoverTemplate.unshift('-'.repeat(15));
-      plotHoverTemplate.unshift(newTemplate[0]!);
-    }
 
     return {
       data: [
         {
-          type: 'bar',
-          x: discriminators,
-          y: effectSizes,
-          customdata,
+          type: 'heatmap',
+          x: columns,
+          y: rows,
+          z: effectSizes,
+          customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
-          marker: {
-            color: plotColors,
-          },
+          ...effectSizeMethodConstraints,
         },
       ],
       layout: {
-        title: `Effect Sizes of How ${item.column} Discriminates ${item.config.target}`,
+        title: `Effect Sizes of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
       },
     };
-  }, [item, values]);
+  }, [columns, item, rows, values]);
 
   const confidenceLevelsPlot = React.useMemo<PlotParams>(() => {
-    const {
-      discriminators,
-      confidences,
-      customdata,
-      hovertemplate,
-      plotColors,
-    } = values;
-
-    const plotHoverTemplate = hovertemplate.slice();
-    const newTemplate = plotHoverTemplate.splice(1, 1);
-    if (newTemplate.length > 0) {
-      plotHoverTemplate.unshift('-'.repeat(15));
-      plotHoverTemplate.unshift(newTemplate[0]!);
-    }
+    const { confidences, customdata, hovertemplate } = values;
 
     return {
       data: [
         {
-          type: 'bar',
-          x: discriminators,
-          y: confidences,
-          customdata,
+          type: 'heatmap',
+          x: columns,
+          y: rows,
+          z: confidences,
+          customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
-          marker: {
-            color: plotColors,
-          },
         },
       ],
       layout: {
-        title: `Confidence Level of How ${item.column} Discriminates ${item.config.target}`,
-        xaxis: {
-          range: [0, 100],
-          minallowed: 0,
-          ticksuffix: '%',
-        },
+        title: `Confidence Level of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
+        zmin: 0,
+        zmax: 100,
       },
     };
-  }, [item, values]);
+  }, [columns, item, rows, values]);
 
   let usedPlot: PlotParams;
-  if (vistype === VisualizationType.RowCounts) {
-    usedPlot = rowCountsPlot;
-  } else if (vistype === VisualizationType.ConfidenceLevel) {
+  if (vistype === BinaryStatisticTestVisualizationType.Frequencies) {
+    usedPlot = frequenciesPlot;
+  } else if (vistype === BinaryStatisticTestVisualizationType.ConfidenceLevel) {
     usedPlot = confidenceLevelsPlot;
   } else {
     usedPlot = effectSizesPlot;
@@ -252,8 +214,19 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   return (
     <Stack>
       {VisualizationMethodSelect}
-      {vistype !== VisualizationType.RowCounts && AlphaSlider}
-      <PlotRenderer plot={usedPlot} />
+      <MultiSelect
+        {...rowsSelectProps}
+        label="Select Rows"
+        description="Select the rows to be included in the heatmap"
+      />
+      <MultiSelect
+        {...columnsSelectProps}
+        label="Select Columns"
+        description="Select the columns to be included in the heatmap"
+      />
+      {vistype !== BinaryStatisticTestVisualizationType.Frequencies &&
+        AlphaSlider}
+      <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
     </Stack>
   );
 }
@@ -266,9 +239,14 @@ export default function VisualizationBinaryStatisticTestOnContingencyTableCompon
 ) {
   const data = props.data[0]?.data;
   const item = props.item;
-  if (!data || data.length === 0) {
+  if (!data?.rows || data.columns.length === 0) {
     throw new Error(
-      `It seems that ${item.column} doesn't contain any categories at all in the dataset so we cannot use them as binary variables.`,
+      `It seems that ${item.column} doesn't contain any values at all in the dataset so we cannot use them as binary variables.`,
+    );
+  }
+  if (!data?.columns || data.columns.length === 0) {
+    throw new Error(
+      `It seems that ${item.config.target} doesn't contain any values at all in the dataset so we cannot use them as binary variables.`,
     );
   }
   return (

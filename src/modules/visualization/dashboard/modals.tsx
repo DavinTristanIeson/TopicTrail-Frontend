@@ -28,7 +28,7 @@ import React from 'react';
 import VisualizationConfigurationForm from '../configuration';
 import { CancelButton } from '@/components/standard/button/variants';
 import { DashboardItemRenderer } from './grid-item';
-import { useDisclosure, useElementSize } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
 import ConfirmationDialog from '@/components/widgets/confirmation';
@@ -160,7 +160,6 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
   const dashboardItemConfig = item
     ? DASHBOARD_ITEM_CONFIGURATION[item.type as DashboardItemTypeEnum]
     : undefined;
-  const { height, ref: elementRef } = useElementSize();
   return (
     <Modal
       size="xl"
@@ -173,7 +172,7 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
       {/* {item && (
         <DashboardFullScreenConfiguration item={item} onSubmit={onSubmit} />
       )} */}
-      <Stack ref={elementRef} className="pb-5">
+      <Stack className="pb-5">
         {dashboardItemConfig && (
           <>
             <Title

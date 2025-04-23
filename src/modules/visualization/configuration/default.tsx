@@ -91,6 +91,7 @@ function DashboardItemTypeDescription() {
     name: 'type',
   });
   const dashboardConfig = DASHBOARD_ITEM_CONFIGURATION[dashboardType];
+  if (!dashboardConfig) return null;
   return (
     <Alert title={dashboardConfig.label} color="blue" icon={<Info />}>
       {dashboardConfig.description}

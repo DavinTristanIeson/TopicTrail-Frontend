@@ -56,16 +56,22 @@ import {
 import { useVisualizationContingencyTableDataProvider } from '../data-provider/contingency-table';
 import { VisualizationContingencyTableHeatmap } from '../components/correlation/contingency-table';
 import {
+  VisualizationBinaryStatisticTestOnContingencyTableMainModel,
   VisualizationBinaryStatisticTestOnDistributionModel,
   VisualizationContingencyTableModel,
 } from '@/api/correlation';
 import VisualizationBinaryStatisticTestOnDistributionComponent from '../components/correlation/test-distribution';
-import { useVisualizationBinaryStatisticTestOnDistributionDataProvider } from '../data-provider/binary-statistic-test';
+import {
+  useVisualizationBinaryStatisticTestOnContingencyTableDataProvider,
+  useVisualizationBinaryStatisticTestOnDistributionDataProvider,
+} from '../data-provider/binary-statistic-test';
 import {
   VisualizationBinaryStatisticTestConfigSchema,
   VisualizationBinaryStatisticTestConfigType,
+  VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
   VisualizationBinaryStatisticTestOnDistributionConfigForm,
 } from '../configuration/binary-statistic-test';
+import VisualizationBinaryStatisticTestOnContingencyTableComponent from '../components/correlation/test-contingency-table';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -167,13 +173,16 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     type: DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
     label: 'Statistical Test on Contingency Table',
     description:
-      'Perform a statistic test between the two columns containing discrete data (wherein each "item" is considered a binary variable) to figure out the correlation of each pair of "items" between both columns.',
-    // TODO: Implement this
-    component: null,
-    dataProvider: null,
-    configForm: null,
-    configValidator: null,
-  } as any,
+      'Perform a statistic test between the two columns containing discrete data (wherein each "item" is considered a binary variable) to figure out the correlation of each pair of categories/values between both columns.',
+    component: VisualizationBinaryStatisticTestOnContingencyTableComponent,
+    dataProvider:
+      useVisualizationBinaryStatisticTestOnContingencyTableDataProvider,
+    configForm: VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
+    configValidator: VisualizationBinaryStatisticTestConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationBinaryStatisticTestOnContingencyTableMainModel,
+    VisualizationBinaryStatisticTestConfigType
+  >,
   [DashboardItemTypeEnum.BinaryStatisticTestOnDistribution]: {
     type: DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
     label: 'Statistical Test on Distribution',

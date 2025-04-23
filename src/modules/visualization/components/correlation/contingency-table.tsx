@@ -158,18 +158,17 @@ export function useContingencyTableAxisMultiSelect(
   };
 }
 
-function getHeatmapZRange(Z: number[][][]): [number, number] {
+export function getHeatmapZRange(Z: number[][]): [number, number] {
   let maxZ = 0;
   let minZ = 0;
   for (const row of Z) {
     for (const col of row) {
-      for (const value of col) {
-        maxZ = Math.max(value, maxZ);
-        minZ = Math.min(value, minZ);
-      }
+      maxZ = Math.max(col, maxZ);
+      minZ = Math.min(col, minZ);
     }
   }
-  return [minZ, maxZ];
+  const zThreshold = minZ > -1 ? maxZ : (maxZ + Math.abs(minZ)) / 2;
+  return [-zThreshold, zThreshold];
 }
 
 function prepareHeatmapData(
@@ -191,8 +190,7 @@ function prepareHeatmapData(
     ]),
   );
   const customdata = zip2D(Object.values(picker));
-  const [minZ, maxZ] = getHeatmapZRange(customdata);
-  return { picker, customdata, maxZ, minZ };
+  return { picker, customdata };
 }
 
 function VisualizationContingencyTableHeatmapInner(
@@ -236,14 +234,14 @@ function VisualizationContingencyTableHeatmapInner(
 
   const plot = React.useMemo<PlotParams | undefined>(() => {
     if (rows.length === 0 || columns.length === 0) return undefined;
-    const { picker, customdata, maxZ, minZ } = prepareHeatmapData(
+    const { picker, customdata } = prepareHeatmapData(
       data,
       rowIndices,
       columnIndices,
     );
-    const zThreshold = minZ > -1 ? maxZ : (maxZ + Math.abs(minZ)) / 2;
 
-    const usedValue = picker[method];
+    const usedValue = picker[method]!;
+    const [minZ, maxZ] = getHeatmapZRange(usedValue);
     const usedTitle = CONTINGENCY_TABLE_METHOD_DICTIONARY[method].title;
     const usedLabel = CONTINGENCY_TABLE_METHOD_DICTIONARY[method].hoverLabel;
 
@@ -269,8 +267,8 @@ function VisualizationContingencyTableHeatmapInner(
           hovertemplate: hovertemplates.join('<br>'),
           colorscale: 'RdBu',
           // So that the middlepoint of the color scale is at 0
-          zmin: -zThreshold,
-          zmax: zThreshold,
+          zmin: minZ,
+          zmax: maxZ,
         },
       ],
       layout: {

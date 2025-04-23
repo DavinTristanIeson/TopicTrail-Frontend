@@ -6,6 +6,7 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
 import { VisualizationGeographicalPointsConfigType } from '../../configuration/geographical-points';
 import { sum } from 'lodash-es';
+import { usePlotRendererHelperProps } from '../utils';
 
 export default function VisualizationGeographicalMap(
   props: BaseVisualizationComponentProps<
@@ -54,5 +55,5 @@ export default function VisualizationGeographicalMap(
       },
     };
   }, [data, item.config.latitude_column, item.config.longitude_column]);
-  return <PlotRenderer plot={plot} />;
+  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }

@@ -73,6 +73,14 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
     }
   }, [dashboardConfig?.configValidator, rawConfig]);
 
+  const [shouldRender, setShouldRender] = React.useState(false);
+  React.useEffect(() => {
+    // Wait until Gridstack.js resolves the sizes of the grid items first.
+    setTimeout(() => {
+      setShouldRender(true);
+    }, 500);
+  }, []);
+
   if (!dashboardConfig) {
     return (
       <Alert color="gray" icon={<X />}>
@@ -89,6 +97,7 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
       </Alert>
     );
   }
+  if (!shouldRender) return;
   return (
     <div className="relative">
       <DashboardItemRendererInternal
@@ -133,9 +142,9 @@ function DashboardGridItemInfo(props: DashboardItemModel) {
 interface DashboardGridItemProps {
   item: DashboardItemModel;
   dragHandleClassName: string;
-  onEdit: ((item: DashboardItemModel) => void) | undefined;
-  onDelete: ((item: DashboardItemModel) => void) | undefined;
-  onFullScreen: ((item: DashboardItemModel) => void) | undefined;
+  onEdit(): void;
+  onDelete(): void;
+  onFullScreen(): void;
 }
 
 export default function DashboardGridItem(props: DashboardGridItemProps) {
@@ -145,30 +154,16 @@ export default function DashboardGridItem(props: DashboardGridItemProps) {
       <Group className="pb-2">
         <DotsSixVertical className={dragHandleClassName} />
         <div className="flex-1" />
-        {onFullScreen && (
-          <ActionIcon
-            variant="subtle"
-            color="gray"
-            onClick={() => onFullScreen(item)}
-          >
-            <CornersOut size={24} />
-          </ActionIcon>
-        )}
+        <ActionIcon variant="subtle" color="gray" onClick={onFullScreen}>
+          <CornersOut size={24} />
+        </ActionIcon>
         <DashboardGridItemInfo {...item} />
-        {onEdit && (
-          <ActionIcon variant="subtle" onClick={() => onEdit(item)}>
-            <PencilSimple size={24} />
-          </ActionIcon>
-        )}
-        {onDelete && (
-          <ActionIcon
-            color="red"
-            variant="subtle"
-            onClick={() => onDelete(item)}
-          >
-            <TrashSimple size={24} />
-          </ActionIcon>
-        )}
+        <ActionIcon variant="subtle" onClick={onEdit}>
+          <PencilSimple size={24} />
+        </ActionIcon>
+        <ActionIcon color="red" variant="subtle" onClick={onDelete}>
+          <TrashSimple size={24} />
+        </ActionIcon>
       </Group>
       <DefaultErrorViewBoundary>
         <DashboardItemRenderer {...item} />

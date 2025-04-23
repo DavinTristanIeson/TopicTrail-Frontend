@@ -59,7 +59,7 @@ export function VisualizationFrequencyDistributionBarChart(
         barmode: 'group',
       },
     };
-  }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
+  }, [data, item, plotlyLayoutProps, transformFrequencies]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
@@ -101,7 +101,7 @@ export function VisualizationFrequencyDistributionLinePlot(
         },
       },
     };
-  }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
+  }, [data, item, plotlyLayoutProps, transformFrequencies]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
