@@ -13,11 +13,14 @@ import {
 import { Divider, Group, Stack, Text } from '@mantine/core';
 import { CancelButton } from '@/components/standard/button/variants';
 import SubmitButton from '@/components/standard/button/submit';
+import { SchemaColumnModel } from '@/api/project';
 
 interface VisualizationConfigurationFormProps {
   data: DashboardItemModel | undefined;
   onClose(): void;
   onSubmit(value: DashboardItemModel): void;
+  defaultColumn?: string;
+  columns?: SchemaColumnModel[];
 }
 
 function ExtendedVisualizationConfigurationFormBody() {
@@ -44,14 +47,14 @@ function ExtendedVisualizationConfigurationFormBody() {
 export default function VisualizationConfigurationForm(
   props: VisualizationConfigurationFormProps,
 ) {
-  const { data, onSubmit, onClose } = props;
+  const { data, onSubmit, onClose, defaultColumn, columns } = props;
 
   const form = useForm<VisualizationConfigFormType>({
     resolver: yupResolver(visualizationConfigFormSchema),
     mode: 'onChange',
     defaultValues: {
       description: data?.description ?? '',
-      column: data?.column ?? '',
+      column: data?.column ?? defaultColumn ?? '',
       type: (data?.type ?? '') as DashboardItemTypeEnum,
       config: data?.config ?? {},
     },
@@ -89,7 +92,7 @@ export default function VisualizationConfigurationForm(
   return (
     <FormWrapper form={form} onSubmit={handleSubmit}>
       <Stack>
-        <DefaultVisualizationConfigurationForm />
+        <DefaultVisualizationConfigurationForm columns={columns} />
         <ExtendedVisualizationConfigurationFormBody />
         <Group justify="end">
           <CancelButton onClick={onClose} />

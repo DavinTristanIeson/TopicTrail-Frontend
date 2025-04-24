@@ -10,8 +10,8 @@ import { TableFilterButton } from '../filter/context';
 import { DashboardGroupsContext } from '../visualization/types/context';
 import UserDataManager from '../userdata';
 import React from 'react';
-import { useTableDashboardDataManager } from '../userdata/data-manager';
 import { DashboardItemModel, DashboardModel } from '@/api/userdata';
+import { useDashboardDataManager } from '../userdata/data-manager';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -21,10 +21,14 @@ const GridstackDashboard = dynamic(
   },
 );
 
+interface UseDashboardUserDataSharedBehaviorParams {
+  dashboard: DashboardItemModel[];
+  setDashboard: (dashboard: DashboardItemModel[]) => void;
+}
 export function useDashboardUserDataSharedBehavior(
-  dashboard: DashboardItemModel[],
-  setDashboard: (dashboard: DashboardItemModel[]) => void,
+  props: UseDashboardUserDataSharedBehaviorParams,
 ) {
+  const { dashboard, setDashboard } = props;
   return {
     state:
       dashboard.length > 0
@@ -32,9 +36,12 @@ export function useDashboardUserDataSharedBehavior(
             items: dashboard,
           } as DashboardModel)
         : null,
-    onApply: React.useCallback((state: DashboardModel) => {
-      setDashboard(state.items as DashboardItemModel[]);
-    }, []),
+    onApply: React.useCallback(
+      (state: DashboardModel) => {
+        setDashboard(state.items as DashboardItemModel[]);
+      },
+      [setDashboard],
+    ),
   };
 }
 
@@ -42,8 +49,11 @@ function TableDashboardUserDataManager() {
   const dashboard = useTableAppState((store) => store.dashboard.state);
   const handlers = useTableAppState((store) => store.dashboard.handlers);
 
-  const rendererProps = useTableDashboardDataManager(
-    useDashboardUserDataSharedBehavior(dashboard, handlers.setState),
+  const rendererProps = useDashboardDataManager(
+    useDashboardUserDataSharedBehavior({
+      dashboard,
+      setDashboard: handlers.setState,
+    }),
   );
   return <UserDataManager {...rendererProps} label="Dashboard" />;
 }

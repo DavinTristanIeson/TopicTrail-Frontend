@@ -75,8 +75,8 @@ const topicFilterFunction: OptionsFilter = (input) => {
       const option = opt as TopicComboboxItem;
       return {
         label: option.label,
-        words: option.data.words.map((word) => word[0]),
-        tags: option.data.tags,
+        words: option.data?.words.map((word) => word[0]) ?? [],
+        tags: option.data?.tags ?? [],
       };
     }),
   );

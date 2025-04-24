@@ -4,20 +4,17 @@ import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { MultiSelect, Stack } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnContingencyTableMainModel } from '@/api/correlation';
-import {
-  EFFECT_SIZE_DICTIONARY,
-  STATISTIC_TEST_METHOD_DICTIONARY,
-} from '@/modules/comparison/statistic-test/dictionary';
 import PlotRenderer from '@/components/widgets/plotly';
-import {
-  BinaryStatisticTestVisualizationType,
-  useBinaryStatisticTestVisualizationMethodSelect,
-  useVisualizationAlphaSlider,
-} from './test-distribution';
-import { useContingencyTableAxisMultiSelect } from './contingency-table';
+
 import { useDebouncedValue } from '@mantine/hooks';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
-import { usePlotRendererHelperProps } from '../utils';
+import { PlotInlineConfiguration, usePlotRendererHelperProps } from '../utils';
+import {
+  useContingencyTableAxisMultiSelect,
+  useVisualizationAlphaSlider,
+  useBinaryStatisticTestVisualizationMethodSelect,
+  BinaryStatisticTestVisualizationType,
+} from './utils';
 
 function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   props: BaseVisualizationComponentProps<
@@ -84,17 +81,9 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
       columnIndices,
     );
 
-    const statisticTestMethod =
-      STATISTIC_TEST_METHOD_DICTIONARY[item.config.statistic_test_preference];
-    const statisticTestMethodLabel =
-      statisticTestMethod?.label ?? item.config.statistic_test_preference;
-    const effectSizeMethod =
-      EFFECT_SIZE_DICTIONARY[item.config.effect_size_preference];
-    const effectSizeMethodLabel =
-      effectSizeMethod?.label ?? item.config.effect_size_preference;
     const effectSizeMethodConstraints = {
-      zmin: effectSizeMethod.range[0],
-      zmax: effectSizeMethod.range[1],
+      zmin: -1,
+      zmax: 1,
     };
     const customdata = zip2D([
       pValues,
@@ -108,8 +97,8 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
       `<b>${item.config.target}</b>: %{y}`,
       '<b>P Value</b>: %{customdata[0]}',
       '<b>Confidence</b>: %{customdata[1]}%',
-      `<b>${statisticTestMethodLabel} Statistic</b>: %{customdata[2]}`,
-      `<b>${effectSizeMethodLabel}</b>: %{customdata[3]}`,
+      `<b>Chi-Squared Statistic</b>: %{customdata[2]}`,
+      `<b>Yule's Q</b>: %{customdata[3]}`,
       '<b>Frequency</b>: %{customdata[4]}',
     ];
 
@@ -129,8 +118,6 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
     columnIndices,
     data.results,
     item.column,
-    item.config.effect_size_preference,
-    item.config.statistic_test_preference,
     item.config.target,
     rowIndices,
   ]);
@@ -213,19 +200,21 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   }
   return (
     <Stack>
-      {VisualizationMethodSelect}
-      <MultiSelect
-        {...rowsSelectProps}
-        label="Select Rows"
-        description="Select the rows to be included in the heatmap"
-      />
-      <MultiSelect
-        {...columnsSelectProps}
-        label="Select Columns"
-        description="Select the columns to be included in the heatmap"
-      />
-      {vistype !== BinaryStatisticTestVisualizationType.Frequencies &&
-        AlphaSlider}
+      <PlotInlineConfiguration>
+        {VisualizationMethodSelect}
+        <MultiSelect
+          {...rowsSelectProps}
+          label="Select Rows"
+          description="Select the rows to be included in the heatmap"
+        />
+        <MultiSelect
+          {...columnsSelectProps}
+          label="Select Columns"
+          description="Select the columns to be included in the heatmap"
+        />
+        {vistype !== BinaryStatisticTestVisualizationType.Frequencies &&
+          AlphaSlider}
+      </PlotInlineConfiguration>
       <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
     </Stack>
   );

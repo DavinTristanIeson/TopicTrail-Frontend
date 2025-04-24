@@ -19,7 +19,6 @@ export default function TopicCorrelationColumnControls(
   return (
     <Card
       withBorder
-      shadow="lg"
       p="lg"
       radius="lg"
       style={{ backgroundColor: 'white', borderLeft: '5px solid #7a84b9' }}

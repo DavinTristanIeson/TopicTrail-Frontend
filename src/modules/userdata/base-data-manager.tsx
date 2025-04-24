@@ -45,12 +45,7 @@ function useUserDataManagerHookRequestBoilerplate() {
 }
 
 interface BaseUserDataManagerProps<T> extends UserDataManagerHookProps<T> {
-  pathname:
-    | 'filters'
-    | 'comparison-state'
-    | 'dashboard/table'
-    | 'dashboard/comparison'
-    | 'dashboard/correlation';
+  pathname: 'filters' | 'comparison-state' | 'dashboard';
   label: string;
 }
 

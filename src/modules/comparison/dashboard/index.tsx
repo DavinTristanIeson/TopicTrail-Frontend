@@ -7,9 +7,9 @@ import {
   DashboardResetButton,
 } from '@/modules/visualization/dashboard/modals';
 import { DashboardGroupsContext } from '@/modules/visualization/types/context';
-import { useComparisonDashboardDataManager } from '@/modules/userdata/data-manager';
 import UserDataManager from '@/modules/userdata';
 import { useDashboardUserDataSharedBehavior } from '@/modules/table/dashboard';
+import { useDashboardDataManager } from '@/modules/userdata/data-manager';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -23,8 +23,11 @@ function ComparisonDashboardUserDataManager() {
   const dashboard = useComparisonAppState((store) => store.dashboard.state);
   const handlers = useComparisonAppState((store) => store.dashboard.handlers);
 
-  const rendererProps = useComparisonDashboardDataManager(
-    useDashboardUserDataSharedBehavior(dashboard, handlers.setState),
+  const rendererProps = useDashboardDataManager(
+    useDashboardUserDataSharedBehavior({
+      dashboard,
+      setDashboard: handlers.setState,
+    }),
   );
   return <UserDataManager {...rendererProps} label="Dashboard" />;
 }

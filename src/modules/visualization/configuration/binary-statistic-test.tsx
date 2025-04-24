@@ -32,11 +32,7 @@ export type VisualizationBinaryStatisticTestConfigType = Yup.InferType<
   typeof VisualizationBinaryStatisticTestConfigSchema
 >;
 
-interface VisualizationBinaryStatisticTestBaseConfigFormProps {
-  type: 'distribution' | 'contingency-table';
-}
-
-function BinaryStatisticExplanation() {
+function BinaryStatisticOnDistributionExplanation() {
   const column = useWatch({
     name: 'column',
   }) as string;
@@ -56,20 +52,33 @@ function BinaryStatisticExplanation() {
   );
 }
 
-function VisualizationBinaryStatisticTestBaseConfigForm(
-  props: VisualizationBinaryStatisticTestBaseConfigFormProps,
-) {
-  const { type } = props;
+function BinaryStatisticOnContingencyTableExplanation() {
+  const column = useWatch({
+    name: 'column',
+  }) as string;
+  const otherColumn = useWatch({
+    name: 'config.target',
+  }) as string;
+  return (
+    <Alert color="blue" title="How does this work?">
+      Each pair of unique value from &quot;{column}&quot; and &quot;
+      {otherColumn}&quot; will be treated as a pair of binary variables, which
+      will split the dataset into four subdatasets. These subdatasets can then
+      be compared with each other using statistic tests to figure out if a pair
+      of values occur more often than expected. If it does, then it may indicate
+      a relationship between said unique value and the data.
+    </Alert>
+  );
+}
+
+export function VisualizationBinaryStatisticOnDistributionConfigForm() {
   const project = React.useContext(ProjectContext);
   const supportedColumns = React.useMemo(() => {
-    const supportedColumnTypes =
-      type === 'contingency-table'
-        ? CATEGORICAL_SCHEMA_COLUMN_TYPES
-        : ANALYZABLE_SCHEMA_COLUMN_TYPES;
+    const supportedColumnTypes = ANALYZABLE_SCHEMA_COLUMN_TYPES;
     return project.config.data_schema.columns.filter((column) =>
       supportedColumnTypes.includes(column.type as SchemaColumnTypeEnum),
     );
-  }, [project.config.data_schema.columns, type]);
+  }, [project.config.data_schema.columns]);
 
   const columnValue = useWatch({
     name: 'config.target',
@@ -82,7 +91,7 @@ function VisualizationBinaryStatisticTestBaseConfigForm(
 
   return (
     <>
-      <BinaryStatisticExplanation />
+      <BinaryStatisticOnDistributionExplanation />
       <ProjectColumnSelectField
         name="config.target"
         data={supportedColumns}
@@ -116,12 +125,25 @@ function VisualizationBinaryStatisticTestBaseConfigForm(
   );
 }
 
-export function VisualizationBinaryStatisticTestOnDistributionConfigForm() {
-  return <VisualizationBinaryStatisticTestBaseConfigForm type="distribution" />;
-}
-
 export function VisualizationBinaryStatisticTestOnContingencyTableConfigForm() {
+  const project = React.useContext(ProjectContext);
+  const supportedColumns = React.useMemo(() => {
+    const supportedColumnTypes = CATEGORICAL_SCHEMA_COLUMN_TYPES;
+    return project.config.data_schema.columns.filter((column) =>
+      supportedColumnTypes.includes(column.type as SchemaColumnTypeEnum),
+    );
+  }, [project.config.data_schema.columns]);
+
   return (
-    <VisualizationBinaryStatisticTestBaseConfigForm type="contingency-table" />
+    <>
+      <BinaryStatisticOnContingencyTableExplanation />
+      <ProjectColumnSelectField
+        name="config.target"
+        data={supportedColumns}
+        label="Target"
+        description="The data of this column will be the distribution that is tested."
+        required
+      />
+    </>
   );
 }

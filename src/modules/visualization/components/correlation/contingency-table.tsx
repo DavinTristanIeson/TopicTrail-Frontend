@@ -3,15 +3,14 @@ import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationContingencyTableConfigType } from '../../configuration/contingency-table';
 import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
-import { Button, Group, MultiSelect, Select, Stack } from '@mantine/core';
+import { MultiSelect, Select, Stack } from '@mantine/core';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
 import { PlotParams } from 'react-plotly.js';
-import { SchemaColumnTypeEnum } from '@/common/constants/enum';
-import { SchemaColumnModel } from '@/api/project';
-import dayjs from 'dayjs';
 import { fromPairs } from 'lodash-es';
 import { sort2D, zip2D } from '@/common/utils/iterable';
 import { useDebouncedValue } from '@mantine/hooks';
+import { useContingencyTableAxisMultiSelect } from './utils';
+import { PlotInlineConfiguration } from '../utils';
 
 enum ContingencyTableVisualizationMethod {
   Observed = 'observed',
@@ -42,7 +41,7 @@ const CONTINGENCY_TABLE_METHOD_DICTIONARY = {
     label: 'Residuals',
     value: ContingencyTableVisualizationMethod.Residuals,
     title: 'Frequency Difference Between Observed and Expected Data',
-    hoverLabel: 'Difference',
+    hoverLabel: 'Residual',
     description:
       'Show the absolute difference between expected data and observed data.',
   },
@@ -53,110 +52,12 @@ const CONTINGENCY_TABLE_METHOD_DICTIONARY = {
       'Show the relative difference between expected data and observed data. A difference of 2 indicates that the observed and expected frequencies are two standard deviations away. As a rule of thumb, you can treat any value greater than 3 (or less than -3) as abnormal values that could be investigated.',
     title:
       'Standardized Frequency Difference Between Observed and Expected Data',
-    hoverLabel: 'Difference',
+    hoverLabel: 'Standardized Residual',
   },
 };
 const CONTINGENCY_TABLE_METHOD_OPTIONS = Object.values(
   CONTINGENCY_TABLE_METHOD_DICTIONARY,
 );
-
-interface UseContingencyTableAxisMultiSelectProps {
-  supportedCategories: string[];
-  column: SchemaColumnModel;
-}
-
-export function useContingencyTableAxisMultiSelect(
-  props: UseContingencyTableAxisMultiSelectProps,
-) {
-  const { supportedCategories, column } = props;
-  const [categories, setCategories] =
-    React.useState<string[]>(supportedCategories);
-
-  const indexMap = React.useMemo(() => {
-    return fromPairs(
-      supportedCategories.map((category, index) => [category, index]),
-    );
-  }, [supportedCategories]);
-
-  const chosenIndices = React.useMemo(() => {
-    return categories
-      .map((category) => indexMap[category]!)
-      .filter((category) => category != null);
-  }, [categories, indexMap]);
-
-  const inputContainer = (children: React.ReactNode) => (
-    <Group>
-      <div className="flex-1">{children}</div>
-      <Button
-        onClick={() => {
-          if (categories.length === supportedCategories.length) {
-            setCategories([]);
-          } else {
-            setCategories(supportedCategories);
-          }
-        }}
-        variant="subtle"
-      >
-        {categories.length === supportedCategories.length
-          ? 'Deselect'
-          : 'Select'}{' '}
-        All
-      </Button>
-      <Button
-        onClick={() => {
-          if (column.type === SchemaColumnTypeEnum.Temporal) {
-            setCategories((categories) => {
-              const newCategories = categories
-                .map(
-                  (category) =>
-                    [dayjs(category), category] as [dayjs.Dayjs, string],
-                )
-                .filter((x) => x[0].isValid())
-                .sort((a, b) => a[0].diff(b[0]))
-                .map((x) => x[1]);
-              return newCategories;
-            });
-          } else if (
-            column.type === SchemaColumnTypeEnum.OrderedCategorical &&
-            column.category_order
-          ) {
-            const categoryOrder = column.category_order!;
-            setCategories((categories) => {
-              const newCategories = categories
-                .map(
-                  (category) =>
-                    [category, categoryOrder.indexOf(category)] as [
-                      string,
-                      number,
-                    ],
-                )
-                .map((x) => (x[1] === -1 ? ([x[0], 0] as [string, number]) : x))
-                .sort((a, b) => a[1] - b[1])
-                .map((x) => x[0]);
-              return newCategories;
-            });
-          } else {
-            setCategories((categories) => categories.slice().sort());
-          }
-        }}
-        variant="subtle"
-      >
-        Sort
-      </Button>
-    </Group>
-  );
-
-  const multiSelectProps = {
-    value: categories,
-    inputContainer,
-    onChange: setCategories,
-    data: supportedCategories,
-  };
-  return {
-    multiSelectProps,
-    chosenIndices,
-  };
-}
 
 export function getHeatmapZRange(Z: number[][]): [number, number] {
   let maxZ = 0;
@@ -291,23 +192,25 @@ function VisualizationContingencyTableHeatmapInner(
 
   return (
     <Stack>
-      <Select
-        data={CONTINGENCY_TABLE_METHOD_OPTIONS}
-        value={method}
-        onChange={setMethod as any}
-        allowDeselect={false}
-        inputContainer={inputContainer}
-      />
-      <MultiSelect
-        {...rowsSelectProps}
-        label="Select Rows"
-        description="Select the rows to be included in the heatmap"
-      />
-      <MultiSelect
-        {...columnsSelectProps}
-        label="Select Columns"
-        description="Select the columns to be included in the heatmap"
-      />
+      <PlotInlineConfiguration>
+        <Select
+          data={CONTINGENCY_TABLE_METHOD_OPTIONS}
+          value={method}
+          onChange={setMethod as any}
+          allowDeselect={false}
+          inputContainer={inputContainer}
+        />
+        <MultiSelect
+          {...rowsSelectProps}
+          label="Select Rows"
+          description="Select the rows to be included in the heatmap"
+        />
+        <MultiSelect
+          {...columnsSelectProps}
+          label="Select Columns"
+          description="Select the columns to be included in the heatmap"
+        />
+      </PlotInlineConfiguration>
       {plot && <PlotRenderer plot={plot} />}
     </Stack>
   );

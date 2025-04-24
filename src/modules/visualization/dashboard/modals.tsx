@@ -32,16 +32,19 @@ import { useDisclosure } from '@mantine/hooks';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
 import ConfirmationDialog from '@/components/widgets/confirmation';
+import { SchemaColumnModel } from '@/api/project';
 
 interface VisualizationConfigurationDialogProps {
   onSubmit(item: DashboardItemModel): void;
+  defaultColumn?: string;
+  columns?: SchemaColumnModel[];
 }
 
 export const AddVisualizationConfigurationDialog = React.forwardRef<
   DisclosureTrigger | null,
   VisualizationConfigurationDialogProps
 >(function AddVisualizationConfigurationDialog(props, ref) {
-  const { onSubmit } = props;
+  const { onSubmit, defaultColumn, columns } = props;
   const [opened, { close }] = useDisclosureTrigger(ref);
   return (
     <Modal
@@ -65,6 +68,8 @@ export const AddVisualizationConfigurationDialog = React.forwardRef<
         <VisualizationConfigurationForm
           onClose={close}
           data={undefined}
+          defaultColumn={defaultColumn}
+          columns={columns}
           onSubmit={onSubmit}
         />
       )}

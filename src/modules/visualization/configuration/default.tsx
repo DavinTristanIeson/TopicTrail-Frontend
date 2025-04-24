@@ -10,6 +10,7 @@ import { fromPairs } from 'lodash-es';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { VisualizationConfigFormType } from './form-type';
 import { Info } from '@phosphor-icons/react';
+import { SchemaColumnModel } from '@/api/project';
 
 function ColumnDashboardItemSelectInput() {
   const project = React.useContext(ProjectContext);
@@ -99,13 +100,26 @@ function DashboardItemTypeDescription() {
   );
 }
 
-export function DefaultVisualizationConfigurationForm() {
+interface DefaultVisualizationConfigurationFormProps {
+  columns?: SchemaColumnModel[];
+}
+
+export function DefaultVisualizationConfigurationForm(
+  props: DefaultVisualizationConfigurationFormProps,
+) {
+  const { columns: controlledColumns } = props;
+
   const project = React.useContext(ProjectContext);
   const { reset, setValue } = useFormContext<VisualizationConfigFormType>();
   const getAllowedTypes = useAllowedDashboardItemTypes();
-  const columns = project.config.data_schema.columns.filter((column) => {
-    return getAllowedTypes(column).length > 0;
-  });
+  const columns = React.useMemo(() => {
+    if (controlledColumns) {
+      return controlledColumns;
+    }
+    return project.config.data_schema.columns.filter((column) => {
+      return getAllowedTypes(column).length > 0;
+    });
+  }, [controlledColumns, getAllowedTypes, project.config.data_schema.columns]);
 
   return (
     <Stack>
