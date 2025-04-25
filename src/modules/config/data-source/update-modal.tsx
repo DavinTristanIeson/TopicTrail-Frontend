@@ -33,7 +33,7 @@ export const ProjectConfigDataSourceUpdateModal = React.forwardRef<
 
   const { onSubmit, isPending } = useVerifyUpdateModalDataSource(form, close);
   return (
-    <Modal title="Change Dataset" size="lg" opened={opened} onClose={close}>
+    <Modal title="Change Dataset" size="xl" opened={opened} onClose={close}>
       <FormWrapper onSubmit={onSubmit} form={form}>
         <LoadingOverlay visible={isPending} />
         <Stack>

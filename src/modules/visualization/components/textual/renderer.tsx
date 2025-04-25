@@ -153,6 +153,7 @@ export function useVisualizationSubdatasetsMultiSelect<T>(
       value={viewed}
       onChange={setViewed}
       label="Choose the Subdatasets to Visualize"
+      maxValues={3}
       inputContainer={
         withSelectAll
           ? (children) => (

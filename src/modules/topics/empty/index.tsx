@@ -33,14 +33,16 @@ export default function ProjectTopicsEmptyPage() {
       color: 'green',
       autoClose: 5000,
     });
-    queryClient.invalidateQueries({
-      queryKey: client.queryOptions('get', '/topic/{project_id}/', {
-        params: {
-          path: {
-            project_id: project.id,
-          },
+
+    const queryKey = client.queryOptions('get', '/topic/{project_id}/', {
+      params: {
+        path: {
+          project_id: project.id,
         },
-      }).queryKey,
+      },
+    }).queryKey;
+    queryClient.removeQueries({
+      queryKey: queryKey,
     });
     invalidateProjectDependencyQueries(project.id);
     topicModelingActions.resetCurrentTopicModelingOptions();
