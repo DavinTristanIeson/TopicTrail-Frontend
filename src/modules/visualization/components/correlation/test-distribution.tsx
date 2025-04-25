@@ -1,5 +1,5 @@
 import { BaseVisualizationComponentProps } from '../../types/base';
-import { VisualizationBinaryStatisticTestConfigType } from '../../configuration/binary-statistic-test';
+import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../configuration/test-distribution';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { MultiSelect, Stack, useMantineTheme } from '@mantine/core';
@@ -25,7 +25,7 @@ import { pickArrayByIndex } from '@/common/utils/iterable';
 function VisualizationBinaryStatisticTestOnDistributionInternal(
   props: BaseVisualizationComponentProps<
     VisualizationBinaryStatisticTestOnDistributionModel[],
-    VisualizationBinaryStatisticTestConfigType
+    VisualizationBinaryStatisticTestonDistributionConfigType
   >,
 ) {
   const { item } = props;
@@ -273,7 +273,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
 export default function VisualizationBinaryStatisticTestOnDistributionComponent(
   props: BaseVisualizationComponentProps<
     VisualizationBinaryStatisticTestOnDistributionModel[],
-    VisualizationBinaryStatisticTestConfigType
+    VisualizationBinaryStatisticTestonDistributionConfigType
   >,
 ) {
   const data = props.data[0]?.data;

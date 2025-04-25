@@ -6,10 +6,14 @@ import {
   AddVisualizationConfigurationButton,
   DashboardResetButton,
 } from '@/modules/visualization/dashboard/modals';
-import { DashboardGroupsContext } from '@/modules/visualization/types/context';
+import {
+  DashboardConstraintContext,
+  DashboardGroupsContext,
+} from '@/modules/visualization/types/context';
 import UserDataManager from '@/modules/userdata';
 import { useDashboardUserDataSharedBehavior } from '@/modules/table/dashboard';
 import { useDashboardDataManager } from '@/modules/userdata/data-manager';
+import { DashboardItemTypeEnum } from '@/modules/visualization/types/dashboard-item-types';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -45,10 +49,19 @@ export default function ComparisonDashboard() {
         <AddVisualizationConfigurationButton onSubmit={append} />
       </Group>
       <DashboardGroupsContext.Provider value={groups}>
-        <GridstackDashboard
-          dashboard={dashboard}
-          dashboardHandlers={handlers}
-        />
+        <DashboardConstraintContext.Provider
+          value={{
+            withoutTypes: [
+              DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
+              DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
+            ],
+          }}
+        >
+          <GridstackDashboard
+            dashboard={dashboard}
+            dashboardHandlers={handlers}
+          />
+        </DashboardConstraintContext.Provider>
       </DashboardGroupsContext.Provider>
     </Stack>
   );

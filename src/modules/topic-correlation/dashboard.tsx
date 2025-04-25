@@ -10,12 +10,21 @@ import { useDashboardDataManager } from '../userdata/data-manager';
 import { useDashboardUserDataSharedBehavior } from '../table/dashboard';
 import UserDataManager from '../userdata';
 import { getTopicColumnName } from '@/api/project';
-import { DashboardGroupsContext } from '../visualization/types/context';
+import {
+  DashboardConstraintContext,
+  DashboardGroupsContext,
+} from '../visualization/types/context';
 import React from 'react';
 import { TableFilterModel } from '@/api/table';
 import { ProjectContext } from '../project/context';
 import { DashboardItemModel } from '@/api/userdata';
-import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import {
+  SchemaColumnTypeEnum,
+  TableFilterTypeEnum,
+} from '@/common/constants/enum';
+import { useTopicModelingResultOfColumn } from '../topics/components/context';
+import { getTopicLabel } from '@/api/topic';
+import { DashboardItemTypeEnum } from '../visualization/types/dashboard-item-types';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -108,6 +117,10 @@ export default function TopicCorrelationDashboard() {
       (column) => column.name === topicColumnName,
     );
   }, [column, project.config.data_schema.columns]);
+
+  const topicModelingResult = useTopicModelingResultOfColumn(
+    column?.name ?? '',
+  );
   const dashboard = useTopicCorrelationAppState(
     (store) => store.dashboard.state,
   );
@@ -117,34 +130,45 @@ export default function TopicCorrelationDashboard() {
   const { append } = handlers;
 
   const namedData = React.useMemo(() => {
-    if (!column) return [];
-    return [
-      {
-        name: column.name,
-        // Intentional.
-        filter: null as unknown as TableFilterModel,
-      },
-    ];
-  }, [column]);
+    if (!column || !topicColumn) return [];
+    return (
+      topicModelingResult?.result?.topics.map((topic) => {
+        return {
+          name: getTopicLabel(topic),
+          filter: {
+            type: TableFilterTypeEnum.EqualTo,
+            target: topicColumn?.name,
+            value: topic.id,
+          } as TableFilterModel,
+        };
+      }) ?? []
+    );
+  }, [column, topicColumn, topicModelingResult?.result?.topics]);
 
   if (!column) return null;
   return (
     <DashboardGroupsContext.Provider value={namedData}>
-      <Stack>
-        <CorrelationDashboardUserDataManager />
-        <Group justify="end">
-          <DashboardResetButton onReset={() => handlers.setState([])} />
-          <AddVisualizationConfigurationButton
-            onSubmit={append}
-            defaultColumn={topicColumn?.name ?? column?.name}
-            columns={topicColumn ? [column, topicColumn] : [column]}
+      <DashboardConstraintContext.Provider
+        value={{
+          withoutTypes: [DashboardItemTypeEnum.SubdatasetWords],
+          shouldUseWholeDataset: [
+            DashboardItemTypeEnum.WordFrequencies,
+            DashboardItemTypeEnum.TopicWords,
+          ],
+        }}
+      >
+        <Stack>
+          <CorrelationDashboardUserDataManager />
+          <Group justify="end">
+            <DashboardResetButton onReset={() => handlers.setState([])} />
+            <AddVisualizationConfigurationButton onSubmit={append} />
+          </Group>
+          <GridstackDashboard
+            dashboard={dashboard}
+            dashboardHandlers={handlers}
           />
-        </Group>
-        <GridstackDashboard
-          dashboard={dashboard}
-          dashboardHandlers={handlers}
-        />
-      </Stack>
+        </Stack>
+      </DashboardConstraintContext.Provider>
     </DashboardGroupsContext.Provider>
   );
 }

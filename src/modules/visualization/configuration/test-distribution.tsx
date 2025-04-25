@@ -1,7 +1,4 @@
-import {
-  ANALYZABLE_SCHEMA_COLUMN_TYPES,
-  CATEGORICAL_SCHEMA_COLUMN_TYPES,
-} from '@/api/project';
+import { ANALYZABLE_SCHEMA_COLUMN_TYPES } from '@/api/project';
 import {
   EffectSizeMethodEnum,
   SchemaColumnTypeEnum,
@@ -18,19 +15,21 @@ import React from 'react';
 import { useWatch } from 'react-hook-form';
 import * as Yup from 'yup';
 
-export const VisualizationBinaryStatisticTestConfigSchema = Yup.object({
-  target: Yup.string().required(),
-  statistic_test_preference: Yup.string()
-    .oneOf(Object.values(StatisticTestMethodEnum))
-    .required(),
-  effect_size_preference: Yup.string()
-    .oneOf(Object.values(EffectSizeMethodEnum))
-    .required(),
-});
+export const VisualizationBinaryStatisticTestOnDistributionConfigSchema =
+  Yup.object({
+    target: Yup.string().required(),
+    statistic_test_preference: Yup.string()
+      .oneOf(Object.values(StatisticTestMethodEnum))
+      .required(),
+    effect_size_preference: Yup.string()
+      .oneOf(Object.values(EffectSizeMethodEnum))
+      .required(),
+  });
 
-export type VisualizationBinaryStatisticTestConfigType = Yup.InferType<
-  typeof VisualizationBinaryStatisticTestConfigSchema
->;
+export type VisualizationBinaryStatisticTestonDistributionConfigType =
+  Yup.InferType<
+    typeof VisualizationBinaryStatisticTestOnDistributionConfigSchema
+  >;
 
 function BinaryStatisticOnDistributionExplanation() {
   const column = useWatch({
@@ -52,26 +51,7 @@ function BinaryStatisticOnDistributionExplanation() {
   );
 }
 
-function BinaryStatisticOnContingencyTableExplanation() {
-  const column = useWatch({
-    name: 'column',
-  }) as string;
-  const otherColumn = useWatch({
-    name: 'config.target',
-  }) as string;
-  return (
-    <Alert color="blue" title="How does this work?">
-      Each pair of unique value from &quot;{column}&quot; and &quot;
-      {otherColumn}&quot; will be treated as a pair of binary variables, which
-      will split the dataset into four subdatasets. These subdatasets can then
-      be compared with each other using statistic tests to figure out if a pair
-      of values occur more often than expected. If it does, then it may indicate
-      a relationship between said unique value and the data.
-    </Alert>
-  );
-}
-
-export function VisualizationBinaryStatisticOnDistributionConfigForm() {
+export function VisualizationBinaryStatisticTestOnDistributionConfigForm() {
   const project = React.useContext(ProjectContext);
   const supportedColumns = React.useMemo(() => {
     const supportedColumnTypes = ANALYZABLE_SCHEMA_COLUMN_TYPES;
@@ -121,29 +101,6 @@ export function VisualizationBinaryStatisticOnDistributionConfigForm() {
           />
         </Group>
       )}
-    </>
-  );
-}
-
-export function VisualizationBinaryStatisticTestOnContingencyTableConfigForm() {
-  const project = React.useContext(ProjectContext);
-  const supportedColumns = React.useMemo(() => {
-    const supportedColumnTypes = CATEGORICAL_SCHEMA_COLUMN_TYPES;
-    return project.config.data_schema.columns.filter((column) =>
-      supportedColumnTypes.includes(column.type as SchemaColumnTypeEnum),
-    );
-  }, [project.config.data_schema.columns]);
-
-  return (
-    <>
-      <BinaryStatisticOnContingencyTableExplanation />
-      <ProjectColumnSelectField
-        name="config.target"
-        data={supportedColumns}
-        label="Target"
-        description="The data of this column will be the distribution that is tested."
-        required
-      />
     </>
   );
 }

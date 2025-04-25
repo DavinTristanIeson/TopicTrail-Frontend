@@ -5,12 +5,13 @@ import { zip } from 'lodash-es';
 import { NamedTableFilterModel } from '@/api/comparison';
 import React from 'react';
 import { ProjectContext } from '@/modules/project/context';
-import { DashboardGroupsContext } from '../types/context';
+import {
+  DashboardConstraintContext,
+  DashboardGroupsContext,
+} from '../types/context';
 import { DashboardItemModel } from '@/api/userdata';
-import { SchemaColumnModel } from '@/api/project';
-import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
-import { getTopicLabel } from '@/api/topic';
-import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { useContextSelector } from 'use-context-selector';
+import { TableFilterModel } from '@/api/table';
 
 interface UseAdaptDataProviderQueriesParams<TQuery, TData> {
   groups: NamedTableFilterModel[];
@@ -38,8 +39,22 @@ export function useAdaptDataProviderQueries<TQuery, TData>(
 export function usePrepareDataProvider(props: DashboardItemModel) {
   const project = React.useContext(ProjectContext);
   const groups = React.useContext(DashboardGroupsContext);
+  const shouldUseWholeDataset = useContextSelector(
+    DashboardConstraintContext,
+    (store) => store.shouldUseWholeDataset,
+  );
   const column = project.config.data_schema.columns.find(
     (column) => column.name === props.column,
+  );
+  const defaultGroup = React.useMemo(
+    () => [
+      {
+        name: 'Default',
+        // Intentional
+        filter: null as unknown as TableFilterModel,
+      },
+    ],
+    [],
   );
   if (!column) {
     throw Error(
@@ -48,7 +63,7 @@ export function usePrepareDataProvider(props: DashboardItemModel) {
   }
   return {
     column,
-    groups,
+    groups: shouldUseWholeDataset ? defaultGroup : groups,
     project,
     params: {
       path: {

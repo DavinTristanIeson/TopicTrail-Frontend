@@ -66,12 +66,15 @@ import {
   useVisualizationBinaryStatisticTestOnDistributionDataProvider,
 } from '../data-provider/binary-statistic-test';
 import {
-  VisualizationBinaryStatisticTestConfigSchema,
-  VisualizationBinaryStatisticTestConfigType,
-  VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
+  VisualizationBinaryStatisticTestOnDistributionConfigSchema,
+  VisualizationBinaryStatisticTestonDistributionConfigType,
   VisualizationBinaryStatisticTestOnDistributionConfigForm,
-} from '../configuration/binary-statistic-test';
+} from '../configuration/test-distribution';
 import VisualizationBinaryStatisticTestOnContingencyTableComponent from '../components/correlation/test-contingency-table';
+import {
+  VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
+  VisualizationBinaryStatisticTestOnContingencyTableConfigSchema,
+} from '../configuration/test-contingency-table';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -178,10 +181,11 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     dataProvider:
       useVisualizationBinaryStatisticTestOnContingencyTableDataProvider,
     configForm: VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
-    configValidator: VisualizationBinaryStatisticTestConfigSchema,
+    configValidator:
+      VisualizationBinaryStatisticTestOnContingencyTableConfigSchema,
   } as VisualizationConfigEntry<
     VisualizationBinaryStatisticTestOnContingencyTableMainModel,
-    VisualizationBinaryStatisticTestConfigType
+    VisualizationBinaryStatisticTestonDistributionConfigType
   >,
   [DashboardItemTypeEnum.BinaryStatisticTestOnDistribution]: {
     type: DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
@@ -191,10 +195,10 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     component: VisualizationBinaryStatisticTestOnDistributionComponent,
     dataProvider: useVisualizationBinaryStatisticTestOnDistributionDataProvider,
     configForm: VisualizationBinaryStatisticTestOnDistributionConfigForm,
-    configValidator: VisualizationBinaryStatisticTestConfigSchema,
+    configValidator: VisualizationBinaryStatisticTestOnDistributionConfigSchema,
   } as VisualizationConfigEntry<
     VisualizationBinaryStatisticTestOnDistributionModel[],
-    VisualizationBinaryStatisticTestConfigType
+    VisualizationBinaryStatisticTestonDistributionConfigType
   >,
   [DashboardItemTypeEnum.SubdatasetWords]: {
     type: DashboardItemTypeEnum.SubdatasetWords,

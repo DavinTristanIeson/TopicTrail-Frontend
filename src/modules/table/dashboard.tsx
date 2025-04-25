@@ -7,11 +7,15 @@ import {
   DashboardResetButton,
 } from '../visualization/dashboard/modals';
 import { TableFilterButton } from '../filter/context';
-import { DashboardGroupsContext } from '../visualization/types/context';
+import {
+  DashboardConstraintContext,
+  DashboardGroupsContext,
+} from '../visualization/types/context';
 import UserDataManager from '../userdata';
 import React from 'react';
 import { DashboardItemModel, DashboardModel } from '@/api/userdata';
 import { useDashboardDataManager } from '../userdata/data-manager';
+import { DashboardItemTypeEnum } from '../visualization/types/dashboard-item-types';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -64,6 +68,16 @@ export function TableDashboard() {
   const { append, setState: setDashboard } = handlers;
   const filter = useTableAppState((store) => store.params.filter);
   const setFilter = useTableAppState((store) => store.params.setFilter);
+
+  const namedData = React.useMemo(
+    () => [
+      {
+        name: 'Default',
+        filter: filter!,
+      },
+    ],
+    [filter],
+  );
   return (
     <Stack>
       <TableDashboardUserDataManager />
@@ -77,18 +91,17 @@ export function TableDashboard() {
         />
         <AddVisualizationConfigurationButton onSubmit={append} />
       </Group>
-      <DashboardGroupsContext.Provider
-        value={[
-          {
-            name: 'Default',
-            filter: filter!,
-          },
-        ]}
-      >
-        <GridstackDashboard
-          dashboard={dashboard}
-          dashboardHandlers={handlers}
-        />
+      <DashboardGroupsContext.Provider value={namedData}>
+        <DashboardConstraintContext.Provider
+          value={{
+            withoutTypes: [DashboardItemTypeEnum.SubdatasetWords],
+          }}
+        >
+          <GridstackDashboard
+            dashboard={dashboard}
+            dashboardHandlers={handlers}
+          />
+        </DashboardConstraintContext.Provider>
       </DashboardGroupsContext.Provider>
     </Stack>
   );

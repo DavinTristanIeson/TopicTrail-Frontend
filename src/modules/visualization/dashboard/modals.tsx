@@ -36,15 +36,13 @@ import { SchemaColumnModel } from '@/api/project';
 
 interface VisualizationConfigurationDialogProps {
   onSubmit(item: DashboardItemModel): void;
-  defaultColumn?: string;
-  columns?: SchemaColumnModel[];
 }
 
 export const AddVisualizationConfigurationDialog = React.forwardRef<
   DisclosureTrigger | null,
   VisualizationConfigurationDialogProps
 >(function AddVisualizationConfigurationDialog(props, ref) {
-  const { onSubmit, defaultColumn, columns } = props;
+  const { onSubmit } = props;
   const [opened, { close }] = useDisclosureTrigger(ref);
   return (
     <Modal
@@ -68,8 +66,6 @@ export const AddVisualizationConfigurationDialog = React.forwardRef<
         <VisualizationConfigurationForm
           onClose={close}
           data={undefined}
-          defaultColumn={defaultColumn}
-          columns={columns}
           onSubmit={onSubmit}
         />
       )}

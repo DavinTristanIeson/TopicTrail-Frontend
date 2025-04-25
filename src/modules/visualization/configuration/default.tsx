@@ -11,6 +11,8 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { VisualizationConfigFormType } from './form-type';
 import { Info } from '@phosphor-icons/react';
 import { SchemaColumnModel } from '@/api/project';
+import { useContextSelector } from 'use-context-selector';
+import { DashboardConstraintContext } from '../types/context';
 
 function ColumnDashboardItemSelectInput() {
   const project = React.useContext(ProjectContext);
@@ -100,14 +102,11 @@ function DashboardItemTypeDescription() {
   );
 }
 
-interface DefaultVisualizationConfigurationFormProps {
-  columns?: SchemaColumnModel[];
-}
-
-export function DefaultVisualizationConfigurationForm(
-  props: DefaultVisualizationConfigurationFormProps,
-) {
-  const { columns: controlledColumns } = props;
+export function DefaultVisualizationConfigurationForm() {
+  const controlledColumns = useContextSelector(
+    DashboardConstraintContext,
+    (store) => store.columns,
+  );
 
   const project = React.useContext(ProjectContext);
   const { reset, setValue } = useFormContext<VisualizationConfigFormType>();

@@ -2,6 +2,9 @@ import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 import React from 'react';
+import { DashboardConstraintContext } from './context';
+import { useContextSelector } from 'use-context-selector';
+import { intersection, without } from 'lodash-es';
 
 export enum DashboardItemTypeEnum {
   DescriptiveStatistics = 'descriptive-statistics',
@@ -66,19 +69,27 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
   [SchemaColumnTypeEnum.Unique]: [],
 };
 
-export const ALLOWED_DASHBOARD_ITEM_COLUMNS: SchemaColumnTypeEnum[] =
-  Object.entries(SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN)
-    .filter((item) => item[1].length > 0)
-    .map((item) => item[0] as SchemaColumnTypeEnum);
-
 export function useAllowedDashboardItemTypes() {
   const allTopicModelingResults = React.useContext(
     AllTopicModelingResultContext,
   );
+  const allowedTypes = useContextSelector(
+    DashboardConstraintContext,
+    (store) => store.allowedTypes,
+  );
+  const withoutTypes = useContextSelector(
+    DashboardConstraintContext,
+    (store) => store.withoutTypes,
+  );
   return React.useCallback(
     (column: SchemaColumnModel) => {
-      const defaultColumns =
+      const defaultDashboardTypes =
         SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN[column.type];
+      const dashboardTypes = allowedTypes
+        ? intersection(allowedTypes, defaultDashboardTypes)
+        : withoutTypes
+          ? without(defaultDashboardTypes, ...withoutTypes)
+          : defaultDashboardTypes;
       if (
         column.type === SchemaColumnTypeEnum.Textual ||
         column.type === SchemaColumnTypeEnum.Topic
@@ -94,10 +105,10 @@ export function useAllowedDashboardItemTypes() {
         if (!topicModelingResult?.result) {
           return [];
         }
-        return defaultColumns;
+        return dashboardTypes;
       }
-      return defaultColumns;
+      return dashboardTypes;
     },
-    [allTopicModelingResults],
+    [allTopicModelingResults, allowedTypes, withoutTypes],
   );
 }

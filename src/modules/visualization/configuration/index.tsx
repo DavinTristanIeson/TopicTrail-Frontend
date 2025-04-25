@@ -14,13 +14,13 @@ import { Divider, Group, Stack, Text } from '@mantine/core';
 import { CancelButton } from '@/components/standard/button/variants';
 import SubmitButton from '@/components/standard/button/submit';
 import { SchemaColumnModel } from '@/api/project';
+import { useContextSelector } from 'use-context-selector';
+import { DashboardConstraintContext } from '../types/context';
 
 interface VisualizationConfigurationFormProps {
   data: DashboardItemModel | undefined;
   onClose(): void;
   onSubmit(value: DashboardItemModel): void;
-  defaultColumn?: string;
-  columns?: SchemaColumnModel[];
 }
 
 function ExtendedVisualizationConfigurationFormBody() {
@@ -47,7 +47,12 @@ function ExtendedVisualizationConfigurationFormBody() {
 export default function VisualizationConfigurationForm(
   props: VisualizationConfigurationFormProps,
 ) {
-  const { data, onSubmit, onClose, defaultColumn, columns } = props;
+  const { data, onSubmit, onClose } = props;
+
+  const defaultColumn = useContextSelector(
+    DashboardConstraintContext,
+    (store) => store.defaultColumn,
+  );
 
   const form = useForm<VisualizationConfigFormType>({
     resolver: yupResolver(visualizationConfigFormSchema),
@@ -92,7 +97,7 @@ export default function VisualizationConfigurationForm(
   return (
     <FormWrapper form={form} onSubmit={handleSubmit}>
       <Stack>
-        <DefaultVisualizationConfigurationForm columns={columns} />
+        <DefaultVisualizationConfigurationForm />
         <ExtendedVisualizationConfigurationFormBody />
         <Group justify="end">
           <CancelButton onClick={onClose} />
