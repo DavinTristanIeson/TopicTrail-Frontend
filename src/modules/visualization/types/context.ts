@@ -3,6 +3,7 @@ import { SchemaColumnModel } from '@/api/project';
 import React from 'react';
 import { createContext } from 'use-context-selector';
 import { DashboardItemTypeEnum } from './dashboard-item-types';
+import { DashboardItemModel } from '@/api/userdata';
 
 export const DashboardGroupsContext = React.createContext<
   NamedTableFilterModel[]
@@ -17,7 +18,10 @@ interface DashboardConstraintContextType {
   withoutTypes?: DashboardItemTypeEnum[];
 
   /** Which dashboard item types should use the whole dataset, and should ignore DashboardGroupsContext */
-  shouldUseWholeDataset?: DashboardItemTypeEnum[];
+  shouldUseWholeDataset?(
+    item: DashboardItemModel,
+    column: SchemaColumnModel,
+  ): boolean;
 }
 
 export const DashboardConstraintContext =

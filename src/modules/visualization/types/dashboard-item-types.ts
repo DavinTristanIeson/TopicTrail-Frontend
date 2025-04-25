@@ -10,6 +10,7 @@ export enum DashboardItemTypeEnum {
   DescriptiveStatistics = 'descriptive-statistics',
   Counts = 'counts',
   FrequencyDistribution = 'frequency-distribution',
+  Proportions = 'proportions',
   DataDistribution = 'data-distribution',
   Aggregate = 'aggregate',
   GeographicalCoordinates = 'geographical-coordinates',
@@ -26,6 +27,7 @@ export enum DashboardItemTypeEnum {
 const FOR_ALL_TYPES = [DashboardItemTypeEnum.Counts];
 const FOR_CATEGORICAL_TYPES = [
   DashboardItemTypeEnum.FrequencyDistribution,
+  DashboardItemTypeEnum.Proportions,
   DashboardItemTypeEnum.ContingencyTable,
   DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
   DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,

@@ -4,20 +4,32 @@ import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { VisualizationFrequencyDistributionConfigType } from '../../configuration/frequency-distribution';
-import { useCategoricalDataFrequencyMode } from './utils';
+import { useCategoricalDataFrequencyModeState } from './utils';
 import { fromPairs, zip } from 'lodash-es';
-import { usePlotRendererHelperProps } from '../utils';
+import { PlotInlineConfiguration, usePlotRendererHelperProps } from '../utils';
+import {
+  VisualizationProportionsConfigType,
+  VisualizationProportionsDisplayMode,
+} from '../../configuration/proportions';
+import { Stack, Select } from '@mantine/core';
 
-export function ProportionStackedBarChart(
+function getHoverTemplate(column: string, needsPercentage: boolean) {
+  return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;
+}
+
+export default function VisualizationProportionsComponent(
   props: BaseVisualizationComponentProps<
     VisualizationFrequencyDistributionModel,
-    VisualizationFrequencyDistributionConfigType
+    VisualizationProportionsConfigType
   >,
 ) {
   const { data, item } = props;
-  const { plotlyLayoutProps, transformFrequencies } =
-    useCategoricalDataFrequencyMode(item.config.mode);
+  const {
+    transformFrequencies,
+    plotlyLayoutProps,
+    selectProps,
+    needsPercentage,
+  } = useCategoricalDataFrequencyModeState();
   const plot = React.useMemo<PlotParams>(() => {
     const uniqueValuesTracker: Set<string> = new Set();
     for (const subdataset of data) {
@@ -39,6 +51,11 @@ export function ProportionStackedBarChart(
 
     const subdatasetNames = data.map((subdataset) => subdataset.name);
 
+    const isAreaChart =
+      item.config.display === VisualizationProportionsDisplayMode.AreaChart;
+    const isBarChart =
+      item.config.display === VisualizationProportionsDisplayMode.BarChart;
+
     const subplots: PlotParams['data'] = uniqueValues.map(
       (uniqueValue, idx) => {
         const y = frequenciesPerSubdataset.map(
@@ -48,7 +65,10 @@ export function ProportionStackedBarChart(
           name: uniqueValue,
           x: subdatasetNames,
           y: y,
-          type: 'bar',
+          hoveron: isAreaChart ? 'points' : undefined,
+          stackgroup: isAreaChart ? 'all' : undefined,
+          type: isAreaChart ? 'scatter' : 'bar',
+          hovertemplate: getHoverTemplate(item.column, needsPercentage),
           marker: {
             color: colors[idx],
           },
@@ -59,12 +79,27 @@ export function ProportionStackedBarChart(
       data: subplots,
       layout: {
         title: `Proportions of ${item.column}`,
-        xaxis: {
+        yaxis: {
           ...plotlyLayoutProps,
         },
-        barmode: 'stack',
+        barmode: isBarChart ? 'stack' : undefined,
       },
     };
-  }, [data, item.column, plotlyLayoutProps, transformFrequencies]);
-  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
+  }, [
+    data,
+    item.column,
+    item.config.display,
+    needsPercentage,
+    plotlyLayoutProps,
+    transformFrequencies,
+  ]);
+
+  return (
+    <Stack>
+      <PlotInlineConfiguration>
+        <Select {...selectProps} />
+      </PlotInlineConfiguration>
+      <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />
+    </Stack>
+  );
 }

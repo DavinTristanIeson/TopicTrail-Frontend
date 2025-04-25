@@ -21,14 +21,19 @@ function VisualizationContinuousDataDistributionViolinBoxPlot(
       data.map((data) => data.name),
     );
     const subplots: PlotParams['data'] = data.map(({ name, data }, idx) => {
+      const isViolin =
+        item.config.display ===
+        VisualizationContinuousDataDistributionDisplayMode.ViolinPlot;
       return {
         name,
         y: data,
-        type:
-          item.config.display ===
-          VisualizationContinuousDataDistributionDisplayMode.ViolinPlot
-            ? 'violin'
-            : 'box',
+        type: isViolin ? 'violin' : 'box',
+        box: isViolin
+          ? {
+              visible: true,
+              width: 1,
+            }
+          : undefined,
         marker: {
           color: colors[idx],
         },

@@ -1,10 +1,11 @@
 import { VisualizationColumnCountsModel } from '@/api/table';
 import { BaseVisualizationComponentProps } from '../../types/base';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
-import { usePlotRendererHelperProps } from '../utils';
-import { useMantineTheme } from '@mantine/core';
-import PlotRenderer from '@/components/widgets/plotly';
+import { Group, RingProgress, Stack, Text } from '@mantine/core';
+
+function normalizeRingProgress(value: number, total: number) {
+  return (value * 100) / total;
+}
 
 export default function VisualizationColumnCountsRingChart(
   props: BaseVisualizationComponentProps<
@@ -13,72 +14,62 @@ export default function VisualizationColumnCountsRingChart(
   >,
 ) {
   const { data, item } = props;
-  const { colors } = useMantineTheme();
-  const plot = React.useMemo<PlotParams>(() => {
-    const columnCount = 3;
-    const subplots: PlotParams['data'] = [];
-    for (let index = 0; index < data.length; index++) {
-      const name = data[index]!.name;
-      const counts = data[index]!.data;
-      const values = [counts.valid, counts.invalid, counts.outside];
-      const labels = ['Valid Rows', 'Empty Rows', 'Outside Rows'];
-      const markerColors = [colors.green[6], colors.red[6], colors.gray[6]];
-      if (counts.outlier != null) {
-        values.push(counts.outlier!);
-        labels.push('Outliers');
-        markerColors.push(colors.orange[6]);
-      }
-      subplots.push({
-        type: 'pie',
-        title: {
-          position: 'top center',
-          font: {
-            size: 14,
-          },
-          text: name,
-        },
-        name,
-        values,
-        labels,
-        marker: {
-          colors: markerColors,
-        },
-        domain: {
-          column: index % columnCount,
-          row: Math.floor(index / columnCount),
-        },
-        hoverinfo: 'label+value+percent',
-        textinfo: 'label+value+percent',
-        textposition: 'inside',
-        insidetextorientation: 'radial',
-      });
-    }
-    return {
-      data: subplots,
-      layout: {
-        annotations: [
-          {
-            font: {
-              size: 20,
+  return (
+    <Stack>
+      <Text ta="center" size="xl" fw={500}>
+        Value Counts of{' '}
+        <Text c="brand" inherit span>
+          {item.column}
+        </Text>
+      </Text>
+      <Group wrap="wrap" align="stretch" className="pt-5">
+        {data.map(({ name, data }) => {
+          const sections = [
+            {
+              value: normalizeRingProgress(data.valid, data.total),
+              tooltip: `Valid Rows: ${data.valid}`,
+              color: 'green',
             },
-            showarrow: false,
-            text: `Value Counts of ${item.column}`,
-            x: 0.5,
-            y: 1.0,
-          },
-        ],
-        margin: {
-          t: 0,
-          b: 0,
-          l: 0,
-          r: 0,
-        },
-        grid: {
-          rows: Math.ceil(data.length / columnCount),
-          columns: columnCount,
-        },
-      },
-    };
-  }, [colors.gray, colors.green, colors.orange, colors.red, data, item.column]);
-  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
+            {
+              value: normalizeRingProgress(data.invalid, data.total),
+              tooltip: `Empty Rows: ${data.invalid}`,
+              color: 'red',
+            },
+            {
+              value: normalizeRingProgress(data.outside, data.total),
+              tooltip: `Rows Not Included in Subdataset: ${data.outside}`,
+              color: 'gray',
+            },
+            {
+              value: normalizeRingProgress(data.outlier ?? 0, data.total),
+              tooltip: `Outliers (No Topic): ${data.outlier ?? 0}`,
+              color: 'yellow',
+            },
+          ];
+          return (
+            <Stack key={name} align="center" justify="space-between" w={300}>
+              <Text ta="center" size="md" fw={500}>
+                {name}
+              </Text>
+              <RingProgress
+                size={280}
+                thickness={40}
+                label={
+                  <div>
+                    <Text size="lg" fw="bold" c="brand" ta="center" lh={1}>
+                      {data.total}
+                    </Text>
+                    <Text c="gray" size="xs" ta="center" lh={1}>
+                      rows
+                    </Text>
+                  </div>
+                }
+                sections={sections}
+              />
+            </Stack>
+          );
+        })}
+      </Group>
+    </Stack>
+  );
 }

@@ -10,7 +10,7 @@ import { DescriptiveStatisticsTableComponent } from '../components/continuous/de
 import { useVisualizationDescriptiveStatisticsDataProvider } from '../data-provider/descriptive-statistics';
 import { VisualizationConfigEntry } from './base';
 import { DashboardItemTypeEnum } from './dashboard-item-types';
-import { VisualizationFrequencyDistributionRenderer } from '../components/categorical/frequency-distribution';
+import VisualizationFrequencyDistributionRenderer from '../components/categorical/frequency-distribution';
 import { useVisualizationAggregatedTotalsDataProvider } from '../data-provider/aggregate';
 import {
   VisualizationAggregateValuesConfigForm,
@@ -75,6 +75,12 @@ import {
   VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
   VisualizationBinaryStatisticTestOnContingencyTableConfigSchema,
 } from '../configuration/test-contingency-table';
+import VisualizationProportionsComponent from '../components/categorical/proportions';
+import {
+  VisualizationProportionsConfigForm,
+  VisualizationProportionsConfigSchema,
+  VisualizationProportionsConfigType,
+} from '../configuration/proportions';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -158,6 +164,19 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
   } as VisualizationConfigEntry<
     VisualizationFrequencyDistributionModel,
     VisualizationFrequencyDistributionConfigType
+  >,
+  [DashboardItemTypeEnum.Proportions]: {
+    type: DashboardItemTypeEnum.Proportions,
+    label: 'Proportions',
+    description:
+      'Show how each subdataset contributes to the frequency distribution of the discrete data in this column. For accurate visualization purposes, the user is expected to ensure that the subdataset are mutually exclusive.',
+    component: VisualizationProportionsComponent,
+    dataProvider: useVisualizationFrequencyDistributionDataProvider,
+    configForm: VisualizationProportionsConfigForm,
+    configValidator: VisualizationProportionsConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationFrequencyDistributionModel,
+    VisualizationProportionsConfigType
   >,
   [DashboardItemTypeEnum.GeographicalCoordinates]: {
     type: DashboardItemTypeEnum.GeographicalCoordinates,

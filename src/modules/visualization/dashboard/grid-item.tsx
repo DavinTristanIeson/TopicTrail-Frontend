@@ -10,6 +10,7 @@ import {
   Text,
   Stack,
   Divider,
+  Skeleton,
 } from '@mantine/core';
 import {
   CornersOut,
@@ -42,7 +43,11 @@ function DashboardItemRendererInternal(
   const { data, error, loading } = useDataProvider(item);
 
   return (
-    <FetchWrapperComponent error={error} isLoading={loading}>
+    <FetchWrapperComponent
+      error={error}
+      isLoading={loading}
+      loadingComponent={<Skeleton className="w-full h-full" />}
+    >
       {data &&
         (data.length === 0 ? (
           <Alert color="red" icon={<Warning />} withCloseButton>
@@ -131,8 +136,12 @@ function DashboardGridItemInfo(props: DashboardItemModel) {
             {dashboardConfig.label}
           </Text>
           <Text>{dashboardConfig.description}</Text>
-          <Divider />
-          <Text>{props.description}</Text>
+          {props.description && (
+            <>
+              <Divider />
+              <Text>{props.description}</Text>
+            </>
+          )}
         </Stack>
       </HoverCard.Dropdown>
     </HoverCard>
