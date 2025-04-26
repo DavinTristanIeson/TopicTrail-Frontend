@@ -1,4 +1,8 @@
-import { ANALYZABLE_SCHEMA_COLUMN_TYPES } from '@/api/project';
+import {
+  ANALYZABLE_SCHEMA_COLUMN_TYPES,
+  filterProjectColumnsByType,
+  findProjectColumn,
+} from '@/api/project';
 import {
   EffectSizeMethodEnum,
   SchemaColumnTypeEnum,
@@ -53,21 +57,15 @@ function BinaryStatisticOnDistributionExplanation() {
 
 export function VisualizationBinaryStatisticTestOnDistributionConfigForm() {
   const project = React.useContext(ProjectContext);
-  const supportedColumns = React.useMemo(() => {
-    const supportedColumnTypes = ANALYZABLE_SCHEMA_COLUMN_TYPES;
-    return project.config.data_schema.columns.filter((column) =>
-      supportedColumnTypes.includes(column.type as SchemaColumnTypeEnum),
-    );
-  }, [project.config.data_schema.columns]);
+  const supportedColumns = filterProjectColumnsByType(
+    project,
+    ANALYZABLE_SCHEMA_COLUMN_TYPES,
+  );
 
   const columnValue = useWatch({
     name: 'config.target',
   });
-  const column = React.useMemo(() => {
-    return project.config.data_schema.columns.find(
-      (column) => column.name === columnValue,
-    );
-  }, [columnValue, project.config.data_schema.columns]);
+  const column = findProjectColumn(project, columnValue);
 
   return (
     <>

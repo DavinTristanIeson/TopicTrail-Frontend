@@ -19,10 +19,10 @@ import { ProjectColumnSelectInput } from '@/modules/project/select-column-input'
 import { ProjectContext } from '@/modules/project/context';
 import {
   CATEGORICAL_SCHEMA_COLUMN_TYPES,
+  filterProjectColumnsByType,
   SchemaColumnModel,
 } from '@/api/project';
 import { client } from '@/common/api/client';
-import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { handleError } from '@/common/utils/error';
 
 const SortableNamedTableFilterDndContext = dynamic(
@@ -38,10 +38,9 @@ const SortableNamedTableFilterDndContext = dynamic(
 function EnumerationSubdatasetSelectInput() {
   const project = React.useContext(ProjectContext);
   const [column, setColumn] = React.useState<SchemaColumnModel | null>(null);
-  const columns = project.config.data_schema.columns.filter((column) =>
-    CATEGORICAL_SCHEMA_COLUMN_TYPES.includes(
-      column.type as SchemaColumnTypeEnum,
-    ),
+  const columns = filterProjectColumnsByType(
+    project,
+    CATEGORICAL_SCHEMA_COLUMN_TYPES,
   );
 
   const setComparisonGroups = useComparisonAppState(

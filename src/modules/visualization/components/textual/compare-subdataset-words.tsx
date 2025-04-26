@@ -16,7 +16,10 @@ export function VisualizationCompareSubdatasetWords(
     Component,
     viewedData,
     options: subdatasetNames,
-  } = useVisualizationSubdatasetsMultiSelect({ data, withSelectAll: true });
+  } = useVisualizationSubdatasetsMultiSelect({
+    data,
+    limit: 3,
+  });
 
   const words = React.useMemo(() => {
     return viewedData.flatMap((subdataset) => {

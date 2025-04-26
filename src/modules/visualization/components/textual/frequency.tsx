@@ -16,7 +16,7 @@ export function VisualizationWordFrequencyComponent(
     Component,
     viewedData,
     options: subdatasetNames,
-  } = useVisualizationSubdatasetsMultiSelect({ data });
+  } = useVisualizationSubdatasetsMultiSelect({ data, limit: 3 });
 
   const words = React.useMemo<VisualizationWordCloudItem[]>(() => {
     return viewedData.flatMap((subdataset) => {

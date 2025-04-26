@@ -55,7 +55,7 @@ interface TopicInfoProps extends TopicModel {
 
 export function TopicInfo(props: TopicInfoProps) {
   return (
-    <Stack className="border-solid border-b border-gray-400 w-full pb-2">
+    <Stack className="w-full pb-2">
       <Group gap={6}>
         <Text size="sm" fw={500} c={getPlotColor(props.id)}>
           {getTopicLabel(props)}

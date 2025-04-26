@@ -9,7 +9,11 @@ import {
 import { useDashboardDataManager } from '../userdata/data-manager';
 import { useDashboardUserDataSharedBehavior } from '../table/dashboard';
 import UserDataManager from '../userdata';
-import { getTopicColumnName, SchemaColumnModel } from '@/api/project';
+import {
+  findProjectColumn,
+  getTopicColumnName,
+  SchemaColumnModel,
+} from '@/api/project';
 import {
   DashboardConstraintContext,
   DashboardGroupsContext,
@@ -40,10 +44,8 @@ function useTopicCorrelationDashboardAppState() {
   const topicColumn = React.useMemo(() => {
     if (!column) return undefined;
     const topicColumnName = getTopicColumnName(column.name);
-    return project.config.data_schema.columns.find(
-      (column) => column.name === topicColumnName,
-    );
-  }, [column, project.config.data_schema.columns]);
+    return findProjectColumn(project, topicColumnName);
+  }, [column, project]);
   const dashboard = useTopicCorrelationAppState(
     (store) => store.dashboard.state,
   );
@@ -113,10 +115,8 @@ export default function TopicCorrelationDashboard() {
   const topicColumn = React.useMemo(() => {
     if (!column) return undefined;
     const topicColumnName = getTopicColumnName(column.name);
-    return project.config.data_schema.columns.find(
-      (column) => column.name === topicColumnName,
-    );
-  }, [column, project.config.data_schema.columns]);
+    return findProjectColumn(project, topicColumnName);
+  }, [column, project]);
 
   const topicModelingResult = useTopicModelingResultOfColumn(
     column?.name ?? '',

@@ -12,6 +12,7 @@ import {
 import { DashboardItemModel } from '@/api/userdata';
 import { useContextSelector } from 'use-context-selector';
 import { TableFilterModel } from '@/api/table';
+import { findProjectColumn } from '@/api/project';
 
 interface UseAdaptDataProviderQueriesParams<TQuery, TData> {
   groups: NamedTableFilterModel[];
@@ -43,9 +44,7 @@ export function usePrepareDataProvider(props: DashboardItemModel) {
     DashboardConstraintContext,
     (store) => store.shouldUseWholeDataset,
   );
-  const column = project.config.data_schema.columns.find(
-    (column) => column.name === props.column,
-  );
+  const column = findProjectColumn(project, props.column);
   const defaultGroup = React.useMemo(
     () => [
       {

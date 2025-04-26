@@ -1,5 +1,6 @@
 import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
 import {
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
@@ -63,6 +64,21 @@ export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
           data: item,
         } as ProjectColumnComboboxItem;
       })}
+      filter={(input) => {
+        const data = input.options.map(
+          (option) => (option as ProjectColumnComboboxItem).data,
+        );
+        const indices = filterByString(
+          input.search,
+          data.map((item) => {
+            return {
+              name: item.type,
+              type: item.type,
+            };
+          }),
+        );
+        return pickArrayByIndex(input.options, indices);
+      }}
       onChange={(value) => {
         onChange?.(value ? (data.find((x) => x.name === value) ?? null) : null);
       }}

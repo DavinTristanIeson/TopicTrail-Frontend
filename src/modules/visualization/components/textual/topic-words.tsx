@@ -24,7 +24,7 @@ export function VisualizationTopicWordsComponent(
     Component,
     viewedData,
     options: subdatasetNames,
-  } = useVisualizationSubdatasetsMultiSelect({ data });
+  } = useVisualizationSubdatasetsMultiSelect({ data, limit: 3 });
 
   const topics = React.useMemo(() => {
     const topicIds = viewedData.flatMap((subdataset) =>

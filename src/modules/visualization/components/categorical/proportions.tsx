@@ -38,9 +38,8 @@ export default function VisualizationProportionsComponent(
 
   const { Component: SubdatasetMultiSelect, viewedData } =
     useVisualizationSubdatasetsMultiSelect({
-      withSelectAll: true,
       data,
-      limit: data.length,
+      limit: null,
     });
 
   // region Plot

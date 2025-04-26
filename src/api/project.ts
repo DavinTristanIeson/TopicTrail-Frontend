@@ -84,6 +84,20 @@ export function getPreprocessedDocumentsColumnName(columnName: string) {
   return `${columnName} (Preprocessed)`;
 }
 
+export function findProjectColumn(project: ProjectModel, columnName: string) {
+  return project.config.data_schema.columns.find(
+    (column) => column.name === columnName,
+  );
+}
+export function filterProjectColumnsByType(
+  project: ProjectModel,
+  types: SchemaColumnTypeEnum[] | SchemaColumnModel['type'][],
+) {
+  return project.config.data_schema.columns.filter((column) =>
+    types.includes(column.type as SchemaColumnTypeEnum),
+  );
+}
+
 export const CATEGORICAL_SCHEMA_COLUMN_TYPES = [
   SchemaColumnTypeEnum.Categorical,
   SchemaColumnTypeEnum.OrderedCategorical,

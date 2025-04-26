@@ -12,21 +12,22 @@ interface UseVisualizationSubdatasetsMultiSelectReturn<T> {
 
 interface UseVisualizationSubdatasetsMultiSelectParams<T> {
   data: NamedData<T>[];
-  withSelectAll?: boolean;
-  limit?: number;
+  limit: number | null;
 }
 
 export function useVisualizationSubdatasetsMultiSelect<T>(
   props: UseVisualizationSubdatasetsMultiSelectParams<T>,
 ): UseVisualizationSubdatasetsMultiSelectReturn<T> {
-  const { data, withSelectAll = false, limit = 3 } = props;
+  const { data, limit } = props;
   const options = React.useMemo(
     () => data.map((subdataset) => subdataset.name),
     [data],
   );
   const [viewed, setViewed] = React.useState<string[]>(() =>
-    options.slice(0, 3),
+    limit != null ? options.slice(0, limit) : options,
   );
+
+  const withSelectAll = limit == null || limit >= data.length;
 
   const Component = data.length > 1 && (
     <MultiSelect
@@ -34,7 +35,7 @@ export function useVisualizationSubdatasetsMultiSelect<T>(
       value={viewed}
       onChange={setViewed}
       label="Choose the Subdatasets to Visualize"
-      maxValues={limit}
+      maxValues={limit ?? undefined}
       inputContainer={
         withSelectAll
           ? (children) => (

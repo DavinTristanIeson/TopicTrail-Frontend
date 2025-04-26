@@ -23,6 +23,7 @@ import {
   usePlotRendererHelperProps,
   useVisualizationMinFrequencySlider,
 } from '../configuration';
+import { findProjectColumn } from '@/api/project';
 
 function VisualizationBinaryStatisticTestOnDistributionInternal(
   props: BaseVisualizationComponentProps<
@@ -46,9 +47,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   );
 
   const project = React.useContext(ProjectContext);
-  const column = project.config.data_schema.columns.find(
-    (column) => column.name === item.column,
-  );
+  const column = findProjectColumn(project, item.column);
   const { multiSelectProps: discriminatorSelectProps, indexed } =
     useCategoriesAxisMultiSelect({
       supportedCategories: discriminators,

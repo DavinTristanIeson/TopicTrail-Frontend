@@ -12,6 +12,7 @@ import { VisualizationConfigFormType } from './form-type';
 import { Info } from '@phosphor-icons/react';
 import { useContextSelector } from 'use-context-selector';
 import { DashboardConstraintContext } from '../types/context';
+import { findProjectColumn } from '@/api/project';
 
 function ColumnDashboardItemSelectInput() {
   const project = React.useContext(ProjectContext);
@@ -20,9 +21,7 @@ function ColumnDashboardItemSelectInput() {
     name: 'column',
     control,
   });
-  const column = project.config.data_schema.columns.find((col) => {
-    return col.name === chosenColumnName;
-  });
+  const column = findProjectColumn(project, chosenColumnName);
 
   const getAllowedTypes = useAllowedDashboardItemTypes();
 

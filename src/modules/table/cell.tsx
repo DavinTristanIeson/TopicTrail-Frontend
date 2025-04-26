@@ -1,8 +1,4 @@
-import {
-  OrderedCategoricalSchemaColumnModel,
-  SchemaColumnModel,
-  TemporalSchemaColumnModel,
-} from '@/api/project';
+import { SchemaColumnModel, TemporalSchemaColumnModel } from '@/api/project';
 import { getTopicLabel } from '@/api/topic';
 import {
   SchemaColumnTypeEnum,
@@ -11,7 +7,7 @@ import {
 import { getPlotColor } from '@/common/utils/colors';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { TopicInfo } from '@/modules/topics/components/info';
-import { Spoiler, Tooltip, Text, HoverCard, Badge, Box } from '@mantine/core';
+import { Spoiler, Tooltip, Text, HoverCard, Box } from '@mantine/core';
 import dayjs from 'dayjs';
 import React from 'react';
 
@@ -166,30 +162,6 @@ export function TopicColumnCell(props: TopicColumnCellProps) {
   );
 }
 
-interface CategoricalColumnCellProps {
-  category: string;
-  categoryOrder: string[] | null;
-}
-
-function CategoricalColumnCell(props: CategoricalColumnCellProps) {
-  if (!props.category) {
-    return null;
-  }
-  const order = props.categoryOrder
-    ? props.categoryOrder.findIndex((category) => category === props.category)
-    : -1;
-  return (
-    <HighlightedCell>
-      {order === -1 ? undefined : (
-        <Badge color="brand.4" mr={8}>
-          {order + 1}
-        </Badge>
-      )}
-      {props.category}
-    </HighlightedCell>
-  );
-}
-
 interface NumericColumnCellProps {
   value: number;
 }
@@ -240,14 +212,7 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
     }
     case SchemaColumnTypeEnum.OrderedCategorical:
     case SchemaColumnTypeEnum.Categorical: {
-      const categoryOrder = (column as OrderedCategoricalSchemaColumnModel)
-        .category_order;
-      return (
-        <CategoricalColumnCell
-          category={props.value}
-          categoryOrder={categoryOrder ?? null}
-        />
-      );
+      return <HighlightedCell>{props.value}</HighlightedCell>;
     }
     default: {
       return <DefaultColumnCell>{props.value}</DefaultColumnCell>;

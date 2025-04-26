@@ -2,17 +2,17 @@ import * as Yup from 'yup';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import React from 'react';
 import { ProjectContext } from '@/modules/project/context';
-import {
-  SchemaColumnTypeEnum,
-  TableColumnAggregateMethodEnum,
-} from '@/common/constants/enum';
+import { TableColumnAggregateMethodEnum } from '@/common/constants/enum';
 import RHFField from '@/components/standard/fields';
 import { Group } from '@mantine/core';
 import {
   VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY,
   VisualizationFrequencyDistributonDisplayMode,
 } from './frequency-distribution';
-import { CATEGORICAL_SCHEMA_COLUMN_TYPES } from '@/api/project';
+import {
+  CATEGORICAL_SCHEMA_COLUMN_TYPES,
+  filterProjectColumnsByType,
+} from '@/api/project';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 
 export const VisualizationAggregateValuesConfigSchema = Yup.object({
@@ -31,13 +31,10 @@ export type VisualizationAggregateValuesConfigType = Yup.InferType<
 
 export function VisualizationAggregateValuesConfigForm() {
   const project = React.useContext(ProjectContext);
-  const columns = React.useMemo(() => {
-    return project.config.data_schema.columns.filter((column) =>
-      CATEGORICAL_SCHEMA_COLUMN_TYPES.includes(
-        column.type as SchemaColumnTypeEnum,
-      ),
-    );
-  }, [project.config.data_schema.columns]);
+  const columns = filterProjectColumnsByType(
+    project,
+    CATEGORICAL_SCHEMA_COLUMN_TYPES,
+  );
   const renderOptionDisplay = useDescriptionBasedRenderOption(
     VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY,
   );

@@ -1,4 +1,5 @@
-import { SchemaColumnModel } from '@/api/project';
+import { getTopicColumnName, SchemaColumnModel } from '@/api/project';
+import { getTopicLabel } from '@/api/topic';
 import { DashboardItemModel } from '@/api/userdata';
 import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
 import { ProjectColumnSelectInput } from '@/modules/project/select-column-input';
@@ -11,7 +12,8 @@ import {
   Affix,
   Button,
   Card,
-  Collapse,
+  CloseButton,
+  Group,
   List,
   Stack,
   TextInput,
@@ -36,7 +38,7 @@ function TopicCheatsheetInner(props: TopicCheatsheetInnerProps) {
       q,
       topics.map((topic) => {
         return {
-          label: topic.label,
+          label: getTopicLabel(topic),
           words: topic.words?.map((word) => word[0]),
           tags: topic.tags,
         };
@@ -52,7 +54,7 @@ function TopicCheatsheetInner(props: TopicCheatsheetInnerProps) {
         placeholder="Search for a topic by label, keyword, or tag"
         onChange={(e) => setQ(e.target.value)}
       />
-      <List>
+      <List className="overflow-y-auto">
         {filteredTopics.map((topic) => {
           return (
             <List.Item key={topic.id}>
@@ -106,7 +108,7 @@ export default function DashboardTopicCheatsheet(
   props: DashboardTopicCheatsheetProps,
 ) {
   const { dashboard } = props;
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle, close }] = useDisclosure();
   const allTopicModelingResults = React.useContext(
     AllTopicModelingResultContext,
   );
@@ -116,7 +118,9 @@ export default function DashboardTopicCheatsheet(
     );
     return allTopicModelingResults
       .filter((result) => !!result.result)
-      .filter((column) => allUniqueDashboardColumns.has(column.column.name))
+      .filter((column) =>
+        allUniqueDashboardColumns.has(getTopicColumnName(column.column.name)),
+      )
       .map((result) => result.column);
   }, [allTopicModelingResults, dashboard]);
 
@@ -125,14 +129,32 @@ export default function DashboardTopicCheatsheet(
   }
 
   return (
-    <Affix bottom={16} right={16} className="max-h-lg">
-      <Card>
-        <Button leftSection={<FileSearch />} onClick={toggle}>
-          View Topic Cheatsheet
-        </Button>
-        <Collapse in={opened}>
-          <TopicCheatsheetColumnSelector columns={supportedColumns} />
-        </Collapse>
+    <Affix bottom={16} right={16}>
+      <Card
+        className="max-w-lg"
+        style={{
+          height: opened ? '80dvh' : undefined,
+          maxHeight: opened ? '80dvh' : undefined,
+        }}
+        withBorder
+      >
+        {opened && (
+          <>
+            <Group justify="end" className="pb-3">
+              <CloseButton onClick={close} />
+            </Group>
+            <TopicCheatsheetColumnSelector columns={supportedColumns} />
+          </>
+        )}
+        {!opened && (
+          <Button
+            leftSection={<FileSearch />}
+            onClick={toggle}
+            variant="subtle"
+          >
+            View Topic Cheatsheet
+          </Button>
+        )}
       </Card>
     </Affix>
   );

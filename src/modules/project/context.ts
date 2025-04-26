@@ -1,9 +1,11 @@
 import {
+  findProjectColumn,
   ProjectModel,
   SchemaColumnModel,
   TextualSchemaColumnModel,
 } from '@/api/project';
 import React from 'react';
+import { useWatch } from 'react-hook-form';
 
 export const ProjectContext = React.createContext<ProjectModel>(
   undefined as any,
@@ -18,8 +20,17 @@ export function useCurrentTextualColumn(): TextualSchemaColumnModel {
 }
 
 export function useProjectColumn(
-  column: string,
+  columnName: string,
 ): SchemaColumnModel | undefined {
   const project = React.useContext(ProjectContext);
-  return project.config.data_schema.columns.find((col) => col.name === column);
+  return findProjectColumn(project, columnName);
+}
+
+export function useProjectColumnField(
+  columnFieldName: string,
+): SchemaColumnModel | undefined {
+  const columnName = useWatch({
+    name: columnFieldName,
+  });
+  return useProjectColumn(columnName);
 }

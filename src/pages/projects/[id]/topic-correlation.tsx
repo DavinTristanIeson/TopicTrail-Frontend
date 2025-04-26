@@ -1,3 +1,4 @@
+import { filterProjectColumnsByType } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import NavigationRoutes from '@/common/constants/routes';
 import { NextPageWithLayout } from '@/common/utils/types';
@@ -18,9 +19,9 @@ const TopicCorrelationPage: NextPageWithLayout = function () {
   const setColumn = useTopicCorrelationAppState((store) => store.setColumn);
 
   const project = React.useContext(ProjectContext);
-  const textualColumns = project.config.data_schema.columns.filter(
-    (col) => col.type === SchemaColumnTypeEnum.Textual,
-  );
+  const textualColumns = filterProjectColumnsByType(project, [
+    SchemaColumnTypeEnum.Textual,
+  ]);
   const allTopicModelingResults = React.useContext(
     AllTopicModelingResultContext,
   );

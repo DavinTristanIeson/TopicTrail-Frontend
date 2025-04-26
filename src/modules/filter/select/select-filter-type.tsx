@@ -7,7 +7,7 @@ import {
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { useProjectColumnField } from '@/modules/project/columns';
+import { useProjectColumnField } from '@/modules/project/context';
 import { type SelectProps, Select } from '@mantine/core';
 
 const FILTER_COMBOBOXES = {

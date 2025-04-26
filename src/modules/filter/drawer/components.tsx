@@ -10,8 +10,10 @@ import {
 } from '@/common/constants/enum';
 import React from 'react';
 import RHFField from '@/components/standard/fields';
-import { ProjectContext } from '@/modules/project/context';
-import { useProjectColumnField } from '@/modules/project/columns';
+import {
+  ProjectContext,
+  useProjectColumnField,
+} from '@/modules/project/context';
 import {
   TableUniqueValueSelectField,
   TableUniqueValuesMultiSelectField,
@@ -49,6 +51,10 @@ function ValueBasedTableFilterComponent(props: TableFilterComponentProps) {
     return (
       <TopicFilterSelectField column={column} {...inputProps} withOutlier />
     );
+  } else if (column.type === SchemaColumnTypeEnum.Temporal) {
+    return <RHFField type="datetime" {...inputProps} />;
+  } else if (column.type === SchemaColumnTypeEnum.Continuous) {
+    return <RHFField type="number" {...inputProps} />;
   } else {
     return <RHFField type="text" {...inputProps} />;
   }

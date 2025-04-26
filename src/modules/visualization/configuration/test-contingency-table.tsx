@@ -1,5 +1,7 @@
-import { CATEGORICAL_SCHEMA_COLUMN_TYPES } from '@/api/project';
-import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import {
+  CATEGORICAL_SCHEMA_COLUMN_TYPES,
+  filterProjectColumnsByType,
+} from '@/api/project';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { Alert } from '@mantine/core';
@@ -37,13 +39,10 @@ function BinaryStatisticOnContingencyTableExplanation() {
 }
 export function VisualizationBinaryStatisticTestOnContingencyTableConfigForm() {
   const project = React.useContext(ProjectContext);
-  const supportedColumns = React.useMemo(() => {
-    const supportedColumnTypes = CATEGORICAL_SCHEMA_COLUMN_TYPES;
-    return project.config.data_schema.columns.filter((column) =>
-      supportedColumnTypes.includes(column.type as SchemaColumnTypeEnum),
-    );
-  }, [project.config.data_schema.columns]);
-
+  const supportedColumns = filterProjectColumnsByType(
+    project,
+    CATEGORICAL_SCHEMA_COLUMN_TYPES,
+  );
   const column = useWatch({
     name: 'column',
   }) as string;

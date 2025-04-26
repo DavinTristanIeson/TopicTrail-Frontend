@@ -5,7 +5,6 @@ import { statisticTestFormSchema, StatisticTestFormType } from './form-type';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import FormWrapper from '@/components/utility/form/wrapper';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
-import { ProjectContext } from '@/modules/project/context';
 import { Group, Stack } from '@mantine/core';
 import { NamedFilterSelectField } from '../subdatasets/select-named-filter';
 import {
@@ -17,17 +16,18 @@ import { SUPPORTED_COLUMN_TYPES_FOR_STATISTIC_TEST } from './dictionary';
 import SubmitButton from '@/components/standard/button/submit';
 import { TestTube } from '@phosphor-icons/react';
 import { useComparisonAppState } from '../app-state';
+import { filterProjectColumnsByType } from '@/api/project';
+import { ProjectContext } from '@/modules/project/context';
 
 function StatisticTestFormBody() {
-  const project = React.useContext(ProjectContext);
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const { setValue } = useFormContext<StatisticTestFormType>();
   const [columnType, setColumnType] =
     React.useState<SchemaColumnTypeEnum | null>(null);
-  const columns = project.config.data_schema.columns.filter((column) =>
-    SUPPORTED_COLUMN_TYPES_FOR_STATISTIC_TEST.includes(
-      column.type as SchemaColumnTypeEnum,
-    ),
+  const project = React.useContext(ProjectContext);
+  const columns = filterProjectColumnsByType(
+    project,
+    SUPPORTED_COLUMN_TYPES_FOR_STATISTIC_TEST,
   );
   return (
     <Stack>
