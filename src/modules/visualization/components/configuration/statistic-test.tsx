@@ -1,5 +1,5 @@
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { Input, Select, Slider } from '@mantine/core';
+import { Input, type InputWrapperProps, Select, Slider } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import React from 'react';
 
@@ -23,7 +23,54 @@ export function useVisualizationAlphaSlider() {
 
   const [debouncedAlpha] = useDebouncedValue(alpha, 1000, { leading: false });
 
-  return { Component, alpha: debouncedAlpha };
+  const filter = React.useCallback(
+    (value: number) => {
+      return value <= debouncedAlpha;
+    },
+    [debouncedAlpha],
+  );
+
+  return { Component, alpha: debouncedAlpha, filter };
+}
+
+interface useVisualizationMinFrequencySliderProps {
+  max: number;
+  inputProps?: InputWrapperProps;
+}
+
+export function useVisualizationMinFrequencySlider(
+  props: useVisualizationMinFrequencySliderProps,
+) {
+  const { max, inputProps } = props;
+  const [minFrequency, setMinFrequency] = React.useState(6);
+  const Component = (
+    <Input.Wrapper
+      label="Min. Frequency"
+      description="The minimal number of rows for a category to be shown. Set this to a higher number to filter out results that are too few to be relevant."
+      {...inputProps}
+    >
+      <Slider
+        value={minFrequency}
+        min={0}
+        max={max}
+        step={1}
+        onChange={setMinFrequency}
+      />
+    </Input.Wrapper>
+  );
+
+  const [debouncedMinFrequency] = useDebouncedValue(minFrequency, 1000, {
+    leading: false,
+  });
+
+  const filter = React.useCallback(
+    (value: number) => {
+      return value >= debouncedMinFrequency;
+    },
+    [debouncedMinFrequency],
+  );
+
+  return { Component, threshold: debouncedMinFrequency, filter };
 }
 
 export enum BinaryStatisticTestVisualizationType {

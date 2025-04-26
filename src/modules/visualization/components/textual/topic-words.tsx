@@ -3,13 +3,13 @@ import { Stack } from '@mantine/core';
 import { getTopicLabel, TopicModel } from '@/api/topic';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
 import {
-  useVisualizationSubdatasetsMultiSelect,
   VisualizationWordCloudItem,
   VisualizationWordCloudRenderer,
 } from '@/modules/visualization/components/textual/renderer';
 import { BaseVisualizationComponentProps } from '../../types/base';
 import { TopicSelectInput } from '@/modules/topics/components/select-topic-input';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
+import { useVisualizationSubdatasetsMultiSelect } from '../configuration/subdatasets';
 
 export function VisualizationTopicWordsComponent(
   props: BaseVisualizationComponentProps<TopicModel[], object>,

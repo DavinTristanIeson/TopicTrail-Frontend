@@ -8,12 +8,14 @@ import {
   VisualizationFrequencyDistributionConfigType,
   VisualizationFrequencyDistributonDisplayMode,
 } from '../../configuration/frequency-distribution';
-import { Select, Stack } from '@mantine/core';
+import { MultiSelect, Select, Stack } from '@mantine/core';
 import {
   PlotInlineConfiguration,
   usePlotRendererHelperProps,
   useCategoricalDataFrequencyModeState,
+  useCategoriesAxisMultiSelectForFrequencyDistribution,
 } from '../configuration';
+import { pickArrayByIndex } from '@/common/utils/iterable';
 
 function getHoverTemplate(column: string, needsPercentage: boolean) {
   return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;
@@ -26,14 +28,24 @@ export default function VisualizationFrequencyDistributionComponent(
   >,
 ) {
   const { data, item } = props;
+
+  // region Configuration
   const {
     transformFrequencies,
     plotlyLayoutProps,
-    selectProps,
+    selectProps: frequencyModeSelectProps,
     needsPercentage,
   } = useCategoricalDataFrequencyModeState();
 
-  const plot = React.useMemo<PlotParams>(() => {
+  const {
+    indexed,
+    categories: allCategories,
+    multiSelectProps: categoriesMultiSelectProps,
+  } = useCategoriesAxisMultiSelectForFrequencyDistribution(props);
+
+  // region Plot
+  const plot = React.useMemo<PlotParams | undefined>(() => {
+    if (allCategories.length === 0) return undefined;
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
     );
@@ -47,11 +59,13 @@ export default function VisualizationFrequencyDistributionComponent(
 
     const subplots: PlotParams['data'] = data.map(
       ({ name, data: { frequencies, categories } }, idx) => {
-        const y = transformFrequencies(frequencies);
+        const mask = indexed(categories);
+        const x = pickArrayByIndex(categories, mask);
+        const y = pickArrayByIndex(transformFrequencies(frequencies), mask);
         return {
           name,
           mode: 'lines+markers',
-          x: categories,
+          x: x,
           y: y,
           type: isLinePlot ? 'scatter' : 'bar',
           hovertemplate: getHoverTemplate(item.column, needsPercentage),
@@ -72,20 +86,26 @@ export default function VisualizationFrequencyDistributionComponent(
       },
     };
   }, [
+    allCategories.length,
     data,
-    item.column,
-    item.config.display,
+    item,
+    indexed,
     needsPercentage,
     plotlyLayoutProps,
     transformFrequencies,
   ]);
 
+  const plotProps = usePlotRendererHelperProps(item);
   return (
     <Stack>
       <PlotInlineConfiguration>
-        <Select {...selectProps} />
+        <Select {...frequencyModeSelectProps} />
+        <MultiSelect
+          label={`Values of ${item.column}`}
+          {...categoriesMultiSelectProps}
+        />
       </PlotInlineConfiguration>
-      <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />
+      {plot && <PlotRenderer plot={plot} {...plotProps} />}
     </Stack>
   );
 }

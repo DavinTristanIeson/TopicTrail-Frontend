@@ -33,7 +33,7 @@ const ComparisonPage: NextPageWithLayout = function () {
             value={ComparisonPageTab.GroupsManager}
             leftSection={<ListNumbers />}
           >
-            Groups Manager
+            Subdatasets
           </Tabs.Tab>
           <Tabs.Tab
             value={ComparisonPageTab.Visualization}

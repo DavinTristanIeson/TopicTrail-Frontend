@@ -2,11 +2,11 @@ import React from 'react';
 import { Stack } from '@mantine/core';
 import { TopicModel } from '@/api/topic';
 import {
-  useVisualizationSubdatasetsMultiSelect,
   VisualizationWordCloudItem,
   VisualizationWordCloudRenderer,
 } from '@/modules/visualization/components/textual/renderer';
 import { BaseVisualizationComponentProps } from '../../types/base';
+import { useVisualizationSubdatasetsMultiSelect } from '../configuration/subdatasets';
 
 export function VisualizationCompareSubdatasetWords(
   props: BaseVisualizationComponentProps<TopicModel, object>,

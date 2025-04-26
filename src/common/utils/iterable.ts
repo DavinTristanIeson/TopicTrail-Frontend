@@ -1,4 +1,4 @@
-import { fromPairs } from 'lodash-es';
+import { fromPairs, uniq, zip } from 'lodash-es';
 
 export function pickArrayById<T>(
   array: T[],
@@ -115,4 +115,17 @@ export function mask2D<T>(arr: T[][], mask: boolean[][], value: T) {
     const valid = !!mask[i]?.[j];
     return valid ? value : original;
   });
+}
+
+export function maskBoolean<T>(arr: T[], mask: boolean[]): T[] {
+  if (mask.length > arr.length) {
+    mask = mask.slice(0, arr.length);
+  }
+  return zip(arr, mask)
+    .filter((x) => x[1])
+    .map((x) => x[0]!);
+}
+
+export function joinIndices(indices: number[][]) {
+  return uniq(indices.flat());
 }

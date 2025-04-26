@@ -6,12 +6,13 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { MultiSelect, Select, Stack } from '@mantine/core';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
 import { PlotParams } from 'react-plotly.js';
-import { fromPairs } from 'lodash-es';
-import { sort2D, zip2D } from '@/common/utils/iterable';
-import { useDebouncedValue } from '@mantine/hooks';
+import { fromPairs, max } from 'lodash-es';
+import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
 import {
   PlotInlineConfiguration,
   useCategoriesAxisMultiSelect,
+  usePlotRendererHelperProps,
+  useVisualizationMinFrequencySlider,
 } from '../configuration';
 
 enum ContingencyTableVisualizationMethod {
@@ -61,93 +62,88 @@ const CONTINGENCY_TABLE_METHOD_OPTIONS = Object.values(
   CONTINGENCY_TABLE_METHOD_DICTIONARY,
 );
 
-export function getHeatmapZRange(Z: number[][]): [number, number] {
-  let maxZ = 0;
-  let minZ = 0;
-  for (const row of Z) {
-    for (const col of row) {
-      maxZ = Math.max(col, maxZ);
-      minZ = Math.min(col, minZ);
-    }
-  }
-  const zThreshold = minZ > -1 ? maxZ : (maxZ + Math.abs(minZ)) / 2;
-  return [-zThreshold, zThreshold];
-}
-
-function prepareHeatmapData(
-  data: VisualizationContingencyTableModel,
-  rowIndices: number[],
-  columnIndices: number[],
-) {
-  const basePicker = {
-    [ContingencyTableVisualizationMethod.Observed]: data.observed,
-    [ContingencyTableVisualizationMethod.Expected]: data.expected,
-    [ContingencyTableVisualizationMethod.Residuals]: data.residuals,
-    [ContingencyTableVisualizationMethod.StandardizedResiduals]:
-      data.standardized_residuals,
-  };
-  const picker = fromPairs(
-    Object.entries(basePicker).map((x) => [
-      x[0],
-      sort2D(x[1], rowIndices, columnIndices),
-    ]),
-  );
-  const customdata = zip2D(Object.values(picker));
-  return { picker, customdata };
-}
-
 function VisualizationContingencyTableHeatmapInner(
   props: BaseVisualizationComponentProps<
     VisualizationContingencyTableModel,
     VisualizationContingencyTableConfigType
   >,
 ) {
-  const { data: dataContainer } = props;
+  const { data: dataContainer, item } = props;
 
+  const { data } = dataContainer[0]!;
+
+  // region Configuration
   const [method, setMethod] = React.useState(
     ContingencyTableVisualizationMethod.Observed,
   );
-  const { data } = dataContainer[0]!;
+
+  const inputContainer = useSelectLeftRightButtons({
+    value: method,
+    onChange: setMethod,
+    options: CONTINGENCY_TABLE_METHOD_OPTIONS.map((opt) => opt.value),
+  });
 
   const {
     multiSelectProps: columnsSelectProps,
-    chosenIndices: rawColumnIndices,
+    categories: columns,
+    indexed: indexColumns,
   } = useCategoriesAxisMultiSelect({
     supportedCategories: data.columns,
     column: data.column2,
   });
-  const { multiSelectProps: rowsSelectProps, chosenIndices: rawRowIndices } =
-    useCategoriesAxisMultiSelect({
-      supportedCategories: data.rows,
-      column: data.column1,
+  const {
+    multiSelectProps: rowsSelectProps,
+    categories: rows,
+    indexed: indexRows,
+  } = useCategoriesAxisMultiSelect({
+    supportedCategories: data.rows,
+    column: data.column1,
+  });
+
+  const maxFrequency = React.useMemo(
+    () => max(data.observed.map(max)) ?? 0,
+    [data.observed],
+  );
+  const { Component: FrequencySlider, filter: filterFrequency } =
+    useVisualizationMinFrequencySlider({
+      max: maxFrequency,
+      inputProps: {
+        label: 'Min. Frequency',
+      },
     });
 
-  const [[rows, columns, rowIndices, columnIndices]] = useDebouncedValue(
-    [
-      rowsSelectProps.value,
-      columnsSelectProps.value,
-      rawRowIndices,
-      rawColumnIndices,
-    ] as const,
-    1000,
-    {
-      leading: false,
-    },
-  );
-
+  // region Plot
   const plot = React.useMemo<PlotParams | undefined>(() => {
     if (rows.length === 0 || columns.length === 0) return undefined;
-    const { picker, customdata } = prepareHeatmapData(
-      data,
-      rowIndices,
-      columnIndices,
-    );
 
+    const basePicker = {
+      [ContingencyTableVisualizationMethod.Observed]: data.observed,
+      [ContingencyTableVisualizationMethod.Expected]: data.expected,
+      [ContingencyTableVisualizationMethod.Residuals]: data.residuals,
+      [ContingencyTableVisualizationMethod.StandardizedResiduals]:
+        data.standardized_residuals,
+    };
+    const colorscale = {
+      [ContingencyTableVisualizationMethod.Observed]: 'Greens',
+      [ContingencyTableVisualizationMethod.Expected]: 'Greens',
+      [ContingencyTableVisualizationMethod.Residuals]: 'RdBu',
+      [ContingencyTableVisualizationMethod.StandardizedResiduals]: 'RdBu',
+    };
+    const picker = fromPairs(
+      Object.entries(basePicker).map((x) => {
+        const sorted = sort2D(
+          x[1],
+          indexRows(data.rows),
+          indexColumns(data.columns),
+        );
+        return [x[0], sorted];
+      }),
+    );
+    const customdata = zip2D(Object.values(picker));
     const usedValue = picker[method]!;
-    const [minZ, maxZ] = getHeatmapZRange(usedValue);
+
     const usedTitle = CONTINGENCY_TABLE_METHOD_DICTIONARY[method].title;
     const usedLabel = CONTINGENCY_TABLE_METHOD_DICTIONARY[method].hoverLabel;
-
     const hovertemplates = [
       `<b>${data.column1.name}</b>: %{y}<br><b>${data.column2.name}</b>: %{x}<br><b>${usedLabel}</b>: %{z}<br>----------------`,
     ];
@@ -159,19 +155,32 @@ function VisualizationContingencyTableHeatmapInner(
       hovertemplates.push(`<b>${entry.hoverLabel}</b>: %{customdata[${i}]}`);
     }
 
+    let maxZ = 0;
+    let minZ = 0;
+    for (const row of usedValue) {
+      for (const col of row) {
+        maxZ = Math.max(col, maxZ);
+        minZ = Math.min(col, minZ);
+      }
+    }
+
+    const invalidFrequencyMask = map2D(
+      data.observed,
+      (x) => !filterFrequency(x),
+    );
+
     return {
       data: [
         {
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: usedValue,
+          z: mask2D(usedValue, invalidFrequencyMask, 0),
           customdata: customdata as any,
           hovertemplate: hovertemplates.join('<br>'),
-          colorscale: 'RdBu',
-          // So that the middlepoint of the color scale is at 0
-          zmin: minZ,
-          zmax: maxZ,
+          colorscale: colorscale[method]!,
+          zmin: minZ / 2,
+          zmax: maxZ / 2,
         },
       ],
       layout: {
@@ -184,13 +193,9 @@ function VisualizationContingencyTableHeatmapInner(
         },
       },
     };
-  }, [columnIndices, columns, data, method, rowIndices, rows]);
+  }, [columns, data, indexColumns, indexRows, method, rows, filterFrequency]);
 
-  const inputContainer = useSelectLeftRightButtons({
-    value: method,
-    onChange: setMethod,
-    options: CONTINGENCY_TABLE_METHOD_OPTIONS.map((opt) => opt.value),
-  });
+  const plotProps = usePlotRendererHelperProps(item);
 
   return (
     <Stack>
@@ -212,8 +217,9 @@ function VisualizationContingencyTableHeatmapInner(
           label="Select Columns"
           description="Select the columns to be included in the heatmap"
         />
+        {FrequencySlider}
       </PlotInlineConfiguration>
-      {plot && <PlotRenderer plot={plot} />}
+      {plot && <PlotRenderer plot={plot} {...plotProps} />}
     </Stack>
   );
 }

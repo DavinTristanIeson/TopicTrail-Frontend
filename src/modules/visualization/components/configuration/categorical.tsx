@@ -2,9 +2,13 @@ import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { Group, Button, type SelectProps } from '@mantine/core';
 import dayjs from 'dayjs';
-import { fromPairs, sum } from 'lodash-es';
+import { fromPairs, sum, uniq } from 'lodash-es';
 import React from 'react';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { BaseVisualizationComponentProps } from '../../types/base';
+import { VisualizationFrequencyDistributionModel } from '@/api/table';
+import { useProjectColumn } from '@/modules/project/context';
+import { useDebouncedValue } from '@mantine/hooks';
 
 interface useCategoriesAxisMultiSelectProps {
   supportedCategories: string[];
@@ -17,18 +21,6 @@ export function useCategoriesAxisMultiSelect(
   const { supportedCategories, column } = props;
   const [categories, setCategories] =
     React.useState<string[]>(supportedCategories);
-
-  const indexMap = React.useMemo(() => {
-    return fromPairs(
-      supportedCategories.map((category, index) => [category, index]),
-    );
-  }, [supportedCategories]);
-
-  const chosenIndices = React.useMemo(() => {
-    return categories
-      .map((category) => indexMap[category]!)
-      .filter((category) => category != null);
-  }, [categories, indexMap]);
 
   const inputContainer = (children: React.ReactNode) => (
     <Group>
@@ -103,9 +95,31 @@ export function useCategoriesAxisMultiSelect(
     data: supportedCategories,
     searchable: true,
   };
+
+  const [debouncedCategories] = useDebouncedValue(categories, 1000, {
+    leading: false,
+  });
+
+  const indexed = React.useCallback(
+    (categories: string[]) => {
+      const indexMap = fromPairs(
+        debouncedCategories.map((category, index) => [category, index]),
+      );
+      return categories
+        .map((category, index) => [category, index] as const)
+        .filter((item) =>
+          Object.prototype.hasOwnProperty.call(indexMap, item[0]),
+        )
+        .sort((a, b) => (indexMap[a[0]] ?? 0) - (indexMap[b[0]] ?? 0))
+        .map((item) => item[1]);
+    },
+    [debouncedCategories],
+  );
+
   return {
     multiSelectProps,
-    chosenIndices,
+    indexed,
+    categories: debouncedCategories,
   };
 }
 
@@ -193,5 +207,30 @@ export function useCategoricalDataFrequencyModeState() {
     transformFrequencies,
     selectProps,
     needsPercentage: mode === CategoricalDataFrequencyMode.Proportion,
+  };
+}
+
+export function useCategoriesAxisMultiSelectForFrequencyDistribution(
+  props: BaseVisualizationComponentProps<
+    VisualizationFrequencyDistributionModel,
+    object
+  >,
+) {
+  const { data, item } = props;
+  const column = useProjectColumn(item.column);
+  const allCategories = React.useMemo(
+    () => uniq(data.flatMap((subdataset) => subdataset.data.categories)),
+    [data],
+  );
+  const { indexed, multiSelectProps, categories } =
+    useCategoriesAxisMultiSelect({
+      column,
+      supportedCategories: allCategories,
+    });
+
+  return {
+    multiSelectProps,
+    categories: categories,
+    indexed,
   };
 }

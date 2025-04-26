@@ -3,10 +3,10 @@ import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationWordsModel } from '@/api/table';
 import React from 'react';
 import {
-  useVisualizationSubdatasetsMultiSelect,
   VisualizationWordCloudItem,
   VisualizationWordCloudRenderer,
 } from './renderer';
+import { useVisualizationSubdatasetsMultiSelect } from '../configuration/subdatasets';
 
 export function VisualizationWordFrequencyComponent(
   props: BaseVisualizationComponentProps<VisualizationWordsModel, object>,

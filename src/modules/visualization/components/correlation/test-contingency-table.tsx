@@ -6,7 +6,6 @@ import { MultiSelect, Stack } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnContingencyTableMainModel } from '@/api/correlation';
 import PlotRenderer from '@/components/widgets/plotly';
 
-import { useDebouncedValue } from '@mantine/hooks';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
 import {
   BinaryStatisticTestVisualizationType,
@@ -15,7 +14,9 @@ import {
   useCategoriesAxisMultiSelect,
   usePlotRendererHelperProps,
   useVisualizationAlphaSlider,
+  useVisualizationMinFrequencySlider,
 } from '../configuration';
+import { max } from 'lodash-es';
 
 function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   props: BaseVisualizationComponentProps<
@@ -26,73 +27,85 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   const { item } = props;
   const data = props.data[0]!.data!;
 
+  // region Configuration
   const {
     multiSelectProps: columnsSelectProps,
-    chosenIndices: rawColumnIndices,
+    categories: columns,
+    indexed: indexColumns,
   } = useCategoriesAxisMultiSelect({
     supportedCategories: data.columns,
     column: data.column2,
   });
-  const { multiSelectProps: rowsSelectProps, chosenIndices: rawRowIndices } =
-    useCategoriesAxisMultiSelect({
-      supportedCategories: data.rows,
-      column: data.column1,
-    });
+  const {
+    multiSelectProps: rowsSelectProps,
+    categories: rows,
+    indexed: indexRows,
+  } = useCategoriesAxisMultiSelect({
+    supportedCategories: data.rows,
+    column: data.column1,
+  });
 
-  const [[rows, columns, rowIndices, columnIndices]] = useDebouncedValue(
-    [
-      rowsSelectProps.value,
-      columnsSelectProps.value,
-      rawRowIndices,
-      rawColumnIndices,
-    ] as const,
-    1000,
-    {
-      leading: false,
-    },
-  );
-
-  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider();
+  const { Component: AlphaSlider, filter: filterAlpha } =
+    useVisualizationAlphaSlider();
   const { Component: VisualizationMethodSelect, type: vistype } =
     useBinaryStatisticTestVisualizationMethodSelect();
 
+  const maxFrequency = React.useMemo(() => {
+    return (
+      max(
+        data.results.map((result) =>
+          max(result.map((resultEntry) => resultEntry.frequency) ?? 0),
+        ),
+      ) ?? 0
+    );
+  }, [data.results]);
+  const { Component: FrequencySlider, filter: filterFrequency } =
+    useVisualizationMinFrequencySlider({
+      max: maxFrequency,
+      inputProps: {
+        label: 'Min. Frequency',
+      },
+    });
+
+  // region Plot
   const values = React.useMemo(() => {
-    const invalid = sort2D(
-      map2D(data.results, (result) => result.significance.p_value > alpha),
-      rowIndices,
-      columnIndices,
-    );
+    const invalid = map2D(data.results, (result) => {
+      return (
+        !filterAlpha(result.significance.p_value) ||
+        !filterFrequency(result.frequency)
+      );
+    });
+    const rowIndices = indexRows(rows);
+    const columnIndices = indexColumns(columns);
     const process = (arr: number[][]) =>
-      mask2D(sort2D(arr, rowIndices, columnIndices), invalid, 0);
-    const effectSizes = process(
-      map2D(data.results, (result) => result.effect_size.value),
+      sort2D(mask2D(arr, invalid, 0), rowIndices, columnIndices);
+    const effectSizes = map2D(
+      data.results,
+      (result) => result.effect_size.value,
     );
-    const pValues = process(
-      map2D(data.results, (result) => result.significance.p_value),
+    const pValues = map2D(
+      data.results,
+      (result) => result.significance.p_value,
     );
-    const confidences = process(
-      map2D(data.results, (result) => (1 - result.significance.p_value) * 100),
+    const confidences = map2D(
+      data.results,
+      (result) => (1 - result.significance.p_value) * 100,
     );
-    const statistics = process(
-      map2D(data.results, (result) => result.significance.statistic),
+    const statistics = map2D(
+      data.results,
+      (result) => result.significance.statistic,
     );
-    const frequencies = sort2D(
-      map2D(data.results, (result) => result.frequency),
-      rowIndices,
-      columnIndices,
-    );
+    const frequencies = map2D(data.results, (result) => result.frequency);
 
     const effectSizeMethodConstraints = {
       zmin: -1,
       zmax: 1,
     };
-    const customdata = zip2D([
-      pValues,
-      confidences,
-      statistics,
-      effectSizes,
-      frequencies,
-    ]);
+    const customdata = sort2D(
+      zip2D([pValues, confidences, statistics, effectSizes, frequencies]),
+      rowIndices,
+      columnIndices,
+    );
     const hovertemplate = [
       `<b>${item.column}</b>: %{x}`,
       `<b>${item.config.target}</b>: %{y}`,
@@ -113,18 +126,21 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
       customdata,
       hovertemplate,
       effectSizeMethodConstraints,
+      process,
     };
   }, [
-    alpha,
-    columnIndices,
-    data.results,
-    item.column,
-    item.config.target,
-    rowIndices,
+    data,
+    indexRows,
+    rows,
+    indexColumns,
+    columns,
+    item,
+    filterAlpha,
+    filterFrequency,
   ]);
 
   const frequenciesPlot = React.useMemo<PlotParams>(() => {
-    const { frequencies, customdata, hovertemplate } = values;
+    const { frequencies, customdata, hovertemplate, process } = values;
 
     return {
       data: [
@@ -132,7 +148,7 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: frequencies,
+          z: process(frequencies),
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
         },
@@ -149,6 +165,7 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
       customdata,
       hovertemplate,
       effectSizeMethodConstraints,
+      process,
     } = values;
 
     return {
@@ -157,7 +174,8 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: effectSizes,
+          z: process(effectSizes),
+          colorscale: 'RdBu',
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
           ...effectSizeMethodConstraints,
@@ -170,7 +188,7 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   }, [columns, item, rows, values]);
 
   const confidenceLevelsPlot = React.useMemo<PlotParams>(() => {
-    const { confidences, customdata, hovertemplate } = values;
+    const { confidences, customdata, hovertemplate, process } = values;
 
     return {
       data: [
@@ -178,15 +196,16 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: confidences,
+          z: process(confidences),
+          colorscale: 'Greens',
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
+          zmin: 0,
+          zmax: 100,
         },
       ],
       layout: {
         title: `Confidence Level of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
-        zmin: 0,
-        zmax: 100,
       },
     };
   }, [columns, item, rows, values]);
@@ -213,8 +232,8 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
           label="Select Columns"
           description="Select the columns to be included in the heatmap"
         />
-        {vistype !== BinaryStatisticTestVisualizationType.Frequencies &&
-          AlphaSlider}
+        {AlphaSlider}
+        {FrequencySlider}
       </PlotInlineConfiguration>
       <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
     </Stack>

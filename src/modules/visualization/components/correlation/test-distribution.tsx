@@ -5,7 +5,7 @@ import { PlotParams } from 'react-plotly.js';
 import { MultiSelect, Stack, useMantineTheme } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnDistributionModel } from '@/api/correlation';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { zip } from 'lodash-es';
+import { max, zip } from 'lodash-es';
 import {
   EFFECT_SIZE_DICTIONARY,
   STATISTIC_TEST_METHOD_DICTIONARY,
@@ -13,7 +13,6 @@ import {
 import PlotRenderer from '@/components/widgets/plotly';
 import { ProjectContext } from '@/modules/project/context';
 
-import { useDebouncedValue } from '@mantine/hooks';
 import { pickArrayByIndex } from '@/common/utils/iterable';
 import {
   useVisualizationAlphaSlider,
@@ -22,6 +21,7 @@ import {
   BinaryStatisticTestVisualizationType,
   PlotInlineConfiguration,
   usePlotRendererHelperProps,
+  useVisualizationMinFrequencySlider,
 } from '../configuration';
 
 function VisualizationBinaryStatisticTestOnDistributionInternal(
@@ -34,7 +34,9 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   const { colors: mantineColors } = useMantineTheme();
   const data = props.data[0]!.data!;
 
-  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider();
+  // region Configuration
+  const { Component: AlphaSlider, filter: filterAlpha } =
+    useVisualizationAlphaSlider();
   const { Component: VisualizationMethodSelect, type: vistype } =
     useBinaryStatisticTestVisualizationMethodSelect();
 
@@ -47,19 +49,24 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   const column = project.config.data_schema.columns.find(
     (column) => column.name === item.column,
   );
-  const {
-    multiSelectProps: discriminatorSelectProps,
-    chosenIndices: rawIndices,
-  } = useCategoriesAxisMultiSelect({
-    supportedCategories: discriminators,
-    column: column,
-  });
+  const { multiSelectProps: discriminatorSelectProps, indexed } =
+    useCategoriesAxisMultiSelect({
+      supportedCategories: discriminators,
+      column: column,
+    });
 
-  const [indices] = useDebouncedValue(rawIndices, 1000, { leading: false });
+  const maxFrequency = React.useMemo(
+    () => max(data.map((item) => item.yes_count)) ?? 0,
+    [data],
+  );
+  const { Component: MinFrequencySlider, filter: filterFrequency } =
+    useVisualizationMinFrequencySlider({ max: maxFrequency });
 
+  // region Plot
   const values = React.useMemo(() => {
+    const discriminatorIndices = indexed(discriminators);
     const process = function <T>(arr: T[]) {
-      return pickArrayByIndex(arr, indices);
+      return pickArrayByIndex(arr, discriminatorIndices);
     };
     const x = process(discriminators);
     const effectSizes = process(data.map((datum) => datum.effect_size.value));
@@ -70,11 +77,14 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
     const statistics = process(
       data.map((datum) => datum.significance.statistic),
     );
-    const valid = process(pValues.map((p) => p <= alpha));
 
     const invalidCounts = process(data.map((datum) => datum.invalid_count));
     const noCounts = process(data.map((datum) => datum.no_count));
     const yesCounts = process(data.map((datum) => datum.yes_count));
+
+    const valid = zip(pValues, yesCounts).map(
+      ([p, frequency]) => filterAlpha(p!) && filterFrequency(frequency!),
+    );
 
     const { colors: baseColors } = generateColorsFromSequence(x);
     const plotColors = zip(baseColors, valid).map(([color, valid]) =>
@@ -130,7 +140,15 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       hovertemplate,
       effectSizeMethodYAxis,
     };
-  }, [alpha, data, discriminators, indices, item, mantineColors.gray]);
+  }, [
+    data,
+    discriminators,
+    filterAlpha,
+    filterFrequency,
+    indexed,
+    item,
+    mantineColors.gray,
+  ]);
 
   const frequenciesPlot = React.useMemo<PlotParams>(() => {
     const { discriminators, yesCounts, noCounts, invalidCounts } = values;
@@ -264,8 +282,8 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
           label={`Values of ${item.column}`}
         />
         {VisualizationMethodSelect}
-        {vistype !== BinaryStatisticTestVisualizationType.Frequencies &&
-          AlphaSlider}
+        {AlphaSlider}
+        {MinFrequencySlider}
       </PlotInlineConfiguration>
       <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
     </Stack>

@@ -4,7 +4,7 @@ import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { fromPairs, zip } from 'lodash-es';
+import { fromPairs, uniq, zip } from 'lodash-es';
 import {
   VisualizationProportionsConfigType,
   VisualizationProportionsDisplayMode,
@@ -15,6 +15,7 @@ import {
   usePlotRendererHelperProps,
   useCategoricalDataFrequencyModeState,
 } from '../configuration';
+import { useVisualizationSubdatasetsMultiSelect } from '../configuration/subdatasets';
 
 function getHoverTemplate(column: string, needsPercentage: boolean) {
   return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;
@@ -27,30 +28,38 @@ export default function VisualizationProportionsComponent(
   >,
 ) {
   const { data, item } = props;
+  // region Configuration
   const {
     transformFrequencies,
     plotlyLayoutProps,
-    selectProps,
+    selectProps: frequencyModeSelectProps,
     needsPercentage,
   } = useCategoricalDataFrequencyModeState();
-  const plot = React.useMemo<PlotParams>(() => {
-    const uniqueValuesTracker: Set<string> = new Set();
-    for (const subdataset of data) {
-      for (const value of subdataset.data.categories) {
-        uniqueValuesTracker.add(value);
-      }
-    }
-    const uniqueValues = Array.from(uniqueValuesTracker);
+
+  const { Component: SubdatasetMultiSelect, viewedData } =
+    useVisualizationSubdatasetsMultiSelect({
+      withSelectAll: true,
+      data,
+      limit: data.length,
+    });
+
+  // region Plot
+  const plot = React.useMemo<PlotParams | undefined>(() => {
+    const data = viewedData;
+    const uniqueValues = uniq(
+      data.flatMap((subdataset) => subdataset.data.categories),
+    );
+    if (data.length === 0 || uniqueValues.length === 0) return undefined;
     const { colors } = generateColorsFromSequence(uniqueValues);
 
-    const frequenciesPerSubdataset = data.map((subdataset) =>
-      fromPairs(
+    const frequenciesPerSubdataset = data.map((subdataset) => {
+      return fromPairs(
         zip(
           subdataset.data.categories,
           transformFrequencies(subdataset.data.frequencies),
         ) as [string, number][],
-      ),
-    );
+      );
+    });
 
     const subdatasetNames = data.map((subdataset) => subdataset.name);
 
@@ -89,20 +98,22 @@ export default function VisualizationProportionsComponent(
       },
     };
   }, [
-    data,
-    item.column,
-    item.config.display,
+    item,
     needsPercentage,
     plotlyLayoutProps,
     transformFrequencies,
+    viewedData,
   ]);
+
+  const plotProps = usePlotRendererHelperProps(item);
 
   return (
     <Stack>
       <PlotInlineConfiguration>
-        <Select {...selectProps} />
+        {SubdatasetMultiSelect}
+        <Select {...frequencyModeSelectProps} />
       </PlotInlineConfiguration>
-      <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />
+      {plot && <PlotRenderer plot={plot} {...plotProps} />}
     </Stack>
   );
 }
