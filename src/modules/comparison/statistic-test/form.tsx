@@ -7,7 +7,7 @@ import FormWrapper from '@/components/utility/form/wrapper';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { ProjectContext } from '@/modules/project/context';
 import { Group, Stack } from '@mantine/core';
-import { NamedFilterSelectField } from '../filter/select-named-filter';
+import { NamedFilterSelectField } from '../subdatasets/select-named-filter';
 import {
   EffectSizeSelectField,
   StatisticMethodSelectField,

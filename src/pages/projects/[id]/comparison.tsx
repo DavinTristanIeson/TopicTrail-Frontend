@@ -4,7 +4,7 @@ import {
   useComparisonAppState,
 } from '@/modules/comparison/app-state';
 import ComparisonDashboard from '@/modules/comparison/dashboard';
-import NamedFiltersManager from '@/modules/comparison/filter';
+import NamedFiltersManager from '@/modules/comparison/subdatasets';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { Alert, Tabs } from '@mantine/core';

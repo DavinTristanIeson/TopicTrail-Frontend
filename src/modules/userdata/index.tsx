@@ -26,6 +26,7 @@ import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 
 interface UserDataManagerProps<T> extends UserDataManagerRendererProps<T> {
   label: string;
+  Bottom?: React.ReactNode;
 }
 
 interface StoreUserDataActionComponentProps {
@@ -67,7 +68,7 @@ function StoreUserDataActionComponent(
 }
 
 export default function UserDataManager<T>(props: UserDataManagerProps<T>) {
-  const { label, data, canSave } = props;
+  const { label, data, canSave, Bottom } = props;
   const [opened, { toggle }] = useDisclosure(false);
   const editDataRemote =
     React.useRef<ParametrizedDisclosureTrigger<UserDataInput> | null>(null);
@@ -127,6 +128,7 @@ export default function UserDataManager<T>(props: UserDataManagerProps<T>) {
                   />
                 </Fieldset>
               </Group>
+              {Bottom}
             </Stack>
           </Collapse>
         </Paper>
