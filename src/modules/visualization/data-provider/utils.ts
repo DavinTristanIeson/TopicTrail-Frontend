@@ -63,7 +63,8 @@ export function usePrepareDataProvider(props: DashboardItemModel) {
   }
   return {
     column,
-    groups: shouldUseWholeDataset ? defaultGroup : groups,
+    groups:
+      (shouldUseWholeDataset?.(props, column) ? defaultGroup : groups) ?? [],
     project,
     params: {
       path: {

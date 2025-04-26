@@ -10,7 +10,6 @@ import { fromPairs } from 'lodash-es';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { VisualizationConfigFormType } from './form-type';
 import { Info } from '@phosphor-icons/react';
-import { SchemaColumnModel } from '@/api/project';
 import { useContextSelector } from 'use-context-selector';
 import { DashboardConstraintContext } from '../types/context';
 
@@ -109,7 +108,7 @@ export function DefaultVisualizationConfigurationForm() {
   );
 
   const project = React.useContext(ProjectContext);
-  const { reset, setValue } = useFormContext<VisualizationConfigFormType>();
+  const { setValue } = useFormContext<VisualizationConfigFormType>();
   const getAllowedTypes = useAllowedDashboardItemTypes();
   const columns = React.useMemo(() => {
     if (controlledColumns) {
@@ -132,8 +131,9 @@ export function DefaultVisualizationConfigurationForm() {
           className="flex-1"
           description="The column that contains the data to be visualized."
           onChange={(column) => {
-            reset();
             setValue('column', column?.name ?? '');
+            setValue('type', '' as any);
+            setValue('config', {});
           }}
         />
         <ColumnDashboardItemSelectInput />

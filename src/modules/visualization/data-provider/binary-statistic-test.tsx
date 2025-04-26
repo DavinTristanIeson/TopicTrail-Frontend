@@ -32,7 +32,7 @@ export const useVisualizationBinaryStatisticTestOnDistributionDataProvider: Base
     data: query.data
       ? [
           {
-            name: 'Default',
+            name: item.column,
             data: query.data?.data,
           },
         ]
@@ -66,7 +66,7 @@ export const useVisualizationBinaryStatisticTestOnContingencyTableDataProvider: 
     data: query.data
       ? [
           {
-            name: 'Default',
+            name: item.column,
             data: query.data?.data,
           },
         ]

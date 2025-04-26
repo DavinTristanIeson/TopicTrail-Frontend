@@ -27,7 +27,7 @@ export const useVisualizationContingencyTableDataProvider: BaseVisualizationData
     data: query.data
       ? [
           {
-            name: 'Default',
+            name: item.column,
             data: query.data?.data,
           },
         ]

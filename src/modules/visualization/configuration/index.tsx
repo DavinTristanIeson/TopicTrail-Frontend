@@ -13,7 +13,6 @@ import {
 import { Divider, Group, Stack, Text } from '@mantine/core';
 import { CancelButton } from '@/components/standard/button/variants';
 import SubmitButton from '@/components/standard/button/submit';
-import { SchemaColumnModel } from '@/api/project';
 import { useContextSelector } from 'use-context-selector';
 import { DashboardConstraintContext } from '../types/context';
 

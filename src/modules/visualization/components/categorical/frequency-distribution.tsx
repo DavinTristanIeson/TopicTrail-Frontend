@@ -8,74 +8,39 @@ import {
   VisualizationFrequencyDistributionConfigType,
   VisualizationFrequencyDistributonDisplayMode,
 } from '../../configuration/frequency-distribution';
-import {
-  CategoricalDataFrequencyMode,
-  useCategoricalDataFrequencyMode,
-} from './utils';
-import { usePlotRendererHelperProps } from '../utils';
-import { DashboardItemModel } from '@/api/userdata';
+import { useCategoricalDataFrequencyModeState } from './utils';
+import { PlotInlineConfiguration, usePlotRendererHelperProps } from '../utils';
+import { Select, Stack } from '@mantine/core';
 
-function getHoverTemplate(
-  item: DashboardItemModel<VisualizationFrequencyDistributionConfigType>,
-) {
-  return `<b>${item.column}</b>: %{x}<br><b>${item.config.mode === CategoricalDataFrequencyMode.Proportion ? 'Proportion' : 'Frequency'}</b>: %{y}`;
+function getHoverTemplate(column: string, needsPercentage: boolean) {
+  return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;
 }
 
-export function VisualizationFrequencyDistributionBarChart(
+export default function VisualizationFrequencyDistributionComponent(
   props: BaseVisualizationComponentProps<
     VisualizationFrequencyDistributionModel,
     VisualizationFrequencyDistributionConfigType
   >,
 ) {
   const { data, item } = props;
-  const { transformFrequencies, plotlyLayoutProps } =
-    useCategoricalDataFrequencyMode(item.config.mode);
+  const {
+    transformFrequencies,
+    plotlyLayoutProps,
+    selectProps,
+    needsPercentage,
+  } = useCategoricalDataFrequencyModeState();
   const plot = React.useMemo<PlotParams>(() => {
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
     );
-    const subplots: PlotParams['data'] = data.map(
-      ({ name, data: { frequencies, categories } }, idx) => {
-        const y = transformFrequencies(frequencies);
-        return {
-          name,
-          x: categories,
-          y: y,
-          hovertemplate: getHoverTemplate(item),
-          type: 'bar',
-          marker: {
-            color: colors[idx],
-          },
-        };
-      },
-    );
-    return {
-      data: subplots,
-      layout: {
-        title: `Frequency Distribution of ${item.column}`,
-        yaxis: {
-          ...plotlyLayoutProps,
-        },
-        barmode: 'group',
-      },
-    };
-  }, [data, item, plotlyLayoutProps, transformFrequencies]);
-  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
-}
 
-export function VisualizationFrequencyDistributionLinePlot(
-  props: BaseVisualizationComponentProps<
-    VisualizationFrequencyDistributionModel,
-    VisualizationFrequencyDistributionConfigType
-  >,
-) {
-  const { data, item } = props;
-  const { transformFrequencies, plotlyLayoutProps } =
-    useCategoricalDataFrequencyMode(item.config?.mode);
-  const plot = React.useMemo<PlotParams>(() => {
-    const { colors } = generateColorsFromSequence(
-      data.map((data) => data.name),
-    );
+    const isBarChart =
+      item.config.display ===
+      VisualizationFrequencyDistributonDisplayMode.BarChart;
+    const isLinePlot =
+      item.config.display ===
+      VisualizationFrequencyDistributonDisplayMode.LinePlot;
+
     const subplots: PlotParams['data'] = data.map(
       ({ name, data: { frequencies, categories } }, idx) => {
         const y = transformFrequencies(frequencies);
@@ -84,8 +49,8 @@ export function VisualizationFrequencyDistributionLinePlot(
           mode: 'lines+markers',
           x: categories,
           y: y,
-          type: 'scatter',
-          hovertemplate: getHoverTemplate(item),
+          type: isLinePlot ? 'scatter' : 'bar',
+          hovertemplate: getHoverTemplate(item.column, needsPercentage),
           marker: {
             color: colors[idx],
           },
@@ -99,32 +64,23 @@ export function VisualizationFrequencyDistributionLinePlot(
         yaxis: {
           ...plotlyLayoutProps,
         },
+        barmode: isBarChart ? 'group' : undefined,
       },
     };
-  }, [data, item, plotlyLayoutProps, transformFrequencies]);
-  return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
-}
-
-export function VisualizationFrequencyDistributionRenderer(
-  props: BaseVisualizationComponentProps<
-    VisualizationFrequencyDistributionModel,
-    VisualizationFrequencyDistributionConfigType
-  >,
-) {
-  const { item } = props;
-  if (
-    item.config.display ===
-    VisualizationFrequencyDistributonDisplayMode.BarChart
-  ) {
-    return <VisualizationFrequencyDistributionBarChart {...props} />;
-  }
-  if (
-    item.config.display ===
-    VisualizationFrequencyDistributonDisplayMode.LinePlot
-  ) {
-    return <VisualizationFrequencyDistributionLinePlot {...props} />;
-  }
-  throw Error(
-    `${item.config.display} is not a valid display mode for frequency distribution`,
+  }, [
+    data,
+    item.column,
+    item.config.display,
+    needsPercentage,
+    plotlyLayoutProps,
+    transformFrequencies,
+  ]);
+  return (
+    <Stack>
+      <PlotInlineConfiguration>
+        <Select {...selectProps} />
+      </PlotInlineConfiguration>
+      <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />
+    </Stack>
   );
 }

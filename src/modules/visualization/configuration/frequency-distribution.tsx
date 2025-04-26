@@ -1,11 +1,6 @@
 import RHFField from '@/components/standard/fields';
 import * as Yup from 'yup';
-import {
-  CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY,
-  CategoricalDataFrequencyMode,
-} from '../components/categorical/utils';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { Group } from '@mantine/core';
 
 export enum VisualizationFrequencyDistributonDisplayMode {
   LinePlot = 'line-plot',
@@ -27,7 +22,17 @@ export const VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY = {
   },
 };
 
-export function FrequencyDistributionDisplayModeSelectField() {
+export const VisualizationFrequencyDistributionConfigSchema = Yup.object({
+  display: Yup.string()
+    .oneOf(Object.values(VisualizationFrequencyDistributonDisplayMode))
+    .required(),
+});
+
+export type VisualizationFrequencyDistributionConfigType = Yup.InferType<
+  typeof VisualizationFrequencyDistributionConfigSchema
+>;
+
+export function VisualizationFrequencyDistributionConfigForm() {
   const renderOptionDisplay = useDescriptionBasedRenderOption(
     VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY,
   );
@@ -43,39 +48,5 @@ export function FrequencyDistributionDisplayModeSelectField() {
       allowDeselect={false}
       required
     />
-  );
-}
-
-export const VisualizationFrequencyDistributionConfigSchema = Yup.object({
-  mode: Yup.string()
-    .oneOf(Object.values(CategoricalDataFrequencyMode))
-    .required(),
-  display: Yup.string()
-    .oneOf(Object.values(VisualizationFrequencyDistributonDisplayMode))
-    .required(),
-});
-
-export type VisualizationFrequencyDistributionConfigType = Yup.InferType<
-  typeof VisualizationFrequencyDistributionConfigSchema
->;
-
-export function VisualizationFrequencyDistributionConfigForm() {
-  const renderOptionMode = useDescriptionBasedRenderOption(
-    CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY,
-  );
-
-  return (
-    <Group align="start">
-      <RHFField
-        name="config.mode"
-        type="select"
-        label="Frequency Mode"
-        renderOption={renderOptionMode}
-        data={Object.values(CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY)}
-        allowDeselect={false}
-        required
-      />
-      <FrequencyDistributionDisplayModeSelectField />
-    </Group>
   );
 }

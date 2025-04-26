@@ -94,7 +94,10 @@ export function TableDashboard() {
       <DashboardGroupsContext.Provider value={namedData}>
         <DashboardConstraintContext.Provider
           value={{
-            withoutTypes: [DashboardItemTypeEnum.SubdatasetWords],
+            withoutTypes: [
+              DashboardItemTypeEnum.SubdatasetWords,
+              DashboardItemTypeEnum.Proportions,
+            ],
           }}
         >
           <GridstackDashboard

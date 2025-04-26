@@ -14,6 +14,7 @@ import NavigationRoutes from '@/common/constants/routes';
 import { queryClient } from '@/common/api/query-client';
 import { client } from '@/common/api/client';
 import { CancelButton } from '@/components/standard/button/variants';
+import PromiseButton from '@/components/standard/button/promise';
 
 interface RediscoverTopicsModalProps {
   column: SchemaColumnModel;
@@ -54,9 +55,9 @@ const RediscoverTopicsModal = React.forwardRef<
       <TopicModelingOptionFlagCheckboxes {...startActions} />
       <Group mt="md" pr="md" style={{ justifyContent: 'flex-end' }}>
         <CancelButton onClick={close}>Cancel</CancelButton>
-        <Button onClick={onStart} leftSection={<CheckCircle />}>
+        <PromiseButton onClick={onStart} leftSection={<CheckCircle />}>
           Confirm
-        </Button>
+        </PromiseButton>
       </Group>
     </Modal>
   );

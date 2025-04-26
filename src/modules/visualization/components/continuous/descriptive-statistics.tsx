@@ -114,7 +114,7 @@ function useDescriptiveStatisticsTableColumns(
         return {
           accessorKey: item.name,
           header: item.name,
-          size: 120,
+          size: 250,
         };
       }),
     ];

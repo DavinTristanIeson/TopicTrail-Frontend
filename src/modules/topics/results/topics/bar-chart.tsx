@@ -8,14 +8,17 @@ import { extractTopicCustomdataForPlotly } from './utils';
 import { Alert, Anchor, Input, Select, Slider, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/categorical/utils';
-import { useDebouncedState } from '@mantine/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
 import { TopicVisualizationRendererProps } from './data-providers';
 
 export function TopicWordsBarChartRenderer(
   props: TopicVisualizationRendererProps,
 ) {
   const { data, column } = props;
-  const [topNWords, setTopNWords] = useDebouncedState(5, 500);
+  const [topNWords, setTopNWords] = React.useState(5);
+  const [debouncedTopNWords] = useDebouncedValue(topNWords, 500, {
+    leading: false,
+  });
   const plot: PlotParams = React.useMemo(() => {
     const subplots: PlotParams['data'] = [];
     const topics = data.map((item) => item.topic);
@@ -34,7 +37,7 @@ export function TopicWordsBarChartRenderer(
     for (let i = 0; i < topics.length; i++) {
       const color = colors[i];
       const topic = topics[i]!;
-      const topicWords = topic.words.slice(0, topNWords);
+      const topicWords = topic.words.slice(0, debouncedTopNWords);
       const y = topicWords.map((word) => word[0]);
       const x = topicWords.map((word) => word[1]);
       y.reverse();
@@ -74,7 +77,7 @@ export function TopicWordsBarChartRenderer(
         ...layouts,
       },
     };
-  }, [column.name, data, topNWords]);
+  }, [column.name, data, debouncedTopNWords]);
   return (
     <Stack>
       <Input.Wrapper

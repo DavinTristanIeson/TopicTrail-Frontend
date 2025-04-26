@@ -9,7 +9,7 @@ import {
 import { useDashboardDataManager } from '../userdata/data-manager';
 import { useDashboardUserDataSharedBehavior } from '../table/dashboard';
 import UserDataManager from '../userdata';
-import { getTopicColumnName } from '@/api/project';
+import { getTopicColumnName, SchemaColumnModel } from '@/api/project';
 import {
   DashboardConstraintContext,
   DashboardGroupsContext,
@@ -145,16 +145,24 @@ export default function TopicCorrelationDashboard() {
     );
   }, [column, topicColumn, topicModelingResult?.result?.topics]);
 
+  const shouldUseWholeDataset = React.useCallback(
+    (item: DashboardItemModel, column: SchemaColumnModel) => {
+      const isTopic = column.type === SchemaColumnTypeEnum.Topic;
+      const isTextual =
+        column.type === SchemaColumnTypeEnum.Textual &&
+        item.type !== DashboardItemTypeEnum.WordFrequencies;
+      return isTopic || isTextual;
+    },
+    [],
+  );
+
   if (!column) return null;
   return (
     <DashboardGroupsContext.Provider value={namedData}>
       <DashboardConstraintContext.Provider
         value={{
           withoutTypes: [DashboardItemTypeEnum.SubdatasetWords],
-          shouldUseWholeDataset: [
-            DashboardItemTypeEnum.WordFrequencies,
-            DashboardItemTypeEnum.TopicWords,
-          ],
+          shouldUseWholeDataset,
         }}
       >
         <Stack>
