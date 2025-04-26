@@ -15,6 +15,7 @@ import {
 import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import { type UseListStateHandlers } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
+import DashboardTopicCheatsheet from './topic-cheatsheet';
 
 interface GridstackDashboardProps {
   dashboard: DashboardItemModel[];
@@ -138,6 +139,7 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
         ref={editRemote}
         onSubmit={setDashboardItem}
       />
+      <DashboardTopicCheatsheet dashboard={dashboard} />
       <div className="rounded color-gray-100">
         <div className="grid-stack" id={id}>
           {dashboard.map((item) => (
