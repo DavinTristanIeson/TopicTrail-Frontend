@@ -4,14 +4,17 @@ import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { useCategoricalDataFrequencyModeState } from './utils';
 import { fromPairs, zip } from 'lodash-es';
-import { PlotInlineConfiguration, usePlotRendererHelperProps } from '../utils';
 import {
   VisualizationProportionsConfigType,
   VisualizationProportionsDisplayMode,
 } from '../../configuration/proportions';
 import { Stack, Select } from '@mantine/core';
+import {
+  PlotInlineConfiguration,
+  usePlotRendererHelperProps,
+  useCategoricalDataFrequencyModeState,
+} from '../configuration';
 
 function getHoverTemplate(column: string, needsPercentage: boolean) {
   return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;

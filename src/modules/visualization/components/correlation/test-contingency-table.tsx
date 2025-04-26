@@ -8,13 +8,14 @@ import PlotRenderer from '@/components/widgets/plotly';
 
 import { useDebouncedValue } from '@mantine/hooks';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
-import { PlotInlineConfiguration, usePlotRendererHelperProps } from '../utils';
 import {
-  useContingencyTableAxisMultiSelect,
-  useVisualizationAlphaSlider,
-  useBinaryStatisticTestVisualizationMethodSelect,
   BinaryStatisticTestVisualizationType,
-} from './utils';
+  PlotInlineConfiguration,
+  useBinaryStatisticTestVisualizationMethodSelect,
+  useCategoriesAxisMultiSelect,
+  usePlotRendererHelperProps,
+  useVisualizationAlphaSlider,
+} from '../configuration';
 
 function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   props: BaseVisualizationComponentProps<
@@ -28,12 +29,12 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
   const {
     multiSelectProps: columnsSelectProps,
     chosenIndices: rawColumnIndices,
-  } = useContingencyTableAxisMultiSelect({
+  } = useCategoriesAxisMultiSelect({
     supportedCategories: data.columns,
     column: data.column2,
   });
   const { multiSelectProps: rowsSelectProps, chosenIndices: rawRowIndices } =
-    useContingencyTableAxisMultiSelect({
+    useCategoriesAxisMultiSelect({
       supportedCategories: data.rows,
       column: data.column1,
     });

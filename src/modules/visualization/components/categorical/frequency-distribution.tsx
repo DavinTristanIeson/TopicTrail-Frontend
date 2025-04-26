@@ -8,9 +8,12 @@ import {
   VisualizationFrequencyDistributionConfigType,
   VisualizationFrequencyDistributonDisplayMode,
 } from '../../configuration/frequency-distribution';
-import { useCategoricalDataFrequencyModeState } from './utils';
-import { PlotInlineConfiguration, usePlotRendererHelperProps } from '../utils';
 import { Select, Stack } from '@mantine/core';
+import {
+  PlotInlineConfiguration,
+  usePlotRendererHelperProps,
+  useCategoricalDataFrequencyModeState,
+} from '../configuration';
 
 function getHoverTemplate(column: string, needsPercentage: boolean) {
   return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;
@@ -29,6 +32,7 @@ export default function VisualizationFrequencyDistributionComponent(
     selectProps,
     needsPercentage,
   } = useCategoricalDataFrequencyModeState();
+
   const plot = React.useMemo<PlotParams>(() => {
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
@@ -75,6 +79,7 @@ export default function VisualizationFrequencyDistributionComponent(
     plotlyLayoutProps,
     transformFrequencies,
   ]);
+
   return (
     <Stack>
       <PlotInlineConfiguration>

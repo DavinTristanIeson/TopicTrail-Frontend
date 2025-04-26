@@ -7,9 +7,9 @@ import { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { Alert, Anchor, Input, Select, Slider, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/categorical/utils';
 import { useDebouncedValue } from '@mantine/hooks';
 import { TopicVisualizationRendererProps } from './data-providers';
+import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/configuration';
 
 export function TopicWordsBarChartRenderer(
   props: TopicVisualizationRendererProps,

@@ -16,3 +16,10 @@ export const SchemaColumnContext = React.createContext<SchemaColumnModel>(
 export function useCurrentTextualColumn(): TextualSchemaColumnModel {
   return React.useContext(SchemaColumnContext) as TextualSchemaColumnModel;
 }
+
+export function useProjectColumn(
+  column: string,
+): SchemaColumnModel | undefined {
+  const project = React.useContext(ProjectContext);
+  return project.config.data_schema.columns.find((col) => col.name === column);
+}

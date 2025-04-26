@@ -1,19 +1,18 @@
 import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
-import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { Group, Button, Input, Slider, Select } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
+import { Group, Button, type SelectProps } from '@mantine/core';
 import dayjs from 'dayjs';
-import { fromPairs } from 'lodash-es';
+import { fromPairs, sum } from 'lodash-es';
 import React from 'react';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 
-interface UseContingencyTableAxisMultiSelectProps {
+interface useCategoriesAxisMultiSelectProps {
   supportedCategories: string[];
   column: SchemaColumnModel | undefined;
 }
 
-export function useContingencyTableAxisMultiSelect(
-  props: UseContingencyTableAxisMultiSelectProps,
+export function useCategoriesAxisMultiSelect(
+  props: useCategoriesAxisMultiSelectProps,
 ) {
   const { supportedCategories, column } = props;
   const [categories, setCategories] =
@@ -110,75 +109,89 @@ export function useContingencyTableAxisMultiSelect(
   };
 }
 
-export function useVisualizationAlphaSlider() {
-  const [alpha, setAlpha] = React.useState(0.05);
-  const Component = (
-    <Input.Wrapper
-      label="Alpha"
-      description="The p-value for the results of a statistic test to be considered significant."
-    >
-      <Slider
-        value={alpha}
-        min={0}
-        max={1}
-        step={0.01}
-        onChange={setAlpha}
-        label={`Alpha: ${alpha} | Confidence Level: ${100 - alpha * 100}%`}
-      />
-    </Input.Wrapper>
-  );
+// region CategoricalData
 
-  const [debouncedAlpha] = useDebouncedValue(alpha, 1000, { leading: false });
-
-  return { Component, alpha: debouncedAlpha };
+export enum CategoricalDataFrequencyMode {
+  Frequency = 'frequency',
+  Proportion = 'proportion',
 }
 
-export enum BinaryStatisticTestVisualizationType {
-  Frequencies = 'frequencies',
-  ConfidenceLevel = 'significance',
-  EffectSize = 'effect-sizes',
-}
-
-const VISUALIZATION_TYPE_DICTIONARY = {
-  [BinaryStatisticTestVisualizationType.Frequencies]: {
-    label: 'Frequencies',
-    value: BinaryStatisticTestVisualizationType.Frequencies,
-    description:
-      'Show the frequencies of the rows that contains the categories.',
+export const CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY = {
+  [CategoricalDataFrequencyMode.Frequency]: {
+    value: CategoricalDataFrequencyMode.Frequency,
+    label: 'Frequency',
+    description: 'Show the absolute counts/frequencies of each category.',
   },
-  [BinaryStatisticTestVisualizationType.ConfidenceLevel]: {
-    label: 'Confidence Levels',
-    value: BinaryStatisticTestVisualizationType.ConfidenceLevel,
-    description:
-      'Show the confidence levels of the statistic tests, wherein the category/discriminator is used to split the dataset into two subdatasets that are compared against each other.',
-  },
-  [BinaryStatisticTestVisualizationType.EffectSize]: {
-    label: 'Effect Sizes',
-    value: BinaryStatisticTestVisualizationType.EffectSize,
-    description:
-      'Show the effect sizes of the statistic tests, wherein the category/discriminator is used to split the dataset into two subdatasets that are compared against each other.',
+  [CategoricalDataFrequencyMode.Proportion]: {
+    value: CategoricalDataFrequencyMode.Proportion,
+    label: 'Proportion (%)',
+    description: 'Show the proportion of each category as percentages.',
   },
 };
 
-export function useBinaryStatisticTestVisualizationMethodSelect() {
-  const [type, setType] = React.useState(
-    BinaryStatisticTestVisualizationType.EffectSize,
+export function useCategoricalDataFrequencyMode(
+  mode: CategoricalDataFrequencyMode,
+) {
+  const transformFrequencies = React.useCallback(
+    (frequencies: number[]) => {
+      if (mode === CategoricalDataFrequencyMode.Proportion) {
+        const totalFrequency = sum(frequencies);
+        const proportions = frequencies.map(
+          (frequency) => frequency / totalFrequency,
+        );
+        const percentages = proportions.map((proportion) => proportion * 100);
+        return percentages;
+      } else {
+        return frequencies;
+      }
+    },
+    [mode],
   );
 
+  const plotlyLayoutProps = React.useMemo(() => {
+    if (mode === CategoricalDataFrequencyMode.Proportion) {
+      return {
+        range: [0, 100],
+        ticksuffix: '%',
+        minallowed: 0,
+      };
+    } else {
+      return {
+        minallowed: 0,
+      };
+    }
+  }, [mode]);
+
+  return { plotlyLayoutProps, transformFrequencies };
+}
+
+export function useCategoricalDataFrequencyModeState() {
+  const [mode, setMode] = React.useState(
+    CategoricalDataFrequencyMode.Frequency,
+  );
   const renderOption = useDescriptionBasedRenderOption(
-    VISUALIZATION_TYPE_DICTIONARY,
+    CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY,
   );
+  const selectProps: SelectProps = {
+    label: 'Frequency Mode',
+    required: true,
+    data: Object.values(CATEGORICAL_DATA_FREQUENCY_MODE_DICTIONARY),
+    value: mode,
+    onChange(newMode) {
+      if (!newMode) return;
+      setMode(newMode as CategoricalDataFrequencyMode);
+    },
+    allowDeselect: false,
+    renderOption,
+  };
 
-  const Component = (
-    <Select
-      value={type}
-      onChange={setType as any}
-      data={Object.values(VISUALIZATION_TYPE_DICTIONARY)}
-      label="Data to Visualize"
-      renderOption={renderOption}
-      allowDeselect={false}
-    />
-  );
+  const { transformFrequencies, plotlyLayoutProps } =
+    useCategoricalDataFrequencyMode(mode);
 
-  return { Component, type };
+  return {
+    plotlyLayoutProps,
+    transformFrequencies,
+    selectProps,
+    needsPercentage: mode === CategoricalDataFrequencyMode.Proportion,
+  };
 }

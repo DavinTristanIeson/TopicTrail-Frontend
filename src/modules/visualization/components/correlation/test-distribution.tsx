@@ -11,16 +11,18 @@ import {
   STATISTIC_TEST_METHOD_DICTIONARY,
 } from '@/modules/comparison/statistic-test/dictionary';
 import PlotRenderer from '@/components/widgets/plotly';
-import { PlotInlineConfiguration, usePlotRendererHelperProps } from '../utils';
 import { ProjectContext } from '@/modules/project/context';
+
+import { useDebouncedValue } from '@mantine/hooks';
+import { pickArrayByIndex } from '@/common/utils/iterable';
 import {
   useVisualizationAlphaSlider,
   useBinaryStatisticTestVisualizationMethodSelect,
-  useContingencyTableAxisMultiSelect,
+  useCategoriesAxisMultiSelect,
   BinaryStatisticTestVisualizationType,
-} from './utils';
-import { useDebouncedValue } from '@mantine/hooks';
-import { pickArrayByIndex } from '@/common/utils/iterable';
+  PlotInlineConfiguration,
+  usePlotRendererHelperProps,
+} from '../configuration';
 
 function VisualizationBinaryStatisticTestOnDistributionInternal(
   props: BaseVisualizationComponentProps<
@@ -48,7 +50,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   const {
     multiSelectProps: discriminatorSelectProps,
     chosenIndices: rawIndices,
-  } = useContingencyTableAxisMultiSelect({
+  } = useCategoriesAxisMultiSelect({
     supportedCategories: discriminators,
     column: column,
   });

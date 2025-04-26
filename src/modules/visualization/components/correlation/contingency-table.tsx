@@ -9,8 +9,10 @@ import { PlotParams } from 'react-plotly.js';
 import { fromPairs } from 'lodash-es';
 import { sort2D, zip2D } from '@/common/utils/iterable';
 import { useDebouncedValue } from '@mantine/hooks';
-import { useContingencyTableAxisMultiSelect } from './utils';
-import { PlotInlineConfiguration } from '../utils';
+import {
+  PlotInlineConfiguration,
+  useCategoriesAxisMultiSelect,
+} from '../configuration';
 
 enum ContingencyTableVisualizationMethod {
   Observed = 'observed',
@@ -110,12 +112,12 @@ function VisualizationContingencyTableHeatmapInner(
   const {
     multiSelectProps: columnsSelectProps,
     chosenIndices: rawColumnIndices,
-  } = useContingencyTableAxisMultiSelect({
+  } = useCategoriesAxisMultiSelect({
     supportedCategories: data.columns,
     column: data.column2,
   });
   const { multiSelectProps: rowsSelectProps, chosenIndices: rawRowIndices } =
-    useContingencyTableAxisMultiSelect({
+    useCategoriesAxisMultiSelect({
       supportedCategories: data.rows,
       column: data.column1,
     });

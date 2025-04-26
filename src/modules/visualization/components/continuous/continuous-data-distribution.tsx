@@ -7,7 +7,7 @@ import {
   VisualizationContinuousDataDistributionConfigType,
   VisualizationContinuousDataDistributionDisplayMode,
 } from '../../configuration/continuous-data-distribution';
-import { usePlotRendererHelperProps } from '../utils';
+import { usePlotRendererHelperProps } from '../configuration';
 
 function VisualizationContinuousDataDistributionViolinBoxPlot(
   props: BaseVisualizationComponentProps<

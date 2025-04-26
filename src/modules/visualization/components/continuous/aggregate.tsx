@@ -4,10 +4,10 @@ import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { VisualizationFrequencyDistributonDisplayMode } from '../../configuration/frequency-distribution';
-import { VisualizationAggregateValuesConfigType } from '../../configuration/aggregate-values';
-import { usePlotRendererHelperProps } from '../utils';
 import { capitalize } from 'lodash-es';
+import { VisualizationAggregateValuesConfigType } from '../../configuration/aggregate-values';
+import { VisualizationFrequencyDistributonDisplayMode } from '../../configuration/frequency-distribution';
+import { usePlotRendererHelperProps } from '../configuration';
 
 export function VisualizationAggregateValuesBarChart(
   props: BaseVisualizationComponentProps<

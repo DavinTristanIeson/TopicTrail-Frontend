@@ -9,10 +9,11 @@ import {
 import RHFField from '@/components/standard/fields';
 import { Group } from '@mantine/core';
 import {
-  FrequencyDistributionDisplayModeSelectField,
+  VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY,
   VisualizationFrequencyDistributonDisplayMode,
 } from './frequency-distribution';
 import { CATEGORICAL_SCHEMA_COLUMN_TYPES } from '@/api/project';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 
 export const VisualizationAggregateValuesConfigSchema = Yup.object({
   grouped_by: Yup.string().required(),
@@ -37,6 +38,9 @@ export function VisualizationAggregateValuesConfigForm() {
       ),
     );
   }, [project.config.data_schema.columns]);
+  const renderOptionDisplay = useDescriptionBasedRenderOption(
+    VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY,
+  );
   return (
     <>
       <Group align="start">
@@ -86,7 +90,17 @@ export function VisualizationAggregateValuesConfigForm() {
           allowDeselect={false}
         />
       </Group>
-      <FrequencyDistributionDisplayModeSelectField />
+      <RHFField
+        name="config.display"
+        type="select"
+        label="Display as"
+        renderOption={renderOptionDisplay}
+        data={Object.values(
+          VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY,
+        )}
+        allowDeselect={false}
+        required
+      />
     </>
   );
 }
