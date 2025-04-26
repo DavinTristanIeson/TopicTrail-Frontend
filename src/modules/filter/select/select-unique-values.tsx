@@ -10,7 +10,7 @@ import {
   Select,
   type SelectProps,
 } from '@mantine/core';
-import { uniq } from 'lodash';
+import { uniq } from 'lodash-es';
 
 interface UseTableUniqueValueSelectPropsProps {
   column: string;

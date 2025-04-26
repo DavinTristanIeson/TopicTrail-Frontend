@@ -75,8 +75,8 @@ const topicFilterFunction: OptionsFilter = (input) => {
       const option = opt as TopicComboboxItem;
       return {
         label: option.label,
-        words: option.data.words.map((word) => word[0]),
-        tags: option.data.tags,
+        words: option.data?.words.map((word) => word[0]) ?? [],
+        tags: option.data?.tags ?? [],
       };
     }),
   );
@@ -111,7 +111,7 @@ export interface TopicSelectInputProps
   extends Omit<SelectProps, 'onChange' | 'data' | 'value'> {
   data: TopicModel[];
   value?: number | null;
-  onChange?(column: TopicModel | null): void;
+  onChange?(column: TopicModel | null, item: ComboboxItem): void;
   withOutlier: boolean;
 }
 
@@ -129,17 +129,17 @@ export function TopicSelectInput(props: TopicSelectInputProps) {
       searchable
       filter={topicFilterFunction}
       data={topicsToComboboxes(data, withOutlier)}
-      onChange={(value) => {
+      onChange={(value, item) => {
         if (value == null) {
-          onChange?.(null);
+          onChange?.(null, item);
           return;
         }
         const topicId = parseInt(value);
         if (withOutlier && topicId === OUTLIER_TOPIC.id) {
-          onChange?.(OUTLIER_TOPIC);
+          onChange?.(OUTLIER_TOPIC, item);
         }
         const chosenTopic = data.find((x) => x.id === topicId) ?? null;
-        onChange?.(chosenTopic);
+        onChange?.(chosenTopic, item);
       }}
     />
   );

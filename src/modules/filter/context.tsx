@@ -2,7 +2,7 @@ import { TableFilterModel } from '@/api/table';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import { Indicator, Button } from '@mantine/core';
 import { Funnel } from '@phosphor-icons/react';
-import { identity } from 'lodash';
+import { identity } from 'lodash-es';
 import React from 'react';
 import TableFilterDrawer from './drawer';
 

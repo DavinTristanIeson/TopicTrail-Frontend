@@ -7,7 +7,7 @@ import {
   UserDataManagerRendererProps,
 } from './types';
 
-import { merge } from 'lodash';
+import { merge } from 'lodash-es';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
 import { UserDataModel } from '@/api/userdata';
@@ -45,12 +45,7 @@ function useUserDataManagerHookRequestBoilerplate() {
 }
 
 interface BaseUserDataManagerProps<T> extends UserDataManagerHookProps<T> {
-  pathname:
-    | 'filters'
-    | 'comparison-state'
-    | 'dashboard/table'
-    | 'dashboard/comparison'
-    | 'dashboard/correlation';
+  pathname: 'filters' | 'comparison-state' | 'dashboard';
   label: string;
 }
 

@@ -4,7 +4,6 @@ export enum SchemaColumnTypeEnum {
   Continuous = 'continuous',
   Categorical = 'categorical',
   OrderedCategorical = 'ordered-categorical',
-  MultiCategorical = 'multi-categorical',
   Temporal = 'temporal',
   Textual = 'textual',
   Unique = 'unique',
@@ -66,6 +65,22 @@ export enum TableFilterTypeEnum {
   Only = 'only',
 }
 
+export enum TableColumnAggregateMethodEnum {
+  Sum = 'sum',
+  Mean = 'mean',
+  Median = 'median',
+  StandardDeviation = 'std-dev',
+  Max = 'max',
+  Min = 'min',
+}
+
+export enum TaskStatusEnum {
+  Idle = 'idle',
+  Pending = 'pending',
+  Success = 'success',
+  Failed = 'failed',
+}
+
 export enum EffectSizeMethodEnum {
   MeanDifference = 'mean-difference',
   MedianDifference = 'median-difference',
@@ -80,13 +95,6 @@ export enum StatisticTestMethodEnum {
   ChiSquared = 'chi-squared',
 }
 
-export enum TaskStatusEnum {
-  Idle = 'idle',
-  Pending = 'pending',
-  Success = 'success',
-  Failed = 'failed',
-}
-
 export enum EnumList {
   SchemaColumnTypeEnum = 'SchemaColumnTypeEnum',
   GeospatialRoleEnum = 'GeospatialRoleEnum',
@@ -96,7 +104,8 @@ export enum EnumList {
   TemporalPrecisionEnum = 'TemporalPrecisionEnum',
   DataSourceTypeEnum = 'DataSourceTypeEnum',
   TableFilterTypeEnum = 'TableFilterTypeEnum',
+  TableColumnAggregateMethodEnum = 'TableColumnAggregateMethodEnum',
+  TaskStatusEnum = 'TaskStatusEnum',
   EffectSizeMethodEnum = 'EffectSizeMethodEnum',
   StatisticTestMethodEnum = 'StatisticTestMethodEnum',
-  TaskStatusEnum = 'TaskStatusEnum',
 }

@@ -5,7 +5,6 @@ export type AndTableFilterModel =
   components['schemas']['AndTableFilter-Output'];
 export type NotTableFilterModel =
   components['schemas']['NotTableFilter-Output'];
-export type OnlyTableFilterModel = components['schemas']['OnlyTableFilter'];
 export type EmptyTableFilterModel = components['schemas']['EmptyTableFilter'];
 export type HasTextTableFilter = components['schemas']['HasTextTableFilter'];
 export type EqualToTableFilter = components['schemas']['EqualToTableFilter'];
@@ -13,10 +12,6 @@ export type IsOneOfTableFilterModel =
   components['schemas']['IsOneOfTableFilter'];
 export type LessThanTableFilterModel =
   components['schemas']['LessThanTableFilter'];
-export type ExcludesTableFilterModel =
-  components['schemas']['ExcludesTableFilter'];
-export type IncludesTableFilterModel =
-  components['schemas']['IncludesTableFilter'];
 export type NotEmptyTableFilterModel =
   components['schemas']['NotEmptyTableFilter'];
 export type GreaterThanTableFilterModel =
@@ -30,14 +25,11 @@ export type TableFilterModel =
   | OrTableFilterModel
   | AndTableFilterModel
   | NotTableFilterModel
-  | OnlyTableFilterModel
   | EmptyTableFilterModel
   | HasTextTableFilter
   | EqualToTableFilter
   | IsOneOfTableFilterModel
   | LessThanTableFilterModel
-  | ExcludesTableFilterModel
-  | IncludesTableFilterModel
   | NotEmptyTableFilterModel
   | GreaterThanTableFilterModel
   | LessThanOrEqualToTableFilterModel
@@ -52,5 +44,15 @@ export type DescriptiveStatisticsModel =
   components['schemas']['DescriptiveStatisticsResource'];
 export type DatasetPreviewModel =
   components['schemas']['DatasetPreviewResource'];
+export type VisualizationColumnCountsModel =
+  components['schemas']['TableColumnCountsResource'];
+export type VisualizationFrequencyDistributionModel =
+  components['schemas']['TableColumnFrequencyDistributionResource'];
+export type VisualizationAggregateValuesModel =
+  components['schemas']['TableColumnAggregateValuesResource'];
+export type VisualizationGeographicalPointsModel =
+  components['schemas']['TableColumnGeographicalPointsResource'];
+export type VisualizationWordsModel =
+  components['schemas']['TableWordsResource'];
 
 export type PaginationParams = components['schemas']['PaginationParams'];

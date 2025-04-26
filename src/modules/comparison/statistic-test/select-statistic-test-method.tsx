@@ -59,9 +59,9 @@ function EffectSizeSelectInputRenderOption({
     <div>
       <Group gap={4}>
         <Text size="sm">{props.label}</Text>
-        {props.range && (
+        {props.rangeString && (
           <Text size="xs" c="gray">
-            {props.range}
+            {props.rangeString}
           </Text>
         )}
       </Group>

@@ -9,7 +9,7 @@ export const queryClient = new QueryClient({
       // is mutated.
       staleTime: 15 * 60 * 1000,
       // Try not to keep too many useless data
-      gcTime: 2 * 60 * 1000,
+      gcTime: 5 * 60 * 1000,
     },
     mutations: {
       retry: false,

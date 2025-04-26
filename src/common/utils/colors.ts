@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-as-default-member */
 import chroma from 'chroma-js';
-import { uniq } from 'lodash';
+import { uniq } from 'lodash-es';
 
 const DISCRETE_PLOT_COLORS: string[] = chroma.brewer.Dark2;
 

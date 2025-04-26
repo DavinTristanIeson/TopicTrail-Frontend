@@ -7,7 +7,7 @@ import {
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { useProjectColumnField } from '@/modules/project/columns';
+import { useProjectColumnField } from '@/modules/project/context';
 import { type SelectProps, Select } from '@mantine/core';
 
 const FILTER_COMBOBOXES = {
@@ -136,12 +136,6 @@ const ALLOWED_FILTER_TYPES_FOR_COLUMNS = {
   [SchemaColumnTypeEnum.Topic]: [
     ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
     TableFilterTypeEnum.IsOneOf,
-  ],
-  [SchemaColumnTypeEnum.MultiCategorical]: [
-    ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
-    TableFilterTypeEnum.Excludes,
-    TableFilterTypeEnum.Includes,
-    TableFilterTypeEnum.Only,
   ],
 };
 

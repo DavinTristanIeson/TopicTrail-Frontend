@@ -3,7 +3,7 @@ import { client } from '@/common/api/client';
 import { LocalStorageKeys } from '@/common/constants/browser-storage-keys';
 import { ProjectContext } from '@/modules/project/context';
 import { useLocalStorage } from '@mantine/hooks';
-import { isObject } from 'lodash';
+import { isObject } from 'lodash-es';
 import React from 'react';
 
 type SavedFiltersLibraryType = Record<string, TableFilterModel>;

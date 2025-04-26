@@ -1,8 +1,8 @@
 import { Skeleton } from '@mantine/core';
+import { mergeWith } from 'lodash-es';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
-import wordwrap from 'wordwrapjs';
 
 const Plot = dynamic(() => import('react-plotly.js'), {
   ssr: false,
@@ -10,14 +10,6 @@ const Plot = dynamic(() => import('react-plotly.js'), {
     return <Skeleton height={540} />;
   },
 });
-
-export function plotlyWrapText(text: string) {
-  return wordwrap
-    .wrap(text, {
-      width: 80,
-    })
-    .replaceAll('\n', '<br>');
-}
 
 interface PlotRendererProps {
   plot: PlotParams;
@@ -27,11 +19,20 @@ export default function PlotRenderer(props: PlotRendererProps) {
 
   return (
     <Plot
+      className="w-full h-full"
       {...plot}
-      layout={{
-        ...plot.layout,
-        dragmode: 'pan',
-      }}
+      layout={mergeWith(
+        {
+          dragmode: 'pan',
+          xaxis: {
+            automargin: true,
+          },
+          yaxis: {
+            automargin: true,
+          },
+        },
+        plot.layout,
+      )}
       config={{
         scrollZoom: true,
         autosizable: true,

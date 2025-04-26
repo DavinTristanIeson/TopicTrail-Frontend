@@ -194,7 +194,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/column/aggregate-totals": {
+    "/table/{project_id}/column/aggregate-values": {
         parameters: {
             query?: never;
             header?: never;
@@ -203,8 +203,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Post  Get Table Column  Aggregate Totals */
-        post: operations["post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post"];
+        /** Post  Get Table Column  Aggregate Values */
+        post: operations["post__get_table_column__aggregate_values_table__project_id__column_aggregate_values_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -324,40 +324,6 @@ export interface paths {
         put?: never;
         /** Post  Get Table Column  Topic Words */
         post: operations["post__get_table_column__topic_words_table__project_id__column_topic_words_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/table/{project_id}/statistic-test": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Statistic Test */
-        post: operations["post__statistic_test_table__project_id__statistic_test_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/table/{project_id}/compare-group-words": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Compare Group Words */
-        post: operations["post__compare_group_words_table__project_id__compare_group_words_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -518,23 +484,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/userdata/{project_id}/filters/{name}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  Filters */
-        get: operations["get__filters_userdata__project_id__filters__name__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/userdata/{project_id}/filters/{id}": {
         parameters: {
             query?: never;
@@ -542,7 +491,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get  Filters */
+        get: operations["get__filters_userdata__project_id__filters__id__get"];
         /** Put  Filters */
         put: operations["put__filters_userdata__project_id__filters__id__put"];
         post?: never;
@@ -571,23 +521,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/userdata/{project_id}/comparison-state/{name}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  Comparison State */
-        get: operations["get__comparison_state_userdata__project_id__comparison_state__name__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/userdata/{project_id}/comparison-state/{id}": {
         parameters: {
             query?: never;
@@ -595,7 +528,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get  Comparison State */
+        get: operations["get__comparison_state_userdata__project_id__comparison_state__id__get"];
         /** Put  Comparison State */
         put: operations["put__comparison_state_userdata__project_id__comparison_state__id__put"];
         post?: never;
@@ -606,42 +540,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/userdata/{project_id}/dashboard/table": {
+    "/userdata/{project_id}/dashboard": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get  All Table Dashboard */
-        get: operations["get__all_table_dashboard_userdata__project_id__dashboard_table_get"];
+        /** Get  All Dashboard */
+        get: operations["get__all_dashboard_userdata__project_id__dashboard_get"];
         put?: never;
-        /** Post  Table Dashboard */
-        post: operations["post__table_dashboard_userdata__project_id__dashboard_table_post"];
+        /** Post  Dashboard */
+        post: operations["post__dashboard_userdata__project_id__dashboard_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/userdata/{project_id}/dashboard/table/{name}": {
+    "/userdata/{project_id}/dashboard/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get  Table Dashboard */
-        get: operations["get__table_dashboard_userdata__project_id__dashboard_table__name__get"];
-        put?: never;
+        /** Get  Dashboard */
+        get: operations["get__dashboard_userdata__project_id__dashboard__id__get"];
+        /** Put  Dashboard */
+        put: operations["put__dashboard_userdata__project_id__dashboard__id__put"];
         post?: never;
-        delete?: never;
+        /** Delete  Dashboard */
+        delete: operations["delete__dashboard_userdata__project_id__dashboard__id__delete"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/userdata/{project_id}/dashboard/table/{id}": {
+    "/table/{project_id}/comparison/statistic-test": {
         parameters: {
             query?: never;
             header?: never;
@@ -649,52 +585,16 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Put  Table Dashboard */
-        put: operations["put__table_dashboard_userdata__project_id__dashboard_table__id__put"];
-        post?: never;
-        /** Delete  Table Dashboard */
-        delete: operations["delete__table_dashboard_userdata__project_id__dashboard_table__id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userdata/{project_id}/dashboard/comparison": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  All Comparison Dashboard */
-        get: operations["get__all_comparison_dashboard_userdata__project_id__dashboard_comparison_get"];
         put?: never;
-        /** Post  Comparison Dashboard */
-        post: operations["post__comparison_dashboard_userdata__project_id__dashboard_comparison_post"];
+        /** Post  Statistic Test */
+        post: operations["post__statistic_test_table__project_id__comparison_statistic_test_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/userdata/{project_id}/dashboard/comparison/{name}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  Comparison Dashboard */
-        get: operations["get__comparison_dashboard_userdata__project_id__dashboard_comparison__name__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userdata/{project_id}/dashboard/comparison/{id}": {
+    "/table/{project_id}/comparison/words": {
         parameters: {
             query?: never;
             header?: never;
@@ -702,52 +602,16 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Put  Comparison Dashboard */
-        put: operations["put__comparison_dashboard_userdata__project_id__dashboard_comparison__id__put"];
-        post?: never;
-        /** Delete  Comparison Dashboard */
-        delete: operations["delete__comparison_dashboard_userdata__project_id__dashboard_comparison__id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userdata/{project_id}/dashboard/correlation": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  All Correlation Dashboard */
-        get: operations["get__all_correlation_dashboard_userdata__project_id__dashboard_correlation_get"];
         put?: never;
-        /** Post  Correlation Dashboard */
-        post: operations["post__correlation_dashboard_userdata__project_id__dashboard_correlation_post"];
+        /** Post  Compare Group Words */
+        post: operations["post__compare_group_words_table__project_id__comparison_words_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/userdata/{project_id}/dashboard/correlation/{name}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get  Correlation Dashboard */
-        get: operations["get__correlation_dashboard_userdata__project_id__dashboard_correlation__name__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/userdata/{project_id}/dashboard/correlation/{id}": {
+    "/table/{project_id}/correlation/binary/test-distribution": {
         parameters: {
             query?: never;
             header?: never;
@@ -755,11 +619,44 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Put  Correlation Dashboard */
-        put: operations["put__correlation_dashboard_userdata__project_id__dashboard_correlation__id__put"];
-        post?: never;
-        /** Delete  Correlation Dashboard */
-        delete: operations["delete__correlation_dashboard_userdata__project_id__dashboard_correlation__id__delete"];
+        put?: never;
+        /** Post  Test Distribution */
+        post: operations["post__test_distribution_table__project_id__correlation_binary_test_distribution_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/table/{project_id}/correlation/contingency-table": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Topics Contingency Table */
+        post: operations["post__topics_contingency_table_table__project_id__correlation_contingency_table_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/table/{project_id}/correlation/binary/test-contingency-table": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Test Contingency Table */
+        post: operations["post__test_contingency_table_table__project_id__correlation_binary_test_contingency_table_post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -777,7 +674,7 @@ export interface components {
              */
             type: "and";
             /** Operands */
-            operands: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
+            operands: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"])[];
         };
         /** AndTableFilter */
         "AndTableFilter-Output": {
@@ -787,7 +684,7 @@ export interface components {
              */
             type: "and";
             /** Operands */
-            operands: (components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
+            operands: (components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"])[];
         };
         /** ApiErrorResult */
         ApiErrorResult: {
@@ -796,16 +693,28 @@ export interface components {
             /** Errors */
             errors?: Record<string, never> | null;
         };
-        /** ApiResult[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
-        ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
+        /** ApiResult[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
+        ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
             /** Data */
-            data: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            data: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[BinaryStatisticTestOnContingencyTableMainResource] */
+        ApiResult_BinaryStatisticTestOnContingencyTableMainResource_: {
+            data: components["schemas"]["BinaryStatisticTestOnContingencyTableMainResource"];
             /** Message */
             message: string | null;
         };
         /** ApiResult[CheckDatasetResource] */
         ApiResult_CheckDatasetResource_: {
             data: components["schemas"]["CheckDatasetResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[ContingencyTableResource] */
+        ApiResult_ContingencyTableResource_: {
+            data: components["schemas"]["ContingencyTableResource"];
             /** Message */
             message: string | null;
         };
@@ -840,9 +749,9 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[TableColumnAggregateTotalsResource] */
-        ApiResult_TableColumnAggregateTotalsResource_: {
-            data: components["schemas"]["TableColumnAggregateTotalsResource"];
+        /** ApiResult[TableColumnAggregateValuesResource] */
+        ApiResult_TableColumnAggregateValuesResource_: {
+            data: components["schemas"]["TableColumnAggregateValuesResource"];
             /** Message */
             message: string | null;
         };
@@ -900,9 +809,9 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]]] */
-        ApiResult_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator___: {
-            data: components["schemas"]["UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
+        /** ApiResult[UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]]] */
+        ApiResult_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator___: {
+            data: components["schemas"]["UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
             /** Message */
             message: string | null;
         };
@@ -915,6 +824,13 @@ export interface components {
         /** ApiResult[UserDataResource[Dashboard]] */
         ApiResult_UserDataResource_Dashboard__: {
             data: components["schemas"]["UserDataResource_Dashboard_"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[list[BinaryStatisticTestOnDistributionResource]] */
+        ApiResult_list_BinaryStatisticTestOnDistributionResource__: {
+            /** Data */
+            data: components["schemas"]["BinaryStatisticTestOnDistributionResource"][];
             /** Message */
             message: string | null;
         };
@@ -939,10 +855,10 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[list[UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]]]] */
-        ApiResult_list_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator____: {
+        /** ApiResult[list[UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]]]] */
+        ApiResult_list_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator____: {
             /** Data */
-            data: components["schemas"]["UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"][];
+            data: components["schemas"]["UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"][];
             /** Message */
             message: string | null;
         };
@@ -967,18 +883,55 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** BoxPlotDashboardItem */
-        BoxPlotDashboardItem: {
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "box-plot";
+        /** BinaryStatisticTestOnContingencyTableMainResource */
+        BinaryStatisticTestOnContingencyTableMainResource: {
+            /** Rows */
+            rows: string[];
+            /** Columns */
+            columns: string[];
+            /** Column1 */
+            column1: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Column2 */
+            column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Results */
+            results: components["schemas"]["BinaryStatisticTestOnContingencyTableResource"][][];
+        };
+        /** BinaryStatisticTestOnContingencyTableResource */
+        BinaryStatisticTestOnContingencyTableResource: {
+            /** Discriminator1 */
+            discriminator1: string;
+            /** Discriminator2 */
+            discriminator2: string;
+            /** Frequency */
+            frequency: number;
+            /** Warnings */
+            warnings: string[];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** BinaryStatisticTestOnDistributionResource */
+        BinaryStatisticTestOnDistributionResource: {
+            /** Discriminator */
+            discriminator: string;
+            /** Yes Count */
+            yes_count: number;
+            /** No Count */
+            no_count: number;
+            /** Invalid Count */
+            invalid_count: number;
+            /** Warnings */
+            warnings: string[];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** BinaryStatisticTestSchema */
+        BinaryStatisticTestSchema: {
+            /** Column1 */
+            column1: string;
+            /** Column2 */
+            column2: string;
+            statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
+            effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
         };
         /** CSVDataSource */
         CSVDataSource: {
@@ -1076,6 +1029,25 @@ export interface components {
             source: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
             data_schema: components["schemas"]["SchemaManager-Output"];
         };
+        /** ContingencyTableResource */
+        ContingencyTableResource: {
+            /** Column1 */
+            column1: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Column2 */
+            column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Rows */
+            rows: string[];
+            /** Columns */
+            columns: string[];
+            /** Observed */
+            observed: number[][];
+            /** Expected */
+            expected: number[][];
+            /** Residuals */
+            residuals: number[][];
+            /** Standardized Residuals */
+            standardized_residuals: number[][];
+        };
         /** ContinuousSchemaColumn */
         ContinuousSchemaColumn: {
             /** Name */
@@ -1105,12 +1077,26 @@ export interface components {
         /** Dashboard */
         "Dashboard-Input": {
             /** Items */
-            items: (components["schemas"]["HistogramDashboardItem"] | components["schemas"]["LinePlotDashboardItem"] | components["schemas"]["DescriptiveStatisticsDashboardItem"] | components["schemas"]["BoxPlotDashboardItem"])[];
+            items: components["schemas"]["DashboardItem"][];
         };
         /** Dashboard */
         "Dashboard-Output": {
             /** Items */
-            items: (components["schemas"]["HistogramDashboardItem"] | components["schemas"]["LinePlotDashboardItem"] | components["schemas"]["DescriptiveStatisticsDashboardItem"] | components["schemas"]["BoxPlotDashboardItem"])[];
+            items: components["schemas"]["DashboardItem"][];
+        };
+        /** DashboardItem */
+        DashboardItem: {
+            /** Id */
+            id: string;
+            /** Description */
+            description: string | null;
+            /** Type */
+            type: string;
+            /** Column */
+            column: string;
+            rect: components["schemas"]["DashboardItemRect"];
+            /** Config */
+            config: Record<string, never>;
         };
         /** DashboardItemRect */
         DashboardItemRect: {
@@ -1126,7 +1112,7 @@ export interface components {
         /** DatasetFilterSchema */
         DatasetFilterSchema: {
             /** Filter */
-            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
         };
         /** DatasetPreviewResource */
         DatasetPreviewResource: {
@@ -1136,19 +1122,6 @@ export interface components {
             preview_rows: Record<string, never>[];
             /** Total Rows */
             total_rows: number;
-        };
-        /** DescriptiveStatisticsDashboardItem */
-        DescriptiveStatisticsDashboardItem: {
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "descriptive-statistics";
         };
         /** DescriptiveStatisticsResource */
         DescriptiveStatisticsResource: {
@@ -1268,18 +1241,6 @@ export interface components {
             /** Sheet Name */
             sheet_name: string | null;
         };
-        /** ExcludesTableFilter */
-        ExcludesTableFilter: {
-            /** Target */
-            target: string;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "excludes";
-            /** Values */
-            values: string[];
-        };
         /**
          * GeospatialRoleEnum
          * @enum {string}
@@ -1305,25 +1266,27 @@ export interface components {
             type: "geospatial";
             role: components["schemas"]["GeospatialRoleEnum"];
         };
-        /** GetTableColumnAggregateTotalsSchema */
-        GetTableColumnAggregateTotalsSchema: {
+        /** GetTableColumnAggregateValuesSchema */
+        GetTableColumnAggregateValuesSchema: {
             /** Column */
             column: string;
             /** Filter */
-            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
-            grouped_by: components["schemas"]["TableSort"];
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
+            /** Grouped By */
+            grouped_by: string;
+            method: components["schemas"]["TableColumnAggregateMethodEnum"];
         };
         /** GetTableColumnSchema */
         GetTableColumnSchema: {
             /** Column */
             column: string;
             /** Filter */
-            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
         };
         /** GetTableGeographicalColumnSchema */
         GetTableGeographicalColumnSchema: {
             /** Filter */
-            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
             /** Latitude Column */
             latitude_column: string;
             /** Longitude Column */
@@ -1364,33 +1327,6 @@ export interface components {
             type: "has_text";
             /** Value */
             value: string;
-        };
-        /** HistogramDashboardItem */
-        HistogramDashboardItem: {
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "histogram";
-            /** Bins */
-            bins: number | null;
-        };
-        /** IncludesTableFilter */
-        IncludesTableFilter: {
-            /** Target */
-            target: string;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "includes";
-            /** Values */
-            values: string[];
         };
         /** InferDatasetColumnResource */
         InferDatasetColumnResource: {
@@ -1439,62 +1375,19 @@ export interface components {
             /** Value */
             value: string | number;
         };
-        /** LinePlotDashboardItem */
-        LinePlotDashboardItem: {
-            /** Column */
-            column: string;
-            rect: components["schemas"]["DashboardItemRect"];
-            /** Config */
-            config: unknown;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "line-plot";
-            sort: components["schemas"]["TableSort"] | null;
-        };
-        /** MultiCategoricalSchemaColumn */
-        MultiCategoricalSchemaColumn: {
-            /** Name */
-            name: string;
-            /** Description */
-            description?: string | null;
-            /**
-             * Internal
-             * @default false
-             */
-            internal: boolean;
-            /** Source Name */
-            source_name?: string | null;
-            /**
-             * Delimiter
-             * @default ,
-             */
-            delimiter: string;
-            /**
-             * Is Json
-             * @default true
-             */
-            is_json: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "multi-categorical";
-        };
         /** NamedTableFilter */
         "NamedTableFilter-Input": {
             /** Name */
             name: string;
             /** Filter */
-            filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** NamedTableFilter */
         "NamedTableFilter-Output": {
             /** Name */
             name: string;
             /** Filter */
-            filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** NotEmptyTableFilter */
         NotEmptyTableFilter: {
@@ -1514,7 +1407,7 @@ export interface components {
              */
             type: "not";
             /** Operand */
-            operand: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            operand: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** NotTableFilter */
         "NotTableFilter-Output": {
@@ -1524,19 +1417,7 @@ export interface components {
              */
             type: "not";
             /** Operand */
-            operand: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
-        };
-        /** OnlyTableFilter */
-        OnlyTableFilter: {
-            /** Target */
-            target: string;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "only";
-            /** Values */
-            values: string[];
+            operand: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** OrTableFilter */
         "OrTableFilter-Input": {
@@ -1546,7 +1427,7 @@ export interface components {
              */
             type: "or";
             /** Operands */
-            operands: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
+            operands: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"])[];
         };
         /** OrTableFilter */
         "OrTableFilter-Output": {
@@ -1556,7 +1437,7 @@ export interface components {
              */
             type: "or";
             /** Operands */
-            operands: (components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"])[];
+            operands: (components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"])[];
         };
         /** OrderedCategoricalSchemaColumn */
         OrderedCategoricalSchemaColumn: {
@@ -1599,7 +1480,7 @@ export interface components {
              */
             limit: number | null;
             /** Filter */
-            filter?: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter?: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
             sort?: components["schemas"]["TableSort"] | null;
         };
         /** ParquetDataSource */
@@ -1647,16 +1528,16 @@ export interface components {
          * SchemaColumnTypeEnum
          * @enum {string}
          */
-        SchemaColumnTypeEnum: "continuous" | "categorical" | "ordered-categorical" | "multi-categorical" | "temporal" | "textual" | "unique" | "geospatial" | "topic";
+        SchemaColumnTypeEnum: "continuous" | "categorical" | "ordered-categorical" | "temporal" | "textual" | "unique" | "geospatial" | "topic";
         /** SchemaManager */
         "SchemaManager-Input": {
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Input"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Input"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
         };
         /** SchemaManager */
         "SchemaManager-Output": {
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
         };
         /** SignificanceResult */
         SignificanceResult: {
@@ -1681,21 +1562,30 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
-        /** TableColumnAggregateTotalsResource */
-        TableColumnAggregateTotalsResource: {
+        /**
+         * TableColumnAggregateMethodEnum
+         * @enum {string}
+         */
+        TableColumnAggregateMethodEnum: "sum" | "mean" | "median" | "std-dev" | "max" | "min";
+        /** TableColumnAggregateValuesResource */
+        TableColumnAggregateValuesResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Categories */
+            categories: string[];
             /** Values */
-            values: string[];
-            /** Totals */
-            totals: number[];
+            values: number[];
         };
         /** TableColumnCountsResource */
         TableColumnCountsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Total */
             total: number;
+            /** Inside */
+            inside: number;
+            /** Outside */
+            outside: number;
             /** Valid */
             valid: number;
             /** Invalid */
@@ -1706,18 +1596,18 @@ export interface components {
         /** TableColumnFrequencyDistributionResource */
         TableColumnFrequencyDistributionResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
-            /** Values */
-            values: string[];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Categories */
+            categories: string[];
             /** Frequencies */
             frequencies: number[];
         };
         /** TableColumnGeographicalPointsResource */
         TableColumnGeographicalPointsResource: {
             /** Latitude Column */
-            latitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            latitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Longitude Column */
-            longitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            longitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Latitude */
             latitude: number[];
             /** Longitude */
@@ -1728,7 +1618,7 @@ export interface components {
         /** TableColumnValuesResource */
         TableColumnValuesResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Values */
             values: unknown[];
         };
@@ -1757,7 +1647,7 @@ export interface components {
         /** TableDescriptiveStatisticsResource */
         TableDescriptiveStatisticsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             statistics: components["schemas"]["DescriptiveStatisticsResource"];
         };
         /** TablePaginationApiResult[DocumentPerTopicResource] */
@@ -1767,7 +1657,7 @@ export interface components {
             /** Message */
             message: string | null;
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
             meta: components["schemas"]["PaginationMeta"];
         };
         /** TablePaginationApiResult[dict[str, Any]] */
@@ -1777,7 +1667,7 @@ export interface components {
             /** Message */
             message: string | null;
             /** Columns */
-            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
+            columns: (components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"])[];
             meta: components["schemas"]["PaginationMeta"];
         };
         /** TableSort */
@@ -1790,7 +1680,7 @@ export interface components {
         /** TableTopicsResource */
         TableTopicsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Topics */
             topics: components["schemas"]["Topic"][];
         };
@@ -1806,7 +1696,7 @@ export interface components {
         /** TableWordsResource */
         TableWordsResource: {
             /** Column */
-            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["MultiCategoricalSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Words */
             words: components["schemas"]["TableWordItemResource"][];
         };
@@ -1986,6 +1876,13 @@ export interface components {
             /** Tags */
             tags?: string[] | null;
         };
+        /** TopicCorrelationSchema */
+        TopicCorrelationSchema: {
+            /** Column1 */
+            column1: string;
+            /** Column2 */
+            column2: string;
+        };
         /** TopicModelingConfig */
         TopicModelingConfig: {
             /**
@@ -2085,7 +1982,7 @@ export interface components {
         /** TopicsOfColumnSchema */
         TopicsOfColumnSchema: {
             /** Filter */
-            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"]) | null;
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
         };
         /** UniqueSchemaColumn */
         UniqueSchemaColumn: {
@@ -2106,8 +2003,8 @@ export interface components {
              */
             type: "unique";
         };
-        /** UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
-        UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
+        /** UserDataResource[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
+        UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
             /** Id */
             id: string;
             /** Name */
@@ -2117,7 +2014,7 @@ export interface components {
             /** Description */
             description: string | null;
             /** Data */
-            data: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            data: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** UserDataResource[ComparisonState] */
         UserDataResource_ComparisonState_: {
@@ -2143,8 +2040,8 @@ export interface components {
             description: string | null;
             data: components["schemas"]["Dashboard-Output"];
         };
-        /** UserDataSchema[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter, IncludesTableFilter, ExcludesTableFilter, OnlyTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
-        UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
+        /** UserDataSchema[Annotated[Union[AndTableFilter, OrTableFilter, NotTableFilter, EmptyTableFilter, NotEmptyTableFilter, EqualToTableFilter, IsOneOfTableFilter, GreaterThanTableFilter, LessThanTableFilter, GreaterThanOrEqualToTableFilter, LessThanOrEqualToTableFilter, HasTextTableFilter], FieldInfo(annotation=NoneType, required=True, discriminator='type'), WrapValidator]] */
+        UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__: {
             /** Name */
             name: string;
             /** Tags */
@@ -2152,7 +2049,7 @@ export interface components {
             /** Description */
             description: string | null;
             /** Data */
-            data: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+            data: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** UserDataSchema[ComparisonState] */
         UserDataSchema_ComparisonState_: {
@@ -2872,7 +2769,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IncludesTableFilter"] | components["schemas"]["ExcludesTableFilter"] | components["schemas"]["OnlyTableFilter"];
+                "application/json": components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
             };
         };
         responses: {
@@ -2882,7 +2779,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
+                    "application/json": components["schemas"]["ApiResult_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
                 };
             };
             /** @description Bad Request */
@@ -3145,7 +3042,7 @@ export interface operations {
             };
         };
     };
-    post__get_table_column__aggregate_totals_table__project_id__column_aggregate_totals_post: {
+    post__get_table_column__aggregate_values_table__project_id__column_aggregate_values_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -3156,7 +3053,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["GetTableColumnAggregateTotalsSchema"];
+                "application/json": components["schemas"]["GetTableColumnAggregateValuesSchema"];
             };
         };
         responses: {
@@ -3166,7 +3063,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_TableColumnAggregateTotalsResource_"];
+                    "application/json": components["schemas"]["ApiResult_TableColumnAggregateValuesResource_"];
                 };
             };
             /** @description Bad Request */
@@ -3654,148 +3551,6 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["GetTableColumnSchema"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    post__statistic_test_table__project_id__statistic_test_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ComparisonStatisticTestSchema"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_TableComparisonResult_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    post__compare_group_words_table__project_id__compare_group_words_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ComparisonGroupWordsSchema"];
             };
         };
         responses: {
@@ -4438,7 +4193,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator____"];
+                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator____"];
                 };
             };
             /** @description Bad Request */
@@ -4499,7 +4254,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
+                "application/json": components["schemas"]["UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
             };
         };
         responses: {
@@ -4559,12 +4314,12 @@ export interface operations {
             };
         };
     };
-    get__filters_userdata__project_id__filters__name__get: {
+    get__filters_userdata__project_id__filters__id__get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                name: string;
+                id: string;
                 project_id: string;
             };
             cookie?: never;
@@ -4577,7 +4332,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator___"];
+                    "application/json": components["schemas"]["ApiResult_UserDataResource_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator___"];
                 };
             };
             /** @description Bad Request */
@@ -4639,7 +4394,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter__IncludesTableFilter__ExcludesTableFilter__OnlyTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
+                "application/json": components["schemas"]["UserDataSchema_Annotated_Union_AndTableFilter__OrTableFilter__NotTableFilter__EmptyTableFilter__NotEmptyTableFilter__EqualToTableFilter__IsOneOfTableFilter__GreaterThanTableFilter__LessThanTableFilter__GreaterThanOrEqualToTableFilter__LessThanOrEqualToTableFilter__HasTextTableFilter___FieldInfo_annotation_NoneType__required_True__discriminator__type____WrapValidator__"];
             };
         };
         responses: {
@@ -4905,12 +4660,12 @@ export interface operations {
             };
         };
     };
-    get__comparison_state_userdata__project_id__comparison_state__name__get: {
+    get__comparison_state_userdata__project_id__comparison_state__id__get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                name: string;
+                id: string;
                 project_id: string;
             };
             cookie?: never;
@@ -5113,7 +4868,7 @@ export interface operations {
             };
         };
     };
-    get__all_table_dashboard_userdata__project_id__dashboard_table_get: {
+    get__all_dashboard_userdata__project_id__dashboard_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -5180,7 +4935,7 @@ export interface operations {
             };
         };
     };
-    post__table_dashboard_userdata__project_id__dashboard_table_post: {
+    post__dashboard_userdata__project_id__dashboard_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -5251,12 +5006,12 @@ export interface operations {
             };
         };
     };
-    get__table_dashboard_userdata__project_id__dashboard_table__name__get: {
+    get__dashboard_userdata__project_id__dashboard__id__get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                name: string;
+                id: string;
                 project_id: string;
             };
             cookie?: never;
@@ -5319,7 +5074,7 @@ export interface operations {
             };
         };
     };
-    put__table_dashboard_userdata__project_id__dashboard_table__id__put: {
+    put__dashboard_userdata__project_id__dashboard__id__put: {
         parameters: {
             query?: never;
             header?: never;
@@ -5391,7 +5146,7 @@ export interface operations {
             };
         };
     };
-    delete__table_dashboard_userdata__project_id__dashboard_table__id__delete: {
+    delete__dashboard_userdata__project_id__dashboard__id__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -5459,74 +5214,7 @@ export interface operations {
             };
         };
     };
-    get__all_comparison_dashboard_userdata__project_id__dashboard_comparison_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Dashboard___"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    post__comparison_dashboard_userdata__project_id__dashboard_comparison_post: {
+    post__statistic_test_table__project_id__comparison_statistic_test_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -5537,7 +5225,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+                "application/json": components["schemas"]["ComparisonStatisticTestSchema"];
             };
         };
         responses: {
@@ -5547,7 +5235,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                    "application/json": components["schemas"]["ApiResult_TableComparisonResult_"];
                 };
             };
             /** @description Bad Request */
@@ -5597,282 +5285,7 @@ export interface operations {
             };
         };
     };
-    get__comparison_dashboard_userdata__project_id__dashboard_comparison__name__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                name: string;
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_UserDataResource_Dashboard__"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    put__comparison_dashboard_userdata__project_id__dashboard_comparison__id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    delete__comparison_dashboard_userdata__project_id__dashboard_comparison__id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    get__all_correlation_dashboard_userdata__project_id__dashboard_correlation_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_list_UserDataResource_Dashboard___"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    post__correlation_dashboard_userdata__project_id__dashboard_correlation_post: {
+    post__compare_group_words_table__project_id__comparison_words_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -5883,7 +5296,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+                "application/json": components["schemas"]["ComparisonGroupWordsSchema"];
             };
         };
         responses: {
@@ -5893,7 +5306,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                    "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
                 };
             };
             /** @description Bad Request */
@@ -5943,87 +5356,18 @@ export interface operations {
             };
         };
     };
-    get__correlation_dashboard_userdata__project_id__dashboard_correlation__name__get: {
+    post__test_distribution_table__project_id__correlation_binary_test_distribution_post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                name: string;
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_UserDataResource_Dashboard__"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    put__correlation_dashboard_userdata__project_id__dashboard_correlation__id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
                 project_id: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserDataSchema_Dashboard_"];
+                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
             };
         };
         responses: {
@@ -6033,7 +5377,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                    "application/json": components["schemas"]["ApiResult_list_BinaryStatisticTestOnDistributionResource__"];
                 };
             };
             /** @description Bad Request */
@@ -6083,17 +5427,20 @@ export interface operations {
             };
         };
     };
-    delete__correlation_dashboard_userdata__project_id__dashboard_correlation__id__delete: {
+    post__topics_contingency_table_table__project_id__correlation_contingency_table_post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                id: string;
                 project_id: string;
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TopicCorrelationSchema"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -6101,7 +5448,78 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                    "application/json": components["schemas"]["ApiResult_ContingencyTableResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__test_contingency_table_table__project_id__correlation_binary_test_contingency_table_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnContingencyTableMainResource_"];
                 };
             };
             /** @description Bad Request */

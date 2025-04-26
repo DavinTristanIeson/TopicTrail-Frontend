@@ -1,38 +1,27 @@
+import { filterProjectColumnsByType } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import NavigationRoutes from '@/common/constants/routes';
 import { NextPageWithLayout } from '@/common/utils/types';
 import { ProjectPageLinks } from '@/components/utility/links';
-import { GridSkeleton } from '@/components/visual/loading';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { ProjectContext } from '@/modules/project/context';
 import { useTopicCorrelationAppState } from '@/modules/topic-correlation/app-state';
 import TopicCorrelationColumnControls from '@/modules/topic-correlation/controls';
+import TopicCorrelationDashboard from '@/modules/topic-correlation/dashboard';
 import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
-import { DashboardControls } from '@/modules/visualization/dashboard/controls';
-import { Alert, Group, Stack } from '@mantine/core';
+import { Alert, Stack } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
-import dynamic from 'next/dynamic';
 import React from 'react';
 
-const GridstackDashboard = dynamic(
-  () => import('@/modules/visualization/dashboard'),
-  {
-    ssr: false,
-    loading: GridSkeleton,
-  },
-);
-
 const TopicCorrelationPage: NextPageWithLayout = function () {
-  const column1 = useTopicCorrelationAppState((store) => store.column1);
-  const column2 = useTopicCorrelationAppState((store) => store.column2);
-  const setColumn1 = useTopicCorrelationAppState((store) => store.setColumn1);
-  const setColumn2 = useTopicCorrelationAppState((store) => store.setColumn2);
+  const column = useTopicCorrelationAppState((store) => store.column);
+  const setColumn = useTopicCorrelationAppState((store) => store.setColumn);
 
   const project = React.useContext(ProjectContext);
-  const textualColumns = project.config.data_schema.columns.filter(
-    (col) => col.type === SchemaColumnTypeEnum.Textual,
-  );
+  const textualColumns = filterProjectColumnsByType(project, [
+    SchemaColumnTypeEnum.Textual,
+  ]);
   const allTopicModelingResults = React.useContext(
     AllTopicModelingResultContext,
   );
@@ -55,20 +44,8 @@ const TopicCorrelationPage: NextPageWithLayout = function () {
   }
   return (
     <Stack>
-      <TopicCorrelationColumnControls
-        column1={column1}
-        setColumn1={setColumn1}
-        column2={column2}
-        setColumn2={setColumn2}
-      />
-      {column1 && column2 && (
-        <>
-          <Group justify="end">
-            <DashboardControls />
-          </Group>
-          <GridstackDashboard />
-        </>
-      )}
+      <TopicCorrelationColumnControls column={column} setColumn={setColumn} />
+      {column && <TopicCorrelationDashboard />}
     </Stack>
   );
 };

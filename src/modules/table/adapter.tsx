@@ -5,7 +5,6 @@ import { ColumnCellRenderer } from './cell';
 import { PaginationMetaModel } from '@/api/table';
 import { TableStateContext } from './context';
 import {
-  type MRT_TableOptions,
   type MRT_ColumnDef,
   type MRT_SortingState,
   type MRT_Updater,
@@ -25,7 +24,6 @@ const DEFAULT_COLUMN_SIZES = {
   [SchemaColumnTypeEnum.Categorical]: 200,
   [SchemaColumnTypeEnum.Continuous]: 150,
   [SchemaColumnTypeEnum.Geospatial]: 150,
-  [SchemaColumnTypeEnum.MultiCategorical]: 300,
   [SchemaColumnTypeEnum.OrderedCategorical]: 200,
   [SchemaColumnTypeEnum.Temporal]: 200,
   [SchemaColumnTypeEnum.Textual]: 400,
@@ -148,7 +146,7 @@ interface UseTableStateToMantineReactTableAdapterProps {
 
 export function useTableStateToMantineReactTableAdapter(
   props: UseTableStateToMantineReactTableAdapterProps,
-): Partial<MRT_TableOptions<any>> {
+) {
   const { meta, isFetching } = props;
   const { sort, setSort, page, setPage, limit, setLimit } =
     React.useContext(TableStateContext);

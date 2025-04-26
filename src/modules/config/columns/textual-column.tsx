@@ -1,13 +1,14 @@
 import { DocumentEmbeddingMethodEnum } from '@/common/constants/enum';
 import { Text, Select, Stack, Divider, Group, Spoiler } from '@mantine/core';
-import { useController } from 'react-hook-form';
+import { useController, useFormContext, useWatch } from 'react-hook-form';
 import RHFField from '@/components/standard/fields';
 import {
   ProjectConfigColumnFormProps,
   useInferProjectDatasetColumn,
 } from './utils';
-import { DescriptiveStatisticsTable } from '@/modules/visualization/continuous/descriptive-statistics';
+import { DescriptiveStatisticsTableComponent } from '@/modules/visualization/components/continuous/descriptive-statistics';
 import React from 'react';
+import { ProjectConfigFormType } from '../form-type';
 
 function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
   const { field } = useController({
@@ -254,6 +255,13 @@ export function ProjectConfigColumnTextualForm(
   const { index } = props;
 
   const { data: column, loading } = useInferProjectDatasetColumn(index);
+  const { control } = useFormContext<ProjectConfigFormType>();
+  const columnName = useWatch({
+    name: `columns.${index}.name`,
+    control,
+    defaultValue: 'Value',
+  });
+
   return (
     <Stack>
       <Spoiler
@@ -264,9 +272,18 @@ export function ProjectConfigColumnTextualForm(
         <Text fw="bold" ta="center">
           Descriptive Statistics (of Document Lengths)
         </Text>
-        <DescriptiveStatisticsTable
+        <DescriptiveStatisticsTableComponent
           loading={loading}
-          {...column?.descriptive_statistics}
+          data={
+            column?.descriptive_statistics
+              ? [
+                  {
+                    name: columnName,
+                    data: column?.descriptive_statistics,
+                  },
+                ]
+              : []
+          }
         />
       </Spoiler>
       <PreprocessingConfigurationFormBody {...props} />

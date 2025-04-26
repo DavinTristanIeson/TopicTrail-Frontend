@@ -1,21 +1,11 @@
 import TableQueryComponent from '@/modules/table';
 import { Tabs } from '@mantine/core';
 import React from 'react';
-import dynamic from 'next/dynamic';
-import { GridSkeleton } from '@/components/visual/loading';
 import { Shapes, Table } from '@phosphor-icons/react';
-import { DashboardControls } from '@/modules/visualization/dashboard/controls';
 import { NextPageWithLayout } from '@/common/utils/types';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { TablePageTab, useTableAppState } from '@/modules/table/app-state';
-
-const GridstackDashboard = dynamic(
-  () => import('@/modules/visualization/dashboard'),
-  {
-    ssr: false,
-    loading: GridSkeleton,
-  },
-);
+import { TableDashboard } from '@/modules/table/dashboard';
 
 const TablePage: NextPageWithLayout = function TablePage() {
   const tab = useTableAppState((store) => store.tab);
@@ -37,10 +27,7 @@ const TablePage: NextPageWithLayout = function TablePage() {
           {tab === TablePageTab.Table ? (
             <TableQueryComponent />
           ) : tab === TablePageTab.Dashboard ? (
-            <>
-              <DashboardControls />
-              <GridstackDashboard />
-            </>
+            <TableDashboard />
           ) : null}
         </>
       </div>

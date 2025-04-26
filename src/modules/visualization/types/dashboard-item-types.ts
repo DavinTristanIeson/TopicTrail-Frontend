@@ -1,0 +1,116 @@
+import { SchemaColumnModel } from '@/api/project';
+import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
+import React from 'react';
+import { DashboardConstraintContext } from './context';
+import { useContextSelector } from 'use-context-selector';
+import { intersection, without } from 'lodash-es';
+
+export enum DashboardItemTypeEnum {
+  DescriptiveStatistics = 'descriptive-statistics',
+  Counts = 'counts',
+  FrequencyDistribution = 'frequency-distribution',
+  Proportions = 'proportions',
+  DataDistribution = 'data-distribution',
+  Aggregate = 'aggregate',
+  GeographicalCoordinates = 'geographical-coordinates',
+  Calendar = 'calendar',
+  WordFrequencies = 'word-frequencies',
+  TopicWords = 'topic-words',
+  SubdatasetWords = 'subdataset-words',
+
+  ContingencyTable = 'contingency-table',
+  BinaryStatisticTestOnContingencyTable = 'binary-statistic-test-on-contingency-table',
+  BinaryStatisticTestOnDistribution = 'binary-statistic-test-on-distribution',
+}
+
+const FOR_ALL_TYPES = [DashboardItemTypeEnum.Counts];
+const FOR_CATEGORICAL_TYPES = [
+  DashboardItemTypeEnum.FrequencyDistribution,
+  DashboardItemTypeEnum.Proportions,
+  DashboardItemTypeEnum.ContingencyTable,
+  DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
+  DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
+];
+
+export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
+  SchemaColumnTypeEnum,
+  DashboardItemTypeEnum[]
+> = {
+  [SchemaColumnTypeEnum.Categorical]: [
+    ...FOR_ALL_TYPES,
+    ...FOR_CATEGORICAL_TYPES,
+  ],
+  [SchemaColumnTypeEnum.Continuous]: [
+    ...FOR_ALL_TYPES,
+    DashboardItemTypeEnum.DescriptiveStatistics,
+    DashboardItemTypeEnum.DataDistribution,
+    DashboardItemTypeEnum.Aggregate,
+  ],
+  [SchemaColumnTypeEnum.Geospatial]: [
+    ...FOR_ALL_TYPES,
+    DashboardItemTypeEnum.GeographicalCoordinates,
+  ],
+  [SchemaColumnTypeEnum.OrderedCategorical]: [
+    ...FOR_ALL_TYPES,
+    ...FOR_CATEGORICAL_TYPES,
+  ],
+  [SchemaColumnTypeEnum.Temporal]: [
+    ...FOR_ALL_TYPES,
+    ...FOR_CATEGORICAL_TYPES,
+    DashboardItemTypeEnum.Calendar,
+    DashboardItemTypeEnum.DataDistribution,
+  ],
+  [SchemaColumnTypeEnum.Textual]: [
+    ...FOR_ALL_TYPES,
+    DashboardItemTypeEnum.SubdatasetWords,
+    DashboardItemTypeEnum.WordFrequencies,
+    DashboardItemTypeEnum.TopicWords,
+  ],
+  [SchemaColumnTypeEnum.Topic]: [...FOR_ALL_TYPES, ...FOR_CATEGORICAL_TYPES],
+  [SchemaColumnTypeEnum.Unique]: [],
+};
+
+export function useAllowedDashboardItemTypes() {
+  const allTopicModelingResults = React.useContext(
+    AllTopicModelingResultContext,
+  );
+  const allowedTypes = useContextSelector(
+    DashboardConstraintContext,
+    (store) => store.allowedTypes,
+  );
+  const withoutTypes = useContextSelector(
+    DashboardConstraintContext,
+    (store) => store.withoutTypes,
+  );
+  return React.useCallback(
+    (column: SchemaColumnModel) => {
+      const defaultDashboardTypes =
+        SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN[column.type];
+      const dashboardTypes = allowedTypes
+        ? intersection(allowedTypes, defaultDashboardTypes)
+        : withoutTypes
+          ? without(defaultDashboardTypes, ...withoutTypes)
+          : defaultDashboardTypes;
+      if (
+        column.type === SchemaColumnTypeEnum.Textual ||
+        column.type === SchemaColumnTypeEnum.Topic
+      ) {
+        const columnName =
+          column.type === SchemaColumnTypeEnum.Textual
+            ? column.name
+            : column.source_name!;
+        const topicModelingResult = allTopicModelingResults.find(
+          (topicModelingResult) =>
+            topicModelingResult.column.name === columnName,
+        );
+        if (!topicModelingResult?.result) {
+          return [];
+        }
+        return dashboardTypes;
+      }
+      return dashboardTypes;
+    },
+    [allTopicModelingResults, allowedTypes, withoutTypes],
+  );
+}

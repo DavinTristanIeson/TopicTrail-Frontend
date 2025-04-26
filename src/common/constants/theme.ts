@@ -94,7 +94,7 @@ const mantineTheme = createTheme({
     Modal: Modal.extend({
       defaultProps: {
         centered: true,
-        size: 'lg',
+        size: 'xl',
       },
     }),
     Checkbox: Checkbox.extend({

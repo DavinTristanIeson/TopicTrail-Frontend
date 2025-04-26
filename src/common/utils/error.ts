@@ -1,6 +1,6 @@
 import { showNotification } from '@mantine/notifications';
 import type { FieldError } from 'react-hook-form';
-import { isObject } from 'lodash';
+import { isObject } from 'lodash-es';
 
 export function isFieldError(x: any): x is FieldError {
   return (

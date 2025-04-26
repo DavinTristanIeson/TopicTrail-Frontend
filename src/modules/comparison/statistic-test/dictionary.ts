@@ -29,34 +29,39 @@ export const EFFECT_SIZE_DICTIONARY = {
   [EffectSizeMethodEnum.CohensD]: {
     label: "Cohen's D",
     value: EffectSizeMethodEnum.CohensD,
-    range: `[0, Inf)`,
+    rangeString: `[0, Inf)`,
+    range: [0, undefined],
     description:
       'Measures the difference of means between the two groups relative to their standard deviations. A value of 0.5 means that the means of both groups differ by 0.5 standard deviations.',
   },
   [EffectSizeMethodEnum.MeanDifference]: {
     label: 'Difference of Means',
-    range: `[-Inf, Inf)`,
+    rangeString: `(-Inf, Inf)`,
+    range: [undefined, undefined],
     value: EffectSizeMethodEnum.MeanDifference,
     description:
       'Measures the difference of means between the two groups. A negative value means the mean of the first group is smaller than the mean of the second group.',
   },
   [EffectSizeMethodEnum.MedianDifference]: {
     label: 'Difference of Medians',
-    range: `[-Inf, Inf)`,
+    rangeString: `(-Inf, Inf)`,
+    range: [undefined, undefined],
     value: EffectSizeMethodEnum.MedianDifference,
     description:
       'Measures the difference of medians between the two groups. A negative value means the median of the first group is smaller than the median of the second group.',
   },
   [EffectSizeMethodEnum.RankBiserialCorrelation]: {
     label: 'Rank Biserial Correlation',
-    range: `[-1, 1]`,
+    rangeString: `[-1, 1]`,
+    range: [-1, 1],
     value: EffectSizeMethodEnum.RankBiserialCorrelation,
     description:
       'Measures the difference in ranks between the two groups. A negative number approaching -1 means that the first group has higher ranks than the second group, while a positive number approaching 1 means that the first group has lower ranks than the second group.',
   },
   [EffectSizeMethodEnum.CramerV]: {
     label: "Cramer's V",
-    range: `[0, 1]`,
+    rangeString: `[0, 1]`,
+    range: [0, 1],
     value: EffectSizeMethodEnum.CramerV,
     description:
       'Measures the difference of frequency distributions between the two groups. A higher number indicates a greater difference between both groups.',
@@ -74,8 +79,6 @@ export const STATISTIC_METHOD_CONSTRAINTS: Partial<
     StatisticTestMethodEnum.MannWhitneyU,
   ],
   [SchemaColumnTypeEnum.Categorical]: CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
-  [SchemaColumnTypeEnum.MultiCategorical]:
-    CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
   [SchemaColumnTypeEnum.OrderedCategorical]: [
     StatisticTestMethodEnum.MannWhitneyU,
     StatisticTestMethodEnum.ChiSquared,
@@ -95,7 +98,6 @@ export const EFFECT_SIZE_CONSTRAINTS: Partial<
     EffectSizeMethodEnum.RankBiserialCorrelation,
   ],
   [SchemaColumnTypeEnum.Categorical]: CATEGORICAL_EFFECT_SIZE_CONSTRAINTS,
-  [SchemaColumnTypeEnum.MultiCategorical]: CATEGORICAL_EFFECT_SIZE_CONSTRAINTS,
   [SchemaColumnTypeEnum.OrderedCategorical]: [
     EffectSizeMethodEnum.RankBiserialCorrelation,
     EffectSizeMethodEnum.CramerV,

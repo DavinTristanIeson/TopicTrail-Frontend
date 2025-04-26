@@ -1,6 +1,18 @@
+import NextBundleAnalyzer from '@next/bundle-analyzer';
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const baseNextConfig = {
   reactStrictMode: true,
+  output: 'export',
+  experimental: {
+    optimizePackageImports: ['@phosphor-icons/react', '@tabler/icons-react', 'lodash-es'],
+  },
 };
+
+const withBundleAnalyzer = NextBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+const nextConfig = withBundleAnalyzer(baseNextConfig);
 
 export default nextConfig;

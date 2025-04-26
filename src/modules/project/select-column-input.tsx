@@ -1,5 +1,6 @@
 import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
 import {
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
@@ -16,7 +17,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import capitalize from 'lodash/capitalize';
+import { capitalize } from 'lodash-es';
 
 export interface ProjectColumnComboboxItem extends ComboboxItem {
   data: SchemaColumnModel;
@@ -63,6 +64,21 @@ export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
           data: item,
         } as ProjectColumnComboboxItem;
       })}
+      filter={(input) => {
+        const data = input.options.map(
+          (option) => (option as ProjectColumnComboboxItem).data,
+        );
+        const indices = filterByString(
+          input.search,
+          data.map((item) => {
+            return {
+              name: item.type,
+              type: item.type,
+            };
+          }),
+        );
+        return pickArrayByIndex(input.options, indices);
+      }}
       onChange={(value) => {
         onChange?.(value ? (data.find((x) => x.name === value) ?? null) : null);
       }}
@@ -149,12 +165,6 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
             label: 'Temporal',
             description:
               'This column contains date-time data that follows a strict format (e.g.: YYYY/MM/DD).',
-          },
-          {
-            value: SchemaColumnTypeEnum.MultiCategorical,
-            label: 'Multi-Categorical',
-            description:
-              'Each row of this column can contain one or more categories.',
           },
           {
             value: SchemaColumnTypeEnum.Geospatial,

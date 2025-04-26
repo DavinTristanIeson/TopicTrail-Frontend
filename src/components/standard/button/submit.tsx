@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import { Button, type ButtonProps, Tooltip } from '@mantine/core';
 import { FloppyDisk } from '@phosphor-icons/react';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 
 export default function SubmitButton(props: ButtonProps) {
   const {

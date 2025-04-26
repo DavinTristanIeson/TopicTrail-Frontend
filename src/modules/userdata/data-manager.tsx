@@ -26,32 +26,12 @@ export function useComparisonStateDataManager(
   });
 }
 
-export function useTableDashboardDataManager(
+export function useDashboardDataManager(
   props: UserDataManagerHookProps<DashboardModel>,
 ): UserDataManagerRendererProps<DashboardModel> {
   return useBaseUserDataManager({
     ...props,
     label: 'dashboard',
-    pathname: 'dashboard/table',
-  });
-}
-
-export function useComparisonDashboardDataManager(
-  props: UserDataManagerHookProps<DashboardModel>,
-): UserDataManagerRendererProps<DashboardModel> {
-  return useBaseUserDataManager({
-    ...props,
-    label: 'dashboard',
-    pathname: 'dashboard/comparison',
-  });
-}
-
-export function useTopicCorrelationDashboardDataManager(
-  props: UserDataManagerHookProps<DashboardModel>,
-): UserDataManagerRendererProps<DashboardModel> {
-  return useBaseUserDataManager({
-    ...props,
-    label: 'dashboard',
-    pathname: 'dashboard/correlation',
+    pathname: 'dashboard',
   });
 }

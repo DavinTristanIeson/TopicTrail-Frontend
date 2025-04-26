@@ -20,8 +20,6 @@ export function ProjectSchemaTypeIcon(props: ProjectSchemaTypeIconProps) {
       return <List />;
     case SchemaColumnTypeEnum.OrderedCategorical:
       return <ListNumbers />;
-    case SchemaColumnTypeEnum.MultiCategorical:
-      return <GridFour />;
     case SchemaColumnTypeEnum.Continuous:
       return <ChartBar />;
     case SchemaColumnTypeEnum.Temporal:

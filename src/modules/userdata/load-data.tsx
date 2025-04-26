@@ -1,14 +1,20 @@
-import { Group, Button, Select } from '@mantine/core';
+import { Group, Button, Select, type ComboboxItem } from '@mantine/core';
 import { Download, PencilSimple } from '@phosphor-icons/react';
 
 import React from 'react';
 import { UserDataManagerRendererProps } from './types';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { fromPairs } from 'lodash';
+import { fromPairs } from 'lodash-es';
+import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
+import { UserDataModel } from '@/api/userdata';
 
 interface LoadUserDataActionComponentProps<T>
   extends UserDataManagerRendererProps<T> {
   onEdit(id: string): void;
+}
+
+interface UserDataComboboxItem<T> extends ComboboxItem {
+  data: UserDataModel<T>;
 }
 
 export function LoadUserDataActionComponent<T>(
@@ -44,11 +50,27 @@ export function LoadUserDataActionComponent<T>(
           return {
             label: item.name,
             value: item.id,
-          };
+            data: item,
+          } as UserDataComboboxItem<T>;
         })}
         disabled={data.length === 0}
         onChange={setSelectedId}
         renderOption={renderOption}
+        filter={(input) => {
+          const data = input.options.map(
+            (option) => (option as UserDataComboboxItem<T>).data,
+          );
+          const indices = filterByString(
+            input.search,
+            data.map((item) => {
+              return {
+                tags: item.tags ?? [],
+                name: item.name,
+              };
+            }),
+          );
+          return pickArrayByIndex(input.options, indices);
+        }}
         styles={{
           input: {
             minWidth: 448,

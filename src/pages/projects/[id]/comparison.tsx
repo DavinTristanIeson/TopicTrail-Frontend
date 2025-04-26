@@ -1,25 +1,15 @@
 import { NextPageWithLayout } from '@/common/utils/types';
-import { GridSkeleton } from '@/components/visual/loading';
 import {
   ComparisonPageTab,
   useComparisonAppState,
 } from '@/modules/comparison/app-state';
-import NamedFiltersManager from '@/modules/comparison/filter';
+import ComparisonDashboard from '@/modules/comparison/dashboard';
+import NamedFiltersManager from '@/modules/comparison/subdatasets';
 import ComparisonStatisticTest from '@/modules/comparison/statistic-test';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
-import { DashboardControls } from '@/modules/visualization/dashboard/controls';
-import { Alert, Stack, Tabs } from '@mantine/core';
+import { Alert, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
-import dynamic from 'next/dynamic';
 import React from 'react';
-
-const GridstackDashboard = dynamic(
-  () => import('@/modules/visualization/dashboard'),
-  {
-    ssr: false,
-    loading: GridSkeleton,
-  },
-);
 
 const ComparisonPage: NextPageWithLayout = function () {
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
@@ -43,14 +33,14 @@ const ComparisonPage: NextPageWithLayout = function () {
             value={ComparisonPageTab.GroupsManager}
             leftSection={<ListNumbers />}
           >
-            Groups Manager
+            Subdatasets
           </Tabs.Tab>
           <Tabs.Tab
             value={ComparisonPageTab.Visualization}
             leftSection={<Shapes />}
             disabled={comparisonGroups.length === 0}
           >
-            Visualization
+            Dashboard
           </Tabs.Tab>
           <Tabs.Tab
             value={ComparisonPageTab.StatisticTest}
@@ -65,10 +55,7 @@ const ComparisonPage: NextPageWithLayout = function () {
         {tab === ComparisonPageTab.GroupsManager ? (
           <NamedFiltersManager />
         ) : tab === ComparisonPageTab.Visualization ? (
-          <Stack>
-            <DashboardControls />
-            <GridstackDashboard />
-          </Stack>
+          <ComparisonDashboard />
         ) : tab === ComparisonPageTab.StatisticTest ? (
           <ComparisonStatisticTest />
         ) : null}

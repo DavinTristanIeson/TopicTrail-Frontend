@@ -13,7 +13,7 @@ export default function ComparisonStatisticTest() {
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const { data, error, isPending, mutateAsync } = client.useMutation(
     'post',
-    '/table/{project_id}/statistic-test',
+    '/table/{project_id}/comparison/statistic-test',
   );
   const onSubmit = React.useCallback(
     async (values: StatisticTestFormType) => {

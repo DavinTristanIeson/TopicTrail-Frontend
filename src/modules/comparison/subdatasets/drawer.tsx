@@ -125,9 +125,9 @@ function ComparisonFilterDrawerContents(
             <RHFField
               type="text"
               name="name"
-              label="Group Name"
+              label="Subdataset Name"
               required
-              description="Group name should be unique."
+              description="Subdataset name should be unique."
             />
           </div>
         }

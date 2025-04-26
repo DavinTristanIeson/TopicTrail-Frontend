@@ -27,12 +27,10 @@ export function ProjectCommonDependencyProvider(
   props: React.PropsWithChildren,
 ) {
   return (
-    <AppProjectLayout>
-      <ProjectAllTopicsProvider>
-        {/* If project or topics is invalidated, ProjectAppStateProvider will be remounted, which resets the state.
-        That's the behavior that we want.*/}
-        <ProjectAppStateProvider>{props.children}</ProjectAppStateProvider>
-      </ProjectAllTopicsProvider>
-    </AppProjectLayout>
+    <ProjectAppStateProvider>
+      <AppProjectLayout>
+        <ProjectAllTopicsProvider>{props.children}</ProjectAllTopicsProvider>
+      </AppProjectLayout>
+    </ProjectAppStateProvider>
   );
 }

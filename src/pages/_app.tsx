@@ -16,12 +16,14 @@ import mantineTheme from '@/common/constants/theme';
 
 import dayjs from 'dayjs';
 import dayjsRelativeTimePlugin from 'dayjs/plugin/relativeTime';
+import dayjsTimezonePlugin from 'dayjs/plugin/timezone';
 import GlobalConfig from '@/common/constants/global';
 import { IconContext } from '@phosphor-icons/react';
 import { NextPageWithLayout } from '@/common/utils/types';
-import identity from 'lodash/identity';
+import { identity } from 'lodash-es';
 
 dayjs.extend(dayjsRelativeTimePlugin);
+dayjs.extend(dayjsTimezonePlugin);
 
 export default function App({ Component, pageProps }: AppProps) {
   const getLayout = (Component as NextPageWithLayout).getLayout ?? identity;

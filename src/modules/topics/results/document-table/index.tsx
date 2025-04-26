@@ -7,7 +7,7 @@ import React from 'react';
 import { TableFilterModel } from '@/api/table';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
-import { Alert, Group, Stack, TextInput } from '@mantine/core';
+import { Alert, Group, HoverCard, Stack, TextInput, Text } from '@mantine/core';
 import { TableStateContext } from '@/modules/table/context';
 import { TableFilterTypeEnum } from '@/common/constants/enum';
 import {
@@ -21,6 +21,7 @@ import { useTopicModelingResultOfColumn } from '../../components/context';
 import { TopicMultiSelectInput } from '../../components/select-topic-input';
 import { DocumentsPerTopicTableRenderer } from './renderer';
 import { useTopicAppState } from '../../app-state';
+
 interface UseDocumentsPerTopicTableFilterStateProps {
   columnName: string;
   filter: TableFilterModel | null;
@@ -107,6 +108,15 @@ export default function DocumentsPerTopicTable() {
     },
   );
 
+  const titleComponentOnly = (
+    <Text ta="center" fw={500} size="lg">
+      Documents of{' '}
+      <Text span inherit c="brand">
+        {column.name}
+      </Text>
+    </Text>
+  );
+
   return (
     <Stack>
       <Group align="start">
@@ -138,6 +148,16 @@ export default function DocumentsPerTopicTable() {
         loadingComponent={<TableSkeleton />}
       >
         <Stack>
+          {!column.description ? (
+            titleComponentOnly
+          ) : (
+            <HoverCard>
+              <HoverCard.Target>{titleComponentOnly}</HoverCard.Target>
+              <HoverCard.Dropdown>
+                <Text>{column.description}</Text>
+              </HoverCard.Dropdown>
+            </HoverCard>
+          )}
           <TableStateContext.Provider value={tableState}>
             {query.data && (
               <DocumentsPerTopicTableRenderer
