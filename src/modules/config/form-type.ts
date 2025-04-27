@@ -144,13 +144,6 @@ export type ProjectConfigFormType = Yup.InferType<
   typeof ProjectConfigFormSchema
 >;
 
-export const ProjectConfigDataSourceUpdateModalFormSchema = Yup.object({
-  source: ProjectConfigDataSourceFormSchema,
-});
-export type ProjectConfigDataSourceUpdateModalFormType = Yup.InferType<
-  typeof ProjectConfigDataSourceUpdateModalFormSchema
->;
-
 export function DefaultProjectSchemaColumnValues(
   name: string,
   type: SchemaColumnTypeEnum,

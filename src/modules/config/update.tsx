@@ -7,7 +7,7 @@ import { client } from '@/common/api/client';
 import NavigationRoutes from '@/common/constants/routes';
 import { DisclosureTrigger } from '@/hooks/disclosure';
 import ProjectConfigForm from '@/modules/config/form';
-import { DeleteProjectModal } from '@/modules/project/actions';
+import { DeleteProjectModal } from './delete-modal';
 import { ProjectContext } from '@/modules/project/context';
 import { Text, Button, Group, Stack } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
@@ -23,6 +23,7 @@ import { FormEditableContext } from '@/components/standard/fields/context';
 import { CancelButton } from '@/components/standard/button/variants';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { handleErrorFn } from '@/common/utils/error';
+import { useResetProjectAppState } from '../project/app-state';
 
 function UpdateProjectDeleteButton() {
   const deleteRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -54,11 +55,13 @@ function UpdateProjectDeleteButton() {
 }
 
 function UpdateProjectReloadDatasetButton() {
+  const reset = useResetProjectAppState();
   const { mutateAsync: reloadDataset } = client.useMutation(
     'patch',
     '/projects/{project_id}/reload',
     {
       onSuccess(data, variables) {
+        reset();
         invalidateProjectDependencyQueries(variables.params.path.project_id);
       },
     },
@@ -188,6 +191,8 @@ export default function ProjectConfigUpdateForm(
       },
     },
   );
+
+  const reset = useResetProjectAppState();
   const onSubmit = async (input: ProjectMutationInput) => {
     const res = await update({
       params: {
@@ -203,6 +208,7 @@ export default function ProjectConfigUpdateForm(
         color: 'green',
       });
     }
+    reset();
     router.replace({
       pathname: NavigationRoutes.ProjectTopics,
       query: {

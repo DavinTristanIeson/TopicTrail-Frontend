@@ -62,6 +62,7 @@ interface TableAppStateContextType {
   params: TableStateType;
   tab: TablePageTab;
   setTab: React.Dispatch<React.SetStateAction<TablePageTab>>;
+  reset(): void;
 }
 
 const TableAppStateContext = createContext<TableAppStateContextType>(
@@ -72,6 +73,12 @@ export default function TableAppStateProvider(props: React.PropsWithChildren) {
   const [tab, setTab] = React.useState(TablePageTab.Table);
   const tableState = useTableStateSetup();
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
+  const { reset: resetTableState } = tableState;
+  const { setState: setDashboard } = dashboardHandlers;
+  const reset = React.useCallback(() => {
+    resetTableState();
+    setDashboard([]);
+  }, [resetTableState, setDashboard]);
 
   return (
     <TableAppStateContext.Provider
@@ -79,6 +86,7 @@ export default function TableAppStateProvider(props: React.PropsWithChildren) {
         tab,
         setTab,
         params: tableState,
+        reset,
         dashboard: {
           state: dashboard,
           handlers: dashboardHandlers,

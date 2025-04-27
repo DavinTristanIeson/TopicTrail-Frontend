@@ -64,7 +64,11 @@ export function TableFilterDrawerFormBody(
   props: TableFilterDrawerComponentProps,
 ) {
   const confirmResetRemote = React.useRef<DisclosureTrigger | null>(null);
-  const { reset, setValue } = useFormContext();
+  const {
+    reset,
+    setValue,
+    formState: { isSubmitting },
+  } = useFormContext();
   const { setFilter, close, AboveForm, name } = props;
 
   return (
@@ -93,6 +97,7 @@ export function TableFilterDrawerFormBody(
             onClick={() => {
               confirmResetRemote.current?.open();
             }}
+            disabled={isSubmitting}
           >
             Reset
           </Button>

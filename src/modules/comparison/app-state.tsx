@@ -21,6 +21,7 @@ interface ComparisonAppStateContextType {
     state: NamedTableFilterModel[];
     handlers: UseListStateHandlers<NamedTableFilterModel>;
   };
+  reset(): void;
 }
 
 const ComparisonAppStateContext = createContext<ComparisonAppStateContextType>(
@@ -38,6 +39,14 @@ export default function ComparisonAppStateProvider(
     setTab(ComparisonPageTab.GroupsManager);
   }, [groups]);
 
+  const { setState: setGroups } = groupHandlers;
+  const { setState: setDashboard } = groupHandlers;
+
+  const reset = React.useCallback(() => {
+    setGroups([]);
+    setDashboard([]);
+  }, [setDashboard, setGroups]);
+
   return (
     <ComparisonAppStateContext.Provider
       value={{
@@ -51,6 +60,7 @@ export default function ComparisonAppStateProvider(
           state: dashboard,
           handlers: dashboardHandlers,
         },
+        reset,
       }}
     >
       {props.children}

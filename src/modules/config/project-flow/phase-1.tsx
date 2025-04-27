@@ -4,7 +4,7 @@
 
 import { Stack, Title, Flex, Button, Tooltip, Text } from '@mantine/core';
 import { ArrowRight } from '@phosphor-icons/react';
-import { useFormState } from 'react-hook-form';
+import { useFormState, useWatch } from 'react-hook-form';
 import RHFField from '@/components/standard/fields';
 import GlobalConfig from '@/common/constants/global';
 import React from 'react';
@@ -45,9 +45,14 @@ export function ConfigureProjectFlow_CheckProjectId(
 ) {
   const { onContinue } = props;
   const { errors } = useFormState<ProjectConfigFormType>({
+    name: 'metadata',
+  });
+  const metadataName = useWatch({
     name: 'metadata.name',
   });
   const isError = !!errors.metadata;
+  const isProjectNameRequired = !metadataName;
+
   return (
     <Stack className="relative">
       <Title order={2}>1/3: What&apos;s the name of your project?</Title>
@@ -62,14 +67,18 @@ export function ConfigureProjectFlow_CheckProjectId(
       <ProjectConfigMetadataFormBody />
       <Flex direction="row-reverse" w="100%">
         <Tooltip
-          disabled={!isError}
+          disabled={!isError && !isProjectNameRequired}
           color="red"
-          label="There are still errors in the form."
+          label={
+            isProjectNameRequired
+              ? 'Please enter a name for the project first.'
+              : 'There are still errors in the form.'
+          }
         >
           <Button
             rightSection={<ArrowRight />}
             onClick={onContinue}
-            disabled={isError}
+            disabled={isError || isProjectNameRequired}
           >
             Next
           </Button>

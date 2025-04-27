@@ -19,6 +19,7 @@ export const useVisualizationGeographicalPointsDataProvider: BaseVisualizationDa
         body: {
           latitude_column: config.latitude_column,
           longitude_column: config.longitude_column,
+          label_column: config.label_column ?? null,
           filter: group.filter,
         },
         params,

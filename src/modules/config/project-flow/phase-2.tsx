@@ -9,6 +9,7 @@ import {
   Button,
   Alert,
   Text,
+  Tooltip,
 } from '@mantine/core';
 import {
   ArrowLeft,
@@ -23,6 +24,36 @@ import { FormEditableContext } from '@/components/standard/fields/context';
 import { ProjectConfigDataSourceUpdateModal } from '../data-source/update-modal';
 import { useVerifyFormDataSource } from '../data-source/check';
 import { ProjectConfigDataSourceFormBody } from '../data-source/form-body';
+import { useWatch } from 'react-hook-form';
+
+interface VerifyDatasetButtonProps {
+  loading: boolean;
+  onSubmit(): void;
+}
+
+function VerifyDatasetButton(props: VerifyDatasetButtonProps) {
+  const { loading, onSubmit } = props;
+  const sourcePath = useWatch({
+    name: 'source.path',
+  });
+  const hasSourcePath = !!sourcePath;
+  return (
+    <Tooltip
+      disabled={hasSourcePath}
+      color="red"
+      label="Please enter the path to the dataset first."
+    >
+      <Button
+        leftSection={<CheckCircle size={20} />}
+        onClick={onSubmit}
+        loading={loading}
+        disabled={!hasSourcePath}
+      >
+        Verify Dataset
+      </Button>
+    </Tooltip>
+  );
+}
 
 interface ConfigureProjectFlow_CheckDatasetProps {
   onContinue(): void;
@@ -34,10 +65,13 @@ export function ConfigureProjectFlow_CheckDataset(
   props: ConfigureProjectFlow_CheckDatasetProps,
 ) {
   const { hasData, onBack, onContinue } = props;
-  const { isPending, onSubmit } = useVerifyFormDataSource();
+  const { isPending, onSubmit } = useVerifyFormDataSource({
+    onContinue,
+  });
   const updateModalRemote = React.useRef<DisclosureTrigger | null>(null);
   const { editable } = React.useContext(FormEditableContext);
   const canUpdateDataset = !!hasData && editable;
+
   return (
     <Stack className="relative">
       {canUpdateDataset && (
@@ -83,16 +117,7 @@ export function ConfigureProjectFlow_CheckDataset(
             Next
           </Button>
         ) : (
-          <Button
-            leftSection={<CheckCircle size={20} />}
-            onClick={async () => {
-              await onSubmit();
-              onContinue();
-            }}
-            loading={isPending}
-          >
-            Verify Dataset
-          </Button>
+          <VerifyDatasetButton loading={isPending} onSubmit={onSubmit} />
         )}
         {onBack && (
           <Button

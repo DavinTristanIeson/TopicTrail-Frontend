@@ -1291,6 +1291,8 @@ export interface components {
             latitude_column: string;
             /** Longitude Column */
             longitude_column: string;
+            /** Label Column */
+            label_column: string | null;
         };
         /** GreaterThanOrEqualToTableFilter */
         GreaterThanOrEqualToTableFilter: {
@@ -1608,10 +1610,12 @@ export interface components {
             latitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Longitude Column */
             longitude_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
-            /** Latitude */
-            latitude: number[];
-            /** Longitude */
-            longitude: number[];
+            /** Latitudes */
+            latitudes: number[];
+            /** Longitudes */
+            longitudes: number[];
+            /** Labels */
+            labels: string[] | null;
             /** Sizes */
             sizes: number[];
         };
@@ -5509,7 +5513,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
+                "application/json": components["schemas"]["TopicCorrelationSchema"];
             };
         };
         responses: {

@@ -112,10 +112,13 @@ function useDescriptiveStatisticsTableColumns(
       },
       ...data.map((item) => {
         return {
-          accessorKey: item.name,
+          id: item.name,
+          accessorFn(row) {
+            return row[item.name];
+          },
           header: item.name,
           size: 250,
-        };
+        } as MRT_ColumnDef<Record<string, any>>;
       }),
     ];
   }, [data]);

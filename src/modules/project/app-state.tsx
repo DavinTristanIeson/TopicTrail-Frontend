@@ -1,10 +1,50 @@
 import React from 'react';
 import { ProjectAllTopicsProvider } from '../topics/components/context';
 import AppProjectLayout from './layout';
-import TableAppStateProvider from '../table/app-state';
-import TopicAppStateProvider from '../topics/app-state';
-import ComparisonAppStateProvider from '../comparison/app-state';
-import TopicCorrelationAppStateProvider from '../topic-correlation/app-state';
+import TableAppStateProvider, { useTableAppState } from '../table/app-state';
+import TopicAppStateProvider, { useTopicAppState } from '../topics/app-state';
+import ComparisonAppStateProvider, {
+  useComparisonAppState,
+} from '../comparison/app-state';
+import TopicCorrelationAppStateProvider, {
+  useTopicCorrelationAppState,
+} from '../topic-correlation/app-state';
+import { useRouter } from 'next/router';
+import { createContext, useContextSelector } from 'use-context-selector';
+
+interface ProjectAppStateActionsProps {
+  reset(): void;
+}
+
+const ProjectAppStateActionsContext =
+  createContext<ProjectAppStateActionsProps>({
+    reset() {},
+  });
+
+export function useResetProjectAppState() {
+  return useContextSelector(
+    ProjectAppStateActionsContext,
+    (store) => store.reset,
+  );
+}
+
+function ProjectAppStateActionsProvider(props: React.PropsWithChildren) {
+  const resetTopics = useTopicAppState((store) => store.reset);
+  const resetTable = useTableAppState((store) => store.reset);
+  const resetComparison = useComparisonAppState((store) => store.reset);
+  const resetCorrelation = useTopicCorrelationAppState((store) => store.reset);
+  const reset = React.useCallback(() => {
+    resetTopics();
+    resetTable();
+    resetComparison();
+    resetCorrelation();
+  }, [resetComparison, resetCorrelation, resetTable, resetTopics]);
+  return (
+    <ProjectAppStateActionsContext.Provider value={{ reset }}>
+      {props.children}
+    </ProjectAppStateActionsContext.Provider>
+  );
+}
 
 // Aggregates all of the different app state providers
 export function ProjectAppStateProvider(props: React.PropsWithChildren) {
@@ -13,7 +53,9 @@ export function ProjectAppStateProvider(props: React.PropsWithChildren) {
       <TableAppStateProvider>
         <ComparisonAppStateProvider>
           <TopicCorrelationAppStateProvider>
-            {props.children}
+            <ProjectAppStateActionsProvider>
+              {props.children}
+            </ProjectAppStateActionsProvider>
           </TopicCorrelationAppStateProvider>
         </ComparisonAppStateProvider>
       </TableAppStateProvider>
@@ -26,10 +68,14 @@ export function ProjectAppStateProvider(props: React.PropsWithChildren) {
 export function ProjectCommonDependencyProvider(
   props: React.PropsWithChildren,
 ) {
+  const id = useRouter().query.id as string;
+  // Remount everything once you change project
   return (
-    <ProjectAppStateProvider>
-      <AppProjectLayout>
-        <ProjectAllTopicsProvider>{props.children}</ProjectAllTopicsProvider>
+    <ProjectAppStateProvider key={id}>
+      <AppProjectLayout key={id}>
+        <ProjectAllTopicsProvider key={id}>
+          {props.children}
+        </ProjectAllTopicsProvider>
       </AppProjectLayout>
     </ProjectAppStateProvider>
   );

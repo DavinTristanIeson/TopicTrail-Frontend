@@ -1,7 +1,8 @@
-import { MultiSelect, Group, Button } from '@mantine/core';
+import { MultiSelect, Group, Button, Select } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import React from 'react';
 import { NamedData } from '../../types/base';
+import { useSelectLeftRightButtons } from '@/components/visual/select';
 
 interface UseVisualizationSubdatasetsMultiSelectReturn<T> {
   viewedData: NamedData<T>[];
@@ -68,4 +69,45 @@ export function useVisualizationSubdatasetsMultiSelect<T>(
   }, [actuallyViewed, data]);
 
   return { viewed: actuallyViewed, Component, viewedData, options };
+}
+
+interface UseVisualizationSubdatasetSelectReturn<T> {
+  viewedData: NamedData<T> | null;
+  Component: React.ReactNode;
+}
+
+interface UseVisualizationSubdatasetSelectParams<T> {
+  data: NamedData<T>[];
+}
+
+export function useVisualizationSubdatasetSelect<T>(
+  props: UseVisualizationSubdatasetSelectParams<T>,
+): UseVisualizationSubdatasetSelectReturn<T> {
+  const { data } = props;
+  const options = React.useMemo(
+    () => data.map((subdataset) => subdataset.name),
+    [data],
+  );
+  const [viewed, setViewed] = React.useState<string | null>(
+    data[0]?.name ?? null,
+  );
+  const inputContainer = useSelectLeftRightButtons({
+    options,
+    value: viewed,
+    onChange: setViewed,
+  });
+  const Component = (
+    <Select
+      data={options}
+      value={viewed}
+      onChange={setViewed}
+      allowDeselect={false}
+      required
+      inputContainer={inputContainer}
+    />
+  );
+  return {
+    Component,
+    viewedData: data.find((subdataset) => subdataset.name === viewed) ?? null,
+  };
 }

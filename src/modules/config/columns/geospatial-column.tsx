@@ -18,8 +18,8 @@ export function ProjectConfigColumnGeospatialForm(
           value: GeospatialRoleEnum.Latitude,
         },
         {
-          label: 'Latitude',
-          value: GeospatialRoleEnum.Latitude,
+          label: 'Longitude',
+          value: GeospatialRoleEnum.Longitude,
         },
       ]}
       description="Does this column contain latitude values or longitude values? Note that the application requires both latitude and longitude columns to be present in the dataset to perform geospatial visualizations."

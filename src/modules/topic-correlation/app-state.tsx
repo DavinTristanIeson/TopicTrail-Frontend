@@ -11,6 +11,7 @@ interface TopicCorrelationAppStateContextType {
   };
   column: SchemaColumnModel | null;
   setColumn: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
+  reset(): void;
 }
 
 const TopicCorrelationAppStateContext =
@@ -27,6 +28,11 @@ export default function TopicCorrelationAppStateProvider(
     setState([]);
   }, [column, setState]);
 
+  const reset = React.useCallback(() => {
+    setState([]);
+    setColumn(null);
+  }, [setState]);
+
   return (
     <TopicCorrelationAppStateContext.Provider
       value={{
@@ -36,6 +42,7 @@ export default function TopicCorrelationAppStateProvider(
           state: dashboard,
           handlers: dashboardHandlers,
         },
+        reset,
       }}
     >
       {props.children}

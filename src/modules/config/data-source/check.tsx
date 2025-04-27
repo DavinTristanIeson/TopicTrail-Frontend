@@ -3,7 +3,6 @@ import {
   DefaultProjectSchemaColumnValues,
   ProjectConfigColumnFormType,
   ProjectConfigDataSourceFormType,
-  ProjectConfigDataSourceUpdateModalFormType,
   ProjectConfigFormType,
 } from '../form-type';
 import { showNotification } from '@mantine/notifications';
@@ -62,7 +61,12 @@ function useVerifyDataSource(): UseVerifyDataSourceReturn {
   return { onSubmit, isPending };
 }
 
-export function useVerifyFormDataSource() {
+interface UseVerifyFormDataSourceProps {
+  onContinue(): void;
+}
+
+export function useVerifyFormDataSource(props: UseVerifyFormDataSourceProps) {
+  const { onContinue } = props;
   const { onSubmit: onSubmitBasic, isPending } = useVerifyDataSource();
   const { getValues, setError, setValue, clearErrors } =
     useFormContext<ProjectConfigFormType>();
@@ -76,6 +80,8 @@ export function useVerifyFormDataSource() {
         shouldTouch: true,
       });
       clearErrors('columns');
+      clearErrors('source');
+      onContinue();
     } catch (e: any) {
       console.error(e);
       if (e.message) {
@@ -90,31 +96,43 @@ export function useVerifyFormDataSource() {
         );
       }
     }
-  }, [clearErrors, getValues, onSubmitBasic, setError, setValue]);
+  }, [clearErrors, getValues, onContinue, onSubmitBasic, setError, setValue]);
 
   return { onSubmit, isPending };
 }
 
+interface UseVerifyUpdateModalDataSourceProps {
+  localForm: UseFormReturn<{ source: ProjectConfigDataSourceFormType }>;
+  onClose(): void;
+}
+
 export function useVerifyUpdateModalDataSource(
-  updateModalForm: UseFormReturn<ProjectConfigDataSourceUpdateModalFormType>,
-  close: () => void,
+  props: UseVerifyUpdateModalDataSourceProps,
 ) {
+  const { localForm, onClose } = props;
   const { onSubmit: onSubmitBasic, isPending } = useVerifyDataSource();
-  const { setValue, clearErrors } = useFormContext<ProjectConfigFormType>();
-  const { getValues, setError } = updateModalForm;
+  // Global form
+  const { setValue: setGlobalValue, clearErrors: clearGlobalErrors } =
+    useFormContext<ProjectConfigFormType>();
+  // Local form. The form inside the modal.
+  const { getValues: getLocalValues, setError: setLocalError } = localForm;
 
   const onSubmit = React.useCallback(async () => {
     try {
-      const source = getValues('source');
+      // Grab local data source state
+      const source = getLocalValues('source');
+      // Check data source
       const columns = await onSubmitBasic(source);
-      setValue('columns', columns, {
+
+      // Set global form state
+      setGlobalValue('columns', columns, {
         shouldDirty: true,
         shouldTouch: true,
       });
-      setValue('source', source);
-      clearErrors('columns');
-      clearErrors('source');
-      close();
+      setGlobalValue('source', source);
+      clearGlobalErrors('columns');
+      clearGlobalErrors('source');
+      onClose();
     } catch (e: any) {
       console.error(e);
       if (e.message) {
@@ -124,12 +142,17 @@ export function useVerifyUpdateModalDataSource(
         });
       }
       if (e.errors) {
-        formSetErrors(e.errors, (name, error) =>
-          setError(`source.${name}` as any, error),
-        );
+        formSetErrors(e.errors, setLocalError);
       }
     }
-  }, [clearErrors, close, getValues, onSubmitBasic, setError, setValue]);
+  }, [
+    getLocalValues,
+    onSubmitBasic,
+    setGlobalValue,
+    clearGlobalErrors,
+    onClose,
+    setLocalError,
+  ]);
 
   return { onSubmit, isPending };
 }

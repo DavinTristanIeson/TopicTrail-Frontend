@@ -25,21 +25,25 @@ import { MantineReactTableBehaviors } from '@/modules/table/adapter';
 function ProjectConfigPreviewTable(props: DatasetPreviewModel) {
   const { dataset_columns, preview_rows, total_rows } = props;
   const tableColumns = React.useMemo(() => {
-    return dataset_columns.map<MRT_ColumnDef<Record<string, any>>>((column) => {
+    return dataset_columns.map((column) => {
       return {
-        accessorKey: column,
+        id: column,
+        accessorFn(row: Record<string, any>) {
+          return row[column];
+        },
         header: column,
         size: 200,
         Cell({ cell: { getValue } }) {
           return <div className="h-full">{getValue() as React.ReactNode}</div>;
         },
-      };
+      } as MRT_ColumnDef<Record<string, any>>;
     });
   }, [dataset_columns]);
 
   const table = useMantineReactTable({
     data: preview_rows,
     columns: tableColumns,
+    enablePagination: false,
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,

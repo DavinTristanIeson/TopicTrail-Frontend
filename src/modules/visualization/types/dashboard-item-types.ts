@@ -1,6 +1,5 @@
 import { SchemaColumnModel } from '@/api/project';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
-import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 import React from 'react';
 import { DashboardConstraintContext } from './context';
 import { useContextSelector } from 'use-context-selector';
@@ -72,9 +71,6 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
 };
 
 export function useAllowedDashboardItemTypes() {
-  const allTopicModelingResults = React.useContext(
-    AllTopicModelingResultContext,
-  );
   const allowedTypes = useContextSelector(
     DashboardConstraintContext,
     (store) => store.allowedTypes,
@@ -92,25 +88,8 @@ export function useAllowedDashboardItemTypes() {
         : withoutTypes
           ? without(defaultDashboardTypes, ...withoutTypes)
           : defaultDashboardTypes;
-      if (
-        column.type === SchemaColumnTypeEnum.Textual ||
-        column.type === SchemaColumnTypeEnum.Topic
-      ) {
-        const columnName =
-          column.type === SchemaColumnTypeEnum.Textual
-            ? column.name
-            : column.source_name!;
-        const topicModelingResult = allTopicModelingResults.find(
-          (topicModelingResult) =>
-            topicModelingResult.column.name === columnName,
-        );
-        if (!topicModelingResult?.result) {
-          return [];
-        }
-        return dashboardTypes;
-      }
       return dashboardTypes;
     },
-    [allTopicModelingResults, allowedTypes, withoutTypes],
+    [allowedTypes, withoutTypes],
   );
 }

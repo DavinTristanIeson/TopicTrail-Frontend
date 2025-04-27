@@ -37,9 +37,11 @@ interface TopicAppStateContextType {
       key: string,
       options: React.SetStateAction<TopicModelingOptionsData>,
     ): void;
+    reset(): void;
     setCurrent(options: React.SetStateAction<TopicModelingOptionsData>): void;
     resetCurrent(): void;
   };
+  reset(): void;
 }
 
 const defaultTopicModelingOptions = () =>
@@ -71,6 +73,9 @@ function useTopicModelingOptionsAppState(
       resetNested(column);
     }, [column, resetNested]),
     setState: setNested,
+    reset: React.useCallback(() => {
+      setState({});
+    }, []),
     setCurrent: React.useCallback(
       (value: TopicModelingOptionsData) => {
         if (!column) return;
@@ -98,11 +103,19 @@ export default function TopicAppStateProvider(props: React.PropsWithChildren) {
 
   const topicModelingOptions = useTopicModelingOptionsAppState(column);
 
-  const { reset } = documentTableState;
+  const { reset: resetDocuments } = documentTableState;
+  const { reset: resetTopicModelingState } = topicModelingOptions;
   React.useEffect(() => {
     setTopics([]);
-    reset();
-  }, [column, reset]);
+    resetDocuments();
+  }, [column, resetDocuments]);
+
+  const reset = React.useCallback(() => {
+    resetDocuments();
+    setTopics([]);
+    resetTopicModelingState();
+    setColumn(null);
+  }, [resetDocuments, resetTopicModelingState]);
 
   return (
     <TopicAppStateContext.Provider
@@ -121,6 +134,7 @@ export default function TopicAppStateProvider(props: React.PropsWithChildren) {
           setTopics,
         },
         topicModelingOptions,
+        reset,
       }}
     >
       {props.children}

@@ -35,13 +35,46 @@ export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
       staleTime: Infinity,
     },
   );
-  const data = query.data?.data;
+  const allTopicModelingResults = query.data?.data;
+
+  const projectWithoutInvalidColumns = React.useMemo(() => {
+    if (!allTopicModelingResults) return project;
+    return {
+      ...project,
+      config: {
+        ...project.config,
+        data_schema: {
+          ...project.config.data_schema,
+          columns: project.config.data_schema.columns.filter((column) => {
+            // Not internal column. Don't have to care.
+            if (!column.source_name) {
+              return true;
+            }
+            const columnTopicModelResult = allTopicModelingResults.find(
+              (topicModelingResult) =>
+                topicModelingResult.column.name === column.name,
+            );
+            // Not textual column. Don't have to care.
+            if (!columnTopicModelResult) {
+              return true;
+            }
+            // Only allow this if it has topic modeling result.
+            return !!columnTopicModelResult.result;
+          }),
+        },
+      },
+    };
+  }, [allTopicModelingResults, project]);
   return (
     <UseQueryWrapperComponent query={query}>
-      {data && (
-        <AllTopicModelingResultContext.Provider value={data}>
-          {children}
-        </AllTopicModelingResultContext.Provider>
+      {allTopicModelingResults && (
+        <ProjectContext.Provider value={projectWithoutInvalidColumns}>
+          <AllTopicModelingResultContext.Provider
+            value={allTopicModelingResults}
+          >
+            {children}
+          </AllTopicModelingResultContext.Provider>
+        </ProjectContext.Provider>
       )}
     </UseQueryWrapperComponent>
   );

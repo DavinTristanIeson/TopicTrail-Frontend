@@ -1,66 +1,25 @@
 import AppLayout from '@/components/layout/app';
-import { Title, TextInput, Stack, Loader, Button, Text } from '@mantine/core';
+import { Title, TextInput, Stack, Button, Text, Loader } from '@mantine/core';
 import React from 'react';
 import { MagnifyingGlass, Plus, Upload } from '@phosphor-icons/react';
 import { useDebouncedState } from '@mantine/hooks';
 import Colors from '@/common/constants/colors';
 import AppHeader from '@/components/layout/header';
-import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
-import { ImportProjectModal, ProjectListItem } from '@/modules/project/actions';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
-import { client } from '@/common/api/client';
 import { DisclosureTrigger } from '@/hooks/disclosure';
-import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
-import { ProjectModel } from '@/api/project';
-
-interface ProjectsListRendererProps {
-  q: string | undefined;
-}
-
-function ProjectsListRenderer(props: ProjectsListRendererProps) {
-  const { q } = props;
-  const query = client.useQuery('get', '/projects/');
-  return (
-    <UseQueryWrapperComponent
-      query={query}
-      loadingComponent={<Loader type="dots" size={48} />}
-    >
-      {(data) => {
-        const fullProjects = data.data;
-        let projects: ProjectModel[];
-        if (q) {
-          const indices = filterByString(
-            q,
-            fullProjects.map((project) => {
-              return {
-                name: project.config.metadata.name,
-                tags: project.config.metadata.tags,
-              };
-            }),
-          );
-          projects = pickArrayByIndex(fullProjects, indices);
-        } else {
-          projects = fullProjects;
-        }
-        return (
-          <ul className="flex flex-col gap-2 w-full">
-            {projects.map((project) => (
-              <ProjectListItem key={project.id} {...project} />
-            ))}
-          </ul>
-        );
-      }}
-    </UseQueryWrapperComponent>
-  );
-}
+import { ImportProjectModal } from '@/modules/home/import-modal.tsx';
+import ProjectsListRenderer from '@/modules/home/list';
+import { client } from '@/common/api/client';
+import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 
 export default function HomePage() {
   const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
 
   const router = useRouter();
   const importProjectRemote = React.useRef<DisclosureTrigger | null>(null);
-
+  const query = client.useQuery('get', '/projects/');
+  const data = query.data?.data;
   return (
     <AppLayout Header={<AppHeader />}>
       <ImportProjectModal ref={importProjectRemote} />
@@ -100,7 +59,12 @@ export default function HomePage() {
               Import a Project
             </Button>
           </Stack>
-          <ProjectsListRenderer q={q} />
+          <UseQueryWrapperComponent
+            query={query}
+            loadingComponent={<Loader type="dots" size={48} />}
+          >
+            {data && <ProjectsListRenderer q={q} data={data} />}
+          </UseQueryWrapperComponent>
         </Stack>
       </Stack>
     </AppLayout>

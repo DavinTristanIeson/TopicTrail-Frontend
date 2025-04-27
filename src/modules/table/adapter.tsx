@@ -11,7 +11,6 @@ import {
   type MRT_PaginationState,
 } from 'mantine-react-table';
 import { Text, HoverCard } from '@mantine/core';
-import { AllTopicModelingResultContext } from '../topics/components/context';
 
 const SORTABLE_COLUMNS = [
   SchemaColumnTypeEnum.OrderedCategorical,
@@ -86,22 +85,15 @@ export const MantineReactTableBehaviors = {
 export function useSchemaColumnToMantineReactTableAdapter(
   columns: SchemaColumnModel[],
 ): SchemaColumnDataTableColumnType[] {
-  const topicModelingResults = React.useContext(AllTopicModelingResultContext);
   return React.useMemo<SchemaColumnDataTableColumnType[]>(() => {
     const tableColumns = columns.flatMap<SchemaColumnDataTableColumnType>(
       (column: SchemaColumnModel) => {
-        if (column.internal) {
-          const topicModelingResult = topicModelingResults.find(
-            (tmColumn) => tmColumn.column.name === column.source_name!,
-          );
-          // If this column is either (Preprocessed) or (Topic), but topic modeling has not been executed yet.
-          if (topicModelingResult && !topicModelingResult.result) {
-            return [];
-          }
-        }
         return [
           {
-            accessorKey: column.name,
+            id: column.name,
+            accessorFn(row) {
+              return row[column.name];
+            },
             header: column.name,
             Header() {
               if (!column.description) {
@@ -136,7 +128,7 @@ export function useSchemaColumnToMantineReactTableAdapter(
       },
     );
     return tableColumns;
-  }, [columns, topicModelingResults]);
+  }, [columns]);
 }
 
 interface UseTableStateToMantineReactTableAdapterProps {
