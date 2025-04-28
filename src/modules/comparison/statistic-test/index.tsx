@@ -1,7 +1,7 @@
 import { Alert, Divider, LoadingOverlay, Stack, Title } from '@mantine/core';
 import React from 'react';
 import StatisticTestForm from './form';
-import StatisticTestResultRenderer from './result';
+import StatisticTestPageResultsRenderer from './result';
 import { Warning } from '@phosphor-icons/react';
 import { ProjectContext } from '@/modules/project/context';
 import { client } from '@/common/api/client';
@@ -53,7 +53,7 @@ export default function ComparisonStatisticTest() {
         <>
           <Divider />
           <Title order={3}>Result</Title>
-          <StatisticTestResultRenderer {...data.data} />
+          <StatisticTestPageResultsRenderer {...data.data} />
         </>
       )}
     </Stack>

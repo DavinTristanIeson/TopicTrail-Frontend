@@ -34,12 +34,17 @@ import {
 import { useVisualizationValuesDataProvider } from '../data-provider/values';
 import { VisualizationContinuousDataDistributionRenderer } from '../components/continuous/continuous-data-distribution';
 import VisualizationCalendarComponent from '../components/temporal/calendar';
-import VisualizationGeographicalMap from '../components/geographical/geographical-points';
-import { useVisualizationGeographicalPointsDataProvider } from '../data-provider/geographical';
 import {
-  VisualizationGeographicalPointsConfigForm,
-  VisualizationGeographicalPointsConfigSchema,
-  VisualizationGeographicalPointsConfigType,
+  useVisualizationGeographicalAggregateValuesDataProvider,
+  useVisualizationGeographicalFrequenciesDataProvider,
+} from '../data-provider/geographical';
+import {
+  VisualizationGeographicalAggregateValuesConfigForm,
+  VisualizationGeographicalAggregateValuesConfigSchema,
+  VisualizationGeographicalAggregateValuesConfigType,
+  VisualizationGeographicalFrequenciesConfigForm,
+  VisualizationGeographicalFrequenciesConfigSchema,
+  VisualizationGeographicalFrequenciesConfigType,
 } from '../configuration/geographical-points';
 import { useVisualizationWordFrequenciesDataProvider } from '../data-provider/word-frequencies';
 import { VisualizationWordFrequencyComponent } from '../components/textual/frequency';
@@ -57,7 +62,7 @@ import { useVisualizationContingencyTableDataProvider } from '../data-provider/c
 import { VisualizationContingencyTableHeatmap } from '../components/correlation/contingency-table';
 import {
   VisualizationBinaryStatisticTestOnContingencyTableMainModel,
-  VisualizationBinaryStatisticTestOnDistributionModel,
+  VisualizationBinaryStatisticTestOnDistributionMainModel,
   VisualizationContingencyTableModel,
 } from '@/api/correlation';
 import VisualizationBinaryStatisticTestOnDistributionComponent from '../components/correlation/test-distribution';
@@ -81,6 +86,10 @@ import {
   VisualizationProportionsConfigSchema,
   VisualizationProportionsConfigType,
 } from '../configuration/proportions';
+import {
+  VisualizationGeographicalAggregateValuesMap,
+  VisualizationGeographicalFrequencyMap,
+} from '../components/geographical/geographical-points';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -178,18 +187,31 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     VisualizationFrequencyDistributionModel,
     VisualizationProportionsConfigType
   >,
-  [DashboardItemTypeEnum.GeographicalCoordinates]: {
-    type: DashboardItemTypeEnum.GeographicalCoordinates,
-    label: 'Geographical Coordinates',
+  [DashboardItemTypeEnum.GeographicalFrequencies]: {
+    type: DashboardItemTypeEnum.GeographicalFrequencies,
+    label: 'Frequency Distribution on Map',
     description:
-      'Show the location indicated by the coordinates of this column (and another column as the longitude column) as a map.',
-    component: VisualizationGeographicalMap,
-    dataProvider: useVisualizationGeographicalPointsDataProvider,
-    configForm: VisualizationGeographicalPointsConfigForm,
-    configValidator: VisualizationGeographicalPointsConfigSchema,
+      'Show the locations indicated by the coordinates of this column (and another column as the longitude column) as a map. Locations that have a lot of rows associated with it will have a brighter color.',
+    component: VisualizationGeographicalFrequencyMap,
+    dataProvider: useVisualizationGeographicalFrequenciesDataProvider,
+    configForm: VisualizationGeographicalFrequenciesConfigForm,
+    configValidator: VisualizationGeographicalFrequenciesConfigSchema,
   } as VisualizationConfigEntry<
     VisualizationGeographicalPointsModel,
-    VisualizationGeographicalPointsConfigType
+    VisualizationGeographicalFrequenciesConfigType
+  >,
+  [DashboardItemTypeEnum.GeographicalAggregate]: {
+    type: DashboardItemTypeEnum.GeographicalAggregate,
+    label: 'Continuous Data Distribution on Map',
+    description:
+      'Show the location indicated by the coordinates of this column (and another column as the longitude column) as a map. Locations with a greater continuous data value associated with it will have a brighter color.',
+    component: VisualizationGeographicalAggregateValuesMap,
+    dataProvider: useVisualizationGeographicalAggregateValuesDataProvider,
+    configForm: VisualizationGeographicalAggregateValuesConfigForm,
+    configValidator: VisualizationGeographicalAggregateValuesConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationGeographicalPointsModel,
+    VisualizationGeographicalAggregateValuesConfigType
   >,
   [DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable]: {
     type: DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
@@ -216,7 +238,7 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     configForm: VisualizationBinaryStatisticTestOnDistributionConfigForm,
     configValidator: VisualizationBinaryStatisticTestOnDistributionConfigSchema,
   } as VisualizationConfigEntry<
-    VisualizationBinaryStatisticTestOnDistributionModel[],
+    VisualizationBinaryStatisticTestOnDistributionMainModel,
     VisualizationBinaryStatisticTestonDistributionConfigType
   >,
   [DashboardItemTypeEnum.SubdatasetWords]: {

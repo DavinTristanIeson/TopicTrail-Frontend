@@ -1,23 +1,31 @@
 import { VisualizationGeographicalPointsModel } from '@/api/table';
-import { BaseVisualizationComponentProps } from '../../types/base';
+import { BaseVisualizationComponentProps, NamedData } from '../../types/base';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
-import { VisualizationGeographicalPointsConfigType } from '../../configuration/geographical-points';
+import {
+  VisualizationGeographicalAggregateValuesConfigType,
+  VisualizationGeographicalFrequenciesConfigType,
+} from '../../configuration/geographical-points';
 import { sum } from 'lodash-es';
 import {
   PlotInlineConfiguration,
   usePlotRendererHelperProps,
 } from '../configuration';
 import { useVisualizationSubdatasetSelect } from '../configuration/subdatasets';
+import { AGGREGATION_METHOD_DICTIONARY } from '../../configuration/aggregate-values';
+import { DashboardItemModel } from '@/api/userdata';
 
-export default function VisualizationGeographicalMap(
-  props: BaseVisualizationComponentProps<
-    VisualizationGeographicalPointsModel,
-    VisualizationGeographicalPointsConfigType
-  >,
+interface VisualizationGeographicalMapProps {
+  valueLabel: string;
+  title: string;
+  data: NamedData<VisualizationGeographicalPointsModel>[];
+  item: DashboardItemModel;
+}
+function VisualizationGeographicalMap(
+  props: VisualizationGeographicalMapProps,
 ) {
-  const { data, item } = props;
+  const { data, valueLabel, title, item } = props;
   const { Component, viewedData } = useVisualizationSubdatasetSelect({
     data,
   });
@@ -37,13 +45,13 @@ export default function VisualizationGeographicalMap(
           mode: 'markers',
           lat: data.latitudes,
           lon: data.longitudes,
-          z: data.sizes,
+          z: data.values,
           customdata: data.labels ?? undefined,
           hovertemplate: [
             hasLabel ? '<b>Location</b>: %{customdata}' : undefined,
             '<b>Latitude</b>: %{lat}',
             '<b>Latitude</b>: %{lon}',
-            '<b>Frequency</b>: %{z}',
+            `<b>${valueLabel}</b>: %{z}`,
           ]
             .filter(Boolean)
             .join('<br>'),
@@ -51,7 +59,7 @@ export default function VisualizationGeographicalMap(
         },
       ],
       layout: {
-        title: `Coordinates of ${item.config.latitude_column} and ${item.config.longitude_column}`,
+        title,
         height: 720,
         map: {
           style: 'light',
@@ -63,12 +71,43 @@ export default function VisualizationGeographicalMap(
         },
       },
     };
-  }, [item, viewedData]);
+  }, [title, valueLabel, viewedData]);
   const plotProps = usePlotRendererHelperProps(item);
   return (
     <>
       <PlotInlineConfiguration>{Component}</PlotInlineConfiguration>
       {plot && <PlotRenderer plot={plot} {...plotProps} />}
     </>
+  );
+}
+
+export function VisualizationGeographicalFrequencyMap(
+  props: BaseVisualizationComponentProps<
+    VisualizationGeographicalPointsModel,
+    VisualizationGeographicalFrequenciesConfigType
+  >,
+) {
+  return (
+    <VisualizationGeographicalMap
+      {...props}
+      title={`Frequency Distribution on Map`}
+      valueLabel="Frequency"
+    />
+  );
+}
+
+export function VisualizationGeographicalAggregateValuesMap(
+  props: BaseVisualizationComponentProps<
+    VisualizationGeographicalPointsModel,
+    VisualizationGeographicalAggregateValuesConfigType
+  >,
+) {
+  const { item } = props;
+  return (
+    <VisualizationGeographicalMap
+      {...props}
+      valueLabel={AGGREGATION_METHOD_DICTIONARY[item.config.method].label}
+      title={`Values of ${item.column} Aggregated (${item.config.method}) by Location`}
+    />
   );
 }
