@@ -14,6 +14,7 @@ import UserDataManager from '@/modules/userdata';
 import { useDashboardUserDataSharedBehavior } from '@/modules/table/dashboard';
 import { useDashboardDataManager } from '@/modules/userdata/data-manager';
 import { DashboardItemTypeEnum } from '@/modules/visualization/types/dashboard-item-types';
+import React from 'react';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -40,6 +41,10 @@ export default function ComparisonDashboard() {
   const dashboard = useComparisonAppState((store) => store.dashboard.state);
   const handlers = useComparisonAppState((store) => store.dashboard.handlers);
   const groups = useComparisonAppState((store) => store.groups.state);
+  const visibleGroups = React.useMemo(
+    () => groups.filter((group) => group.visible),
+    [groups],
+  );
   const { append } = handlers;
   return (
     <Stack>
@@ -48,7 +53,7 @@ export default function ComparisonDashboard() {
         <DashboardResetButton onReset={() => handlers.setState([])} />
         <AddVisualizationConfigurationButton onSubmit={append} />
       </Group>
-      <DashboardGroupsContext.Provider value={groups}>
+      <DashboardGroupsContext.Provider value={visibleGroups}>
         <DashboardConstraintContext.Provider
           value={{
             withoutTypes: [

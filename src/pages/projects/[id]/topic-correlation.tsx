@@ -16,7 +16,6 @@ import React from 'react';
 
 const TopicCorrelationPage: NextPageWithLayout = function () {
   const column = useTopicCorrelationAppState((store) => store.column);
-  const setColumn = useTopicCorrelationAppState((store) => store.setColumn);
 
   const project = React.useContext(ProjectContext);
   const textualColumns = filterProjectColumnsByType(project, [
@@ -44,7 +43,7 @@ const TopicCorrelationPage: NextPageWithLayout = function () {
   }
   return (
     <Stack>
-      <TopicCorrelationColumnControls column={column} setColumn={setColumn} />
+      <TopicCorrelationColumnControls />
       {column && <TopicCorrelationDashboard />}
     </Stack>
   );

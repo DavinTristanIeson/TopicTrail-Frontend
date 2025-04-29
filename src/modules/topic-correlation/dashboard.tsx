@@ -1,7 +1,10 @@
 import { Group, Stack } from '@mantine/core';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
-import { useTopicCorrelationAppState } from './app-state';
+import {
+  useTopicCorrelationAppState,
+  useTopicCorrelationAppStateTopicColumn,
+} from './app-state';
 import {
   AddVisualizationConfigurationButton,
   DashboardResetButton,
@@ -26,7 +29,6 @@ import {
   SchemaColumnTypeEnum,
   TableFilterTypeEnum,
 } from '@/common/constants/enum';
-import { useTopicModelingResultOfColumn } from '../topics/components/context';
 import { getTopicLabel } from '@/api/topic';
 import { DashboardItemTypeEnum } from '../visualization/types/dashboard-item-types';
 
@@ -110,29 +112,21 @@ function CorrelationDashboardUserDataManager() {
 }
 
 export default function TopicCorrelationDashboard() {
-  const project = React.useContext(ProjectContext);
-  const column = useTopicCorrelationAppState((store) => store.column);
-  const topicColumn = React.useMemo(() => {
-    if (!column) return undefined;
-    const topicColumnName = getTopicColumnName(column.name);
-    return findProjectColumn(project, topicColumnName);
-  }, [column, project]);
+  const { topicColumn } = useTopicCorrelationAppStateTopicColumn();
 
-  const topicModelingResult = useTopicModelingResultOfColumn(
-    column?.name ?? '',
-  );
   const dashboard = useTopicCorrelationAppState(
     (store) => store.dashboard.state,
   );
   const handlers = useTopicCorrelationAppState(
     (store) => store.dashboard.handlers,
   );
+  const topics = useTopicCorrelationAppState((store) => store.topics.state);
   const { append } = handlers;
 
   const namedData = React.useMemo(() => {
-    if (!column || !topicColumn) return [];
+    if (!topicColumn) return [];
     return (
-      topicModelingResult?.result?.topics.map((topic) => {
+      topics.map((topic) => {
         return {
           name: getTopicLabel(topic),
           filter: {
@@ -143,7 +137,7 @@ export default function TopicCorrelationDashboard() {
         };
       }) ?? []
     );
-  }, [column, topicColumn, topicModelingResult?.result?.topics]);
+  }, [topicColumn, topics]);
 
   const shouldUseWholeDataset = React.useCallback(
     (item: DashboardItemModel, column: SchemaColumnModel) => {
@@ -156,7 +150,7 @@ export default function TopicCorrelationDashboard() {
     [],
   );
 
-  if (!column) return null;
+  if (!topicColumn) return null;
   return (
     <DashboardGroupsContext.Provider value={namedData}>
       <DashboardConstraintContext.Provider
