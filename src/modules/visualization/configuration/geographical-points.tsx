@@ -2,23 +2,25 @@ import { filterProjectColumnsByType } from '@/api/project';
 import {
   GeospatialRoleEnum,
   SchemaColumnTypeEnum,
+  TableColumnAggregateMethodEnum,
 } from '@/common/constants/enum';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import React from 'react';
 import * as Yup from 'yup';
+import { AggregateMethodSelectInput } from './aggregate-values';
 
-export const VisualizationGeographicalPointsConfigSchema = Yup.object({
+export const VisualizationGeographicalFrequenciesConfigSchema = Yup.object({
   latitude_column: Yup.string().required(),
   longitude_column: Yup.string().required(),
   label_column: Yup.string(),
 });
 
-export type VisualizationGeographicalPointsConfigType = Yup.InferType<
-  typeof VisualizationGeographicalPointsConfigSchema
+export type VisualizationGeographicalFrequenciesConfigType = Yup.InferType<
+  typeof VisualizationGeographicalFrequenciesConfigSchema
 >;
 
-export function VisualizationGeographicalPointsConfigForm() {
+export function VisualizationGeographicalFrequenciesConfigForm() {
   const project = React.useContext(ProjectContext);
   const [latitudeColumns, longitudeColumns, labelColumns] =
     React.useMemo(() => {
@@ -62,6 +64,26 @@ export function VisualizationGeographicalPointsConfigForm() {
         description="The values of this column will be used to label the locations. Please make sure that each coordinate is assigned to one label."
         clearable
       />
+    </>
+  );
+}
+
+export const VisualizationGeographicalAggregateValuesConfigSchema =
+  VisualizationGeographicalFrequenciesConfigSchema.shape({
+    method: Yup.string()
+      .oneOf(Object.values(TableColumnAggregateMethodEnum))
+      .required(),
+  });
+
+export type VisualizationGeographicalAggregateValuesConfigType = Yup.InferType<
+  typeof VisualizationGeographicalAggregateValuesConfigSchema
+>;
+
+export function VisualizationGeographicalAggregateValuesConfigForm() {
+  return (
+    <>
+      <VisualizationGeographicalFrequenciesConfigForm />
+      <AggregateMethodSelectInput />
     </>
   );
 }

@@ -3,7 +3,7 @@ import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { MultiSelect, Stack, useMantineTheme } from '@mantine/core';
-import { VisualizationBinaryStatisticTestOnDistributionModel } from '@/api/correlation';
+import { VisualizationBinaryStatisticTestOnDistributionMainModel } from '@/api/correlation';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { max, zip } from 'lodash-es';
 import {
@@ -22,18 +22,20 @@ import {
   PlotInlineConfiguration,
   usePlotRendererHelperProps,
   useVisualizationMinFrequencySlider,
+  VisualizationCorrelationStatisticTestResultsRenderer,
 } from '../configuration';
 import { findProjectColumn } from '@/api/project';
+import { plotlyWrapText } from '../utils';
 
-function VisualizationBinaryStatisticTestOnDistributionInternal(
+export default function VisualizationBinaryStatisticTestOnDistribution(
   props: BaseVisualizationComponentProps<
-    VisualizationBinaryStatisticTestOnDistributionModel[],
+    VisualizationBinaryStatisticTestOnDistributionMainModel,
     VisualizationBinaryStatisticTestonDistributionConfigType
   >,
 ) {
   const { item } = props;
   const { colors: mantineColors } = useMantineTheme();
-  const data = props.data[0]!.data!;
+  const mainData = props.data[0]!.data!;
 
   // region Configuration
   const { Component: AlphaSlider, filter: filterAlpha } =
@@ -41,13 +43,9 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
   const { Component: VisualizationMethodSelect, type: vistype } =
     useBinaryStatisticTestVisualizationMethodSelect();
 
-  const discriminators = React.useMemo(
-    () => data.map((datum) => datum.discriminator),
-    [data],
-  );
-
   const project = React.useContext(ProjectContext);
   const column = findProjectColumn(project, item.column);
+  const discriminators = mainData.discriminators;
   const { multiSelectProps: discriminatorSelectProps, indexed } =
     useCategoriesAxisMultiSelect({
       supportedCategories: discriminators,
@@ -55,14 +53,15 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
     });
 
   const maxFrequency = React.useMemo(
-    () => max(data.map((item) => item.yes_count)) ?? 0,
-    [data],
+    () => max(mainData.results.map((item) => item.yes_count)) ?? 0,
+    [mainData.results],
   );
   const { Component: MinFrequencySlider, filter: filterFrequency } =
     useVisualizationMinFrequencySlider({ max: maxFrequency });
 
   // region Plot
   const values = React.useMemo(() => {
+    const data = mainData.results;
     const discriminatorIndices = indexed(discriminators);
     const process = function <T>(arr: T[]) {
       return pickArrayByIndex(arr, discriminatorIndices);
@@ -80,6 +79,16 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
     const invalidCounts = process(data.map((datum) => datum.invalid_count));
     const noCounts = process(data.map((datum) => datum.no_count));
     const yesCounts = process(data.map((datum) => datum.yes_count));
+    const warnings = process(
+      data.map((datum) => {
+        if (datum.warnings.length === 0) {
+          return 'None';
+        }
+        return datum.warnings
+          .map((warning) => plotlyWrapText(`- ${warning}`))
+          .join('<br>');
+      }),
+    );
 
     const valid = zip(pValues, yesCounts).map(
       ([p, frequency]) => filterAlpha(p!) && filterFrequency(frequency!),
@@ -106,13 +115,14 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       maxallowed: effectSizeMethod.range[1],
     };
 
-    const customdata = zip(
+    const customdata = zip<string | number>(
       pValues,
       confidences,
       statistics,
       effectSizes,
       yesCounts,
       noCounts,
+      warnings,
     ) as any;
     const hovertemplate = [
       `<b>${item.column}</b>: %{x}`,
@@ -122,6 +132,7 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       `<b>${effectSizeMethodLabel}</b>: %{customdata[3]}`,
       '<b>Positive Counts</b>: %{customdata[4]}',
       '<b>Negative Counts</b>: %{customdata[5]}',
+      '<br><b>Warnings</b>:<br>%{customdata[6]}',
     ];
 
     return {
@@ -140,12 +151,12 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
       effectSizeMethodYAxis,
     };
   }, [
-    data,
     discriminators,
     filterAlpha,
     filterFrequency,
     indexed,
     item,
+    mainData.results,
     mantineColors.gray,
   ]);
 
@@ -284,23 +295,14 @@ function VisualizationBinaryStatisticTestOnDistributionInternal(
         {AlphaSlider}
         {MinFrequencySlider}
       </PlotInlineConfiguration>
+      <VisualizationCorrelationStatisticTestResultsRenderer
+        column1={item.column}
+        column2={item.config.target}
+        effectSize={mainData.effect_size}
+        significance={mainData.significance}
+        warnings={mainData.warnings}
+      />
       <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
     </Stack>
   );
-}
-
-export default function VisualizationBinaryStatisticTestOnDistributionComponent(
-  props: BaseVisualizationComponentProps<
-    VisualizationBinaryStatisticTestOnDistributionModel[],
-    VisualizationBinaryStatisticTestonDistributionConfigType
-  >,
-) {
-  const data = props.data[0]?.data;
-  const item = props.item;
-  if (!data || data.length === 0) {
-    throw new Error(
-      `It seems that ${item.column} doesn't contain any categories at all in the dataset so we cannot use them as binary variables.`,
-    );
-  }
-  return <VisualizationBinaryStatisticTestOnDistributionInternal {...props} />;
 }

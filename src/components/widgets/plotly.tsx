@@ -13,9 +13,10 @@ const Plot = dynamic(() => import('react-plotly.js'), {
 
 interface PlotRendererProps {
   plot: PlotParams;
+  height?: number;
 }
 export default function PlotRenderer(props: PlotRendererProps) {
-  const { plot } = props;
+  const { plot, height } = props;
 
   return (
     <Plot
@@ -30,6 +31,7 @@ export default function PlotRenderer(props: PlotRendererProps) {
           yaxis: {
             automargin: true,
           },
+          height,
         },
         plot.layout,
       )}

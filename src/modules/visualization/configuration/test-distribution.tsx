@@ -5,12 +5,14 @@ import {
 } from '@/api/project';
 import {
   EffectSizeMethodEnum,
+  GroupStatisticTestMethodEnum,
   SchemaColumnTypeEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
 import {
   StatisticMethodSelectField,
   EffectSizeSelectField,
+  GroupStatisticMethodSelectField,
 } from '@/modules/comparison/statistic-test/select-statistic-test-method';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
@@ -27,6 +29,9 @@ export const VisualizationBinaryStatisticTestOnDistributionConfigSchema =
       .required(),
     effect_size_preference: Yup.string()
       .oneOf(Object.values(EffectSizeMethodEnum))
+      .required(),
+    main_statistic_test_preference: Yup.string()
+      .oneOf(Object.values(GroupStatisticTestMethodEnum))
       .required(),
   });
 
@@ -62,10 +67,13 @@ export function VisualizationBinaryStatisticTestOnDistributionConfigForm() {
     ANALYZABLE_SCHEMA_COLUMN_TYPES,
   );
 
-  const columnValue = useWatch({
+  const discriminatorColumnName = useWatch({
+    name: 'column',
+  });
+  const targetColumnName = useWatch({
     name: 'config.target',
   });
-  const column = findProjectColumn(project, columnValue);
+  const targetColumn = findProjectColumn(project, targetColumnName);
 
   return (
     <>
@@ -77,27 +85,38 @@ export function VisualizationBinaryStatisticTestOnDistributionConfigForm() {
         description="The data of this column will be the distribution that is tested."
         required
       />
-      {column && (
-        <Group>
-          <StatisticMethodSelectField
-            name="config.statistic_test_preference"
+      {targetColumn && (
+        <React.Fragment key={targetColumnName}>
+          <Group>
+            <StatisticMethodSelectField
+              name="config.statistic_test_preference"
+              type="select"
+              label="Statistic Test"
+              className="flex-1"
+              description="What test method do you want to use for the statistic test?"
+              required
+              columnType={targetColumn.type as SchemaColumnTypeEnum}
+            />
+            <EffectSizeSelectField
+              name="config.effect_size_preference"
+              type="select"
+              className="flex-1"
+              label="Effect Size"
+              description="What effect size do you want to use in this statistic test?"
+              required
+              columnType={targetColumn.type as SchemaColumnTypeEnum}
+            />
+          </Group>
+          <GroupStatisticMethodSelectField
+            name="config.main_statistic_test_preference"
             type="select"
-            label="Statistic Test"
+            label="Main Statistic Test"
             className="flex-1"
-            description="What test method do you want to use for the statistic test?"
+            description={`The test method used to test how significantly ${discriminatorColumnName} affects ${targetColumn.name}.`}
             required
-            columnType={column.type as SchemaColumnTypeEnum}
+            columnType={targetColumn.type as SchemaColumnTypeEnum}
           />
-          <EffectSizeSelectField
-            name="config.effect_size_preference"
-            type="select"
-            className="flex-1"
-            label="Effect Size"
-            description="What effect size do you want to use in this statistic test?"
-            required
-            columnType={column.type as SchemaColumnTypeEnum}
-          />
-        </Group>
+        </React.Fragment>
       )}
     </>
   );

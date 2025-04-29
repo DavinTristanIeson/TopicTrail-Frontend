@@ -98,7 +98,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
       .oneOf(Object.values(DocumentEmbeddingMethodEnum))
       .required(),
     clustering_conservativeness: Yup.number().positive().max(1).required(),
-    reference_document_count: yupNullableNumber.positive(),
+    reference_document_count: Yup.number().required().positive(),
     top_n_words: Yup.number().min(3).required(),
   }).when('type', {
     is: SchemaColumnTypeEnum.Textual,
@@ -179,7 +179,7 @@ export function DefaultProjectSchemaColumnValues(
             represent_outliers: false,
             embedding_method: DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2,
             clustering_conservativeness: 1,
-            reference_document_count: null,
+            reference_document_count: 15,
             top_n_words: 50,
           }
         : undefined,

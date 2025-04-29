@@ -1,6 +1,22 @@
+import {
+  EffectSizeResultModel,
+  SignificanceResultModel,
+} from '@/api/comparison';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { Input, type InputWrapperProps, Select, Slider } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
+import { StatisticTestResultRenderer } from '@/modules/comparison/statistic-test/result';
+import {
+  Alert,
+  Button,
+  Collapse,
+  Input,
+  type InputWrapperProps,
+  Select,
+  Slider,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
+import { TestTube, Warning } from '@phosphor-icons/react';
 import React from 'react';
 
 export function useVisualizationAlphaSlider() {
@@ -121,4 +137,46 @@ export function useBinaryStatisticTestVisualizationMethodSelect() {
   );
 
   return { Component, type };
+}
+
+interface VisualizationCorrelationStatisticTestResultsRendererProps {
+  significance: SignificanceResultModel;
+  effectSize: EffectSizeResultModel;
+  column1: string;
+  column2: string;
+  warnings: string[];
+}
+
+export function VisualizationCorrelationStatisticTestResultsRenderer(
+  props: VisualizationCorrelationStatisticTestResultsRendererProps,
+) {
+  const { significance, effectSize, column1, column2, warnings } = props;
+  const [opened, { toggle }] = useDisclosure(true);
+  return (
+    <>
+      <Button onClick={toggle} variant="subtle" leftSection={<TestTube />}>
+        {opened ? 'Hide' : 'Show'} Results
+      </Button>
+      <Collapse in={opened}>
+        <Stack>
+          <Text ta="center" fw={500} size="lg">
+            Does {column1} influence {column2}?
+          </Text>
+          <StatisticTestResultRenderer
+            effectSize={effectSize}
+            significance={significance}
+          />
+          {warnings.length > 0 && (
+            <Alert color="yellow" icon={<Warning />}>
+              {warnings.map((warning) => (
+                <Text inherit key={warning}>
+                  {warning}
+                </Text>
+              ))}
+            </Alert>
+          )}
+        </Stack>
+      </Collapse>
+    </>
+  );
 }

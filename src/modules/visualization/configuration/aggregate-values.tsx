@@ -29,6 +29,54 @@ export type VisualizationAggregateValuesConfigType = Yup.InferType<
   typeof VisualizationAggregateValuesConfigSchema
 >;
 
+export const AGGREGATION_METHOD_DICTIONARY = {
+  [TableColumnAggregateMethodEnum.Sum]: {
+    value: TableColumnAggregateMethodEnum.Sum,
+    label: 'Sum',
+    description: 'Sum up all of the values in the group.',
+  },
+  [TableColumnAggregateMethodEnum.Mean]: {
+    value: TableColumnAggregateMethodEnum.Mean,
+    label: 'Average',
+    description: 'Get the average value in the group.',
+  },
+  [TableColumnAggregateMethodEnum.Max]: {
+    value: TableColumnAggregateMethodEnum.Max,
+    label: 'Max',
+    description: 'Get the maximum/greatest value in the group.',
+  },
+  [TableColumnAggregateMethodEnum.Min]: {
+    value: TableColumnAggregateMethodEnum.Min,
+    label: 'Min',
+    description: 'Get the minimum/smallest value in the group.',
+  },
+  [TableColumnAggregateMethodEnum.Median]: {
+    value: TableColumnAggregateMethodEnum.Median,
+    label: 'Median',
+    description: 'Get the middle value (median) in the group.',
+  },
+  [TableColumnAggregateMethodEnum.StandardDeviation]: {
+    value: TableColumnAggregateMethodEnum.StandardDeviation,
+    label: 'Standard Deviation',
+    description: 'Get the standard deviation of the values in the group.',
+  },
+};
+
+export function AggregateMethodSelectInput() {
+  return (
+    <RHFField
+      type="select"
+      name="config.method"
+      label="Aggregation Method"
+      description="Once the data has been grouped, how are they combined into a single value?"
+      className="flex-1"
+      data={Object.values(AGGREGATION_METHOD_DICTIONARY)}
+      required
+      allowDeselect={false}
+    />
+  );
+}
+
 export function VisualizationAggregateValuesConfigForm() {
   const project = React.useContext(ProjectContext);
   const columns = filterProjectColumnsByType(
@@ -51,41 +99,7 @@ export function VisualizationAggregateValuesConfigForm() {
           description="Choose a column to group the data by"
           allowDeselect={false}
         />
-        <RHFField
-          type="select"
-          name="config.method"
-          label="Aggregation Method"
-          description="Once the data has been grouped, how are they combined into a single value?"
-          className="flex-1"
-          data={[
-            {
-              value: TableColumnAggregateMethodEnum.Sum,
-              label: 'Sum the values',
-            },
-            {
-              value: TableColumnAggregateMethodEnum.Mean,
-              label: 'Get the average',
-            },
-            {
-              value: TableColumnAggregateMethodEnum.Max,
-              label: 'Get the maximum value',
-            },
-            {
-              value: TableColumnAggregateMethodEnum.Min,
-              label: 'Get the minimum value',
-            },
-            {
-              value: TableColumnAggregateMethodEnum.Median,
-              label: 'Get the median',
-            },
-            {
-              value: TableColumnAggregateMethodEnum.StandardDeviation,
-              label: 'Get the standard deviation',
-            },
-          ]}
-          required
-          allowDeselect={false}
-        />
+        <AggregateMethodSelectInput />
       </Group>
       <RHFField
         name="config.display"

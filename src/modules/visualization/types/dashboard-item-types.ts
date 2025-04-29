@@ -12,7 +12,8 @@ export enum DashboardItemTypeEnum {
   Proportions = 'proportions',
   DataDistribution = 'data-distribution',
   Aggregate = 'aggregate',
-  GeographicalCoordinates = 'geographical-coordinates',
+  GeographicalFrequencies = 'geographical-frequencies',
+  GeographicalAggregate = 'geographical-aggregate',
   Calendar = 'calendar',
   WordFrequencies = 'word-frequencies',
   TopicWords = 'topic-words',
@@ -45,10 +46,11 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     DashboardItemTypeEnum.DescriptiveStatistics,
     DashboardItemTypeEnum.DataDistribution,
     DashboardItemTypeEnum.Aggregate,
+    DashboardItemTypeEnum.GeographicalAggregate,
   ],
   [SchemaColumnTypeEnum.Geospatial]: [
     ...FOR_ALL_TYPES,
-    DashboardItemTypeEnum.GeographicalCoordinates,
+    DashboardItemTypeEnum.GeographicalFrequencies,
   ],
   [SchemaColumnTypeEnum.OrderedCategorical]: [
     ...FOR_ALL_TYPES,

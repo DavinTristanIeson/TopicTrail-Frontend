@@ -1,7 +1,11 @@
-import { Group, Stack } from '@mantine/core';
+import { Alert, Group, Stack } from '@mantine/core';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
-import { useTopicCorrelationAppState } from './app-state';
+import {
+  useCheckTopicCorrelationTargetVisibility,
+  useTopicCorrelationAppState,
+  useTopicCorrelationAppStateTopicColumn,
+} from './app-state';
 import {
   AddVisualizationConfigurationButton,
   DashboardResetButton,
@@ -26,7 +30,6 @@ import {
   SchemaColumnTypeEnum,
   TableFilterTypeEnum,
 } from '@/common/constants/enum';
-import { useTopicModelingResultOfColumn } from '../topics/components/context';
 import { getTopicLabel } from '@/api/topic';
 import { DashboardItemTypeEnum } from '../visualization/types/dashboard-item-types';
 
@@ -110,40 +113,42 @@ function CorrelationDashboardUserDataManager() {
 }
 
 export default function TopicCorrelationDashboard() {
-  const project = React.useContext(ProjectContext);
-  const column = useTopicCorrelationAppState((store) => store.column);
-  const topicColumn = React.useMemo(() => {
-    if (!column) return undefined;
-    const topicColumnName = getTopicColumnName(column.name);
-    return findProjectColumn(project, topicColumnName);
-  }, [column, project]);
+  const { topicColumn } = useTopicCorrelationAppStateTopicColumn();
 
-  const topicModelingResult = useTopicModelingResultOfColumn(
-    column?.name ?? '',
-  );
   const dashboard = useTopicCorrelationAppState(
     (store) => store.dashboard.state,
   );
   const handlers = useTopicCorrelationAppState(
     (store) => store.dashboard.handlers,
   );
+  const correlationTargets = useTopicCorrelationAppState(
+    (store) => store.topics,
+  );
+  const { onlyVisible } = useCheckTopicCorrelationTargetVisibility();
   const { append } = handlers;
 
   const namedData = React.useMemo(() => {
-    if (!column || !topicColumn) return [];
+    if (!topicColumn) return [];
     return (
-      topicModelingResult?.result?.topics.map((topic) => {
-        return {
-          name: getTopicLabel(topic),
-          filter: {
-            type: TableFilterTypeEnum.EqualTo,
-            target: topicColumn?.name,
-            value: topic.id,
-          } as TableFilterModel,
-        };
-      }) ?? []
+      onlyVisible(correlationTargets ?? [])
+        .map((topic) => {
+          return {
+            name: getTopicLabel(topic),
+            filter: {
+              type: TableFilterTypeEnum.EqualTo,
+              target: topicColumn?.name,
+              value: topic.id,
+            } as TableFilterModel,
+          };
+        })
+        .concat([
+          {
+            name: 'Original Dataset',
+            filter: null!,
+          },
+        ]) ?? []
     );
-  }, [column, topicColumn, topicModelingResult?.result?.topics]);
+  }, [topicColumn, onlyVisible, correlationTargets]);
 
   const shouldUseWholeDataset = React.useCallback(
     (item: DashboardItemModel, column: SchemaColumnModel) => {
@@ -156,7 +161,14 @@ export default function TopicCorrelationDashboard() {
     [],
   );
 
-  if (!column) return null;
+  if (!topicColumn) return null;
+  if (namedData.length === 0) {
+    return (
+      <Alert color="yellow" title="No Topics">
+        Choose at least one topics to be shown from &quot;Topics Manager&quot;.
+      </Alert>
+    );
+  }
   return (
     <DashboardGroupsContext.Provider value={namedData}>
       <DashboardConstraintContext.Provider

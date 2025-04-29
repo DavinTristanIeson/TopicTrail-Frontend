@@ -15,10 +15,12 @@ import {
   usePlotRendererHelperProps,
   useVisualizationAlphaSlider,
   useVisualizationMinFrequencySlider,
+  VisualizationCorrelationStatisticTestResultsRenderer,
 } from '../configuration';
 import { max } from 'lodash-es';
+import { plotlyWrapText } from '../utils';
 
-function VisualizationBinaryStatisticTestOnContingencyTableInternal(
+export default function VisualizationBinaryStatisticTestOnContingencyTable(
   props: BaseVisualizationComponentProps<
     VisualizationBinaryStatisticTestOnContingencyTableMainModel,
     VisualizationBinaryStatisticTestonDistributionConfigType
@@ -96,13 +98,28 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
       (result) => result.significance.statistic,
     );
     const frequencies = map2D(data.results, (result) => result.frequency);
+    const warnings = map2D(data.results, (result) => {
+      if (result.warnings.length === 0) {
+        return 'None';
+      }
+      return result.warnings
+        .map((warning) => plotlyWrapText(`- ${warning}`))
+        .join('<br>');
+    });
 
     const effectSizeMethodConstraints = {
       zmin: -1,
       zmax: 1,
     };
     const customdata = sort2D(
-      zip2D([pValues, confidences, statistics, effectSizes, frequencies]),
+      zip2D<string | number>([
+        pValues,
+        confidences,
+        statistics,
+        effectSizes,
+        frequencies,
+        warnings,
+      ]),
       rowIndices,
       columnIndices,
     );
@@ -114,6 +131,7 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
       `<b>Chi-Squared Statistic</b>: %{customdata[2]}`,
       `<b>Yule's Q</b>: %{customdata[3]}`,
       '<b>Frequency</b>: %{customdata[4]}',
+      '<br><b>Warnings</b>:<br>%{customdata[5]}',
     ];
 
     return {
@@ -235,30 +253,14 @@ function VisualizationBinaryStatisticTestOnContingencyTableInternal(
         {AlphaSlider}
         {FrequencySlider}
       </PlotInlineConfiguration>
+      <VisualizationCorrelationStatisticTestResultsRenderer
+        column1={item.column}
+        column2={item.config.target}
+        effectSize={data.effect_size}
+        significance={data.significance}
+        warnings={data.warnings}
+      />
       <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
     </Stack>
-  );
-}
-
-export default function VisualizationBinaryStatisticTestOnContingencyTableComponent(
-  props: BaseVisualizationComponentProps<
-    VisualizationBinaryStatisticTestOnContingencyTableMainModel,
-    VisualizationBinaryStatisticTestonDistributionConfigType
-  >,
-) {
-  const data = props.data[0]?.data;
-  const item = props.item;
-  if (!data?.rows || data.columns.length === 0) {
-    throw new Error(
-      `It seems that ${item.column} doesn't contain any values at all in the dataset so we cannot use them as binary variables.`,
-    );
-  }
-  if (!data?.columns || data.columns.length === 0) {
-    throw new Error(
-      `It seems that ${item.config.target} doesn't contain any values at all in the dataset so we cannot use them as binary variables.`,
-    );
-  }
-  return (
-    <VisualizationBinaryStatisticTestOnContingencyTableInternal {...props} />
   );
 }

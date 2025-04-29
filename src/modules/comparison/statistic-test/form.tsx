@@ -6,7 +6,7 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import FormWrapper from '@/components/utility/form/wrapper';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { Group, Stack } from '@mantine/core';
-import { NamedFilterSelectField } from '../subdatasets/select-named-filter';
+import { ComparisonSubdatasetSelectField } from '../subdatasets/select-subdataset';
 import {
   EffectSizeSelectField,
   StatisticMethodSelectField,
@@ -52,13 +52,13 @@ function StatisticTestFormBody() {
         }}
       />
       <Group gap={8} className="w-full">
-        <NamedFilterSelectField
+        <ComparisonSubdatasetSelectField
           name="group1"
           data={comparisonGroups}
           className="flex-1"
           label="Group 1"
         />
-        <NamedFilterSelectField
+        <ComparisonSubdatasetSelectField
           name="group2"
           data={comparisonGroups}
           className="flex-1"

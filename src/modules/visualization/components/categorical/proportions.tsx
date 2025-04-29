@@ -15,7 +15,6 @@ import {
   usePlotRendererHelperProps,
   useCategoricalDataFrequencyModeState,
 } from '../configuration';
-import { useVisualizationSubdatasetsMultiSelect } from '../configuration/subdatasets';
 
 function getHoverTemplate(column: string, needsPercentage: boolean) {
   return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;
@@ -36,15 +35,8 @@ export default function VisualizationProportionsComponent(
     needsPercentage,
   } = useCategoricalDataFrequencyModeState();
 
-  const { Component: SubdatasetMultiSelect, viewedData } =
-    useVisualizationSubdatasetsMultiSelect({
-      data,
-      limit: null,
-    });
-
   // region Plot
   const plot = React.useMemo<PlotParams | undefined>(() => {
-    const data = viewedData;
     const uniqueValues = uniq(
       data.flatMap((subdataset) => subdataset.data.categories),
     );
@@ -97,11 +89,12 @@ export default function VisualizationProportionsComponent(
       },
     };
   }, [
-    item,
+    data,
+    item.column,
+    item.config.display,
     needsPercentage,
     plotlyLayoutProps,
     transformFrequencies,
-    viewedData,
   ]);
 
   const plotProps = usePlotRendererHelperProps(item);
@@ -109,7 +102,6 @@ export default function VisualizationProportionsComponent(
   return (
     <Stack>
       <PlotInlineConfiguration>
-        {SubdatasetMultiSelect}
         <Select {...frequencyModeSelectProps} />
       </PlotInlineConfiguration>
       {plot && <PlotRenderer plot={plot} {...plotProps} />}

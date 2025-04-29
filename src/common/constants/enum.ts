@@ -69,7 +69,7 @@ export enum TableColumnAggregateMethodEnum {
   Sum = 'sum',
   Mean = 'mean',
   Median = 'median',
-  StandardDeviation = 'std-dev',
+  StandardDeviation = 'std',
   Max = 'max',
   Min = 'min',
 }
@@ -81,6 +81,18 @@ export enum TaskStatusEnum {
   Failed = 'failed',
 }
 
+export enum StatisticTestMethodEnum {
+  T = 't',
+  MannWhitneyU = 'mann-whitney-u',
+  ChiSquared = 'chi-squared',
+}
+
+export enum GroupStatisticTestMethodEnum {
+  ANOVA = 'anova',
+  KruskalWallis = 'kruskal-wallis',
+  ChiSquared = 'chi-squared',
+}
+
 export enum EffectSizeMethodEnum {
   MeanDifference = 'mean-difference',
   MedianDifference = 'median-difference',
@@ -89,10 +101,10 @@ export enum EffectSizeMethodEnum {
   CramerV = 'cramer-v',
 }
 
-export enum StatisticTestMethodEnum {
-  T = 't',
-  MannWhitneyU = 'mann-whitney-u',
-  ChiSquared = 'chi-squared',
+export enum GroupEffectSizeMethodEnum {
+  EtaSquared = 'eta-squared',
+  EpsilonSquared = 'epsilon-squared',
+  CramerV = 'cramer-v',
 }
 
 export enum EnumList {
@@ -106,6 +118,8 @@ export enum EnumList {
   TableFilterTypeEnum = 'TableFilterTypeEnum',
   TableColumnAggregateMethodEnum = 'TableColumnAggregateMethodEnum',
   TaskStatusEnum = 'TaskStatusEnum',
-  EffectSizeMethodEnum = 'EffectSizeMethodEnum',
   StatisticTestMethodEnum = 'StatisticTestMethodEnum',
+  GroupStatisticTestMethodEnum = 'GroupStatisticTestMethodEnum',
+  EffectSizeMethodEnum = 'EffectSizeMethodEnum',
+  GroupEffectSizeMethodEnum = 'GroupEffectSizeMethodEnum',
 }

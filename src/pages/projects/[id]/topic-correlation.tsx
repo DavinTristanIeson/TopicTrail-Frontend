@@ -5,19 +5,56 @@ import { NextPageWithLayout } from '@/common/utils/types';
 import { ProjectPageLinks } from '@/components/utility/links';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { ProjectContext } from '@/modules/project/context';
-import { useTopicCorrelationAppState } from '@/modules/topic-correlation/app-state';
-import TopicCorrelationColumnControls from '@/modules/topic-correlation/controls';
+import {
+  TopicCorrelationPageTab,
+  useCheckTopicCorrelationTargetVisibility,
+  useTopicCorrelationAppState,
+} from '@/modules/topic-correlation/app-state';
+import TopicCorrelationTopicsManager from '@/modules/topic-correlation/controls';
 import TopicCorrelationDashboard from '@/modules/topic-correlation/dashboard';
 import { AllTopicModelingResultContext } from '@/modules/topics/components/context';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
-import { Alert, Stack } from '@mantine/core';
-import { Warning } from '@phosphor-icons/react';
+import { Alert, Tabs } from '@mantine/core';
+import { ListNumbers, Shapes, Warning } from '@phosphor-icons/react';
 import React from 'react';
 
-const TopicCorrelationPage: NextPageWithLayout = function () {
-  const column = useTopicCorrelationAppState((store) => store.column);
-  const setColumn = useTopicCorrelationAppState((store) => store.setColumn);
+function TopicCorrelationTabs() {
+  const tab = useTopicCorrelationAppState((store) => store.tab);
+  const setTab = useTopicCorrelationAppState((store) => store.setTab);
+  const topics = useTopicCorrelationAppState((store) => store.topics);
+  const { onlyVisible } = useCheckTopicCorrelationTargetVisibility();
+  const visibleTopics = onlyVisible(topics ?? []);
+  return (
+    <>
+      <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>
+        <Tabs.List>
+          <Tabs.Tab
+            value={TopicCorrelationPageTab.TopicsManager}
+            leftSection={<ListNumbers />}
+          >
+            Topics Manager
+          </Tabs.Tab>
+          <Tabs.Tab
+            value={TopicCorrelationPageTab.Dashboard}
+            leftSection={<Shapes />}
+            disabled={!topics || visibleTopics.length === 0}
+          >
+            Dashboard
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+      <div className="py-5">
+        {tab === TopicCorrelationPageTab.TopicsManager ? (
+          <TopicCorrelationTopicsManager />
+        ) : tab === TopicCorrelationPageTab.Dashboard ? (
+          <TopicCorrelationDashboard />
+        ) : null}
+      </div>
+    </>
+  );
+}
 
+const TopicCorrelationPage: NextPageWithLayout = function () {
   const project = React.useContext(ProjectContext);
   const textualColumns = filterProjectColumnsByType(project, [
     SchemaColumnTypeEnum.Textual,
@@ -42,12 +79,7 @@ const TopicCorrelationPage: NextPageWithLayout = function () {
       </Alert>
     );
   }
-  return (
-    <Stack>
-      <TopicCorrelationColumnControls column={column} setColumn={setColumn} />
-      {column && <TopicCorrelationDashboard />}
-    </Stack>
-  );
+  return <TopicCorrelationTabs />;
 };
 
 TopicCorrelationPage.getLayout = (children) => {

@@ -14,6 +14,8 @@ import {
 import {
   EFFECT_SIZE_CONSTRAINTS,
   EFFECT_SIZE_DICTIONARY,
+  GROUP_STATISTIC_METHOD_CONSTRAINTS,
+  GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
   STATISTIC_METHOD_CONSTRAINTS,
   STATISTIC_TEST_METHOD_DICTIONARY,
 } from './dictionary';
@@ -32,6 +34,32 @@ export function StatisticMethodSelectField(
   const supportedMethods = (STATISTIC_METHOD_CONSTRAINTS[columnType] ?? []).map(
     (value) => STATISTIC_TEST_METHOD_DICTIONARY[value],
   );
+  return (
+    <RHFField
+      {...restProps}
+      data={supportedMethods}
+      type="select"
+      disabled={supportedMethods.length === 0}
+      error={
+        supportedMethods.length === 0
+          ? 'There are no supported statistic test methods for this column.'
+          : undefined
+      }
+      renderOption={renderOption}
+    />
+  );
+}
+
+export function GroupStatisticMethodSelectField(
+  props: StatisticMethodSelectFieldProps,
+) {
+  const { columnType, ...restProps } = props;
+  const renderOption = useDescriptionBasedRenderOption(
+    GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
+  );
+  const supportedMethods = (
+    GROUP_STATISTIC_METHOD_CONSTRAINTS[columnType] ?? []
+  ).map((value) => GROUP_STATISTIC_TEST_METHOD_DICTIONARY[value]);
   return (
     <RHFField
       {...restProps}

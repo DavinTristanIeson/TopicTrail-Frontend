@@ -1,48 +1,211 @@
 import React from 'react';
 import { ProjectColumnSelectInput } from '../project/select-column-input';
-import { Group, Card, Text, Divider, Title } from '@mantine/core';
-import { SchemaColumnModel } from '@/api/project';
+import {
+  Card,
+  Text,
+  Divider,
+  Title,
+  Slider,
+  Input,
+  Stack,
+  Button,
+  Group,
+} from '@mantine/core';
 import { AllTopicModelingResultContext } from '../topics/components/context';
+import {
+  useCheckTopicCorrelationTargetVisibility,
+  useTopicCorrelationAppState,
+  useTopicCorrelationAppStateTopicColumn,
+} from './app-state';
+import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
+import dynamic from 'next/dynamic';
+import { ListSkeleton } from '@/components/visual/loading';
+import { Eye, EyeSlash, Files } from '@phosphor-icons/react';
+import { sum } from 'lodash-es';
+import { useTopicAppState } from '../topics/app-state';
+import { TopicsPageTab } from '../topics/results';
 
-interface TopicCorrelationColumnControlsProps {
-  column: SchemaColumnModel | null;
-  setColumn: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
+const SortableTopicCorrelationTopicsDndContext = dynamic(
+  () => import('./sortable-correlation-targets-context'),
+  {
+    loading: () => <ListSkeleton />,
+  },
+);
+
+function TopicsManagerMinFrequencySlider() {
+  const { topicModelingResult } = useTopicCorrelationAppStateTopicColumn();
+  const setVisibility = useTopicCorrelationAppState(
+    (store) => store.setVisibility,
+  );
+  const setVisibilityDebounced = useDebouncedCallback(setVisibility, 1000);
+
+  const allTopics = topicModelingResult?.result?.topics;
+
+  const [minFrequency, setMinFrequency] = React.useState(0);
+  const [debouncedMinFrequency] = useDebouncedValue(minFrequency, 1000, {
+    leading: false,
+  });
+
+  React.useEffect(() => {
+    setVisibilityDebounced(() => {
+      return new Map(
+        (allTopics ?? []).map((topic) => [
+          topic.id,
+          topic.frequency >= debouncedMinFrequency,
+        ]),
+      );
+    });
+  }, [allTopics, debouncedMinFrequency, setVisibilityDebounced]);
+
+  const maxFrequency = React.useMemo(() => {
+    if (!allTopics) return 20;
+    return Math.max(20, sum(allTopics?.map((topic) => topic.frequency)));
+  }, [allTopics]);
+
+  if (!topicModelingResult?.result) return null;
+  return (
+    <Input.Wrapper
+      label="Min. Frequency"
+      description="Only show topics with at least this amount of rows. This helps filter out topics that are too small to be analyzed accurately with statistic tests."
+    >
+      <Slider
+        value={minFrequency}
+        min={0}
+        max={maxFrequency}
+        label={`Min. Frequency: ${minFrequency} rows`}
+        onChange={setMinFrequency}
+      />
+    </Input.Wrapper>
+  );
 }
 
-export default function TopicCorrelationColumnControls(
-  props: TopicCorrelationColumnControlsProps,
-) {
-  const { column, setColumn } = props;
-  const topicColumns = React.useContext(AllTopicModelingResultContext)
+function TopicsManagerShowHideAllButton() {
+  const correlationTargets = useTopicCorrelationAppState(
+    (store) => store.topics,
+  );
+  const setVisibility = useTopicCorrelationAppState(
+    (store) => store.setVisibility,
+  );
+  const { isAllVisible: areAllTopicsVisible } =
+    useCheckTopicCorrelationTargetVisibility();
+  const isAll = areAllTopicsVisible(correlationTargets ?? []);
+
+  if (!correlationTargets) {
+    return null;
+  }
+  return (
+    <Button
+      variant="outline"
+      color={isAll ? 'red' : 'green'}
+      leftSection={isAll ? <EyeSlash /> : <Eye />}
+      onClick={() => {
+        setVisibility(
+          new Map(correlationTargets?.map((target) => [target.id, !isAll])),
+        );
+      }}
+    >
+      {isAll ? 'Hide' : 'Show'} All
+    </Button>
+  );
+}
+
+function SortableTopicCorrelationTopicsSafeguard() {
+  const correlationTargets = useTopicCorrelationAppState(
+    (store) => store.topics,
+  );
+  if (correlationTargets == null || correlationTargets.length === 0) return;
+  return <SortableTopicCorrelationTopicsDndContext />;
+}
+
+function ViewTopicsPageButton() {
+  const column = useTopicCorrelationAppState((store) => store.column);
+  const setTopicAppStateColumn = useTopicAppState((store) => store.setColumn);
+  const setTopicAppStateTab = useTopicAppState((store) => store.setTab);
+
+  if (!column) return;
+
+  return (
+    <Button
+      onClick={() => {
+        setTopicAppStateColumn(column.name);
+        setTopicAppStateTab(TopicsPageTab.Topics);
+      }}
+      variant="outline"
+      leftSection={<Files />}
+    >
+      View Topics
+    </Button>
+  );
+}
+
+export default function TopicCorrelationTopicsManager() {
+  const column = useTopicCorrelationAppState((store) => store.column);
+  const setColumn = useTopicCorrelationAppState((store) => store.setColumn);
+  const setCorrelationTargets = useTopicCorrelationAppState(
+    (store) => store.setTopics,
+  );
+  const setVisibility = useTopicCorrelationAppState(
+    (store) => store.setVisibility,
+  );
+
+  const allTopicModelingResults = React.useContext(
+    AllTopicModelingResultContext,
+  );
+  const topicColumns = allTopicModelingResults
     .filter((topic) => !!topic.result)
     .map((topicModelingResult) => topicModelingResult.column);
+
   return (
-    <Card
-      withBorder
-      p="lg"
-      radius="lg"
-      style={{ backgroundColor: 'white', borderLeft: '5px solid #7a84b9' }}
-    >
-      <Title order={2} c="brand">
-        Topic Correlation Analysis
-      </Title>
-      <Divider my="sm" size="sm" color="#7a84b9" />
-      <Text size="sm">
-        Understanding the correlation between discovered topics and other
-        dataset variables can provide valuable insights. This analysis helps in
-        identifying patterns, trends, and potential influencing factors, which
-        can be useful for decision-making and deeper data interpretation.
-      </Text>
-      <Group align="start" mt="md">
-        <ProjectColumnSelectInput
-          data={topicColumns}
-          value={column?.name ?? null}
-          onChange={setColumn}
-          label="Column"
-          description="Select a textual column whose topics will be used in the analysis. If you cannot find a textual column in the dropdown list, it is likely that you haven't run the topic modeling algorithm on that column yet."
-          className="flex-1"
-        />
-      </Group>
-    </Card>
+    <Stack>
+      <Card
+        withBorder
+        p="lg"
+        radius="lg"
+        style={{ backgroundColor: 'white', borderLeft: '5px solid #7a84b9' }}
+      >
+        <Title order={2} c="brand">
+          Topic Correlation Analysis
+        </Title>
+        <Divider my="sm" size="sm" color="#7a84b9" />
+        <Stack>
+          <Text size="sm">
+            Understanding the correlation between discovered topics and other
+            dataset variables can provide valuable insights. This analysis helps
+            in identifying patterns, trends, and potential influencing factors,
+            which can be useful for decision-making and deeper data
+            interpretation.
+          </Text>
+          <ProjectColumnSelectInput
+            data={topicColumns}
+            value={column?.name ?? null}
+            onChange={(column) => {
+              if (!column) {
+                setCorrelationTargets(null);
+                setColumn(null);
+              } else {
+                const topicModelingResult = allTopicModelingResults.find(
+                  (tmResult) => tmResult.column.name === column.name,
+                );
+                if (!topicModelingResult?.result) {
+                  return;
+                }
+                const topics = topicModelingResult.result.topics;
+                setColumn(column);
+                setCorrelationTargets(topics);
+                setVisibility(new Map(topics.map((topic) => [topic.id, true])));
+              }
+            }}
+            label="Column"
+            description="Select a textual column whose topics will be used in the analysis. If you cannot find a textual column in the dropdown list, it is likely that you haven't run the topic modeling algorithm on that column yet."
+          />
+          <TopicsManagerMinFrequencySlider />
+          <Group>
+            <TopicsManagerShowHideAllButton />
+            <ViewTopicsPageButton />
+          </Group>
+        </Stack>
+      </Card>
+      <SortableTopicCorrelationTopicsSafeguard />
+    </Stack>
   );
 }

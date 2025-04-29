@@ -143,15 +143,13 @@ function VisualizationContingencyTableHeatmapInner(
     const usedValue = picker[method]!;
 
     const usedTitle = CONTINGENCY_TABLE_METHOD_DICTIONARY[method].title;
-    const usedLabel = CONTINGENCY_TABLE_METHOD_DICTIONARY[method].hoverLabel;
     const hovertemplates = [
-      `<b>${data.column1.name}</b>: %{y}<br><b>${data.column2.name}</b>: %{x}<br><b>${usedLabel}</b>: %{z}<br>----------------`,
+      `<b>${data.column1.name}</b>: %{y}<br><b>${data.column2.name}</b>: %{x}<br>`,
     ];
 
     const methodOptions = Object.values(CONTINGENCY_TABLE_METHOD_DICTIONARY);
     for (let i = 0; i < methodOptions.length; i++) {
       const entry = methodOptions[i]!;
-      if (entry.value === method) continue;
       hovertemplates.push(`<b>${entry.hoverLabel}</b>: %{customdata[${i}]}`);
     }
 

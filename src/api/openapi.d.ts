@@ -262,6 +262,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/column/geographical/aggregate-values": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Table Column  Geographical  Aggregate Values */
+        post: operations["post__get_table_column__geographical__aggregate_values_table__project_id__column_geographical_aggregate_values_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/column/descriptive-statistics": {
         parameters: {
             query?: never;
@@ -706,6 +723,12 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[BinaryStatisticTestOnDistributionMainResource] */
+        ApiResult_BinaryStatisticTestOnDistributionMainResource_: {
+            data: components["schemas"]["BinaryStatisticTestOnDistributionMainResource"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[CheckDatasetResource] */
         ApiResult_CheckDatasetResource_: {
             data: components["schemas"]["CheckDatasetResource"];
@@ -827,13 +850,6 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[list[BinaryStatisticTestOnDistributionResource]] */
-        ApiResult_list_BinaryStatisticTestOnDistributionResource__: {
-            /** Data */
-            data: components["schemas"]["BinaryStatisticTestOnDistributionResource"][];
-            /** Message */
-            message: string | null;
-        };
         /** ApiResult[list[ColumnTopicModelingResultResource]] */
         ApiResult_list_ColumnTopicModelingResultResource__: {
             /** Data */
@@ -895,6 +911,10 @@ export interface components {
             column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Results */
             results: components["schemas"]["BinaryStatisticTestOnContingencyTableResource"][][];
+            /** Warnings */
+            warnings: string[];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
         };
         /** BinaryStatisticTestOnContingencyTableResource */
         BinaryStatisticTestOnContingencyTableResource: {
@@ -908,6 +928,21 @@ export interface components {
             warnings: string[];
             significance: components["schemas"]["SignificanceResult"];
             effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** BinaryStatisticTestOnDistributionMainResource */
+        BinaryStatisticTestOnDistributionMainResource: {
+            /** Discriminators */
+            discriminators: string[];
+            /** Discriminator Column */
+            discriminator_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Target Column */
+            target_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
+            /** Results */
+            results: components["schemas"]["BinaryStatisticTestOnDistributionResource"][];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
+            /** Warnings */
+            warnings: string[];
         };
         /** BinaryStatisticTestOnDistributionResource */
         BinaryStatisticTestOnDistributionResource: {
@@ -932,6 +967,7 @@ export interface components {
             column2: string;
             statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
             effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
+            main_statistic_test_preference: components["schemas"]["GroupStatisticTestMethodEnum"];
         };
         /** CSVDataSource */
         CSVDataSource: {
@@ -990,24 +1026,38 @@ export interface components {
         /** ComparisonGroupWordsSchema */
         ComparisonGroupWordsSchema: {
             /** Groups */
-            groups: components["schemas"]["NamedTableFilter-Input"][];
+            groups: components["schemas"]["NamedTableFilter"][];
             /** Column */
             column: string;
         };
         /** ComparisonState */
         "ComparisonState-Input": {
             /** Groups */
-            groups: components["schemas"]["NamedTableFilter-Input"][];
+            groups: components["schemas"]["ComparisonStateItem-Input"][];
         };
         /** ComparisonState */
         "ComparisonState-Output": {
             /** Groups */
-            groups: components["schemas"]["NamedTableFilter-Output"][];
+            groups: components["schemas"]["ComparisonStateItem-Output"][];
+        };
+        /** ComparisonStateItem */
+        "ComparisonStateItem-Input": {
+            /** Name */
+            name: string;
+            /** Filter */
+            filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
+        };
+        /** ComparisonStateItem */
+        "ComparisonStateItem-Output": {
+            /** Name */
+            name: string;
+            /** Filter */
+            filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** ComparisonStatisticTestSchema */
         ComparisonStatisticTestSchema: {
-            group1: components["schemas"]["NamedTableFilter-Input"];
-            group2: components["schemas"]["NamedTableFilter-Input"];
+            group1: components["schemas"]["NamedTableFilter"];
+            group2: components["schemas"]["NamedTableFilter"];
             /** Column */
             column: string;
             statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
@@ -1283,6 +1333,20 @@ export interface components {
             /** Filter */
             filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
         };
+        /** GetTableGeographicalAggregateValuesSchema */
+        GetTableGeographicalAggregateValuesSchema: {
+            /** Filter */
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"]) | null;
+            /** Latitude Column */
+            latitude_column: string;
+            /** Longitude Column */
+            longitude_column: string;
+            /** Target Column */
+            target_column: string;
+            /** Label Column */
+            label_column: string | null;
+            method: components["schemas"]["TableColumnAggregateMethodEnum"];
+        };
         /** GetTableGeographicalColumnSchema */
         GetTableGeographicalColumnSchema: {
             /** Filter */
@@ -1318,6 +1382,11 @@ export interface components {
             /** Value */
             value: string | number;
         };
+        /**
+         * GroupStatisticTestMethodEnum
+         * @enum {string}
+         */
+        GroupStatisticTestMethodEnum: "anova" | "kruskal-wallis" | "chi-squared";
         /** HasTextTableFilter */
         HasTextTableFilter: {
             /** Target */
@@ -1378,18 +1447,11 @@ export interface components {
             value: string | number;
         };
         /** NamedTableFilter */
-        "NamedTableFilter-Input": {
+        NamedTableFilter: {
             /** Name */
             name: string;
             /** Filter */
             filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
-        };
-        /** NamedTableFilter */
-        "NamedTableFilter-Output": {
-            /** Name */
-            name: string;
-            /** Filter */
-            filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** NotEmptyTableFilter */
         NotEmptyTableFilter: {
@@ -1568,7 +1630,7 @@ export interface components {
          * TableColumnAggregateMethodEnum
          * @enum {string}
          */
-        TableColumnAggregateMethodEnum: "sum" | "mean" | "median" | "std-dev" | "max" | "min";
+        TableColumnAggregateMethodEnum: "sum" | "mean" | "median" | "std" | "max" | "min";
         /** TableColumnAggregateValuesResource */
         TableColumnAggregateValuesResource: {
             /** Column */
@@ -1616,8 +1678,8 @@ export interface components {
             longitudes: number[];
             /** Labels */
             labels: string[] | null;
-            /** Sizes */
-            sizes: number[];
+            /** Values */
+            values: (number)[];
         };
         /** TableColumnValuesResource */
         TableColumnValuesResource: {
@@ -1901,8 +1963,11 @@ export interface components {
              * @default 1
              */
             clustering_conservativeness: number;
-            /** Reference Document Count */
-            reference_document_count?: number | null;
+            /**
+             * Reference Document Count
+             * @default 15
+             */
+            reference_document_count: number;
             /** Max Topics */
             max_topics?: number | null;
             /** @default all-MiniLM-L6-v2 */
@@ -3271,6 +3336,77 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["GetTableGeographicalColumnSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TableColumnGeographicalPointsResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__get_table_column__geographical__aggregate_values_table__project_id__column_geographical_aggregate_values_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetTableGeographicalAggregateValuesSchema"];
             };
         };
         responses: {
@@ -5381,7 +5517,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_list_BinaryStatisticTestOnDistributionResource__"];
+                    "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnDistributionMainResource_"];
                 };
             };
             /** @description Bad Request */

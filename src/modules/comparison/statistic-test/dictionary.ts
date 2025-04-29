@@ -1,5 +1,7 @@
 import {
   EffectSizeMethodEnum,
+  GroupEffectSizeMethodEnum,
+  GroupStatisticTestMethodEnum,
   SchemaColumnTypeEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
@@ -18,6 +20,27 @@ export const STATISTIC_TEST_METHOD_DICTIONARY = {
       'Use this method if the chosen column contains ordered data (such as continuous data, temporal data, or ordered categorical data).',
   },
   [StatisticTestMethodEnum.ChiSquared]: {
+    label: 'Chi-Squared Test',
+    value: StatisticTestMethodEnum.ChiSquared,
+    description:
+      'Use this method if the chosen column contains unordered discrete data (such as categorical data or topic data).',
+  },
+};
+
+export const GROUP_STATISTIC_TEST_METHOD_DICTIONARY = {
+  [GroupStatisticTestMethodEnum.ANOVA]: {
+    label: 'One-Way ANOVA F-Test',
+    value: GroupStatisticTestMethodEnum.ANOVA,
+    description:
+      "Use this method if the chosen column contains continuous data and can be assumed to be normally distributed. This test checks if the groups have equal means. If the data doesn't follow a normal distribution, use Kruskal-Wallis H Test instead.",
+  },
+  [GroupStatisticTestMethodEnum.KruskalWallis]: {
+    label: 'Kruskal-Wallis H Test',
+    value: GroupStatisticTestMethodEnum.KruskalWallis,
+    description:
+      'Use this method if the chosen column contains ordered data (such as continuous data, temporal data, or ordered categorical data). This test checks if the groups have equal medians',
+  },
+  [GroupStatisticTestMethodEnum.ChiSquared]: {
     label: 'Chi-Squared Test',
     value: StatisticTestMethodEnum.ChiSquared,
     description:
@@ -68,6 +91,33 @@ export const EFFECT_SIZE_DICTIONARY = {
   },
 };
 
+export const GROUP_EFFECT_SIZE_DICTIONARY = {
+  [GroupEffectSizeMethodEnum.EtaSquared]: {
+    label: 'Eta-Squared',
+    value: GroupEffectSizeMethodEnum.EtaSquared,
+    rangeString: `[0, Inf)`,
+    range: [0, undefined],
+    description:
+      'Measures how much of the variation in the second column (dependent variable) is explained by the first column (independent variable).',
+  },
+  [GroupEffectSizeMethodEnum.EpsilonSquared]: {
+    label: 'Epsilon-Squared',
+    value: GroupEffectSizeMethodEnum.EpsilonSquared,
+    rangeString: `(-Inf, Inf)`,
+    range: [undefined, undefined],
+    description:
+      'Measures how much of the variation in the second column (dependent variable) is explained by the first column (independent variable).',
+  },
+  [EffectSizeMethodEnum.CramerV]: {
+    label: "Cramer's V",
+    rangeString: `[0, 1]`,
+    range: [0, 1],
+    value: EffectSizeMethodEnum.CramerV,
+    description:
+      'Measures how much the values of the first column affects the distribution of the second column. A higher number indicates a greater influence.',
+  },
+};
+
 const CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS = [
   StatisticTestMethodEnum.ChiSquared,
 ];
@@ -85,6 +135,26 @@ export const STATISTIC_METHOD_CONSTRAINTS: Partial<
   ],
   [SchemaColumnTypeEnum.Temporal]: [StatisticTestMethodEnum.MannWhitneyU],
   [SchemaColumnTypeEnum.Topic]: CATEGORICAL_STATISTIC_METHOD_CONSTRAINTS,
+};
+
+const CATEGORICAL_GROUP_STATISTIC_METHOD_CONSTRAINTS = [
+  GroupStatisticTestMethodEnum.ChiSquared,
+];
+export const GROUP_STATISTIC_METHOD_CONSTRAINTS: Partial<
+  Record<SchemaColumnTypeEnum, GroupStatisticTestMethodEnum[]>
+> = {
+  [SchemaColumnTypeEnum.Continuous]: [
+    GroupStatisticTestMethodEnum.ANOVA,
+    GroupStatisticTestMethodEnum.KruskalWallis,
+  ],
+  [SchemaColumnTypeEnum.Categorical]:
+    CATEGORICAL_GROUP_STATISTIC_METHOD_CONSTRAINTS,
+  [SchemaColumnTypeEnum.OrderedCategorical]: [
+    GroupStatisticTestMethodEnum.KruskalWallis,
+    GroupStatisticTestMethodEnum.ChiSquared,
+  ],
+  [SchemaColumnTypeEnum.Temporal]: [GroupStatisticTestMethodEnum.KruskalWallis],
+  [SchemaColumnTypeEnum.Topic]: CATEGORICAL_GROUP_STATISTIC_METHOD_CONSTRAINTS,
 };
 
 const CATEGORICAL_EFFECT_SIZE_CONSTRAINTS = [EffectSizeMethodEnum.CramerV];
