@@ -113,7 +113,7 @@ export function useCheckTopicCorrelationTargetVisibility() {
     },
     [visibility],
   );
-  const areAllTopicsVisible = React.useCallback(
+  const isAllVisible = React.useCallback(
     (topics: TopicModel[]) => {
       return topics.every((topic) => isVisible(topic.id));
     },
@@ -125,7 +125,7 @@ export function useCheckTopicCorrelationTargetVisibility() {
     },
     [isVisible],
   );
-  return { isVisible, areAllTopicsVisible, onlyVisible };
+  return { isVisible, isAllVisible, onlyVisible };
 }
 export function useCheckTopicCorrelationTargetSpecificVisibility(id: number) {
   // more efficient than triggering a rerender for every visibility change

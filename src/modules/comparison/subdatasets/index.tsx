@@ -13,7 +13,10 @@ import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type'
 import { ComparisonStateItemModel } from '@/api/comparison';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
 import UserDataManager from '@/modules/userdata';
-import { useComparisonAppState } from '../app-state';
+import {
+  useCheckComparisonSubdatasetsVisibility,
+  useComparisonAppState,
+} from '../app-state';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { ProjectColumnSelectInput } from '@/modules/project/select-column-input';
 import { ProjectContext } from '@/modules/project/context';
@@ -128,10 +131,14 @@ function ComparisonStateDataManager() {
   const setComparisonGroups = useComparisonAppState(
     (store) => store.groups.handlers.setState,
   );
+  const setVisibility = useComparisonAppState(
+    (store) => store.groups.setVisibility,
+  );
 
   const rendererProps = useComparisonStateDataManager({
     onApply(state) {
       setComparisonGroups(state.groups);
+      setVisibility(new Map(state.groups.map((group) => [group.name, true])));
     },
     state: React.useMemo(() => {
       if (!comparisonGroups || comparisonGroups.length === 0) {
@@ -165,11 +172,12 @@ function ComparisonStateDataManager() {
 
 function ComparisonStateManagerShowHideAllButton() {
   const groups = useComparisonAppState((store) => store.groups.state);
-  const setGroups = useComparisonAppState(
-    (store) => store.groups.handlers.setState,
+  const setVisibility = useComparisonAppState(
+    (store) => store.groups.setVisibility,
   );
+  const { isAllVisible } = useCheckComparisonSubdatasetsVisibility();
 
-  const isAll = groups.every((group) => group.visible);
+  const isAll = isAllVisible(groups);
 
   return (
     <Button
@@ -178,14 +186,7 @@ function ComparisonStateManagerShowHideAllButton() {
       leftSection={isAll ? <EyeSlash /> : <Eye />}
       disabled={groups.length === 0}
       onClick={() => {
-        setGroups(() => {
-          return groups.map((group) => {
-            return {
-              ...group,
-              visible: !isAll,
-            };
-          });
-        });
+        setVisibility(new Map(groups.map((group) => [group.name, !isAll])));
       }}
     >
       {isAll ? 'Hide' : 'Show'} All
@@ -200,8 +201,11 @@ export default function NamedFiltersManager() {
     );
   const confirmationRemote = React.useRef<DisclosureTrigger | null>(null);
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
-  const { setState: setComparisonGroups } = useComparisonAppState(
-    (store) => store.groups.handlers,
+  const setComparisonGroups = useComparisonAppState(
+    (store) => store.groups.handlers.setState,
+  );
+  const setVisibility = useComparisonAppState(
+    (store) => store.groups.setVisibility,
   );
   return (
     <>
@@ -215,7 +219,6 @@ export default function NamedFiltersManager() {
             onClick={() => {
               editRemote.current?.open({
                 name: `Subdataset ${comparisonGroups.length + 1}`,
-                visible: true,
                 filter: defaultTableFilterFormValues as TableFilterModel,
               });
             }}
@@ -230,6 +233,7 @@ export default function NamedFiltersManager() {
             message='Are you sure you want to reset the subdatasets? If you want to reuse these subdatasets, you should save it first through the "Manage Subdatasets" menu at the top.'
             onConfirm={() => {
               setComparisonGroups([]);
+              setVisibility(new Map());
             }}
             ref={confirmationRemote}
           />

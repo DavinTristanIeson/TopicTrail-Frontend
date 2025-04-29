@@ -28,7 +28,7 @@ import React from 'react';
 import VisualizationConfigurationForm from '../configuration';
 import { CancelButton } from '@/components/standard/button/variants';
 import { DashboardItemRenderer } from './grid-item';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, type UseListStateHandlers } from '@mantine/hooks';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
 import ConfirmationDialog from '@/components/widgets/confirmation';
@@ -197,18 +197,14 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
 });
 
 interface DashboardGridItemDeleteModalProps {
-  items: DashboardItemModel[];
-  removeDashboardItem(index: number): void;
+  filterDashboardItems: UseListStateHandlers<DashboardItemModel>['filter'];
 }
 export const DashboardGridItemDeleteModal = React.forwardRef<
   ParametrizedDisclosureTrigger<DashboardItemModel> | null,
   DashboardGridItemDeleteModalProps
 >(function ConfirmationDialog(props, ref) {
-  const { items, removeDashboardItem } = props;
+  const { filterDashboardItems } = props;
   const [item, { close }] = useParametrizedDisclosureTrigger(ref);
-  const idx = item
-    ? items.findIndex((dashboardItem) => dashboardItem.id === item.id)
-    : undefined;
 
   return (
     <Modal
@@ -229,8 +225,10 @@ export const DashboardGridItemDeleteModal = React.forwardRef<
           leftSection={<TrashSimple />}
           color={'red'}
           onClick={() => {
-            if (idx == null) return;
-            removeDashboardItem(idx);
+            if (!item) return;
+            filterDashboardItems(
+              (dashboardItem) => dashboardItem.id !== item.id,
+            );
             close();
           }}
         >

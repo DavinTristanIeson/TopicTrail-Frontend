@@ -7,6 +7,7 @@ import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { ProjectContext } from '@/modules/project/context';
 import {
   TopicCorrelationPageTab,
+  useCheckTopicCorrelationTargetVisibility,
   useTopicCorrelationAppState,
 } from '@/modules/topic-correlation/app-state';
 import TopicCorrelationTopicsManager from '@/modules/topic-correlation/controls';
@@ -20,9 +21,9 @@ import React from 'react';
 function TopicCorrelationTabs() {
   const tab = useTopicCorrelationAppState((store) => store.tab);
   const setTab = useTopicCorrelationAppState((store) => store.setTab);
-  const topics = useTopicCorrelationAppState(
-    (store) => store.correlationTargets,
-  );
+  const topics = useTopicCorrelationAppState((store) => store.topics);
+  const { onlyVisible } = useCheckTopicCorrelationTargetVisibility();
+  const visibleTopics = onlyVisible(topics ?? []);
   return (
     <>
       <Tabs value={tab} onChange={setTab as any} allowTabDeactivation={false}>
@@ -36,11 +37,7 @@ function TopicCorrelationTabs() {
           <Tabs.Tab
             value={TopicCorrelationPageTab.Dashboard}
             leftSection={<Shapes />}
-            disabled={
-              !topics ||
-              topics.length === 0 ||
-              topics.every((topic) => !topic.visible)
-            }
+            disabled={!topics || visibleTopics.length === 0}
           >
             Dashboard
           </Tabs.Tab>

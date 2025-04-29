@@ -132,8 +132,7 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
       />
       <DashboardGridItemDeleteModal
         ref={deleteRemote}
-        items={dashboard}
-        removeDashboardItem={dashboardHandlers.remove}
+        filterDashboardItems={dashboardHandlers.filter}
       />
       <VisualizationConfigurationDialog
         ref={editRemote}

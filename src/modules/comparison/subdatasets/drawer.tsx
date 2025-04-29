@@ -22,7 +22,10 @@ import {
 import { useCheckFilterValidity } from '@/modules/filter/management/hooks';
 import RHFField from '@/components/standard/fields';
 import { ComparisonStateItemModel } from '@/api/comparison';
-import { useComparisonAppState } from '../app-state';
+import {
+  useCheckComparisonSubdatasetsVisibility,
+  useComparisonAppState,
+} from '../app-state';
 
 interface ComparisonFilterDrawerContentsProps {
   appliedGroup: ComparisonStateItemModel;
@@ -41,6 +44,7 @@ function ComparisonFilterDrawerContents(
   const addComparisonGroup = useComparisonAppState(
     (store) => store.groups.handlers.append,
   );
+  const { setVisibility } = useCheckComparisonSubdatasetsVisibility();
 
   const currentComparisonGroupIndex = React.useMemo(() => {
     const index = comparisonGroups.findIndex(
@@ -57,7 +61,6 @@ function ComparisonFilterDrawerContents(
     const defaultComparisonFilterValues: ComparisonFilterFormType = {
       name: `Group ${comparisonGroups.length + 1}`,
       filter: defaultTableFilterFormValues,
-      visible: true,
     };
     return (
       (appliedGroup as ComparisonFilterFormType | undefined) ??
@@ -87,6 +90,7 @@ function ComparisonFilterDrawerContents(
       } else {
         setComparisonGroup(currentComparisonGroupIndex, payload);
       }
+      setVisibility(payload.name, true);
 
       onClose();
       showNotification({
@@ -101,6 +105,7 @@ function ComparisonFilterDrawerContents(
       currentComparisonGroupIndex,
       onClose,
       setComparisonGroup,
+      setVisibility,
     ],
   );
 
@@ -144,7 +149,7 @@ const ComparisonFilterDrawer = React.forwardRef<
   const [appliedGroup, { close }] = useParametrizedDisclosureTrigger(ref);
   return (
     <Drawer
-      title="Filter"
+      title="Edit Subdataset"
       opened={appliedGroup != null}
       onClose={close}
       closeOnClickOutside={false}

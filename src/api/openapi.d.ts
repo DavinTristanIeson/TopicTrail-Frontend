@@ -1046,8 +1046,6 @@ export interface components {
             name: string;
             /** Filter */
             filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
-            /** Visible */
-            visible: boolean;
         };
         /** ComparisonStateItem */
         "ComparisonStateItem-Output": {
@@ -1055,8 +1053,6 @@ export interface components {
             name: string;
             /** Filter */
             filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
-            /** Visible */
-            visible: boolean;
         };
         /** ComparisonStatisticTestSchema */
         ComparisonStatisticTestSchema: {
@@ -1967,8 +1963,11 @@ export interface components {
              * @default 1
              */
             clustering_conservativeness: number;
-            /** Reference Document Count */
-            reference_document_count?: number | null;
+            /**
+             * Reference Document Count
+             * @default 15
+             */
+            reference_document_count: number;
             /** Max Topics */
             max_topics?: number | null;
             /** @default all-MiniLM-L6-v2 */

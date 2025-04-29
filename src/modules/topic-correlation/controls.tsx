@@ -9,6 +9,7 @@ import {
   Input,
   Stack,
   Button,
+  Group,
 } from '@mantine/core';
 import { AllTopicModelingResultContext } from '../topics/components/context';
 import {
@@ -19,8 +20,10 @@ import {
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import dynamic from 'next/dynamic';
 import { ListSkeleton } from '@/components/visual/loading';
-import { Eye, EyeSlash } from '@phosphor-icons/react';
+import { Eye, EyeSlash, Files } from '@phosphor-icons/react';
 import { sum } from 'lodash-es';
+import { useTopicAppState } from '../topics/app-state';
+import { TopicsPageTab } from '../topics/results';
 
 const SortableTopicCorrelationTopicsDndContext = dynamic(
   () => import('./sortable-correlation-targets-context'),
@@ -80,10 +83,11 @@ function TopicsManagerShowHideAllButton() {
   const correlationTargets = useTopicCorrelationAppState(
     (store) => store.topics,
   );
-  const setCorrelationTargets = useTopicCorrelationAppState(
-    (store) => store.setTopics,
+  const setVisibility = useTopicCorrelationAppState(
+    (store) => store.setVisibility,
   );
-  const { areAllTopicsVisible } = useCheckTopicCorrelationTargetVisibility();
+  const { isAllVisible: areAllTopicsVisible } =
+    useCheckTopicCorrelationTargetVisibility();
   const isAll = areAllTopicsVisible(correlationTargets ?? []);
 
   if (!correlationTargets) {
@@ -95,16 +99,9 @@ function TopicsManagerShowHideAllButton() {
       color={isAll ? 'red' : 'green'}
       leftSection={isAll ? <EyeSlash /> : <Eye />}
       onClick={() => {
-        setCorrelationTargets((targets) => {
-          return (
-            targets?.map((topic) => {
-              return {
-                ...topic,
-                visible: !isAll,
-              };
-            }) ?? null
-          );
-        });
+        setVisibility(
+          new Map(correlationTargets?.map((target) => [target.id, !isAll])),
+        );
       }}
     >
       {isAll ? 'Hide' : 'Show'} All
@@ -118,6 +115,27 @@ function SortableTopicCorrelationTopicsSafeguard() {
   );
   if (correlationTargets == null || correlationTargets.length === 0) return;
   return <SortableTopicCorrelationTopicsDndContext />;
+}
+
+function ViewTopicsPageButton() {
+  const column = useTopicCorrelationAppState((store) => store.column);
+  const setTopicAppStateColumn = useTopicAppState((store) => store.setColumn);
+  const setTopicAppStateTab = useTopicAppState((store) => store.setTab);
+
+  if (!column) return;
+
+  return (
+    <Button
+      onClick={() => {
+        setTopicAppStateColumn(column.name);
+        setTopicAppStateTab(TopicsPageTab.Topics);
+      }}
+      variant="outline"
+      leftSection={<Files />}
+    >
+      View Topics
+    </Button>
+  );
 }
 
 export default function TopicCorrelationTopicsManager() {
@@ -181,7 +199,10 @@ export default function TopicCorrelationTopicsManager() {
             description="Select a textual column whose topics will be used in the analysis. If you cannot find a textual column in the dropdown list, it is likely that you haven't run the topic modeling algorithm on that column yet."
           />
           <TopicsManagerMinFrequencySlider />
-          <TopicsManagerShowHideAllButton />
+          <Group>
+            <TopicsManagerShowHideAllButton />
+            <ViewTopicsPageButton />
+          </Group>
         </Stack>
       </Card>
       <SortableTopicCorrelationTopicsSafeguard />
