@@ -163,6 +163,34 @@ function ComparisonStateDataManager() {
   );
 }
 
+function ComparisonStateManagerShowHideAllButton() {
+  const groups = useComparisonAppState((store) => store.groups.state);
+  const setGroups = useComparisonAppState(
+    (store) => store.groups.handlers.setState,
+  );
+
+  const isAll = groups.every((group) => group.visible);
+
+  return (
+    <Button
+      variant="outline"
+      color={isAll ? 'green' : 'red'}
+      onClick={() => {
+        setGroups(() => {
+          return groups.map((group) => {
+            return {
+              ...group,
+              visible: !isAll,
+            };
+          });
+        });
+      }}
+    >
+      {isAll ? 'Hide' : 'Show'} All
+    </Button>
+  );
+}
+
 export default function NamedFiltersManager() {
   const editRemote =
     React.useRef<ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null>(
@@ -178,7 +206,7 @@ export default function NamedFiltersManager() {
       <Stack>
         <ComparisonStateDataManager />
         <SortableNamedTableFilterDndContext editRemote={editRemote} />
-        <Group justify="space-between">
+        <Group>
           <Button
             leftSection={<Plus />}
             className="max-w-md"
@@ -192,6 +220,8 @@ export default function NamedFiltersManager() {
           >
             Add New Subdataset
           </Button>
+          <ComparisonStateManagerShowHideAllButton />
+          <div className="flex-1" />
           <ConfirmationDialog
             dangerous
             title="Reset Subdatasets?"

@@ -11,6 +11,16 @@ import { createContext, useContextSelector } from 'use-context-selector';
 import { ProjectContext } from '../project/context';
 import { useTopicModelingResultOfColumn } from '../topics/components/context';
 
+export enum TopicCorrelationPageTab {
+  TopicsManager = 'topics-manager',
+  Dashboard = 'dashboard',
+}
+
+export interface TopicCorrelationTopicItemModel {
+  topic: TopicModel;
+  visible: boolean;
+}
+
 interface TopicCorrelationAppStateContextType {
   dashboard: {
     state: DashboardItemModel[];
@@ -18,10 +28,12 @@ interface TopicCorrelationAppStateContextType {
   };
   column: SchemaColumnModel | null;
   setColumn: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
-  topics: {
-    state: TopicModel[];
-    handlers: UseListStateHandlers<TopicModel>;
-  };
+  tab: TopicCorrelationPageTab;
+  setTab: React.Dispatch<React.SetStateAction<TopicCorrelationPageTab>>;
+  correlationTargets: TopicCorrelationTopicItemModel[] | null;
+  setCorrelationTargets: React.Dispatch<
+    React.SetStateAction<TopicCorrelationTopicItemModel[] | null>
+  >;
   reset(): void;
 }
 
@@ -32,31 +44,35 @@ export default function TopicCorrelationAppStateProvider(
   props: React.PropsWithChildren,
 ) {
   const [column, setColumn] = React.useState<SchemaColumnModel | null>(null);
+  const [tab, setTab] = React.useState<TopicCorrelationPageTab>(
+    TopicCorrelationPageTab.TopicsManager,
+  );
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
-  const [topics, topicHandlers] = useListState<TopicModel>([]);
+  const [discriminators, setCorrelationTargets] = React.useState<
+    TopicCorrelationTopicItemModel[] | null
+  >(null);
   const { setState: setDashboard } = dashboardHandlers;
-  const { setState: setTopics } = topicHandlers;
 
   React.useEffect(() => {
     setDashboard([]);
-    setTopics([]);
-  }, [column, setDashboard, setTopics]);
+    setCorrelationTargets(null);
+  }, [column, setDashboard, setCorrelationTargets]);
 
   const reset = React.useCallback(() => {
     setDashboard([]);
     setColumn(null);
-    setTopics([]);
-  }, [setDashboard, setTopics]);
+    setCorrelationTargets(null);
+  }, [setDashboard, setCorrelationTargets]);
 
   return (
     <TopicCorrelationAppStateContext.Provider
       value={{
         column,
         setColumn,
-        topics: {
-          state: topics,
-          handlers: topicHandlers,
-        },
+        tab,
+        setTab,
+        correlationTargets: discriminators,
+        setCorrelationTargets: setCorrelationTargets,
         dashboard: {
           state: dashboard,
           handlers: dashboardHandlers,

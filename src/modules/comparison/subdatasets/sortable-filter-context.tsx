@@ -7,11 +7,12 @@ import {
   useSortableGridStack,
 } from '@/hooks/gridstack';
 import { Button, Group, Paper, Table, Text } from '@mantine/core';
-import { Eye, EyeSlash, PencilSimple } from '@phosphor-icons/react';
+import { PencilSimple } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useComparisonAppState } from '../app-state';
 import { useTableAppState } from '@/modules/table/app-state';
+import { VisibilityActionIcon } from '@/components/standard/button/variants';
 
 interface SortableComparisonStateDndContextProps {
   editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null>;
@@ -33,6 +34,15 @@ function ComparisonStateItemComponent(
   const setFilter = useTableAppState((store) => store.params.setFilter);
   return (
     <Group>
+      <VisibilityActionIcon
+        visible={item.visible}
+        setVisibility={(visible) => {
+          setItem(index, {
+            ...item,
+            visible,
+          });
+        }}
+      />
       <Text>{item.name}</Text>
       <div className="flex-1"></div>
       <Button
@@ -49,19 +59,6 @@ function ComparisonStateItemComponent(
         }}
       >
         View Table
-      </Button>
-      <Button
-        leftSection={item.visible ? <Eye /> : <EyeSlash />}
-        onClick={() => {
-          setItem(index, {
-            ...item,
-            visible: !item.visible,
-          });
-        }}
-        color={item.visible ? 'green' : 'red'}
-        variant="outline"
-      >
-        {item.visible ? 'Visible' : 'Hidden'}
       </Button>
       <Button
         leftSection={<PencilSimple />}

@@ -1,4 +1,4 @@
-import { Group, Stack } from '@mantine/core';
+import { Alert, Group, Stack } from '@mantine/core';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
 import {
@@ -120,13 +120,15 @@ export default function TopicCorrelationDashboard() {
   const handlers = useTopicCorrelationAppState(
     (store) => store.dashboard.handlers,
   );
-  const topics = useTopicCorrelationAppState((store) => store.topics.state);
+  const correlationTargets = useTopicCorrelationAppState(
+    (store) => store.correlationTargets,
+  );
   const { append } = handlers;
 
   const namedData = React.useMemo(() => {
     if (!topicColumn) return [];
     return (
-      topics.map((topic) => {
+      correlationTargets?.map(({ topic }) => {
         return {
           name: getTopicLabel(topic),
           filter: {
@@ -137,7 +139,7 @@ export default function TopicCorrelationDashboard() {
         };
       }) ?? []
     );
-  }, [topicColumn, topics]);
+  }, [topicColumn, correlationTargets]);
 
   const shouldUseWholeDataset = React.useCallback(
     (item: DashboardItemModel, column: SchemaColumnModel) => {
@@ -151,6 +153,13 @@ export default function TopicCorrelationDashboard() {
   );
 
   if (!topicColumn) return null;
+  if (namedData.length === 0) {
+    return (
+      <Alert color="yellow" title="No Topics">
+        Choose at least one topics to be shown from &quot;Topics Manager&quot;.
+      </Alert>
+    );
+  }
   return (
     <DashboardGroupsContext.Provider value={namedData}>
       <DashboardConstraintContext.Provider
