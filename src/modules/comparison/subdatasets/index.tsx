@@ -10,7 +10,7 @@ import ComparisonFilterDrawer from './drawer';
 import { Button, Fieldset, Group, Stack, Text } from '@mantine/core';
 import { Plus, Warning } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
-import { NamedTableFilterModel } from '@/api/comparison';
+import { ComparisonStateItemModel } from '@/api/comparison';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
 import UserDataManager from '@/modules/userdata';
 import { useComparisonAppState } from '../app-state';
@@ -77,6 +77,7 @@ function EnumerationSubdatasetSelectInput() {
           }
           return {
             name: label,
+            visible: true,
             filter: {
               type: 'and',
               operands: [
@@ -164,7 +165,7 @@ function ComparisonStateDataManager() {
 
 export default function NamedFiltersManager() {
   const editRemote =
-    React.useRef<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>(
+    React.useRef<ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null>(
       null,
     );
   const confirmationRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -184,6 +185,7 @@ export default function NamedFiltersManager() {
             onClick={() => {
               editRemote.current?.open({
                 name: `Subdataset ${comparisonGroups.length + 1}`,
+                visible: true,
                 filter: defaultTableFilterFormValues as TableFilterModel,
               });
             }}

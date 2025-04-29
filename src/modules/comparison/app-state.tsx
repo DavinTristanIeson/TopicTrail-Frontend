@@ -1,4 +1,4 @@
-import { NamedTableFilterModel } from '@/api/comparison';
+import { ComparisonStateItemModel } from '@/api/comparison';
 import { DashboardItemModel } from '@/api/userdata';
 import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 import React from 'react';
@@ -18,8 +18,8 @@ interface ComparisonAppStateContextType {
     handlers: UseListStateHandlers<DashboardItemModel>;
   };
   groups: {
-    state: NamedTableFilterModel[];
-    handlers: UseListStateHandlers<NamedTableFilterModel>;
+    state: ComparisonStateItemModel[];
+    handlers: UseListStateHandlers<ComparisonStateItemModel>;
   };
   reset(): void;
 }
@@ -32,7 +32,7 @@ export default function ComparisonAppStateProvider(
   props: React.PropsWithChildren,
 ) {
   const [tab, setTab] = React.useState(ComparisonPageTab.GroupsManager);
-  const [groups, groupHandlers] = useListState<NamedTableFilterModel>();
+  const [groups, groupHandlers] = useListState<ComparisonStateItemModel>();
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
 
   React.useEffect(() => {

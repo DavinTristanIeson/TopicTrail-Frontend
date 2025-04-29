@@ -1,4 +1,4 @@
-import { NamedTableFilterModel } from '@/api/comparison';
+import { ComparisonStateItemModel } from '@/api/comparison';
 import {
   IRHFMantineAdaptable,
   useRHFMantineAdapter,
@@ -7,11 +7,13 @@ import { type ComboboxItem, Select, type SelectProps } from '@mantine/core';
 
 interface NamedFilterSelectInputProps
   extends Omit<SelectProps, 'data' | 'onChange'> {
-  data: NamedTableFilterModel[];
-  onChange?(filter: NamedTableFilterModel | null): void;
+  data: ComparisonStateItemModel[];
+  onChange?(filter: ComparisonStateItemModel | null): void;
 }
 
-export function NamedFilterSelectInput(props: NamedFilterSelectInputProps) {
+export function ComparisonSubdatasetSelectInput(
+  props: NamedFilterSelectInputProps,
+) {
   const { onChange, data, ...selectProps } = props;
   return (
     <Select
@@ -30,16 +32,16 @@ export function NamedFilterSelectInput(props: NamedFilterSelectInputProps) {
   );
 }
 
-type NamedFilterSelectFieldProps = NamedFilterSelectInputProps &
+type ComparisonSubdatasetSelectFieldProps = NamedFilterSelectInputProps &
   IRHFMantineAdaptable<NamedFilterSelectInputProps>;
-export function NamedFilterSelectField(props: NamedFilterSelectFieldProps) {
-  const { mergedProps } = useRHFMantineAdapter<NamedFilterSelectFieldProps>(
-    props,
-    {
+export function ComparisonSubdatasetSelectField(
+  props: ComparisonSubdatasetSelectFieldProps,
+) {
+  const { mergedProps } =
+    useRHFMantineAdapter<ComparisonSubdatasetSelectFieldProps>(props, {
       extractEventValue(e) {
         return e?.name ?? null;
       },
-    },
-  );
-  return <NamedFilterSelectInput {...mergedProps} />;
+    });
+  return <ComparisonSubdatasetSelectInput {...mergedProps} />;
 }

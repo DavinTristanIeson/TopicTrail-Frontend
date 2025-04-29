@@ -1026,24 +1026,42 @@ export interface components {
         /** ComparisonGroupWordsSchema */
         ComparisonGroupWordsSchema: {
             /** Groups */
-            groups: components["schemas"]["NamedTableFilter-Input"][];
+            groups: components["schemas"]["NamedTableFilter"][];
             /** Column */
             column: string;
         };
         /** ComparisonState */
         "ComparisonState-Input": {
             /** Groups */
-            groups: components["schemas"]["NamedTableFilter-Input"][];
+            groups: components["schemas"]["ComparisonStateItem-Input"][];
         };
         /** ComparisonState */
         "ComparisonState-Output": {
             /** Groups */
-            groups: components["schemas"]["NamedTableFilter-Output"][];
+            groups: components["schemas"]["ComparisonStateItem-Output"][];
+        };
+        /** ComparisonStateItem */
+        "ComparisonStateItem-Input": {
+            /** Name */
+            name: string;
+            /** Filter */
+            filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
+            /** Visible */
+            visible: boolean;
+        };
+        /** ComparisonStateItem */
+        "ComparisonStateItem-Output": {
+            /** Name */
+            name: string;
+            /** Filter */
+            filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
+            /** Visible */
+            visible: boolean;
         };
         /** ComparisonStatisticTestSchema */
         ComparisonStatisticTestSchema: {
-            group1: components["schemas"]["NamedTableFilter-Input"];
-            group2: components["schemas"]["NamedTableFilter-Input"];
+            group1: components["schemas"]["NamedTableFilter"];
+            group2: components["schemas"]["NamedTableFilter"];
             /** Column */
             column: string;
             statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
@@ -1433,18 +1451,11 @@ export interface components {
             value: string | number;
         };
         /** NamedTableFilter */
-        "NamedTableFilter-Input": {
+        NamedTableFilter: {
             /** Name */
             name: string;
             /** Filter */
             filter: components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
-        };
-        /** NamedTableFilter */
-        "NamedTableFilter-Output": {
-            /** Name */
-            name: string;
-            /** Filter */
-            filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"];
         };
         /** NotEmptyTableFilter */
         NotEmptyTableFilter: {

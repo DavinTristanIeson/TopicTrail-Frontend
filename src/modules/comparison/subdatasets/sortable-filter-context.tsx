@@ -1,4 +1,4 @@
-import { NamedTableFilterModel } from '@/api/comparison';
+import { ComparisonStateItemModel } from '@/api/comparison';
 import NavigationRoutes from '@/common/constants/routes';
 import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import {
@@ -6,34 +6,40 @@ import {
   useControlledGridstack,
   useSortableGridStack,
 } from '@/hooks/gridstack';
-import { Button, Group, Paper, Text } from '@mantine/core';
-import { Eye, PencilSimple } from '@phosphor-icons/react';
+import { Button, Group, Paper, Table, Text } from '@mantine/core';
+import { Eye, EyeSlash, PencilSimple } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useComparisonAppState } from '../app-state';
+import { useTableAppState } from '@/modules/table/app-state';
 
-interface SortableNamedTableFilterDndContextProps {
-  editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>;
+interface SortableComparisonStateDndContextProps {
+  editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null>;
 }
 
-interface NamedFilterItemComponentProps {
-  item: NamedTableFilterModel;
-  editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>;
+interface ComparisonStateItemComponentProps {
+  item: ComparisonStateItemModel;
+  index: number;
+  setItem(index: number, item: ComparisonStateItemModel): void;
+  editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null>;
 }
 
-function NamedFilterItemComponent(props: NamedFilterItemComponentProps) {
-  const { item, editRemote } = props;
+function ComparisonStateItemComponent(
+  props: ComparisonStateItemComponentProps,
+) {
+  const { item, index, editRemote, setItem } = props;
   const router = useRouter();
   const projectId = router.query.id as string;
+  const setFilter = useTableAppState((store) => store.params.setFilter);
   return (
     <Group>
       <Text>{item.name}</Text>
       <div className="flex-1"></div>
-      {/* TODO: Table params */}
       <Button
         variant="outline"
-        leftSection={<Eye />}
+        leftSection={<Table />}
         onClick={() => {
+          setFilter(item.filter);
           router.push({
             pathname: NavigationRoutes.ProjectTable,
             query: {
@@ -43,6 +49,19 @@ function NamedFilterItemComponent(props: NamedFilterItemComponentProps) {
         }}
       >
         View Table
+      </Button>
+      <Button
+        leftSection={item.visible ? <Eye /> : <EyeSlash />}
+        onClick={() => {
+          setItem(index, {
+            ...item,
+            visible: !item.visible,
+          });
+        }}
+        color={item.visible ? 'green' : 'red'}
+        variant="outline"
+      >
+        {item.visible ? 'Visible' : 'Hidden'}
       </Button>
       <Button
         leftSection={<PencilSimple />}
@@ -56,13 +75,16 @@ function NamedFilterItemComponent(props: NamedFilterItemComponentProps) {
   );
 }
 
-export default function SortableNamedTableFilterDndContext(
-  props: SortableNamedTableFilterDndContextProps,
+export default function SortableComparisonStateDndContext(
+  props: SortableComparisonStateDndContextProps,
 ) {
   const { editRemote } = props;
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const setComparisonGroups = useComparisonAppState(
     (store) => store.groups.handlers.setState,
+  );
+  const setItem = useComparisonAppState(
+    (store) => store.groups.handlers.setItem,
   );
 
   const { id, grid, gridElements } = useControlledGridstack({
@@ -84,14 +106,19 @@ export default function SortableNamedTableFilterDndContext(
 
   return (
     <div className="grid-stack" id={id}>
-      {comparisonGroups.map((group) => (
+      {comparisonGroups.map((group, index) => (
         <div
           className="grid-stack-item"
           key={group.name}
           ref={gridElements.current[group.name]}
         >
           <Paper className="p-3 select-none grid-stack-item-content">
-            <NamedFilterItemComponent item={group} editRemote={editRemote} />
+            <ComparisonStateItemComponent
+              item={group}
+              index={index}
+              setItem={setItem}
+              editRemote={editRemote}
+            />
           </Paper>
         </div>
       ))}

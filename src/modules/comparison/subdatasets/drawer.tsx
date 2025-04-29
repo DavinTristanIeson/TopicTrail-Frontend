@@ -21,11 +21,11 @@ import {
 } from './form-type';
 import { useCheckFilterValidity } from '@/modules/filter/management/hooks';
 import RHFField from '@/components/standard/fields';
-import { NamedTableFilterModel } from '@/api/comparison';
+import { ComparisonStateItemModel } from '@/api/comparison';
 import { useComparisonAppState } from '../app-state';
 
 interface ComparisonFilterDrawerContentsProps {
-  appliedGroup: NamedTableFilterModel;
+  appliedGroup: ComparisonStateItemModel;
   onClose(): void;
 }
 
@@ -57,6 +57,7 @@ function ComparisonFilterDrawerContents(
     const defaultComparisonFilterValues: ComparisonFilterFormType = {
       name: `Group ${comparisonGroups.length + 1}`,
       filter: defaultTableFilterFormValues,
+      visible: true,
     };
     return (
       (appliedGroup as ComparisonFilterFormType | undefined) ??
@@ -78,7 +79,7 @@ function ComparisonFilterDrawerContents(
       if (!appliedGroup) return;
       const payload = comparisonFilterFormSchema.cast(formValues, {
         stripUnknown: true,
-      }) as NamedTableFilterModel;
+      }) as ComparisonStateItemModel;
       payload.filter = await checkFilter(payload.filter);
 
       if (currentComparisonGroupIndex == null) {
@@ -137,7 +138,7 @@ function ComparisonFilterDrawerContents(
 }
 
 const ComparisonFilterDrawer = React.forwardRef<
-  ParametrizedDisclosureTrigger<NamedTableFilterModel> | null,
+  ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null,
   object
 >(function TableFilterDrawer(props, ref) {
   const [appliedGroup, { close }] = useParametrizedDisclosureTrigger(ref);
