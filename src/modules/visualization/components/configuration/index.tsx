@@ -1,7 +1,13 @@
 import { DashboardItemModel } from '@/api/userdata';
 import { Stack, Button, Collapse } from '@mantine/core';
-import { useDebouncedValue, useDisclosure, useId } from '@mantine/hooks';
+import {
+  useDebouncedValue,
+  useDisclosure,
+  useId,
+  useViewportSize,
+} from '@mantine/hooks';
 import { Faders } from '@phosphor-icons/react';
+import React from 'react';
 export * from './categorical';
 export * from './statistic-test';
 
@@ -24,8 +30,18 @@ export function PlotInlineConfiguration(props: React.PropsWithChildren) {
   );
 }
 
+interface PlotRendererContextType {
+  isFullScreen: boolean;
+}
+
+export const PlotRendererContext = React.createContext<PlotRendererContextType>(
+  {
+    isFullScreen: false,
+  },
+);
 export function usePlotRendererHelperProps(item: DashboardItemModel) {
   const id = useId();
+  const { isFullScreen } = React.useContext(PlotRendererContext);
   const [key] = useDebouncedValue(
     `${id}-${item.rect.width}-${item.rect.height}`,
     1000,
@@ -33,7 +49,9 @@ export function usePlotRendererHelperProps(item: DashboardItemModel) {
       leading: false,
     },
   );
+  const { height } = useViewportSize();
   return {
     key,
+    height: isFullScreen ? height * 0.8 : undefined,
   };
 }

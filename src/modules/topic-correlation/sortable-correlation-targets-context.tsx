@@ -4,7 +4,7 @@ import {
   useControlledGridstack,
   useSortableGridStack,
 } from '@/hooks/gridstack';
-import { Button, Group, HoverCard, Paper, Table, Text } from '@mantine/core';
+import { Button, Card, Group, HoverCard, Table, Text } from '@mantine/core';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useTableAppState } from '@/modules/table/app-state';
@@ -57,12 +57,14 @@ function CorrelationTargetItemComponent(
         visible={item.visible}
         setVisibility={toggleVisibility}
       />
-      <HoverCard.Target>
-        <Text>{getTopicLabel(item.topic)}</Text>
-      </HoverCard.Target>
-      <HoverCard.Dropdown>
-        <TopicInfo {...item.topic} />
-      </HoverCard.Dropdown>
+      <HoverCard>
+        <HoverCard.Target>
+          <Text>{getTopicLabel(item.topic)}</Text>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <TopicInfo {...item.topic} />
+        </HoverCard.Dropdown>
+      </HoverCard>
       <div className="flex-1"></div>
       {topicColumn && (
         <Button
@@ -128,9 +130,12 @@ export default function SortableTopicCorrelationTopicsDndContext() {
           key={target.topic.id}
           ref={gridElements.current[target.topic.id.toString()]}
         >
-          <Paper className="p-3 select-none grid-stack-item-content">
+          <Card
+            className="select-none grid-stack-item-content"
+            bg={target.visible ? undefined : 'gray.1'}
+          >
             <CorrelationTargetItemComponent item={target} />
-          </Paper>
+          </Card>
         </div>
       ))}
     </div>

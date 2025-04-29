@@ -35,9 +35,9 @@ export function VisibilityActionIcon(props: VisibilityActionIconProps) {
         setVisibility(!visible);
       }}
       color={visible ? 'green' : 'red'}
-      variant="outline"
+      variant="subtle"
     >
-      {visible ? <Eye /> : <EyeSlash />}
+      {visible ? <Eye size={24} /> : <EyeSlash size={24} />}
     </ActionIcon>
   );
 }

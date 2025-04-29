@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import ComparisonFilterDrawer from './drawer';
 import { Button, Fieldset, Group, Stack, Text } from '@mantine/core';
-import { Plus, Warning } from '@phosphor-icons/react';
+import { Eye, EyeSlash, Plus, Warning } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { ComparisonStateItemModel } from '@/api/comparison';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
@@ -174,7 +174,9 @@ function ComparisonStateManagerShowHideAllButton() {
   return (
     <Button
       variant="outline"
-      color={isAll ? 'green' : 'red'}
+      color={isAll ? 'red' : 'green'}
+      leftSection={isAll ? <EyeSlash /> : <Eye />}
+      disabled={groups.length === 0}
       onClick={() => {
         setGroups(() => {
           return groups.map((group) => {

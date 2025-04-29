@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppShell, Burger, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { DefaultErrorViewBoundary } from '../visual/error';
 
 interface AppLayoutProps {
   Sidebar?: React.ReactNode;
@@ -45,7 +46,7 @@ export default function AppLayout(props: AppLayoutProps) {
       )}
       <AppShell.Main>
         <div className="relative" style={{ height: `calc(100dvh - 60px)` }}>
-          {children}
+          <DefaultErrorViewBoundary>{children}</DefaultErrorViewBoundary>
         </div>
       </AppShell.Main>
     </AppShell>

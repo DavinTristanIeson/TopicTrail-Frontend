@@ -55,7 +55,6 @@ export default function TopicCorrelationAppStateProvider(
 
   React.useEffect(() => {
     setDashboard([]);
-    setCorrelationTargets(null);
   }, [column, setDashboard, setCorrelationTargets]);
 
   const reset = React.useCallback(() => {
@@ -101,7 +100,7 @@ export function useTopicCorrelationAppStateTopicColumn() {
   }, [column, project]);
 
   const topicModelingResult = useTopicModelingResultOfColumn(
-    topicColumn?.name ?? '',
+    column?.name ?? '',
   );
 
   return { topicColumn, topicModelingResult };

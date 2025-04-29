@@ -18,9 +18,10 @@ import {
 import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import dynamic from 'next/dynamic';
 import { ListSkeleton } from '@/components/visual/loading';
+import { Eye, EyeSlash } from '@phosphor-icons/react';
 
 const SortableTopicCorrelationTopicsDndContext = dynamic(
-  () => import('./sortable-topics-context'),
+  () => import('./sortable-correlation-targets-context'),
   {
     loading: () => <ListSkeleton />,
   },
@@ -88,7 +89,8 @@ function TopicsManagerShowHideAllButton() {
   return (
     <Button
       variant="outline"
-      color={isAll ? 'green' : 'red'}
+      color={isAll ? 'red' : 'green'}
+      leftSection={isAll ? <EyeSlash /> : <Eye />}
       onClick={() => {
         setCorrelationTargets((targets) => {
           return (
@@ -105,6 +107,14 @@ function TopicsManagerShowHideAllButton() {
       {isAll ? 'Hide' : 'Show'} All
     </Button>
   );
+}
+
+function SortableTopicCorrelationTopicsSafeguard() {
+  const correlationTargets = useTopicCorrelationAppState(
+    (store) => store.correlationTargets,
+  );
+  if (correlationTargets == null || correlationTargets.length === 0) return;
+  return <SortableTopicCorrelationTopicsDndContext />;
 }
 
 export default function TopicCorrelationTopicsManager() {
@@ -133,45 +143,47 @@ export default function TopicCorrelationTopicsManager() {
           Topic Correlation Analysis
         </Title>
         <Divider my="sm" size="sm" color="#7a84b9" />
-        <Text size="sm">
-          Understanding the correlation between discovered topics and other
-          dataset variables can provide valuable insights. This analysis helps
-          in identifying patterns, trends, and potential influencing factors,
-          which can be useful for decision-making and deeper data
-          interpretation.
-        </Text>
-        <ProjectColumnSelectInput
-          data={topicColumns}
-          value={column?.name ?? null}
-          onChange={(column) => {
-            if (!column) {
-              setCorrelationTargets(null);
-              setColumn(null);
-            } else {
-              const topicModelingResult = allTopicModelingResults.find(
-                (tmResult) => tmResult.column.name === column.name,
-              );
-              if (!topicModelingResult?.result) {
-                return;
+        <Stack>
+          <Text size="sm">
+            Understanding the correlation between discovered topics and other
+            dataset variables can provide valuable insights. This analysis helps
+            in identifying patterns, trends, and potential influencing factors,
+            which can be useful for decision-making and deeper data
+            interpretation.
+          </Text>
+          <ProjectColumnSelectInput
+            data={topicColumns}
+            value={column?.name ?? null}
+            onChange={(column) => {
+              if (!column) {
+                setCorrelationTargets(null);
+                setColumn(null);
+              } else {
+                const topicModelingResult = allTopicModelingResults.find(
+                  (tmResult) => tmResult.column.name === column.name,
+                );
+                if (!topicModelingResult?.result) {
+                  return;
+                }
+                setColumn(column);
+                setCorrelationTargets(
+                  topicModelingResult.result.topics.map((topic) => {
+                    return {
+                      topic,
+                      visible: true,
+                    };
+                  }),
+                );
               }
-              setColumn(column);
-              setCorrelationTargets(
-                topicModelingResult.result.topics.map((topic) => {
-                  return {
-                    topic,
-                    visible: true,
-                  };
-                }),
-              );
-            }
-          }}
-          label="Column"
-          description="Select a textual column whose topics will be used in the analysis. If you cannot find a textual column in the dropdown list, it is likely that you haven't run the topic modeling algorithm on that column yet."
-        />
-        <TopicsManagerMinFrequencySlider />
-        <TopicsManagerShowHideAllButton />
+            }}
+            label="Column"
+            description="Select a textual column whose topics will be used in the analysis. If you cannot find a textual column in the dropdown list, it is likely that you haven't run the topic modeling algorithm on that column yet."
+          />
+          <TopicsManagerMinFrequencySlider />
+          <TopicsManagerShowHideAllButton />
+        </Stack>
       </Card>
-      <SortableTopicCorrelationTopicsDndContext />
+      <SortableTopicCorrelationTopicsSafeguard />
     </Stack>
   );
 }

@@ -6,7 +6,7 @@ import {
   useControlledGridstack,
   useSortableGridStack,
 } from '@/hooks/gridstack';
-import { Button, Group, Paper, Table, Text } from '@mantine/core';
+import { Button, Card, Group, Table, Text } from '@mantine/core';
 import { PencilSimple } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -33,7 +33,7 @@ function ComparisonStateItemComponent(
   const projectId = router.query.id as string;
   const setFilter = useTableAppState((store) => store.params.setFilter);
   return (
-    <Group>
+    <Group align="center" className="h-full">
       <VisibilityActionIcon
         visible={item.visible}
         setVisibility={(visible) => {
@@ -109,14 +109,17 @@ export default function SortableComparisonStateDndContext(
           key={group.name}
           ref={gridElements.current[group.name]}
         >
-          <Paper className="p-3 select-none grid-stack-item-content">
+          <Card
+            className="select-none grid-stack-item-content"
+            bg={group.visible ? undefined : 'gray.1'}
+          >
             <ComparisonStateItemComponent
               item={group}
               index={index}
               setItem={setItem}
               editRemote={editRemote}
             />
-          </Paper>
+          </Card>
         </div>
       ))}
     </div>

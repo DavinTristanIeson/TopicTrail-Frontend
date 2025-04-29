@@ -128,16 +128,24 @@ export default function TopicCorrelationDashboard() {
   const namedData = React.useMemo(() => {
     if (!topicColumn) return [];
     return (
-      correlationTargets?.map(({ topic }) => {
-        return {
-          name: getTopicLabel(topic),
-          filter: {
-            type: TableFilterTypeEnum.EqualTo,
-            target: topicColumn?.name,
-            value: topic.id,
-          } as TableFilterModel,
-        };
-      }) ?? []
+      correlationTargets
+        ?.filter((target) => target.visible)
+        .map(({ topic }) => {
+          return {
+            name: getTopicLabel(topic),
+            filter: {
+              type: TableFilterTypeEnum.EqualTo,
+              target: topicColumn?.name,
+              value: topic.id,
+            } as TableFilterModel,
+          };
+        })
+        .concat([
+          {
+            name: 'Original Dataset',
+            filter: null!,
+          },
+        ]) ?? []
     );
   }, [topicColumn, correlationTargets]);
 

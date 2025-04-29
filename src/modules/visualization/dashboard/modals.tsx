@@ -32,7 +32,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
 import ConfirmationDialog from '@/components/widgets/confirmation';
-import { SchemaColumnModel } from '@/api/project';
+import { PlotRendererContext } from '../components/configuration';
 
 interface VisualizationConfigurationDialogProps {
   onSubmit(item: DashboardItemModel): void;
@@ -152,6 +152,7 @@ interface DashboardGridItemFullScreenModalProps {
   onSubmit(item: DashboardItemModel): void;
 }
 
+const isFullScreenValue = { isFullScreen: true };
 export const DashboardGridItemFullScreenModal = React.forwardRef<
   ParametrizedDisclosureTrigger<DashboardItemModel> | null,
   DashboardGridItemFullScreenModalProps
@@ -187,7 +188,9 @@ export const DashboardGridItemFullScreenModal = React.forwardRef<
         {item?.description && <Text>{item.description}</Text>}
       </Stack>
       <div style={{ height: `calc(100dvh - 12rem)` }}>
-        {item && <DashboardItemRenderer {...item} />}
+        <PlotRendererContext.Provider value={isFullScreenValue}>
+          {item && <DashboardItemRenderer {...item} />}
+        </PlotRendererContext.Provider>
       </div>
     </Modal>
   );
