@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import { AllTopicModelingResultContext } from '../topics/components/context';
 import {
+  useCheckTopicCorrelationTargetVisibility,
   useTopicCorrelationAppState,
   useTopicCorrelationAppStateTopicColumn,
 } from './app-state';
@@ -19,6 +20,7 @@ import { useDebouncedCallback, useDebouncedValue } from '@mantine/hooks';
 import dynamic from 'next/dynamic';
 import { ListSkeleton } from '@/components/visual/loading';
 import { Eye, EyeSlash } from '@phosphor-icons/react';
+import { sum } from 'lodash-es';
 
 const SortableTopicCorrelationTopicsDndContext = dynamic(
   () => import('./sortable-correlation-targets-context'),
@@ -29,13 +31,10 @@ const SortableTopicCorrelationTopicsDndContext = dynamic(
 
 function TopicsManagerMinFrequencySlider() {
   const { topicModelingResult } = useTopicCorrelationAppStateTopicColumn();
-  const setCorrelationTargets = useTopicCorrelationAppState(
-    (store) => store.setCorrelationTargets,
+  const setVisibility = useTopicCorrelationAppState(
+    (store) => store.setVisibility,
   );
-  const setCorrelationTargetsDebounced = useDebouncedCallback(
-    setCorrelationTargets,
-    1000,
-  );
+  const setVisibilityDebounced = useDebouncedCallback(setVisibility, 1000);
 
   const allTopics = topicModelingResult?.result?.topics;
 
@@ -45,17 +44,20 @@ function TopicsManagerMinFrequencySlider() {
   });
 
   React.useEffect(() => {
-    setCorrelationTargetsDebounced((targets) => {
-      return (
-        targets?.map((target) => {
-          return {
-            ...target,
-            visible: target.topic.frequency >= debouncedMinFrequency,
-          };
-        }) ?? null
+    setVisibilityDebounced(() => {
+      return new Map(
+        (allTopics ?? []).map((topic) => [
+          topic.id,
+          topic.frequency >= debouncedMinFrequency,
+        ]),
       );
     });
-  }, [allTopics, debouncedMinFrequency, setCorrelationTargetsDebounced]);
+  }, [allTopics, debouncedMinFrequency, setVisibilityDebounced]);
+
+  const maxFrequency = React.useMemo(() => {
+    if (!allTopics) return 20;
+    return Math.max(20, sum(allTopics?.map((topic) => topic.frequency)));
+  }, [allTopics]);
 
   if (!topicModelingResult?.result) return null;
   return (
@@ -66,7 +68,7 @@ function TopicsManagerMinFrequencySlider() {
       <Slider
         value={minFrequency}
         min={0}
-        max={Math.max(20, topicModelingResult.result.total_count)}
+        max={maxFrequency}
         label={`Min. Frequency: ${minFrequency} rows`}
         onChange={setMinFrequency}
       />
@@ -76,12 +78,13 @@ function TopicsManagerMinFrequencySlider() {
 
 function TopicsManagerShowHideAllButton() {
   const correlationTargets = useTopicCorrelationAppState(
-    (store) => store.correlationTargets,
+    (store) => store.topics,
   );
   const setCorrelationTargets = useTopicCorrelationAppState(
-    (store) => store.setCorrelationTargets,
+    (store) => store.setTopics,
   );
-  const isAll = correlationTargets?.every((target) => target.visible);
+  const { areAllTopicsVisible } = useCheckTopicCorrelationTargetVisibility();
+  const isAll = areAllTopicsVisible(correlationTargets ?? []);
 
   if (!correlationTargets) {
     return null;
@@ -111,7 +114,7 @@ function TopicsManagerShowHideAllButton() {
 
 function SortableTopicCorrelationTopicsSafeguard() {
   const correlationTargets = useTopicCorrelationAppState(
-    (store) => store.correlationTargets,
+    (store) => store.topics,
   );
   if (correlationTargets == null || correlationTargets.length === 0) return;
   return <SortableTopicCorrelationTopicsDndContext />;
@@ -121,7 +124,10 @@ export default function TopicCorrelationTopicsManager() {
   const column = useTopicCorrelationAppState((store) => store.column);
   const setColumn = useTopicCorrelationAppState((store) => store.setColumn);
   const setCorrelationTargets = useTopicCorrelationAppState(
-    (store) => store.setCorrelationTargets,
+    (store) => store.setTopics,
+  );
+  const setVisibility = useTopicCorrelationAppState(
+    (store) => store.setVisibility,
   );
 
   const allTopicModelingResults = React.useContext(
@@ -165,15 +171,10 @@ export default function TopicCorrelationTopicsManager() {
                 if (!topicModelingResult?.result) {
                   return;
                 }
+                const topics = topicModelingResult.result.topics;
                 setColumn(column);
-                setCorrelationTargets(
-                  topicModelingResult.result.topics.map((topic) => {
-                    return {
-                      topic,
-                      visible: true,
-                    };
-                  }),
-                );
+                setCorrelationTargets(topics);
+                setVisibility(new Map(topics.map((topic) => [topic.id, true])));
               }
             }}
             label="Column"

@@ -2,6 +2,7 @@ import { Alert, Group, Stack } from '@mantine/core';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
 import {
+  useCheckTopicCorrelationTargetVisibility,
   useTopicCorrelationAppState,
   useTopicCorrelationAppStateTopicColumn,
 } from './app-state';
@@ -121,16 +122,16 @@ export default function TopicCorrelationDashboard() {
     (store) => store.dashboard.handlers,
   );
   const correlationTargets = useTopicCorrelationAppState(
-    (store) => store.correlationTargets,
+    (store) => store.topics,
   );
+  const { onlyVisible } = useCheckTopicCorrelationTargetVisibility();
   const { append } = handlers;
 
   const namedData = React.useMemo(() => {
     if (!topicColumn) return [];
     return (
-      correlationTargets
-        ?.filter((target) => target.visible)
-        .map(({ topic }) => {
+      onlyVisible(correlationTargets ?? [])
+        .map((topic) => {
           return {
             name: getTopicLabel(topic),
             filter: {
@@ -147,7 +148,7 @@ export default function TopicCorrelationDashboard() {
           },
         ]) ?? []
     );
-  }, [topicColumn, correlationTargets]);
+  }, [topicColumn, onlyVisible, correlationTargets]);
 
   const shouldUseWholeDataset = React.useCallback(
     (item: DashboardItemModel, column: SchemaColumnModel) => {

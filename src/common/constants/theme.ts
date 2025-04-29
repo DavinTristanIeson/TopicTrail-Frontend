@@ -119,6 +119,9 @@ const mantineTheme = createTheme({
       defaultProps: {
         position: 'right',
       },
+      classNames: {
+        dropdown: 'max-w-lg',
+      },
     }),
     Select: Select.extend({
       defaultProps: {

@@ -16,11 +16,6 @@ export enum TopicCorrelationPageTab {
   Dashboard = 'dashboard',
 }
 
-export interface TopicCorrelationTopicItemModel {
-  topic: TopicModel;
-  visible: boolean;
-}
-
 interface TopicCorrelationAppStateContextType {
   dashboard: {
     state: DashboardItemModel[];
@@ -30,10 +25,10 @@ interface TopicCorrelationAppStateContextType {
   setColumn: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
   tab: TopicCorrelationPageTab;
   setTab: React.Dispatch<React.SetStateAction<TopicCorrelationPageTab>>;
-  correlationTargets: TopicCorrelationTopicItemModel[] | null;
-  setCorrelationTargets: React.Dispatch<
-    React.SetStateAction<TopicCorrelationTopicItemModel[] | null>
-  >;
+  topics: TopicModel[] | null;
+  setTopics: React.Dispatch<React.SetStateAction<TopicModel[] | null>>;
+  visibility: Map<number, boolean>;
+  setVisibility: React.Dispatch<React.SetStateAction<Map<number, boolean>>>;
   reset(): void;
 }
 
@@ -48,20 +43,22 @@ export default function TopicCorrelationAppStateProvider(
     TopicCorrelationPageTab.TopicsManager,
   );
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
-  const [discriminators, setCorrelationTargets] = React.useState<
-    TopicCorrelationTopicItemModel[] | null
-  >(null);
+  const [topics, setTopics] = React.useState<TopicModel[] | null>(null);
+  const [visibility, setVisibility] = React.useState<Map<number, boolean>>(
+    new Map(),
+  );
   const { setState: setDashboard } = dashboardHandlers;
 
   React.useEffect(() => {
     setDashboard([]);
-  }, [column, setDashboard, setCorrelationTargets]);
+  }, [column, setDashboard]);
 
   const reset = React.useCallback(() => {
     setDashboard([]);
     setColumn(null);
-    setCorrelationTargets(null);
-  }, [setDashboard, setCorrelationTargets]);
+    setTopics(null);
+    setVisibility(new Map());
+  }, [setDashboard, setTopics]);
 
   return (
     <TopicCorrelationAppStateContext.Provider
@@ -70,8 +67,10 @@ export default function TopicCorrelationAppStateProvider(
         setColumn,
         tab,
         setTab,
-        correlationTargets: discriminators,
-        setCorrelationTargets: setCorrelationTargets,
+        topics,
+        setTopics,
+        visibility,
+        setVisibility,
         dashboard: {
           state: dashboard,
           handlers: dashboardHandlers,
@@ -104,4 +103,44 @@ export function useTopicCorrelationAppStateTopicColumn() {
   );
 
   return { topicColumn, topicModelingResult };
+}
+
+export function useCheckTopicCorrelationTargetVisibility() {
+  const visibility = useTopicCorrelationAppState((store) => store.visibility);
+  const isVisible = React.useCallback(
+    (id: number) => {
+      return visibility.get(id) ?? true;
+    },
+    [visibility],
+  );
+  const areAllTopicsVisible = React.useCallback(
+    (topics: TopicModel[]) => {
+      return topics.every((topic) => isVisible(topic.id));
+    },
+    [isVisible],
+  );
+  const onlyVisible = React.useCallback(
+    (topics: TopicModel[]) => {
+      return topics.filter((topic) => isVisible(topic.id));
+    },
+    [isVisible],
+  );
+  return { isVisible, areAllTopicsVisible, onlyVisible };
+}
+export function useCheckTopicCorrelationTargetSpecificVisibility(id: number) {
+  // more efficient than triggering a rerender for every visibility change
+  const visible = useTopicCorrelationAppState(
+    (store) => store.visibility.get(id) ?? true,
+  );
+  const setVisibility = useTopicCorrelationAppState(
+    (store) => store.setVisibility,
+  );
+  const toggle = React.useCallback(() => {
+    setVisibility((visibility) => {
+      const newVisibility = new Map(visibility);
+      newVisibility.set(id, !(visibility.get(id) ?? true));
+      return newVisibility;
+    });
+  }, [id, setVisibility]);
+  return { visible, toggle };
 }
