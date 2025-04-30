@@ -83,6 +83,10 @@ const CorrelationTargetItemComponent = React.memo(
   },
 );
 
+function accessCorrelationTargetIdentifier(topic: TopicModel) {
+  return topic.id.toString();
+}
+
 export default function SortableTopicCorrelationTopicsDndContext() {
   const correlationTargets = useTopicCorrelationAppState(
     (store) => store.topics,
@@ -92,21 +96,18 @@ export default function SortableTopicCorrelationTopicsDndContext() {
   );
 
   const { id, grid, gridElements } = useControlledGridstack({
-    gridItems: correlationTargets.map((target) => target.id.toString()),
+    gridItems: correlationTargets.map(accessCorrelationTargetIdentifier),
     options: SortableGridStackDefaultOptions({
       itemsCount: correlationTargets.length,
     }),
   });
+
   useSortableGridStack({
     grid,
-    onSort(gridstackIds) {
-      setCorrelationTargets((prev) => {
-        if (!prev) return prev;
-        return gridstackIds.map((id) => {
-          return prev.find((target) => target.id.toString() === id)!;
-        });
-      });
-    },
+    setValues: setCorrelationTargets as React.Dispatch<
+      React.SetStateAction<TopicModel[]>
+    >,
+    getId: accessCorrelationTargetIdentifier,
   });
 
   return (

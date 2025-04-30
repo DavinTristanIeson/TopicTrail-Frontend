@@ -47,33 +47,45 @@ export function useControlledGridstack(props: UseControlledGridStackProps) {
   };
 }
 
-interface UseSortableGridStackProps {
+interface UseSortableGridStackProps<T> {
   grid: React.MutableRefObject<GridStack | undefined>;
-  onSort(sortedValues: string[]): void;
+  setValues: React.Dispatch<React.SetStateAction<T[]>>;
+  getId(value: T): string;
 }
 
-export function useSortableGridStack(props: UseSortableGridStackProps) {
-  const { grid, onSort } = props;
-  React.useLayoutEffect(() => {
+export function useSortableGridStack<T>(props: UseSortableGridStackProps<T>) {
+  const { grid, setValues, getId } = props;
+  React.useEffect(() => {
     if (!grid.current) return;
     const currentGrid = grid.current;
-    currentGrid.on('change', () => {
-      const gridItems = currentGrid.getGridItems();
-      const parsedGridItems = gridItems.map((item) => {
-        return {
-          order: parseInt(item.getAttribute('gs-y')!, 10),
-          id: item.getAttribute('gs-id')!,
-        };
-      });
+    currentGrid.on('change', (e, items) => {
+      const newPositionMap = new Map(
+        items
+          .map((item) => {
+            return [item.id!, item.y!] as [string, number];
+          })
+          .filter((item) => item[0] != null && item[1] != null),
+      );
 
-      parsedGridItems.sort((a, b) => a.order - b.order);
-      const newIds = parsedGridItems.map((gridItem) => gridItem.id);
-      onSort(newIds);
+      setValues((values) => {
+        if (!values) return values;
+        return values
+          .map<[T, number]>((value, index) => {
+            const id = getId(value);
+            if (newPositionMap.has(id)) {
+              return [value, newPositionMap.get(id)!];
+            } else {
+              return [value, index];
+            }
+          })
+          .sort((a, b) => a[1] - b[1])
+          .map((value) => value[0]);
+      });
     });
     return () => {
       currentGrid.off('change');
     };
-  }, [grid, onSort]);
+  }, [getId, grid, setValues]);
 }
 
 interface SortableGridStackDefaultOptionsProps {
