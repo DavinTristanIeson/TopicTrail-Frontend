@@ -10,6 +10,7 @@ import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { Alert, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
 import React from 'react';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 const ComparisonPage: NextPageWithLayout = function () {
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
@@ -52,13 +53,15 @@ const ComparisonPage: NextPageWithLayout = function () {
         </Tabs.List>
       </Tabs>
       <div className="py-5">
-        {tab === ComparisonPageTab.GroupsManager ? (
-          <NamedFiltersManager />
-        ) : tab === ComparisonPageTab.Visualization ? (
-          <ComparisonDashboard />
-        ) : tab === ComparisonPageTab.StatisticTest ? (
-          <ComparisonStatisticTest />
-        ) : null}
+        <DefaultErrorViewBoundary>
+          {tab === ComparisonPageTab.GroupsManager ? (
+            <NamedFiltersManager />
+          ) : tab === ComparisonPageTab.Visualization ? (
+            <ComparisonDashboard />
+          ) : tab === ComparisonPageTab.StatisticTest ? (
+            <ComparisonStatisticTest />
+          ) : null}
+        </DefaultErrorViewBoundary>
       </div>
     </>
   );

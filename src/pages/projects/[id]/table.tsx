@@ -6,6 +6,7 @@ import { NextPageWithLayout } from '@/common/utils/types';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { TablePageTab, useTableAppState } from '@/modules/table/app-state';
 import { TableDashboard } from '@/modules/table/dashboard';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 const TablePage: NextPageWithLayout = function TablePage() {
   const tab = useTableAppState((store) => store.tab);
@@ -23,13 +24,13 @@ const TablePage: NextPageWithLayout = function TablePage() {
         </Tabs.List>
       </Tabs>
       <div className="pt-5">
-        <>
+        <DefaultErrorViewBoundary>
           {tab === TablePageTab.Table ? (
             <TableQueryComponent />
           ) : tab === TablePageTab.Dashboard ? (
             <TableDashboard />
           ) : null}
-        </>
+        </DefaultErrorViewBoundary>
       </div>
     </>
   );

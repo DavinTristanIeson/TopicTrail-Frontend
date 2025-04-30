@@ -11,7 +11,8 @@ import {
 } from '@/modules/visualization/dashboard/modals';
 import {
   DashboardConstraintContext,
-  DashboardGroupsContext,
+  DashboardSubdatasetsContext,
+  DashboardSubdatasetsContextType,
 } from '@/modules/visualization/types/context';
 import UserDataManager from '@/modules/userdata';
 import { useDashboardUserDataSharedBehavior } from '@/modules/table/dashboard';
@@ -40,16 +41,36 @@ function ComparisonDashboardUserDataManager() {
   return <UserDataManager {...rendererProps} label="Dashboard" />;
 }
 
+const COMPARISON_DASHBOARD_CONSTRAINT = {
+  withoutTypes: [
+    DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
+    DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
+    DashboardItemTypeEnum.ContingencyTable,
+  ],
+};
+
 export default function ComparisonDashboard() {
   const dashboard = useComparisonAppState((store) => store.dashboard.state);
   const handlers = useComparisonAppState((store) => store.dashboard.handlers);
   const groups = useComparisonAppState((store) => store.groups.state);
+  const includeWholeDataset = useComparisonAppState(
+    (store) => store.groups.includeWholeDataset,
+  );
   const { onlyVisible } = useCheckComparisonSubdatasetsVisibility();
 
-  const visibleGroups = React.useMemo(
-    () => onlyVisible(groups),
-    [groups, onlyVisible],
-  );
+  const dashboardSubdatasets =
+    React.useMemo<DashboardSubdatasetsContextType>(() => {
+      const defaultSubdatasets = onlyVisible(groups);
+      if (includeWholeDataset) {
+        defaultSubdatasets.unshift({
+          name: 'Dataset',
+          filter: null as any,
+        });
+      }
+      return {
+        default: defaultSubdatasets,
+      };
+    }, [groups, includeWholeDataset, onlyVisible]);
   const { append } = handlers;
   return (
     <Stack>
@@ -58,21 +79,16 @@ export default function ComparisonDashboard() {
         <DashboardResetButton onReset={() => handlers.setState([])} />
         <AddVisualizationConfigurationButton onSubmit={append} />
       </Group>
-      <DashboardGroupsContext.Provider value={visibleGroups}>
+      <DashboardSubdatasetsContext.Provider value={dashboardSubdatasets}>
         <DashboardConstraintContext.Provider
-          value={{
-            withoutTypes: [
-              DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
-              DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
-            ],
-          }}
+          value={COMPARISON_DASHBOARD_CONSTRAINT}
         >
           <GridstackDashboard
             dashboard={dashboard}
             dashboardHandlers={handlers}
           />
         </DashboardConstraintContext.Provider>
-      </DashboardGroupsContext.Provider>
+      </DashboardSubdatasetsContext.Provider>
     </Stack>
   );
 }

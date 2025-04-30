@@ -4,16 +4,15 @@ import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { useQueries } from '@tanstack/react-query';
-import { useAdaptDataProviderQueries } from './utils';
+import { useAdaptDataProviderQueries, usePrepareDataProvider } from './utils';
 import { DashboardItemModel } from '@/api/userdata';
-import { DashboardGroupsContext } from '../types/context';
 
 export const useVisualizationDescriptiveStatisticsDataProvider: BaseVisualizationDataProviderHook<
   DescriptiveStatisticsModel,
   DashboardItemModel
 > = function (config) {
   const project = React.useContext(ProjectContext);
-  const groups = React.useContext(DashboardGroupsContext);
+  const { groups } = usePrepareDataProvider(config);
   const queries = useQueries({
     queries: groups.map((group) =>
       client.queryOptions(

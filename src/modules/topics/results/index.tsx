@@ -4,6 +4,7 @@ import React from 'react';
 import { Cards, Files } from '@phosphor-icons/react';
 import TopicVisualizationRenderer from './topics';
 import { useTopicAppState } from '../app-state';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 export enum TopicsPageTab {
   Topics = 'topics',
@@ -26,11 +27,13 @@ export default function ProjectTopicResultsPage() {
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
-      {tab === TopicsPageTab.Topics ? (
-        <TopicVisualizationRenderer />
-      ) : (
-        <DocumentsPerTopicTable />
-      )}
+      <DefaultErrorViewBoundary>
+        {tab === TopicsPageTab.Topics ? (
+          <TopicVisualizationRenderer />
+        ) : (
+          <DocumentsPerTopicTable />
+        )}
+      </DefaultErrorViewBoundary>
     </Stack>
   );
 }

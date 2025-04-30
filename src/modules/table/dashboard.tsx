@@ -9,7 +9,8 @@ import {
 import { TableFilterButton } from '../filter/context';
 import {
   DashboardConstraintContext,
-  DashboardGroupsContext,
+  DashboardSubdatasetsContext,
+  DashboardSubdatasetsContextType,
 } from '../visualization/types/context';
 import UserDataManager from '../userdata';
 import React from 'react';
@@ -49,6 +50,13 @@ export function useDashboardUserDataSharedBehavior(
   };
 }
 
+const TABLE_DASHBOARD_CONSTRAINT = {
+  withoutTypes: [
+    DashboardItemTypeEnum.SubdatasetWords,
+    DashboardItemTypeEnum.Proportions,
+  ],
+};
+
 function TableDashboardUserDataManager() {
   const dashboard = useTableAppState((store) => store.dashboard.state);
   const handlers = useTableAppState((store) => store.dashboard.handlers);
@@ -69,43 +77,38 @@ export function TableDashboard() {
   const filter = useTableAppState((store) => store.params.filter);
   const setFilter = useTableAppState((store) => store.params.setFilter);
 
-  const namedData = React.useMemo(
-    () => [
-      {
-        name: 'Default',
-        filter: filter!,
-      },
-    ],
-    [filter],
-  );
+  const dashboardSubdatasets =
+    React.useMemo<DashboardSubdatasetsContextType>(() => {
+      return {
+        default: [
+          {
+            name: 'Default',
+            filter: filter!,
+          },
+        ],
+      };
+    }, [filter]);
   return (
-    <Stack>
-      <TableDashboardUserDataManager />
-      <Group justify="end">
-        <DashboardResetButton onReset={() => setDashboard([])} />
-        <TableFilterButton
-          state={{
-            filter,
-            setFilter,
-          }}
-        />
-        <AddVisualizationConfigurationButton onSubmit={append} />
-      </Group>
-      <DashboardGroupsContext.Provider value={namedData}>
-        <DashboardConstraintContext.Provider
-          value={{
-            withoutTypes: [
-              DashboardItemTypeEnum.SubdatasetWords,
-              DashboardItemTypeEnum.Proportions,
-            ],
-          }}
-        >
+    <DashboardSubdatasetsContext.Provider value={dashboardSubdatasets}>
+      <DashboardConstraintContext.Provider value={TABLE_DASHBOARD_CONSTRAINT}>
+        <Stack>
+          <TableDashboardUserDataManager />
+          <Group justify="end">
+            <DashboardResetButton onReset={() => setDashboard([])} />
+            <TableFilterButton
+              state={{
+                filter,
+                setFilter,
+              }}
+            />
+            <AddVisualizationConfigurationButton onSubmit={append} />
+          </Group>
           <GridstackDashboard
             dashboard={dashboard}
             dashboardHandlers={handlers}
           />
-        </DashboardConstraintContext.Provider>
-      </DashboardGroupsContext.Provider>
-    </Stack>
+        </Stack>
+      </DashboardConstraintContext.Provider>
+    </DashboardSubdatasetsContext.Provider>
   );
 }

@@ -7,7 +7,7 @@ import {
 import dynamic from 'next/dynamic';
 import React from 'react';
 import ComparisonFilterDrawer from './drawer';
-import { Button, Fieldset, Group, Stack, Text } from '@mantine/core';
+import { Button, Checkbox, Fieldset, Group, Stack, Text } from '@mantine/core';
 import { Eye, EyeSlash, Plus, Warning } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { ComparisonStateItemModel } from '@/api/comparison';
@@ -194,6 +194,23 @@ function ComparisonStateManagerShowHideAllButton() {
   );
 }
 
+function ComparisonStateManagerWholeDatasetCheckbox() {
+  const includeWholeDataset = useComparisonAppState(
+    (store) => store.groups.includeWholeDataset,
+  );
+  const setIncludeWholeDataset = useComparisonAppState(
+    (store) => store.groups.setIncludeWholeDataset,
+  );
+  return (
+    <Checkbox
+      label="Include whole dataset?"
+      description="You can include the whole dataset in your comparison. This may be helpful when comparing the frequency distributions of the subdatasets to the original dataset to see if there's any noticeable deviation."
+      checked={includeWholeDataset}
+      onChange={(e) => setIncludeWholeDataset(e.target.checked)}
+    />
+  );
+}
+
 export default function NamedFiltersManager() {
   const editRemote =
     React.useRef<ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null>(
@@ -211,6 +228,9 @@ export default function NamedFiltersManager() {
     <>
       <Stack>
         <ComparisonStateDataManager />
+        {comparisonGroups.length > 0 && (
+          <ComparisonStateManagerWholeDatasetCheckbox />
+        )}
         <SortableNamedTableFilterDndContext editRemote={editRemote} />
         <Group>
           <Button
@@ -243,6 +263,7 @@ export default function NamedFiltersManager() {
             onClick={() => {
               confirmationRemote.current?.open();
             }}
+            disabled={comparisonGroups.length === 0}
             variant="outline"
           >
             Reset

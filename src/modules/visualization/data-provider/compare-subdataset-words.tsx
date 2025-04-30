@@ -8,14 +8,16 @@ export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizati
   TopicModel,
   object
 > = function (item) {
-  const { groups, params } = usePrepareDataProvider(item);
+  const { groups: rawGroups, params } = usePrepareDataProvider(item);
+  const groups = rawGroups.filter((group) => !!group.filter);
   const { data, error, isFetching } = client.useQuery(
     'post',
     '/table/{project_id}/comparison/words',
     {
       body: {
         column: item.column,
-        groups,
+        // Exclude default subdataset
+        groups: groups,
       },
       params,
     },

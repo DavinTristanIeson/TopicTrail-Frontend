@@ -48,13 +48,16 @@ function TopicCheatsheetInner(props: TopicCheatsheetInnerProps) {
   }, [topicModelingResult?.result?.topics, q]);
 
   return (
-    <Stack>
+    <Stack style={{ height: '80dvh', maxHeight: '80dvh' }}>
       <TextInput
         leftSection={<MagnifyingGlass />}
         placeholder="Search for a topic by label, keyword, or tag"
         onChange={(e) => setQ(e.target.value)}
       />
-      <List className="overflow-y-auto">
+      <List
+        // overscroll-contain prevents users from scrolling the document after reaching the end of the scroll area
+        className="overflow-y-auto h-full overscroll-contain"
+      >
         {filteredTopics.map((topic) => {
           return (
             <List.Item key={topic.id}>
@@ -130,14 +133,7 @@ export default function DashboardTopicCheatsheet(
 
   return (
     <Affix bottom={16} right={16}>
-      <Card
-        className="max-w-lg"
-        style={{
-          height: opened ? '80dvh' : undefined,
-          maxHeight: opened ? '80dvh' : undefined,
-        }}
-        withBorder
-      >
+      <Card className="max-w-lg" withBorder>
         {opened && (
           <>
             <Group justify="end" className="pb-3">

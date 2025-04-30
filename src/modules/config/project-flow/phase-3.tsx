@@ -18,6 +18,7 @@ import { useWatchFieldError } from '@/components/standard/fields/watcher';
 import { ProjectSchemaTypeIcon } from '@/components/widgets/project-schema-icon';
 import { ProjectConfigPreviewTableQuery } from './preview-table';
 import { FormEditableContext } from '@/components/standard/fields/context';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 interface ProjectConfigColumnTitleProps {
   index: number;
@@ -60,25 +61,25 @@ function ProjectConfigColumnsFieldArray() {
     fields[0]?.__fieldId ?? null,
   );
 
+  const activeIndex = fields.findIndex((field) => field.__fieldId === value);
+
   return (
-    <Tabs value={value} onChange={setValue}>
-      <Tabs.List>
-        {fields.map((field, index) => (
-          <Tabs.Tab key={field.__fieldId} value={field.__fieldId}>
-            <ProjectConfigColumnTitle name={field.name} index={index} />
-          </Tabs.Tab>
-        ))}
-      </Tabs.List>
-      {fields.map((field, index) => {
-        return (
-          <Tabs.Panel key={field.__fieldId} value={field.__fieldId}>
-            {field.__fieldId === value && (
-              <ProjectConfigColumnFormItem index={index} />
-            )}
-          </Tabs.Panel>
-        );
-      })}
-    </Tabs>
+    <>
+      <Tabs value={value} onChange={setValue} allowTabDeactivation={false}>
+        <Tabs.List>
+          {fields.map((field, index) => (
+            <Tabs.Tab key={field.__fieldId} value={field.__fieldId}>
+              <ProjectConfigColumnTitle name={field.name} index={index} />
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+      </Tabs>
+      <DefaultErrorViewBoundary>
+        {activeIndex != -1 && (
+          <ProjectConfigColumnFormItem index={activeIndex} key={activeIndex} />
+        )}
+      </DefaultErrorViewBoundary>
+    </>
   );
 }
 

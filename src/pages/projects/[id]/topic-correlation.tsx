@@ -3,6 +3,7 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import NavigationRoutes from '@/common/constants/routes';
 import { NextPageWithLayout } from '@/common/utils/types';
 import { ProjectPageLinks } from '@/components/utility/links';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { ProjectContext } from '@/modules/project/context';
 import {
@@ -44,11 +45,13 @@ function TopicCorrelationTabs() {
         </Tabs.List>
       </Tabs>
       <div className="py-5">
-        {tab === TopicCorrelationPageTab.TopicsManager ? (
-          <TopicCorrelationTopicsManager />
-        ) : tab === TopicCorrelationPageTab.Dashboard ? (
-          <TopicCorrelationDashboard />
-        ) : null}
+        <DefaultErrorViewBoundary>
+          {tab === TopicCorrelationPageTab.TopicsManager ? (
+            <TopicCorrelationTopicsManager />
+          ) : tab === TopicCorrelationPageTab.Dashboard ? (
+            <TopicCorrelationDashboard />
+          ) : null}
+        </DefaultErrorViewBoundary>
       </div>
     </>
   );

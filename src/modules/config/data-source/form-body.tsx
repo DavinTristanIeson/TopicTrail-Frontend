@@ -28,6 +28,7 @@ function ProjectConfigDataSourceFormFieldSwitcher(
       <RHFField
         type="text"
         name="source.delimiter"
+        key="delimiter"
         label="Delimiter"
         placeholder=","
         description="The delimiter used to separate the columns in a CSV file. It's usually , or ;."
@@ -41,7 +42,8 @@ function ProjectConfigDataSourceFormFieldSwitcher(
     return (
       <RHFField
         type="text"
-        name="source.sheetName"
+        name="source.sheet_name"
+        key="sheetName"
         label="Sheet Name"
         description="The sheet that contains the data to be analyzed."
         required

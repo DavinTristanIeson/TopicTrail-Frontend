@@ -22,6 +22,8 @@ interface ComparisonAppStateContextType {
     handlers: UseListStateHandlers<ComparisonStateItemModel>;
     visibility: Map<string, boolean>;
     setVisibility: React.Dispatch<React.SetStateAction<Map<string, boolean>>>;
+    includeWholeDataset: boolean;
+    setIncludeWholeDataset: React.Dispatch<React.SetStateAction<boolean>>;
   };
   reset(): void;
 }
@@ -38,6 +40,8 @@ export default function ComparisonAppStateProvider(
   const [groupVisibility, setGroupVisibility] = React.useState<
     Map<string, boolean>
   >(new Map());
+  const [includeWholeDataset, setIncludeWholeDataset] =
+    React.useState<boolean>(false);
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
 
   React.useEffect(() => {
@@ -63,6 +67,8 @@ export default function ComparisonAppStateProvider(
           setVisibility: setGroupVisibility,
           state: groups,
           handlers: groupHandlers,
+          includeWholeDataset,
+          setIncludeWholeDataset,
         },
         dashboard: {
           state: dashboard,

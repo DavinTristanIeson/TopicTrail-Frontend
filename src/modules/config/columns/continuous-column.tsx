@@ -127,28 +127,30 @@ export function ProjectConfigColumnContinuousForm(
         that you can now use analysis methods for ordered categorical columns on
         the bins.
       </Alert>
-      <Spoiler
-        hideLabel={'Hide Descriptive Statistics'}
-        showLabel={'Show Descriptive Statistics'}
-        maxHeight={100}
-      >
-        <Text fw="bold" ta="center">
-          Descriptive Statistics of this Column
-        </Text>
-        <DescriptiveStatisticsTableComponent
-          loading={loading}
-          data={
-            column?.descriptive_statistics
-              ? [
-                  {
-                    name: columnName,
-                    data: column.descriptive_statistics,
-                  },
-                ]
-              : []
-          }
-        />
-      </Spoiler>
+      {column?.descriptive_statistics && (
+        <Spoiler
+          hideLabel={'Hide Descriptive Statistics'}
+          showLabel={'Show Descriptive Statistics'}
+          maxHeight={100}
+        >
+          <Text fw="bold" ta="center">
+            Descriptive Statistics of this Column
+          </Text>
+          <DescriptiveStatisticsTableComponent
+            loading={loading}
+            data={
+              column?.descriptive_statistics
+                ? [
+                    {
+                      name: columnName,
+                      data: column.descriptive_statistics,
+                    },
+                  ]
+                : []
+            }
+          />
+        </Spoiler>
+      )}
       {isUsingBinCount && (
         <RHFField
           name="bin_count"
