@@ -26,6 +26,7 @@ import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configurat
 import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
 import { VisualizationConfigEntry } from '../types/base';
 import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
+import { FreezeWhenNotVisible } from '@/components/utility/rendering';
 
 interface DashboardItemRendererInternalProps {
   item: DashboardItemModel;
@@ -104,7 +105,11 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
   }
   if (!shouldRender) return;
   return (
-    <div className="relative">
+    <FreezeWhenNotVisible
+      containerProps={{
+        className: 'relative',
+      }}
+    >
       <DashboardItemRendererInternal
         config={dashboardConfig}
         item={{
@@ -112,7 +117,7 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
           config: dashboardItemInternalConfig,
         }}
       />
-    </div>
+    </FreezeWhenNotVisible>
   );
 }
 
