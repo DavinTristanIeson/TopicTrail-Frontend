@@ -50,17 +50,22 @@ export function VisualizationWordCloudRenderer(
       words.slice(0, maxWordsPerGroup),
     );
 
-    return limitedGroupedWords.flatMap((words) => {
-      const maxValue = words.reduce((acc, cur) => Math.max(acc, cur.value), 0);
-      return words.map((word) => {
-        const proportion = word.value / maxValue;
-        return {
-          ...word,
-          value: proportion,
-          significance: word.value,
-        } as VisualizationInternalWordCloudItem;
-      });
-    });
+    return limitedGroupedWords
+      .flatMap((words) => {
+        const maxValue = words.reduce(
+          (acc, cur) => Math.max(acc, cur.value),
+          0,
+        );
+        return words.map((word) => {
+          const proportion = word.value / maxValue;
+          return {
+            ...word,
+            value: proportion,
+            significance: word.value,
+          } as VisualizationInternalWordCloudItem;
+        });
+      })
+      .sort((a, b) => a.value - b.value);
   }, [words]);
 
   return (
@@ -105,6 +110,8 @@ export function VisualizationWordCloudRenderer(
               deterministic: true,
               rotations: 0,
               fontSizes: [24, 64],
+              enableOptimizations: true,
+              scale: 'linear',
             }}
           />
         </div>

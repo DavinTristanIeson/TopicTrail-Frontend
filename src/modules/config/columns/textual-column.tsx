@@ -27,6 +27,8 @@ function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
     <Select
       value={field.value}
       onChange={field.onChange}
+      // Disabled for now. We don't allow users to change method.
+      disabled
       data={[
         {
           label: 'Doc2Vec',
@@ -264,28 +266,30 @@ export function ProjectConfigColumnTextualForm(
 
   return (
     <Stack>
-      <Spoiler
-        hideLabel={'Hide Descriptive Statistics'}
-        showLabel={'Show Descriptive Statistics'}
-        maxHeight={100}
-      >
-        <Text fw="bold" ta="center">
-          Descriptive Statistics (of Document Lengths)
-        </Text>
-        <DescriptiveStatisticsTableComponent
-          loading={loading}
-          data={
-            column?.descriptive_statistics
-              ? [
-                  {
-                    name: columnName,
-                    data: column?.descriptive_statistics,
-                  },
-                ]
-              : []
-          }
-        />
-      </Spoiler>
+      {column?.descriptive_statistics && (
+        <Spoiler
+          hideLabel={'Hide Descriptive Statistics'}
+          showLabel={'Show Descriptive Statistics'}
+          maxHeight={100}
+        >
+          <Text fw="bold" ta="center">
+            Descriptive Statistics (of Document Lengths)
+          </Text>
+          <DescriptiveStatisticsTableComponent
+            loading={loading}
+            data={
+              column?.descriptive_statistics
+                ? [
+                    {
+                      name: columnName,
+                      data: column?.descriptive_statistics,
+                    },
+                  ]
+                : []
+            }
+          />
+        </Spoiler>
+      )}
       <PreprocessingConfigurationFormBody {...props} />
       <Divider />
       <TopicModelingConfigurationFormBody {...props} />

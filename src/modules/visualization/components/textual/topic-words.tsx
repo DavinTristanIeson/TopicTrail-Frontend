@@ -18,8 +18,6 @@ export function VisualizationTopicWordsComponent(
 
   const topicModelingResult = useTopicModelingResultOfColumn(item.column);
 
-  const [topic, setTopic] = React.useState<TopicModel | null>(null);
-
   const {
     Component,
     viewedData,
@@ -36,6 +34,10 @@ export function VisualizationTopicWordsComponent(
       ) ?? []
     );
   }, [topicModelingResult?.result?.topics, viewedData]);
+
+  const [topic, setTopic] = React.useState<TopicModel | null>(
+    topics?.[0] ?? null,
+  );
 
   const inputContainer = useSelectLeftRightButtons({
     options: topics,
@@ -76,7 +78,9 @@ export function VisualizationTopicWordsComponent(
       <VisualizationWordCloudRenderer
         words={topicWords}
         title={
-          topic ? `Topic Words of ${getTopicLabel(topic!)}` : 'View Topic Words'
+          topic
+            ? `Tuned Topic Words of ${getTopicLabel(topic!)}`
+            : 'View Topic Words'
         }
         groups={subdatasetNames}
         noDataPlaceholder="Choose a topic to get started"

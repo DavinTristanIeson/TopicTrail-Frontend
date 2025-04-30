@@ -8,6 +8,7 @@ import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
 import { showNotification } from '@mantine/notifications';
 import { queryClient } from '@/common/api/query-client';
 import { client } from '@/common/api/client';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 export default function ProjectTopicsEmptyPage() {
   const project = React.useContext(ProjectContext);
@@ -50,8 +51,10 @@ export default function ProjectTopicsEmptyPage() {
   }, [column.name, progress?.data, project.id, topicModelingActions]);
   return (
     <Stack className="pb-8">
-      <ProjectTopicsEmptyPageControls {...topicModelingActions} />
-      <TopicModelingProgressLogs {...topicModelingActions} />
+      <DefaultErrorViewBoundary>
+        <ProjectTopicsEmptyPageControls {...topicModelingActions} />
+        <TopicModelingProgressLogs {...topicModelingActions} />
+      </DefaultErrorViewBoundary>
     </Stack>
   );
 }

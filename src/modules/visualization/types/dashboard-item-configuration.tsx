@@ -255,7 +255,7 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     type: DashboardItemTypeEnum.TopicWords,
     label: 'Topic Words',
     description:
-      'Show the topic words for each subdataset. The significance (c-TF-IDF score) of the topic words has been adjusted according to the words that appear in the subdataset, so you can treat this as class-based and/or dynamic topic modeling.',
+      'Show the topic words for each subdataset. The significance (c-TF-IDF score) of the topic words has been adjusted according to the words that appear in the subdataset, so you can treat this as class-based and/or dynamic topic modeling. For example: a topic about hotel services may have different words to describe said topic in the 1990s and in the 2020s (e.g.: the word "wifi" is not likely to appear in the 1990s).',
     component: VisualizationTopicWordsComponent,
     dataProvider: useVisualizationTopicWordsDataProvider,
     configForm: null,

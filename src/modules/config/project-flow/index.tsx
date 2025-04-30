@@ -6,6 +6,7 @@ import ConfigureProjectFlow_ConfigureColumns from './phase-3';
 import { Lock } from '@phosphor-icons/react';
 import { FormEditableContext } from '@/components/standard/fields/context';
 import { ErrorAlert } from '@/components/standard/fields/watcher';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 interface ProjectConfigFormPhaseSwitcherProps {
   hasData?: boolean;
@@ -55,20 +56,22 @@ export default function ProjectConfigFormPhaseSwitcher(
       )}
       <div className="flex flex-col items-center pt-5">
         <div className="max-w-5xl px-3">
-          {phase === 0 ? (
-            <ConfigureProjectFlow_CheckProjectId onContinue={onContinue} />
-          ) : phase === 1 ? (
-            <ConfigureProjectFlow_CheckDataset
-              onContinue={onContinue}
-              onBack={onBack}
-              hasData={hasData}
-            />
-          ) : (
-            <ConfigureProjectFlow_ConfigureColumns
-              onBack={onBack}
-              hasData={hasData}
-            />
-          )}
+          <DefaultErrorViewBoundary>
+            {phase === 0 ? (
+              <ConfigureProjectFlow_CheckProjectId onContinue={onContinue} />
+            ) : phase === 1 ? (
+              <ConfigureProjectFlow_CheckDataset
+                onContinue={onContinue}
+                onBack={onBack}
+                hasData={hasData}
+              />
+            ) : (
+              <ConfigureProjectFlow_ConfigureColumns
+                onBack={onBack}
+                hasData={hasData}
+              />
+            )}
+          </DefaultErrorViewBoundary>
         </div>
       </div>
     </>

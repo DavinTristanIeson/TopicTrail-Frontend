@@ -5,13 +5,8 @@ import { zip } from 'lodash-es';
 import { NamedTableFilterModel } from '@/api/comparison';
 import React from 'react';
 import { ProjectContext } from '@/modules/project/context';
-import {
-  DashboardConstraintContext,
-  DashboardGroupsContext,
-} from '../types/context';
+import { useDashboardSubdatasets } from '../types/context';
 import { DashboardItemModel } from '@/api/userdata';
-import { useContextSelector } from 'use-context-selector';
-import { TableFilterModel } from '@/api/table';
 import { findProjectColumn } from '@/api/project';
 
 interface UseAdaptDataProviderQueriesParams<TQuery, TData> {
@@ -39,31 +34,19 @@ export function useAdaptDataProviderQueries<TQuery, TData>(
 
 export function usePrepareDataProvider(props: DashboardItemModel) {
   const project = React.useContext(ProjectContext);
-  const groups = React.useContext(DashboardGroupsContext);
-  const shouldUseWholeDataset = useContextSelector(
-    DashboardConstraintContext,
-    (store) => store.shouldUseWholeDataset,
-  );
   const column = findProjectColumn(project, props.column);
-  const defaultGroup = React.useMemo(
-    () => [
-      {
-        name: 'Default',
-        // Intentional
-        filter: null as unknown as TableFilterModel,
-      },
-    ],
-    [],
-  );
   if (!column) {
-    throw Error(
+    throw new Error(
       `Oops, we weren't able to find this column: ${props.column}. Perhaps this dashboard item is associated with an old dataset version.`,
     );
   }
+  const groups = useDashboardSubdatasets(props, column);
+  if (groups.length === 0) {
+    throw new Error(`Provide at least one subdataset to be analyzed.`);
+  }
   return {
     column,
-    groups:
-      (shouldUseWholeDataset?.(props, column) ? defaultGroup : groups) ?? [],
+    groups,
     project,
     params: {
       path: {
