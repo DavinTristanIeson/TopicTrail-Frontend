@@ -1,10 +1,13 @@
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { Alert, Title } from '@mantine/core';
+import { Alert, Input, Slider, Title } from '@mantine/core';
 import { XCircle } from '@phosphor-icons/react';
 import chroma from 'chroma-js';
-import { groupBy } from 'lodash-es';
+import { groupBy, max } from 'lodash-es';
 import React from 'react';
 import ReactWordcloud from 'react-wordcloud';
+import { useDebouncedValue } from '@mantine/hooks';
+import { NamedData } from '../../types/base';
+import type { PlotParams } from 'react-plotly.js';
 
 export interface VisualizationWordCloudItem {
   text: string;
@@ -21,13 +24,14 @@ interface VisualizationWordCloudRendererProps {
   words: VisualizationWordCloudItem[] | undefined;
   title: string;
   noDataPlaceholder: string;
+  valueLabel: string;
   groups?: string[];
 }
 
 export function VisualizationWordCloudRenderer(
   props: VisualizationWordCloudRendererProps,
 ) {
-  const { words, title, noDataPlaceholder, groups } = props;
+  const { words, title, noDataPlaceholder, groups, valueLabel } = props;
 
   const colorMap = React.useMemo(() => {
     if (!groups) return undefined;
@@ -98,7 +102,7 @@ export function VisualizationWordCloudRenderer(
               },
               getWordTooltip: (rawWord) => {
                 const word = rawWord as VisualizationInternalWordCloudItem;
-                const additionalInfo = [`Value: ${word.significance}`];
+                const additionalInfo = [`${valueLabel}: ${word.significance}`];
                 if (word.group) {
                   additionalInfo.push(`Group: ${word.group}`);
                 }
@@ -126,4 +130,101 @@ export function VisualizationWordCloudRenderer(
       )}
     </>
   );
+}
+
+export function useTopNWordsSlider() {
+  const [topNWords, setTopNWords] = React.useState(5);
+  const [debouncedTopNWords] = useDebouncedValue(topNWords, 1000, {
+    leading: false,
+  });
+  const Component = (
+    <Input.Wrapper
+      label="Show top N words"
+      description="This value determines how many words are shown at once in this plot. Please note that having too many words on screen may make it harder for you to understand the topics. Usually 5 - 10 keywords are enough to represent the meaning of a topic."
+    >
+      <Slider
+        min={3}
+        max={50}
+        defaultValue={topNWords}
+        onChange={setTopNWords}
+        step={1}
+        maw={512}
+        label={`Show top ${topNWords} Words`}
+      />
+    </Input.Wrapper>
+  );
+  return { topNWords: debouncedTopNWords, setTopNWords, Component };
+}
+
+interface UseVisualizationWordBarChartPlot {
+  data: NamedData<[string, number][]>[] | null;
+  topNWords: number;
+  title: string;
+  valueLabel: string;
+}
+
+export function useVisualizationWordBarChartPlot(
+  props: UseVisualizationWordBarChartPlot,
+) {
+  const { data, topNWords, title, valueLabel } = props;
+
+  const maxX = React.useMemo(() => {
+    return (
+      max(data?.map((words) => max(words.data.map((word) => word[1])))) ?? 0
+    );
+  }, [data]);
+
+  const plot = React.useMemo<PlotParams | undefined>(() => {
+    if (!data) return undefined;
+    const subplots: PlotParams['data'] = [];
+    const { colors } = generateColorsFromSequence(
+      data.map((item) => item.name),
+    );
+    const layouts: any = {};
+    for (let i = 0; i < data.length; i++) {
+      const color = colors[i]!;
+      const focusedData = data[i]!;
+      const words = focusedData.data.slice(0, topNWords);
+      const y = words.map((word) => word[0]);
+      const x = words.map((word) => word[1]);
+      y.reverse();
+      x.reverse();
+      subplots.push({
+        x,
+        y,
+        name: focusedData.name,
+        type: 'bar',
+        orientation: 'h',
+        hovertemplate: `<b>Word</b>: %{y}<br><b>${valueLabel}</b>: %{x}<br>`,
+        xaxis: `x${i + 1}`,
+        yaxis: `y${i + 1}`,
+        marker: {
+          color,
+        },
+      });
+      layouts[i === 0 ? 'xaxis' : `xaxis${i + 1}`] = {
+        minallowed: 0,
+        title: focusedData.name,
+        range: [0, maxX],
+      };
+    }
+    const rows = Math.ceil(subplots.length / 3);
+    return {
+      data: subplots,
+      layout: {
+        title: {
+          text: title,
+        },
+        height: 400 * rows,
+        grid: {
+          rows,
+          columns: 3,
+          pattern: 'independent',
+        },
+        ...layouts,
+      },
+    };
+  }, [data, maxX, title, topNWords, valueLabel]);
+
+  return plot;
 }

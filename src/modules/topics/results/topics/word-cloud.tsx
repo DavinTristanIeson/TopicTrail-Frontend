@@ -40,6 +40,7 @@ export function TopicVisualizationWordCloudRenderer(
             value: word[1],
           };
         })}
+        valueLabel="C-TF-IDF Score"
         title={
           topic ? `Topic Words of ${getTopicLabel(topic!)}` : 'View Topic Words'
         }

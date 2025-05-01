@@ -1,6 +1,6 @@
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { BaseVisualizationComponentProps } from '../../types/base';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
 import {

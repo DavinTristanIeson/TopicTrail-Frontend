@@ -5,7 +5,7 @@ import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
 import { MultiSelect, Select, Stack } from '@mantine/core';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import { fromPairs, max } from 'lodash-es';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
 import {

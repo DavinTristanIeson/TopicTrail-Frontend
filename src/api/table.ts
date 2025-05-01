@@ -52,7 +52,7 @@ export type VisualizationAggregateValuesModel =
   components['schemas']['TableColumnAggregateValuesResource'];
 export type VisualizationGeographicalPointsModel =
   components['schemas']['TableColumnGeographicalPointsResource'];
-export type VisualizationWordsModel =
-  components['schemas']['TableWordsResource'];
+export type VisualizationTableWordFrequenciesModel =
+  components['schemas']['TableWordFrequenciesResource'];
 
 export type PaginationParams = components['schemas']['PaginationParams'];

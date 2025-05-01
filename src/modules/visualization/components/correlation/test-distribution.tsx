@@ -1,7 +1,7 @@
 import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../configuration/test-distribution';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import { MultiSelect, Stack, useMantineTheme } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnDistributionMainModel } from '@/api/correlation';
 import { generateColorsFromSequence } from '@/common/utils/colors';

@@ -1,7 +1,7 @@
 import { VisualizationFrequencyDistributionModel } from '@/api/table';
 import { BaseVisualizationComponentProps } from '../../types/base';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import {
