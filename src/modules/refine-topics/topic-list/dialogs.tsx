@@ -11,7 +11,6 @@ import { Alert, Button, Drawer, Group, Modal } from '@mantine/core';
 import { FloppyDisk, Info } from '@phosphor-icons/react';
 import dynamic from 'next/dynamic';
 import { ListSkeleton } from '@/components/visual/loading';
-import { pickArrayById } from '@/common/utils/iterable';
 import TopicUpdateForm from './topic-update';
 
 export const UpdateTopicLabelDialog =
@@ -98,17 +97,7 @@ function SortTopicsDrawerBody(props: SortTopicsDrawerBodyProps) {
           </Button>
         </Group>
       </Drawer.Header>
-      <SortableTopicDndContext
-        topics={sortState}
-        setTopicIds={(ids) => {
-          const sortedTopics = pickArrayById(
-            sortState,
-            ids,
-            (topic) => topic.id,
-          );
-          setSortState(sortedTopics);
-        }}
-      />
+      <SortableTopicDndContext topics={sortState} setTopics={setSortState} />
     </>
   );
 }

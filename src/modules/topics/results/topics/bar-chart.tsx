@@ -3,22 +3,19 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
 import { zip } from 'lodash-es';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
-import { Alert, Anchor, Input, Select, Slider, Stack } from '@mantine/core';
+import { Alert, Anchor, Select, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import { useDebouncedValue } from '@mantine/hooks';
 import { TopicVisualizationRendererProps } from './data-providers';
 import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/configuration';
+import { useTopNWordsSlider } from '@/modules/visualization/components/textual/renderer';
 
 export function TopicWordsBarChartRenderer(
   props: TopicVisualizationRendererProps,
 ) {
   const { data, column } = props;
-  const [topNWords, setTopNWords] = React.useState(5);
-  const [debouncedTopNWords] = useDebouncedValue(topNWords, 500, {
-    leading: false,
-  });
+  const { topNWords, Component: TopNWordsSlider } = useTopNWordsSlider();
   const plot: PlotParams = React.useMemo(() => {
     const subplots: PlotParams['data'] = [];
     const topics = data.map((item) => item.topic);
@@ -37,7 +34,7 @@ export function TopicWordsBarChartRenderer(
     for (let i = 0; i < topics.length; i++) {
       const color = colors[i];
       const topic = topics[i]!;
-      const topicWords = topic.words.slice(0, debouncedTopNWords);
+      const topicWords = topic.words.slice(0, topNWords);
       const y = topicWords.map((word) => word[0]);
       const x = topicWords.map((word) => word[1]);
       y.reverse();
@@ -48,7 +45,7 @@ export function TopicWordsBarChartRenderer(
         name: getTopicLabel(topic),
         type: 'bar',
         orientation: 'h',
-        hovertemplate: `<b>Topic</b>: %{y}<br><b>Significance</b>: %{x}<br>`,
+        hovertemplate: `<b>Word</b>: %{y}<br><b>C-TF-IDF</b>: %{x}<br>`,
         xaxis: `x${i + 1}`,
         yaxis: `y${i + 1}`,
         marker: {
@@ -77,24 +74,10 @@ export function TopicWordsBarChartRenderer(
         ...layouts,
       },
     };
-  }, [column.name, data, debouncedTopNWords]);
+  }, [column.name, data, topNWords]);
   return (
     <Stack>
-      <Input.Wrapper
-        label="Show top N words"
-        description="This value determines how many words are shown at once in this plot. Please note that having too many words on screen may make it harder for you to understand the topics. Usually 5 - 10 keywords are enough to represent the meaning of a topic."
-      >
-        <Slider
-          min={3}
-          max={50}
-          defaultValue={topNWords}
-          onChange={setTopNWords}
-          step={1}
-          maw={512}
-          label={`Show top ${topNWords} Words`}
-        />
-      </Input.Wrapper>
-
+      {TopNWordsSlider}
       <Alert color="blue" icon={<Info />}>
         The &quot;significance&quot; in question is the c-TF-IDF score of each
         word. This score represents how much this word uniquely identifies this
@@ -108,7 +91,7 @@ export function TopicWordsBarChartRenderer(
         </Anchor>
         .
       </Alert>
-      <PlotRenderer plot={plot} />
+      <PlotRenderer plot={plot} scrollZoom={false} />
     </Stack>
   );
 }

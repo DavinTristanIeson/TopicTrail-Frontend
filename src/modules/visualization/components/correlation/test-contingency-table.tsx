@@ -1,8 +1,8 @@
 import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../configuration/test-distribution';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
-import { MultiSelect, Stack } from '@mantine/core';
+import type { PlotParams } from 'react-plotly.js';
+import { Alert, MultiSelect, Stack } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnContingencyTableMainModel } from '@/api/correlation';
 import PlotRenderer from '@/components/widgets/plotly';
 
@@ -19,6 +19,7 @@ import {
 } from '../configuration';
 import { max } from 'lodash-es';
 import { plotlyWrapText } from '../utils';
+import { Warning } from '@phosphor-icons/react';
 
 export default function VisualizationBinaryStatisticTestOnContingencyTable(
   props: BaseVisualizationComponentProps<
@@ -77,10 +78,15 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         !filterFrequency(result.frequency)
       );
     });
+    const isAllInvalid = invalid.every((row) => row.every((col) => col));
     const rowIndices = indexRows(rows);
     const columnIndices = indexColumns(columns);
     const process = (arr: number[][]) =>
-      sort2D(mask2D(arr, invalid, 0), rowIndices, columnIndices);
+      sort2D(
+        mask2D(arr, invalid, undefined),
+        rowIndices,
+        columnIndices,
+      ) as number[][];
     const effectSizes = map2D(
       data.results,
       (result) => result.effect_size.value,
@@ -145,6 +151,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       hovertemplate,
       effectSizeMethodConstraints,
       process,
+      isAllInvalid,
     };
   }, [
     data,
@@ -166,16 +173,26 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: process(frequencies),
+          z: map2D(process(frequencies), (value) => value ?? 0),
+          texttemplate: '%{z}',
+          hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
         },
       ],
       layout: {
         title: `Frequencies of ${item.column}`,
+        yaxis: {
+          title: item.column,
+          automargin: true,
+        },
+        xaxis: {
+          title: item.config.target,
+          automargin: true,
+        },
       },
     };
-  }, [columns, item.column, rows, values]);
+  }, [columns, item.column, item.config.target, rows, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
     const {
@@ -193,7 +210,9 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           x: columns,
           y: rows,
           z: process(effectSizes),
+          texttemplate: '%{z:.3f}',
           colorscale: 'RdBu',
+          hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
           ...effectSizeMethodConstraints,
@@ -201,6 +220,14 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       ],
       layout: {
         title: `Effect Sizes of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
+        yaxis: {
+          title: item.column,
+          automargin: true,
+        },
+        xaxis: {
+          title: item.config.target,
+          automargin: true,
+        },
       },
     };
   }, [columns, item, rows, values]);
@@ -215,6 +242,8 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           x: columns,
           y: rows,
           z: process(confidences),
+          texttemplate: '%{z:.3f}',
+          hoverongaps: false,
           colorscale: 'Greens',
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
@@ -224,6 +253,14 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       ],
       layout: {
         title: `Confidence Level of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
+        yaxis: {
+          title: item.column,
+          automargin: true,
+        },
+        xaxis: {
+          title: item.config.target,
+          automargin: true,
+        },
       },
     };
   }, [columns, item, rows, values]);
@@ -236,6 +273,8 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
   } else {
     usedPlot = effectSizesPlot;
   }
+
+  const plotProps = usePlotRendererHelperProps(item);
   return (
     <Stack>
       <PlotInlineConfiguration>
@@ -258,9 +297,16 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         column2={item.config.target}
         effectSize={data.effect_size}
         significance={data.significance}
-        warnings={data.warnings}
+        warnings={[]}
       />
-      <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
+      {values.isAllInvalid ? (
+        <Alert color="yellow" icon={<Warning />}>
+          Your filters are too strict. Try choosing a few rows/columns,
+          increasing the alpha constraint, or lowering the min. frequency.
+        </Alert>
+      ) : (
+        <PlotRenderer plot={usedPlot} {...plotProps} scrollZoom={false} />
+      )}
     </Stack>
   );
 }

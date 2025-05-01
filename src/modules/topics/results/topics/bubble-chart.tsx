@@ -3,7 +3,7 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
 import { zip } from 'lodash-es';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { TopicVisualizationRendererProps } from './data-providers';
 

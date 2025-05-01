@@ -2,7 +2,7 @@ import { Skeleton } from '@mantine/core';
 import { mergeWith } from 'lodash-es';
 import dynamic from 'next/dynamic';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 
 const Plot = dynamic(() => import('react-plotly.js'), {
   ssr: false,
@@ -14,9 +14,10 @@ const Plot = dynamic(() => import('react-plotly.js'), {
 interface PlotRendererProps {
   plot: PlotParams;
   height?: number;
+  scrollZoom?: boolean;
 }
 export default function PlotRenderer(props: PlotRendererProps) {
-  const { plot, height } = props;
+  const { plot, height, scrollZoom = true } = props;
 
   return (
     <Plot
@@ -36,7 +37,7 @@ export default function PlotRenderer(props: PlotRendererProps) {
         plot.layout,
       )}
       config={{
-        scrollZoom: true,
+        scrollZoom,
         autosizable: true,
         responsive: true,
         displaylogo: false,

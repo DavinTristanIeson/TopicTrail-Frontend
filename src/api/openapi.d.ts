@@ -820,9 +820,9 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[TableWordsResource] */
-        ApiResult_TableWordsResource_: {
-            data: components["schemas"]["TableWordsResource"];
+        /** ApiResult[TableWordFrequenciesResource] */
+        ApiResult_TableWordFrequenciesResource_: {
+            data: components["schemas"]["TableWordFrequenciesResource"];
             /** Message */
             message: string | null;
         };
@@ -1750,21 +1750,15 @@ export interface components {
             /** Topics */
             topics: components["schemas"]["Topic"][];
         };
-        /** TableWordItemResource */
-        TableWordItemResource: {
-            /** Group */
-            group: number;
-            /** Word */
-            word: string;
-            /** Size */
-            size: number;
-        };
-        /** TableWordsResource */
-        TableWordsResource: {
+        /** TableWordFrequenciesResource */
+        TableWordFrequenciesResource: {
             /** Column */
             column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"];
             /** Words */
-            words: components["schemas"]["TableWordItemResource"][];
+            words: [
+                string,
+                number
+            ][];
         };
         /** TaskLog */
         TaskLog: {
@@ -3629,7 +3623,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_TableWordsResource_"];
+                    "application/json": components["schemas"]["ApiResult_TableWordFrequenciesResource_"];
                 };
             };
             /** @description Bad Request */

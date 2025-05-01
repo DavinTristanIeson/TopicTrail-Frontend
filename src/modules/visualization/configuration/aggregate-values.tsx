@@ -29,7 +29,7 @@ export type VisualizationAggregateValuesConfigType = Yup.InferType<
   typeof VisualizationAggregateValuesConfigSchema
 >;
 
-export const AGGREGATION_METHOD_DICTIONARY = {
+export const VISUALIZATION_AGGREGATION_METHOD_DICTIONARY = {
   [TableColumnAggregateMethodEnum.Sum]: {
     value: TableColumnAggregateMethodEnum.Sum,
     label: 'Sum',
@@ -70,7 +70,7 @@ export function AggregateMethodSelectInput() {
       label="Aggregation Method"
       description="Once the data has been grouped, how are they combined into a single value?"
       className="flex-1"
-      data={Object.values(AGGREGATION_METHOD_DICTIONARY)}
+      data={Object.values(VISUALIZATION_AGGREGATION_METHOD_DICTIONARY)}
       required
       allowDeselect={false}
     />

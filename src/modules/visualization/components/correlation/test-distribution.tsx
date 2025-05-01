@@ -1,7 +1,7 @@
 import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../configuration/test-distribution';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import { MultiSelect, Stack, useMantineTheme } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnDistributionMainModel } from '@/api/correlation';
 import { generateColorsFromSequence } from '@/common/utils/colors';
@@ -196,15 +196,20 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
         },
       ],
       layout: {
-        title: `Frequencies of ${item.column}`,
+        title: `Frequencies of ${item.config.target} Grouped by ${item.column}`,
         barmode: 'stack',
         yaxis: {
           minallowed: 0,
+          title: 'Frequency',
+        },
+        xaxis: {
+          title: item.config.target,
         },
       },
     };
   }, [
     item.column,
+    item.config.target,
     mantineColors.gray,
     mantineColors.green,
     mantineColors.red,
@@ -238,6 +243,10 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
         title: `Effect Sizes of How ${item.column} Affects ${item.config.target}`,
         yaxis: {
           ...effectSizeMethodYAxis,
+          title: 'Effect Size',
+        },
+        xaxis: {
+          title: item.config.target,
         },
       },
     };
@@ -271,6 +280,10 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
           range: [0, 100],
           minallowed: 0,
           ticksuffix: '%',
+          title: 'Confidence Level',
+        },
+        xaxis: {
+          title: item.config.target,
         },
       },
     };

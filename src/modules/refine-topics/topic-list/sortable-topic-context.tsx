@@ -9,18 +9,22 @@ import {
 import { TopicWordsRenderer } from '@/modules/topics/components/info';
 import { TopicUpdateFormType } from '../form-type';
 
-interface ReorderCategoryOrderDndContextProps {
+interface ReorderTopicOrderDndContextProps {
   topics: TopicUpdateFormType[];
-  setTopicIds(ids: number[]): void;
+  setTopics: React.Dispatch<React.SetStateAction<TopicUpdateFormType[]>>;
 }
 
-export default function ReorderCategoryOrderDndContext(
-  props: ReorderCategoryOrderDndContextProps,
+function accessTopicIdentifier(item: TopicUpdateFormType) {
+  return item.id.toString();
+}
+
+export default function ReorderTopicOrderDndContext(
+  props: ReorderTopicOrderDndContextProps,
 ) {
-  const { topics, setTopicIds } = props;
+  const { topics, setTopics } = props;
 
   const { id, grid, gridElements } = useControlledGridstack({
-    gridItems: topics.map((topic) => topic.id.toString()),
+    gridItems: topics.map(accessTopicIdentifier),
     options: {
       ...SortableGridStackDefaultOptions({
         itemsCount: topics.length,
@@ -28,13 +32,11 @@ export default function ReorderCategoryOrderDndContext(
       cellHeight: 100,
     },
   });
+
   useSortableGridStack({
     grid,
-    onSort(gridItemIds) {
-      setTopicIds(
-        gridItemIds.map((id) => parseInt(id)).filter((id) => !isNaN(id)),
-      );
-    },
+    setValues: setTopics,
+    getId: accessTopicIdentifier,
   });
 
   return (

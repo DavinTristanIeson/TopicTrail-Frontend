@@ -6,6 +6,7 @@ import {
   useControlledGridstack,
   useSortableGridStack,
 } from '@/hooks/gridstack';
+import { identity } from 'lodash-es';
 
 interface ReorderCategoryOrderDndContextProps {
   categories: string[];
@@ -23,9 +24,11 @@ export default function ReorderCategoryOrderDndContext(
       itemsCount: categories.length,
     }),
   });
+
   useSortableGridStack({
     grid,
-    onSort: setCategories,
+    setValues: setCategories,
+    getId: identity,
   });
 
   return (

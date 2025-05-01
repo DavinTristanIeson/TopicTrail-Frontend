@@ -2,7 +2,7 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
 import { groupBy, zip } from 'lodash-es';
 import React from 'react';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import { useTopicModelingResultOfColumn } from '../../components/context';
 import { useMantineTheme } from '@mantine/core';
 import { DocumentTopicsVisualizationRendererProps } from './data-providers';

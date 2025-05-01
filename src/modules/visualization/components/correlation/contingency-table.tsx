@@ -5,7 +5,7 @@ import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
 import { MultiSelect, Select, Stack } from '@mantine/core';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
-import { PlotParams } from 'react-plotly.js';
+import type { PlotParams } from 'react-plotly.js';
 import { fromPairs, max } from 'lodash-es';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
 import {
@@ -14,6 +14,7 @@ import {
   usePlotRendererHelperProps,
   useVisualizationMinFrequencySlider,
 } from '../configuration';
+import { getBalancedHeatmapZRange } from '../configuration/heatmap';
 
 enum ContingencyTableVisualizationMethod {
   Observed = 'observed',
@@ -153,45 +154,53 @@ function VisualizationContingencyTableHeatmapInner(
       hovertemplates.push(`<b>${entry.hoverLabel}</b>: %{customdata[${i}]}`);
     }
 
-    let maxZ = 0;
-    let minZ = 0;
-    for (const row of usedValue) {
-      for (const col of row) {
-        maxZ = Math.max(col, maxZ);
-        minZ = Math.min(col, minZ);
-      }
-    }
-
     const invalidFrequencyMask = map2D(
       data.observed,
       (x) => !filterFrequency(x),
     );
 
+    const [minZ, maxZ] = getBalancedHeatmapZRange(usedValue);
+
     return {
       data: [
         {
           type: 'heatmap',
+          texttemplate:
+            method === ContingencyTableVisualizationMethod.Observed
+              ? '%{z}'
+              : '%{z:.3f}',
           x: columns,
           y: rows,
           z: mask2D(usedValue, invalidFrequencyMask, 0),
           customdata: customdata as any,
           hovertemplate: hovertemplates.join('<br>'),
           colorscale: colorscale[method]!,
-          zmin: minZ / 2,
-          zmax: maxZ / 2,
+          zmin: minZ,
+          zmax: maxZ,
         },
       ],
       layout: {
         title: usedTitle,
         yaxis: {
+          title: item.column,
           automargin: true,
         },
         xaxis: {
+          title: item.config.target,
           automargin: true,
         },
       },
     };
-  }, [columns, data, indexColumns, indexRows, method, rows, filterFrequency]);
+  }, [
+    rows,
+    columns,
+    data,
+    method,
+    item,
+    indexRows,
+    indexColumns,
+    filterFrequency,
+  ]);
 
   const plotProps = usePlotRendererHelperProps(item);
 
@@ -217,7 +226,7 @@ function VisualizationContingencyTableHeatmapInner(
         />
         {FrequencySlider}
       </PlotInlineConfiguration>
-      {plot && <PlotRenderer plot={plot} {...plotProps} />}
+      {plot && <PlotRenderer plot={plot} {...plotProps} scrollZoom={false} />}
     </Stack>
   );
 }

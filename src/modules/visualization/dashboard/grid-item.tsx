@@ -21,7 +21,7 @@ import {
   Warning,
   X,
 } from '@phosphor-icons/react';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { DASHBOARD_ITEM_CONFIGURATION } from '../types/dashboard-item-configuration';
 import { DashboardItemTypeEnum } from '../types/dashboard-item-types';
 import { VisualizationConfigEntry } from '../types/base';
@@ -55,7 +55,9 @@ function DashboardItemRendererInternal(
             started.
           </Alert>
         ) : (
-          <Component data={data} item={item} />
+          <Suspense fallback={<Skeleton className="w-full h-full" />}>
+            <Component data={data} item={item} />
+          </Suspense>
         ))}
     </FetchWrapperComponent>
   );

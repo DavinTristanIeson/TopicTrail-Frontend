@@ -140,6 +140,10 @@ const DeleteComparisonStateItemConfirmationModal = React.forwardRef<
   );
 });
 
+function accessComparisonStateIdentifier(item: ComparisonStateItemModel) {
+  return item.name;
+}
+
 export default function SortableComparisonStateDndContext(
   props: SortableComparisonStateDndContextProps,
 ) {
@@ -149,20 +153,15 @@ export default function SortableComparisonStateDndContext(
     (store) => store.groups.handlers.setState,
   );
   const { id, grid, gridElements } = useControlledGridstack({
-    gridItems: comparisonGroups.map((group) => group.name),
+    gridItems: comparisonGroups.map(accessComparisonStateIdentifier),
     options: SortableGridStackDefaultOptions({
       itemsCount: comparisonGroups.length,
     }),
   });
   useSortableGridStack({
     grid,
-    onSort(gridstackIds) {
-      setComparisonGroups((prev) => {
-        return gridstackIds.map((id) => {
-          return prev.find((namedFilter) => namedFilter.name === id)!;
-        });
-      });
-    },
+    setValues: setComparisonGroups,
+    getId: accessComparisonStateIdentifier,
   });
 
   const deleteRemote =
