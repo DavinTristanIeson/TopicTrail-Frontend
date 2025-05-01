@@ -62,7 +62,15 @@ export default function VisualizationFrequencyDistributionComponent(
       data.map((data) => data.name),
     );
 
-    let subplots: PlotParams['data'];
+    const title = {
+      text: `Frequency Distribution of ${item.column}`,
+      subtitle: {
+        text:
+          isHeatmap && needsPercentage
+            ? 'The values of each row sums up to 100%.'
+            : undefined,
+      },
+    };
     if (isHeatmap) {
       const allCategories = uniq(
         data.flatMap((entry) => entry.data.categories),
@@ -72,31 +80,47 @@ export default function VisualizationFrequencyDistributionComponent(
       const y = data.map((entry) => entry.name);
       const z = data.map(({ data: { frequencies, categories } }) => {
         const categoryFrequencyMap = fromPairs(
-          zip(categories, transformFrequencies(frequencies)),
+          zip(categories, transformFrequencies(frequencies)) as [
+            string,
+            number,
+          ][],
         );
-        const z = categories.map((category) => categoryFrequencyMap[category]);
+        const z = categories.map(
+          (category) => categoryFrequencyMap[category] ?? 0,
+        );
         return z;
       });
 
-      subplots = [
-        {
-          x,
-          y,
-          z,
-          type: 'heatmap',
-          colorscale: 'Greens',
-          hovertemplate: [
-            `<b>${item.column}</b>: %{x}`,
-            `<b>Subdataset</b>: %{y}`,
-            `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${needsPercentage ? '%' : ''}`,
-          ].join('<br>'),
-          zmin: 0,
-          zmax: needsPercentage ? 100 : undefined,
+      return {
+        data: [
+          {
+            x,
+            y,
+            z,
+            type: 'heatmap',
+            colorscale: 'Greens',
+            hovertemplate: [
+              `<b>${item.column}</b>: %{x}`,
+              `<b>Subdataset</b>: %{y}`,
+              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${needsPercentage ? '%' : ''}`,
+            ].join('<br>'),
+            zmin: 0,
+            zmax: needsPercentage ? 100 : undefined,
+          },
+        ],
+        layout: {
+          title,
+          xaxis: {
+            title: item.column,
+          },
+          yaxis: {
+            title: 'Subdatasets',
+          },
         },
-      ];
+      };
     } else {
-      subplots = data.map(
-        ({ name, data: { frequencies, categories } }, idx) => {
+      return {
+        data: data.map(({ name, data: { frequencies, categories } }, idx) => {
           const mask = indexed(categories);
           const x = pickArrayByIndex(categories, mask);
           const y = pickArrayByIndex(transformFrequencies(frequencies), mask);
@@ -114,30 +138,20 @@ export default function VisualizationFrequencyDistributionComponent(
               color: colors[idx],
             },
           };
-        },
-      );
-    }
-
-    return {
-      data: subplots,
-      layout: {
-        title: {
-          text: `Frequency Distribution of ${item.column}`,
-          subtitle: {
-            text:
-              isHeatmap && needsPercentage
-                ? 'The values of each row sums up to 100%.'
-                : undefined,
+        }),
+        layout: {
+          title,
+          xaxis: {
+            title: item.column,
           },
+          yaxis: {
+            ...plotlyLayoutProps,
+            title: needsPercentage ? 'Proportion' : 'Frequency',
+          },
+          barmode: isBarChart ? 'group' : undefined,
         },
-        yaxis: isHeatmap
-          ? undefined
-          : {
-              ...plotlyLayoutProps,
-            },
-        barmode: isBarChart ? 'group' : undefined,
-      },
-    };
+      };
+    }
   }, [
     allCategories.length,
     data,

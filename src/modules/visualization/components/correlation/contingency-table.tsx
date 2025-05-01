@@ -178,14 +178,25 @@ function VisualizationContingencyTableHeatmapInner(
       layout: {
         title: usedTitle,
         yaxis: {
+          title: item.column,
           automargin: true,
         },
         xaxis: {
+          title: item.config.target,
           automargin: true,
         },
       },
     };
-  }, [columns, data, indexColumns, indexRows, method, rows, filterFrequency]);
+  }, [
+    rows,
+    columns,
+    data,
+    method,
+    item,
+    indexRows,
+    indexColumns,
+    filterFrequency,
+  ]);
 
   const plotProps = usePlotRendererHelperProps(item);
 

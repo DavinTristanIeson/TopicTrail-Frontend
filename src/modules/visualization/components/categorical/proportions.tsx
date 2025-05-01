@@ -61,8 +61,16 @@ export default function VisualizationProportionsComponent(
     });
 
     const subdatasetNames = data.map((subdataset) => subdataset.name);
+    const title = {
+      text: `Proportions of ${item.column}`,
+      subtitle: {
+        text:
+          isHeatmap && needsPercentage
+            ? 'The values of each column sums up to 100%.'
+            : undefined,
+      },
+    };
 
-    let subplots: PlotParams['data'];
     if (isHeatmap) {
       const x = subdatasetNames;
       const y = uniqueValues;
@@ -71,64 +79,69 @@ export default function VisualizationProportionsComponent(
           (frequencies) => frequencies[uniqueValue] ?? 0,
         );
       });
-      subplots = [
-        {
-          x,
-          y,
-          z,
-          type: 'heatmap',
-          colorscale: 'Greens',
-          hovertemplate: [
-            `<b>Subdataset</b>: %{x}`,
-            `<b>${item.column}</b>: %{y}`,
-            `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${needsPercentage ? '%' : ''}`,
-          ].join('<br>'),
-          zmin: 0,
-          zmax: needsPercentage ? 100 : undefined,
+      return {
+        data: [
+          {
+            x,
+            y,
+            z,
+            type: 'heatmap',
+            colorscale: 'Greens',
+            hovertemplate: [
+              `<b>${item.column}</b>: %{y}`,
+              `<b>Subdataset</b>: %{x}`,
+              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${needsPercentage ? '%' : ''}`,
+            ].join('<br>'),
+            zmin: 0,
+            zmax: needsPercentage ? 100 : undefined,
+          },
+        ],
+        layout: {
+          title,
+          xaxis: {
+            title: 'Subdatasets',
+          },
+          yaxis: {
+            title: item.column,
+          },
         },
-      ];
+      };
     } else {
-      subplots = uniqueValues.map((uniqueValue, idx) => {
-        const y = frequenciesPerSubdataset.map(
-          (frequencies) => frequencies[uniqueValue] ?? 0,
-        );
-        return {
-          name: uniqueValue,
-          x: subdatasetNames,
-          y: y,
-          hoveron: isAreaChart ? 'points' : undefined,
-          stackgroup: isAreaChart ? 'all' : undefined,
-          type: isAreaChart ? 'scatter' : 'bar',
-          hovertemplate: [
-            `<b>${item.column}</b>: %{x}`,
-            `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`,
-          ].join('<br>'),
-          marker: {
-            color: colors[idx],
-          },
-        };
-      });
-    }
-    return {
-      data: subplots,
-      layout: {
-        title: {
-          text: `Proportions of ${item.column}`,
-          subtitle: {
-            text:
-              isHeatmap && needsPercentage
-                ? 'The values of each column sums up to 100%.'
-                : undefined,
-          },
-        },
-        yaxis: isHeatmap
-          ? undefined
-          : {
-              ...plotlyLayoutProps,
+      return {
+        data: uniqueValues.map((uniqueValue, idx) => {
+          const y = frequenciesPerSubdataset.map(
+            (frequencies) => frequencies[uniqueValue] ?? 0,
+          );
+          return {
+            name: uniqueValue,
+            x: subdatasetNames,
+            y: y,
+            hoveron: isAreaChart ? 'points' : undefined,
+            stackgroup: isAreaChart ? 'all' : undefined,
+            type: isAreaChart ? 'scatter' : 'bar',
+            hovertemplate: [
+              `<b>${item.column}</b>: %{x}`,
+              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`,
+            ].join('<br>'),
+            marker: {
+              color: colors[idx],
             },
-        barmode: isBarChart ? 'stack' : undefined,
-      },
-    };
+          };
+        }),
+        layout: {
+          title,
+          xaxis: {
+            title: 'Subdatasets',
+          },
+          yaxis: {
+            ...plotlyLayoutProps,
+            title:
+              `Proportions of ${item.column}` + (needsPercentage ? ' (%)' : ''),
+          },
+          barmode: isBarChart ? 'stack' : undefined,
+        },
+      };
+    }
   }, [
     data,
     isAreaChart,

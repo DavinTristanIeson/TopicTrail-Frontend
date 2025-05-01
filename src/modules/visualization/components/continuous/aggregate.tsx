@@ -57,9 +57,9 @@ export function VisualizationAggregateValuesRenderer(
       data.map((data) => data.name),
     );
 
-    let subplots: PlotParams['data'];
     const aggregationMethod =
       VISUALIZATION_AGGREGATION_METHOD_DICTIONARY[item.config.method].label;
+    const title = `Values of ${item.column} Grouped By ${item.config.grouped_by} (${aggregationMethod})`;
     if (isHeatmap) {
       const allCategories = uniq(
         data.flatMap((entry) => entry.data.categories),
@@ -74,48 +74,64 @@ export function VisualizationAggregateValuesRenderer(
       });
 
       const [minZ, maxZ] = getBalancedHeatmapZRange(z);
-      subplots = [
-        {
-          x,
-          y,
-          z,
-          type: 'heatmap',
-          hoverongaps: false,
-          hovertemplate: [
-            `<b>${item.config.grouped_by}</b>: %{x}`,
-            `<b>Subdataset</b>: %{y}`,
-            `<b>${capitalize(item.config.method)} of ${item.column}</b>: %{z}`,
-          ].join('<br>'),
-          zmin: minZ,
-          zmax: maxZ,
-        },
-      ];
-    } else {
-      subplots = data.map(({ name, data: { values, categories } }, idx) => {
-        const mask = indexed(categories);
-        return {
-          name,
-          mode: isLinePlot ? 'lines+markers' : undefined,
-          x: pickArrayByIndex(categories, mask),
-          y: pickArrayByIndex(values, mask),
-          type: isLinePlot ? 'scatter' : 'bar',
-          hovertemplate: [
-            `<b>${item.config.grouped_by}</b>: %{x}`,
-            `<b>${capitalize(item.config.method)} of ${item.column}</b>: %{y}`,
-          ].join('<br>'),
-          marker: {
-            color: colors[idx],
+      return {
+        data: [
+          {
+            x,
+            y,
+            z,
+            type: 'heatmap',
+            hoverongaps: false,
+            hovertemplate: [
+              `<b>${item.config.grouped_by}</b>: %{x}`,
+              `<b>Subdataset</b>: %{y}`,
+              `<b>${aggregationMethod} of ${item.column}</b>: %{z}`,
+            ].join('<br>'),
+            zmin: minZ,
+            zmax: maxZ,
           },
-        };
-      });
+        ],
+        layout: {
+          title,
+          xaxis: {
+            title: item.config.grouped_by,
+          },
+          yaxis: {
+            title: 'Subdatasets',
+          },
+        },
+      };
+    } else {
+      return {
+        data: data.map(({ name, data: { values, categories } }, idx) => {
+          const mask = indexed(categories);
+          return {
+            name,
+            mode: isLinePlot ? 'lines+markers' : undefined,
+            x: pickArrayByIndex(categories, mask),
+            y: pickArrayByIndex(values, mask),
+            type: isLinePlot ? 'scatter' : 'bar',
+            hovertemplate: [
+              `<b>${item.config.grouped_by}</b>: %{x}`,
+              `<b>${capitalize(item.config.method)} of ${item.column}</b>: %{y}`,
+            ].join('<br>'),
+            marker: {
+              color: colors[idx],
+            },
+          };
+        }),
+        layout: {
+          title,
+          barmode: isBarChart ? 'group' : undefined,
+          xaxis: {
+            title: item.config.grouped_by,
+          },
+          yaxis: {
+            title: `${aggregationMethod} of ${item.column}`,
+          },
+        },
+      };
     }
-    return {
-      data: subplots,
-      layout: {
-        title: `Values of ${item.column} Grouped By ${item.config.grouped_by} (${aggregationMethod})`,
-        barmode: isBarChart ? 'group' : undefined,
-      },
-    };
   }, [
     data,
     indexed,

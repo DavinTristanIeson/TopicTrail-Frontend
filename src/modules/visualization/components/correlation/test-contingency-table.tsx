@@ -173,7 +173,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: process(frequencies),
+          z: map2D(process(frequencies), (value) => value ?? 0),
           hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
@@ -181,9 +181,17 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       ],
       layout: {
         title: `Frequencies of ${item.column}`,
+        yaxis: {
+          title: item.column,
+          automargin: true,
+        },
+        xaxis: {
+          title: item.config.target,
+          automargin: true,
+        },
       },
     };
-  }, [columns, item.column, rows, values]);
+  }, [columns, item.column, item.config.target, rows, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
     const {
@@ -210,6 +218,14 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       ],
       layout: {
         title: `Effect Sizes of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
+        yaxis: {
+          title: item.column,
+          automargin: true,
+        },
+        xaxis: {
+          title: item.config.target,
+          automargin: true,
+        },
       },
     };
   }, [columns, item, rows, values]);
@@ -234,6 +250,14 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       ],
       layout: {
         title: `Confidence Level of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
+        yaxis: {
+          title: item.column,
+          automargin: true,
+        },
+        xaxis: {
+          title: item.config.target,
+          automargin: true,
+        },
       },
     };
   }, [columns, item, rows, values]);

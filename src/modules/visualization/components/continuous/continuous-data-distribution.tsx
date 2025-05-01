@@ -43,6 +43,12 @@ function VisualizationContinuousDataDistributionViolinBoxPlot(
       data: subplots,
       layout: {
         title: `Continuous Data Distribution of ${item.column}`,
+        xaxis: {
+          title: 'Subdatasets',
+        },
+        yaxis: {
+          title: item.column,
+        },
       },
     };
   }, [data, item.column, item.config.display]);
