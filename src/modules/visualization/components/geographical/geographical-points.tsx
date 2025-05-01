@@ -13,7 +13,7 @@ import {
   usePlotRendererHelperProps,
 } from '../configuration';
 import { useVisualizationSubdatasetSelect } from '../configuration/subdatasets';
-import { AGGREGATION_METHOD_DICTIONARY } from '../../configuration/aggregate-values';
+import { VISUALIZATION_AGGREGATION_METHOD_DICTIONARY } from '../../configuration/aggregate-values';
 import { DashboardItemModel } from '@/api/userdata';
 
 interface VisualizationGeographicalMapProps {
@@ -106,7 +106,9 @@ export function VisualizationGeographicalAggregateValuesMap(
   return (
     <VisualizationGeographicalMap
       {...props}
-      valueLabel={AGGREGATION_METHOD_DICTIONARY[item.config.method].label}
+      valueLabel={
+        VISUALIZATION_AGGREGATION_METHOD_DICTIONARY[item.config.method].label
+      }
       title={`Values of ${item.column} Aggregated (${item.config.method}) by Location`}
     />
   );

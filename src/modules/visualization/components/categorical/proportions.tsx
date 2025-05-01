@@ -16,10 +16,6 @@ import {
   useCategoricalDataFrequencyModeState,
 } from '../configuration';
 
-function getHoverTemplate(column: string, needsPercentage: boolean) {
-  return `<b>${column}</b>: %{x}<br><b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`;
-}
-
 export default function VisualizationProportionsComponent(
   props: BaseVisualizationComponentProps<
     VisualizationFrequencyDistributionModel,
@@ -34,6 +30,18 @@ export default function VisualizationProportionsComponent(
     selectProps: frequencyModeSelectProps,
     needsPercentage,
   } = useCategoricalDataFrequencyModeState();
+
+  const isAreaChart =
+    item.config.display === VisualizationProportionsDisplayMode.AreaChart;
+  const isBarChart =
+    item.config.display === VisualizationProportionsDisplayMode.BarChart;
+  const isHeatmap =
+    item.config.display === VisualizationProportionsDisplayMode.Heatmap;
+  if (!isAreaChart && !isBarChart && !isHeatmap) {
+    throw new Error(
+      `${item.config.display} is not a valid display mode for showing proportions of rows.`,
+    );
+  }
 
   // region Plot
   const plot = React.useMemo<PlotParams | undefined>(() => {
@@ -54,13 +62,33 @@ export default function VisualizationProportionsComponent(
 
     const subdatasetNames = data.map((subdataset) => subdataset.name);
 
-    const isAreaChart =
-      item.config.display === VisualizationProportionsDisplayMode.AreaChart;
-    const isBarChart =
-      item.config.display === VisualizationProportionsDisplayMode.BarChart;
-
-    const subplots: PlotParams['data'] = uniqueValues.map(
-      (uniqueValue, idx) => {
+    let subplots: PlotParams['data'];
+    if (isHeatmap) {
+      const x = subdatasetNames;
+      const y = uniqueValues;
+      const z = uniqueValues.map((uniqueValue) => {
+        return frequenciesPerSubdataset.map(
+          (frequencies) => frequencies[uniqueValue] ?? 0,
+        );
+      });
+      subplots = [
+        {
+          x,
+          y,
+          z,
+          type: 'heatmap',
+          colorscale: 'Greens',
+          hovertemplate: [
+            `<b>Subdataset</b>: %{x}`,
+            `<b>${item.column}</b>: %{y}`,
+            `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${needsPercentage ? '%' : ''}`,
+          ].join('<br>'),
+          zmin: 0,
+          zmax: needsPercentage ? 100 : undefined,
+        },
+      ];
+    } else {
+      subplots = uniqueValues.map((uniqueValue, idx) => {
         const y = frequenciesPerSubdataset.map(
           (frequencies) => frequencies[uniqueValue] ?? 0,
         );
@@ -71,27 +99,42 @@ export default function VisualizationProportionsComponent(
           hoveron: isAreaChart ? 'points' : undefined,
           stackgroup: isAreaChart ? 'all' : undefined,
           type: isAreaChart ? 'scatter' : 'bar',
-          hovertemplate: getHoverTemplate(item.column, needsPercentage),
+          hovertemplate: [
+            `<b>${item.column}</b>: %{x}`,
+            `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`,
+          ].join('<br>'),
           marker: {
             color: colors[idx],
           },
         };
-      },
-    );
+      });
+    }
     return {
       data: subplots,
       layout: {
-        title: `Proportions of ${item.column}`,
-        yaxis: {
-          ...plotlyLayoutProps,
+        title: {
+          text: `Proportions of ${item.column}`,
+          subtitle: {
+            text:
+              isHeatmap && needsPercentage
+                ? 'The values of each column sums up to 100%.'
+                : undefined,
+          },
         },
+        yaxis: isHeatmap
+          ? undefined
+          : {
+              ...plotlyLayoutProps,
+            },
         barmode: isBarChart ? 'stack' : undefined,
       },
     };
   }, [
     data,
+    isAreaChart,
+    isBarChart,
+    isHeatmap,
     item.column,
-    item.config.display,
     needsPercentage,
     plotlyLayoutProps,
     transformFrequencies,
@@ -104,7 +147,9 @@ export default function VisualizationProportionsComponent(
       <PlotInlineConfiguration>
         <Select {...frequencyModeSelectProps} />
       </PlotInlineConfiguration>
-      {plot && <PlotRenderer plot={plot} {...plotProps} />}
+      {plot && (
+        <PlotRenderer plot={plot} {...plotProps} scrollZoom={!isHeatmap} />
+      )}
     </Stack>
   );
 }

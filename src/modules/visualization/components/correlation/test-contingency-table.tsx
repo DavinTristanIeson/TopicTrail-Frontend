@@ -2,7 +2,7 @@ import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../configuration/test-distribution';
 import React from 'react';
 import type { PlotParams } from 'react-plotly.js';
-import { MultiSelect, Stack } from '@mantine/core';
+import { Alert, MultiSelect, Stack } from '@mantine/core';
 import { VisualizationBinaryStatisticTestOnContingencyTableMainModel } from '@/api/correlation';
 import PlotRenderer from '@/components/widgets/plotly';
 
@@ -19,6 +19,7 @@ import {
 } from '../configuration';
 import { max } from 'lodash-es';
 import { plotlyWrapText } from '../utils';
+import { Warning } from '@phosphor-icons/react';
 
 export default function VisualizationBinaryStatisticTestOnContingencyTable(
   props: BaseVisualizationComponentProps<
@@ -77,10 +78,15 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         !filterFrequency(result.frequency)
       );
     });
+    const isAllInvalid = invalid.every((row) => row.every((col) => col));
     const rowIndices = indexRows(rows);
     const columnIndices = indexColumns(columns);
     const process = (arr: number[][]) =>
-      sort2D(mask2D(arr, invalid, 0), rowIndices, columnIndices);
+      sort2D(
+        mask2D(arr, invalid, undefined),
+        rowIndices,
+        columnIndices,
+      ) as number[][];
     const effectSizes = map2D(
       data.results,
       (result) => result.effect_size.value,
@@ -145,6 +151,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       hovertemplate,
       effectSizeMethodConstraints,
       process,
+      isAllInvalid,
     };
   }, [
     data,
@@ -167,6 +174,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           x: columns,
           y: rows,
           z: process(frequencies),
+          hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
         },
@@ -194,6 +202,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           y: rows,
           z: process(effectSizes),
           colorscale: 'RdBu',
+          hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
           ...effectSizeMethodConstraints,
@@ -215,6 +224,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           x: columns,
           y: rows,
           z: process(confidences),
+          hoverongaps: false,
           colorscale: 'Greens',
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
@@ -236,6 +246,8 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
   } else {
     usedPlot = effectSizesPlot;
   }
+
+  const plotProps = usePlotRendererHelperProps(item);
   return (
     <Stack>
       <PlotInlineConfiguration>
@@ -258,9 +270,16 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         column2={item.config.target}
         effectSize={data.effect_size}
         significance={data.significance}
-        warnings={data.warnings}
+        warnings={[]}
       />
-      <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
+      {values.isAllInvalid ? (
+        <Alert color="yellow" icon={<Warning />}>
+          Your filters are too strict. Try choosing a few rows/columns,
+          increasing the alpha constraint, or lowering the min. frequency.
+        </Alert>
+      ) : (
+        <PlotRenderer plot={usedPlot} {...plotProps} scrollZoom={false} />
+      )}
     </Stack>
   );
 }

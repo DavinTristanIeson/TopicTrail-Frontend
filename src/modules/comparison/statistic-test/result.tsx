@@ -86,7 +86,7 @@ interface StatisticTestResultCardProps {
 
 export function StatisticTestResultCard(props: StatisticTestResultCardProps) {
   return (
-    <Paper className="flex-1 p-2">
+    <Paper className="flex-1 p-2" miw={250}>
       <Stack align="center" gap={4}>
         <Group justify="center">
           <Text fw={500}>{props.label}</Text>
@@ -173,7 +173,7 @@ export function StatisticTestResultRenderer(
   props: StatisticTestResultRendererProps,
 ) {
   return (
-    <Group align="stretch">
+    <Group align="stretch" wrap="wrap">
       <SignificanceResultRenderer {...props.significance} />
       <EffectSizeResultRenderer {...props.effectSize} />
     </Group>

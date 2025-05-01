@@ -14,6 +14,7 @@ import {
   usePlotRendererHelperProps,
   useVisualizationMinFrequencySlider,
 } from '../configuration';
+import { getBalancedHeatmapZRange } from '../configuration/heatmap';
 
 enum ContingencyTableVisualizationMethod {
   Observed = 'observed',
@@ -153,19 +154,12 @@ function VisualizationContingencyTableHeatmapInner(
       hovertemplates.push(`<b>${entry.hoverLabel}</b>: %{customdata[${i}]}`);
     }
 
-    let maxZ = 0;
-    let minZ = 0;
-    for (const row of usedValue) {
-      for (const col of row) {
-        maxZ = Math.max(col, maxZ);
-        minZ = Math.min(col, minZ);
-      }
-    }
-
     const invalidFrequencyMask = map2D(
       data.observed,
       (x) => !filterFrequency(x),
     );
+
+    const [minZ, maxZ] = getBalancedHeatmapZRange(usedValue);
 
     return {
       data: [
@@ -177,8 +171,8 @@ function VisualizationContingencyTableHeatmapInner(
           customdata: customdata as any,
           hovertemplate: hovertemplates.join('<br>'),
           colorscale: colorscale[method]!,
-          zmin: minZ / 2,
-          zmax: maxZ / 2,
+          zmin: minZ,
+          zmax: maxZ,
         },
       ],
       layout: {
@@ -217,7 +211,7 @@ function VisualizationContingencyTableHeatmapInner(
         />
         {FrequencySlider}
       </PlotInlineConfiguration>
-      {plot && <PlotRenderer plot={plot} {...plotProps} />}
+      {plot && <PlotRenderer plot={plot} {...plotProps} scrollZoom={false} />}
     </Stack>
   );
 }

@@ -5,6 +5,7 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 export enum VisualizationProportionsDisplayMode {
   AreaChart = 'area-chart',
   BarChart = 'bar-chart',
+  Heatmap = 'heatmap',
 }
 
 const VISUALIZATION_PROPORTIONS_DISPLAY_MODE_DICTIONARY = {
@@ -19,6 +20,12 @@ const VISUALIZATION_PROPORTIONS_DISPLAY_MODE_DICTIONARY = {
     value: VisualizationProportionsDisplayMode.BarChart,
     description:
       'Choose this method if you want to compare the proportions of unordered data. Otherwise, an area chart may be more readable.',
+  },
+  [VisualizationProportionsDisplayMode.Heatmap]: {
+    label: 'Heatmap',
+    value: VisualizationProportionsDisplayMode.Heatmap,
+    description:
+      "Choose this method if you want to compare the proportions of unordered data, where each value should have the same size and the total proportion doesn't matter. Otherwise, a bar chart may represent the proportions more accurately through the sizes of its bars.",
   },
 };
 

@@ -5,6 +5,7 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 export enum VisualizationFrequencyDistributonDisplayMode {
   LinePlot = 'line-plot',
   BarChart = 'bar-chart',
+  Heatmap = 'heatmap',
 }
 
 export const VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY = {
@@ -19,6 +20,12 @@ export const VISUALIZATION_FREQUENCY_DISTRIBUTION_DISPLAY_MODE_DICTIONARY = {
     value: VisualizationFrequencyDistributonDisplayMode.BarChart,
     description:
       'Choose this method if you want to compare one or two subdatasets. Otherwise, a line plot may be more readable.',
+  },
+  [VisualizationFrequencyDistributonDisplayMode.Heatmap]: {
+    label: 'Heatmap',
+    value: VisualizationFrequencyDistributonDisplayMode.Heatmap,
+    description:
+      'Choose this method if you want to compare many subdatasets and do not care as much about the absolute values and only about their relative differences. Otherwise, a bar chart or a line plot may be more readable.',
   },
 };
 
