@@ -202,11 +202,14 @@ export function useCategoricalDataFrequencyModeState() {
   const { transformFrequencies, plotlyLayoutProps } =
     useCategoricalDataFrequencyMode(mode);
 
+  const needsPercentage = mode === CategoricalDataFrequencyMode.Proportion;
+
   return {
     plotlyLayoutProps,
     transformFrequencies,
     selectProps,
-    needsPercentage: mode === CategoricalDataFrequencyMode.Proportion,
+    needsPercentage: needsPercentage,
+    character: needsPercentage ? '%' : '',
   };
 }
 

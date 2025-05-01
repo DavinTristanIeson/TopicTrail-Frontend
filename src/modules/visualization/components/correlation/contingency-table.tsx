@@ -165,6 +165,10 @@ function VisualizationContingencyTableHeatmapInner(
       data: [
         {
           type: 'heatmap',
+          texttemplate:
+            method === ContingencyTableVisualizationMethod.Observed
+              ? '%{z}'
+              : '%{z:.3f}',
           x: columns,
           y: rows,
           z: mask2D(usedValue, invalidFrequencyMask, 0),

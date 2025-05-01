@@ -32,6 +32,7 @@ export default function VisualizationFrequencyDistributionComponent(
     plotlyLayoutProps,
     selectProps: frequencyModeSelectProps,
     needsPercentage,
+    character,
   } = useCategoricalDataFrequencyModeState();
 
   const {
@@ -98,11 +99,12 @@ export default function VisualizationFrequencyDistributionComponent(
             y,
             z,
             type: 'heatmap',
+            texttemplate: needsPercentage ? '%{z:.2f}%' : '%{z}',
             colorscale: 'Greens',
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,
               `<b>Subdataset</b>: %{y}`,
-              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${needsPercentage ? '%' : ''}`,
+              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${character}`,
             ].join('<br>'),
             zmin: 0,
             zmax: needsPercentage ? 100 : undefined,
@@ -132,7 +134,7 @@ export default function VisualizationFrequencyDistributionComponent(
             type: isLinePlot ? 'scatter' : 'bar',
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,
-              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`,
+              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}${character}`,
             ].join('<br>'),
             marker: {
               color: colors[idx],
@@ -155,13 +157,14 @@ export default function VisualizationFrequencyDistributionComponent(
   }, [
     allCategories.length,
     data,
-    isHeatmap,
     item.column,
+    isHeatmap,
     needsPercentage,
+    indexed,
+    character,
+    transformFrequencies,
     plotlyLayoutProps,
     isBarChart,
-    indexed,
-    transformFrequencies,
     isLinePlot,
   ]);
 

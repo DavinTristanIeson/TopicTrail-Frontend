@@ -87,6 +87,7 @@ export function VisualizationAggregateValuesRenderer(
               `<b>Subdataset</b>: %{y}`,
               `<b>${aggregationMethod} of ${item.column}</b>: %{z}`,
             ].join('<br>'),
+            texttemplate: '%{z:.3f}',
             zmin: minZ,
             zmax: maxZ,
           },
