@@ -95,6 +95,11 @@ import {
   VisualizationWeightedWordsConfigSchema,
   VisualizationWeightedWordsConfigType,
 } from '../configuration/weighted-words';
+import {
+  VisualizationCalendarConfigForm,
+  VisualizationCalendarConfigSchema,
+  VisualizationCalendarConfigType,
+} from '../configuration/calendar';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -119,9 +124,9 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     description: 'Show the frequency of rows per date.',
     component: VisualizationCalendarComponent,
     dataProvider: useVisualizationValuesDataProvider,
-    configForm: null,
-    configValidator: null,
-  } as VisualizationConfigEntry<string[], object>,
+    configForm: VisualizationCalendarConfigForm,
+    configValidator: VisualizationCalendarConfigSchema,
+  } as VisualizationConfigEntry<string[], VisualizationCalendarConfigType>,
   [DashboardItemTypeEnum.ContingencyTable]: {
     type: DashboardItemTypeEnum.ContingencyTable,
     label: 'Contingency Table',

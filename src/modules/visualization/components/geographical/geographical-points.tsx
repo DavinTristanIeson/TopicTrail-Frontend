@@ -15,6 +15,7 @@ import {
 import { useVisualizationSubdatasetSelect } from '../configuration/subdatasets';
 import { VISUALIZATION_AGGREGATION_METHOD_DICTIONARY } from '../../configuration/aggregate-values';
 import { DashboardItemModel } from '@/api/userdata';
+import { Select } from '@mantine/core';
 
 interface VisualizationGeographicalMapProps {
   valueLabel: string;
@@ -26,7 +27,7 @@ function VisualizationGeographicalMap(
   props: VisualizationGeographicalMapProps,
 ) {
   const { data, valueLabel, title, item } = props;
-  const { Component, viewedData } = useVisualizationSubdatasetSelect({
+  const { selectProps, viewedData } = useVisualizationSubdatasetSelect({
     data,
   });
   const plot = React.useMemo<PlotParams | undefined>(() => {
@@ -75,7 +76,13 @@ function VisualizationGeographicalMap(
   const plotProps = usePlotRendererHelperProps(item);
   return (
     <>
-      <PlotInlineConfiguration>{Component}</PlotInlineConfiguration>
+      <PlotInlineConfiguration>
+        <Select
+          {...selectProps}
+          label="Subdataset"
+          description="Select a subdataset to visualize its locations."
+        />
+      </PlotInlineConfiguration>
       {plot && <PlotRenderer plot={plot} {...plotProps} />}
     </>
   );

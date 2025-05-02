@@ -63,6 +63,9 @@ export const VISUALIZATION_AGGREGATION_METHOD_DICTIONARY = {
 };
 
 export function AggregateMethodSelectInput() {
+  const renderOption = useDescriptionBasedRenderOption(
+    VISUALIZATION_AGGREGATION_METHOD_DICTIONARY,
+  );
   return (
     <RHFField
       type="select"
@@ -71,6 +74,7 @@ export function AggregateMethodSelectInput() {
       description="Once the data has been grouped, how are they combined into a single value?"
       className="flex-1"
       data={Object.values(VISUALIZATION_AGGREGATION_METHOD_DICTIONARY)}
+      renderOption={renderOption}
       required
       allowDeselect={false}
     />

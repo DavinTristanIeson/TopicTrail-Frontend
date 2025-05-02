@@ -1,4 +1,4 @@
-import { MultiSelect, Group, Button, Select } from '@mantine/core';
+import { MultiSelect, Group, Button, type SelectProps } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import React from 'react';
 import { NamedData } from '../../types/base';
@@ -73,7 +73,9 @@ export function useVisualizationSubdatasetsMultiSelect<T>(
 
 interface UseVisualizationSubdatasetSelectReturn<T> {
   viewedData: NamedData<T> | null;
-  Component: React.ReactNode;
+  viewedIndex: number | null;
+  viewed: string | null;
+  selectProps: SelectProps;
 }
 
 interface UseVisualizationSubdatasetSelectParams<T> {
@@ -96,18 +98,23 @@ export function useVisualizationSubdatasetSelect<T>(
     value: viewed,
     onChange: setViewed,
   });
-  const Component = (
-    <Select
-      data={options}
-      value={viewed}
-      onChange={setViewed}
-      allowDeselect={false}
-      required
-      inputContainer={inputContainer}
-    />
+  const selectProps: SelectProps = {
+    data: options,
+    value: viewed,
+    onChange: setViewed,
+    allowDeselect: false,
+    required: true,
+    inputContainer: inputContainer,
+  };
+  const viewedIndex = data.findIndex(
+    (subdataset) => subdataset.name === viewed,
   );
+  const viewedData =
+    data.find((subdataset) => subdataset.name === viewed) ?? null;
   return {
-    Component,
-    viewedData: data.find((subdataset) => subdataset.name === viewed) ?? null,
+    selectProps,
+    viewedData,
+    viewedIndex: viewedIndex === -1 ? null : viewedIndex,
+    viewed,
   };
 }
