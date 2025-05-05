@@ -2,7 +2,7 @@ import { invalidateProjectDependencyQueries } from '@/api/project';
 import React from 'react';
 import { Stack } from '@mantine/core';
 import useTopicModelingActions from '../behavior/procedure';
-import TopicModelingProgressLogs from './progress-logs';
+import TaskProgressLogs from '../../task/progress-logs';
 import ProjectTopicsEmptyPageControls from './controls';
 import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
 import { showNotification } from '@mantine/notifications';
@@ -53,7 +53,7 @@ export default function ProjectTopicsEmptyPage() {
     <Stack className="pb-8">
       <DefaultErrorViewBoundary>
         <ProjectTopicsEmptyPageControls {...topicModelingActions} />
-        <TopicModelingProgressLogs {...topicModelingActions} />
+        <TaskProgressLogs {...topicModelingActions} />
       </DefaultErrorViewBoundary>
     </Stack>
   );

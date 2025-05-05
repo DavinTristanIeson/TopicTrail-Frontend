@@ -4,16 +4,8 @@ import {
   TableComparisonGroupInfoModel,
   TableComparisonResultModel,
 } from '@/api/comparison';
-import {
-  Alert,
-  Group,
-  HoverCard,
-  Paper,
-  RingProgress,
-  Stack,
-  Text,
-} from '@mantine/core';
-import { Info, Warning } from '@phosphor-icons/react';
+import { Alert, Group, Paper, RingProgress, Stack, Text } from '@mantine/core';
+import { Warning } from '@phosphor-icons/react';
 import React from 'react';
 import {
   EFFECT_SIZE_DICTIONARY,
@@ -27,6 +19,7 @@ import {
   GroupStatisticTestMethodEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
+import { ResultCard } from '@/components/visual/result-card';
 
 function GroupCountsInfoCard(props: TableComparisonGroupInfoModel) {
   const emptyProportion = Math.round(
@@ -78,44 +71,6 @@ function GroupCountsInfoCard(props: TableComparisonGroupInfoModel) {
   );
 }
 
-interface StatisticTestResultCardProps {
-  label: string;
-  value: string;
-  info?: string;
-}
-
-export function StatisticTestResultCard(props: StatisticTestResultCardProps) {
-  return (
-    <Paper className="flex-1 p-2" miw={250}>
-      <Stack align="center" gap={4}>
-        <Group justify="center">
-          <Text fw={500}>{props.label}</Text>
-          {props.info && (
-            <HoverCard>
-              <HoverCard.Target>
-                <Info />
-              </HoverCard.Target>
-              <HoverCard.Dropdown>
-                <Text className={'max-w-sm'}>{props.info}</Text>
-              </HoverCard.Dropdown>
-            </HoverCard>
-          )}
-        </Group>
-        <Text
-          size="xl"
-          c="brand"
-          fw={500}
-          style={{
-            fontSize: 36,
-          }}
-        >
-          {props.value}
-        </Text>
-      </Stack>
-    </Paper>
-  );
-}
-
 function SignificanceResultRenderer(props: SignificanceResultModel) {
   const dictionaryEntry =
     STATISTIC_TEST_METHOD_DICTIONARY[props.type as StatisticTestMethodEnum] ??
@@ -125,19 +80,19 @@ function SignificanceResultRenderer(props: SignificanceResultModel) {
   const confidence = (1 - props.p_value) * 100;
   return (
     <>
-      <StatisticTestResultCard
+      <ResultCard
         label={
           dictionaryEntry ? `Statistic (${dictionaryEntry.label})` : 'Statistic'
         }
         value={props.statistic.toFixed(4)}
         info="The value calculated by the statistic test, which is later used to calculate the p value and confidence. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead."
       />
-      <StatisticTestResultCard
+      <ResultCard
         label="P-Value"
         value={props.p_value.toFixed(4)}
         info="The p value calculated from the statistic test. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead"
       />
-      <StatisticTestResultCard
+      <ResultCard
         label="Confidence"
         value={`${confidence.toFixed(2)}%`}
         info="A high confidence means that you can be sure that both groups are different. For example, you might have a hypothesis that guests who come as a group tend to give higher ratings than guests who come alone; if this confidence value is high (generally above 95%), then you can be sure that your hypothesis is correct."
@@ -152,7 +107,7 @@ function EffectSizeResultRenderer(props: EffectSizeResultModel) {
     GROUP_EFFECT_SIZE_DICTIONARY[props.type as GroupEffectSizeMethodEnum];
 
   return (
-    <StatisticTestResultCard
+    <ResultCard
       label={
         dictionaryEntry
           ? `Effect Size (${dictionaryEntry.label})`

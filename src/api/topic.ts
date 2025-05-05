@@ -17,6 +17,15 @@ export type TopicVisualizationModel =
 export type DocumentTopicsVisualizationModel =
   components['schemas']['DocumentTopicsVisualizationResource'];
 
+export type TopicEvaluationResultModel =
+  components['schemas']['TopicEvaluationResult'];
+export type BERTopicExperimentResultModel =
+  components['schemas']['BERTopicExperimentResult'];
+export type BERTopicExperimentTrialResultModel =
+  components['schemas']['BERTopicExperimentTrialResult'];
+export type BERTopicHyperparameterConstraintModel =
+  components['schemas']['BERTopicHyperparameterConstraint'];
+
 interface GetTopicLabelParams {
   id?: number;
   words?: [string, number][];
@@ -36,4 +45,11 @@ export function getTopicLabel(topic: GetTopicLabelParams): string {
     return `Topic ${topic.id}`;
   }
   return 'Unnamed Topic';
+}
+
+export interface TaskResponseModel<T> {
+  id: string;
+  data: T | null;
+  logs: components['schemas']['TaskLog'][];
+  status: components['schemas']['TaskStatusEnum'];
 }

@@ -16,6 +16,7 @@ import { Play, XCircle } from '@phosphor-icons/react';
 import useTopicModelingActions from '../behavior/procedure';
 import { TaskStatusEnum } from '@/common/constants/enum';
 import { TopicModelingOptionFlagCheckboxes } from '../components/controls';
+import { TaskControlsCard } from '@/modules/task/controls';
 
 interface TopicsIconProps {
   loading: boolean;
@@ -117,7 +118,7 @@ export default function ProjectTopicsEmptyPageControls(
     props;
 
   return (
-    <Card withBorder shadow="lg" p="md" radius="md">
+    <TaskControlsCard title="Discover Topics">
       <Stack>
         <Group align="start">
           <TopicsIcon
@@ -125,9 +126,6 @@ export default function ProjectTopicsEmptyPageControls(
             error={progress?.status === TaskStatusEnum.Failed}
           />
           <Stack className="flex-1">
-            <Text fw={500} size="xl">
-              Discover Topics
-            </Text>
             <TopicModelingExplanation />
             <Group justify="end">
               <Button
@@ -144,6 +142,6 @@ export default function ProjectTopicsEmptyPageControls(
           <TopicModelingOptionFlagCheckboxes {...props} />
         </Group>
       </Stack>
-    </Card>
+    </TaskControlsCard>
   );
 }

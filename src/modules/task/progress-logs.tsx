@@ -8,16 +8,17 @@ import {
   Badge,
   Text,
   type MantineColor,
+  Loader,
 } from '@mantine/core';
 import { QuestionMark } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
-import useTopicModelingActions from '../behavior/procedure';
 import PromiseButton from '@/components/standard/button/promise';
 import { usePolling } from '@/hooks/polling';
 import React from 'react';
 import { useDisclosure } from '@mantine/hooks';
+import { usePeriodicTaskStatusCheck } from './status-check';
 
-const TOPIC_MODELING_STATUS_COLORS: Record<TaskStatusEnum, MantineColor> = {
+const TASK_STATUS_COLORS: Record<TaskStatusEnum, MantineColor> = {
   [TaskStatusEnum.Success]: 'green',
   [TaskStatusEnum.Pending]: 'yellow',
   [TaskStatusEnum.Failed]: 'red',
@@ -35,9 +36,7 @@ function LogItemComponent(props: TaskLogModel) {
       color="white"
     >
       <Group>
-        <Badge color={TOPIC_MODELING_STATUS_COLORS[props.status]}>
-          {props.status}
-        </Badge>
+        <Badge color={TASK_STATUS_COLORS[props.status]}>{props.status}</Badge>
         <Text size="sm" c="gray">
           {dayjs(props.timestamp).format('DD MMMM YYYY, HH:mm:ss')}
         </Text>
@@ -63,12 +62,8 @@ function LastCheckedTimer(props: LastCheckedTimerProps) {
   return <Text size="xs">{`Last checked: ${dayjs(date).fromNow()}`}</Text>;
 }
 
-type TopicModelingProgressLogsProps = ReturnType<
-  typeof useTopicModelingActions
->;
-export default function TopicModelingProgressLogs(
-  props: TopicModelingProgressLogsProps,
-) {
+type TaskProgressLogsProps = ReturnType<typeof usePeriodicTaskStatusCheck>;
+export default function TaskProgressLogs(props: TaskProgressLogsProps) {
   const { progress, dataUpdatedAt, checkAgain, isStillPolling } = props;
   if (!progress || progress.logs.length === 0) {
     return null;
@@ -88,25 +83,28 @@ export default function TopicModelingProgressLogs(
       }}
     >
       <Text size="lg" mb="sm">
-        Topic Modeling Execution Logs
+        Execution Logs
       </Text>
       <ScrollArea style={{ flexGrow: 1, maxHeight: '80vh', overflowY: 'auto' }}>
         <Stack>
           {progress.logs.map((log) => (
             <LogItemComponent {...log} key={log.timestamp ?? log.message} />
           ))}
-          {isStillPolling && (
-            <Stack gap={2}>
-              <PromiseButton
-                leftSection={<QuestionMark />}
-                onClick={() => checkAgain()}
-                className="max-w-sm"
-              >
-                Check Status
-              </PromiseButton>
-              {dataUpdatedAt && <LastCheckedTimer date={dataUpdatedAt} />}
-            </Stack>
-          )}
+          {isStillPolling ? (
+            <Group justify="center">
+              <Loader type="dots" />
+            </Group>
+          ) : undefined}
+          <Stack gap={2}>
+            <PromiseButton
+              leftSection={<QuestionMark />}
+              onClick={() => checkAgain()}
+              className="max-w-sm"
+            >
+              Check Status
+            </PromiseButton>
+            {dataUpdatedAt && <LastCheckedTimer date={dataUpdatedAt} />}
+          </Stack>
         </Stack>
       </ScrollArea>
     </Card>

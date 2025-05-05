@@ -3,7 +3,6 @@ import { plotlyWrapText } from '@/modules/visualization/components/utils';
 
 interface ExtractTopicCustomdataForPlotlyParams {
   topics: (TopicModel | null)[];
-  startIndex?: number;
   toggles?: {
     label?: boolean;
     words?: boolean;
@@ -17,11 +16,11 @@ interface ExtractTopicCustomdataForPlotlyParams {
 export function extractTopicCustomdataForPlotly(
   props: ExtractTopicCustomdataForPlotlyParams,
 ) {
-  const { topics, startIndex = 0, toggles, percentage } = props;
+  const { topics, toggles, percentage } = props;
   const customdata = [];
   const hovertemplateBuilder = [];
 
-  const index = () => startIndex + hovertemplateBuilder.length;
+  const index = () => hovertemplateBuilder.length;
 
   if (toggles?.label !== false) {
     const labels = topics.map((topic) => {
@@ -31,7 +30,7 @@ export function extractTopicCustomdataForPlotly(
       return getTopicLabel(topic);
     });
     customdata.push(labels);
-    hovertemplateBuilder.push(`<b>Topic</b>: %{customdata[${index()}]}<br>`);
+    hovertemplateBuilder.push(`<b>Topic</b>: %{customdata[${index()}]}`);
   }
   if (toggles?.frequency !== false) {
     const topicFrequencies = topics.map((topic) => {
@@ -43,7 +42,7 @@ export function extractTopicCustomdataForPlotly(
     });
     customdata.push(topicFrequencies);
     hovertemplateBuilder.push(
-      `<b>${percentage ? 'Proportion' : 'Frequency'}</b>: %{customdata[${index()}]}<br>`,
+      `<b>${percentage ? 'Proportion' : 'Frequency'}</b>: %{customdata[${index()}]}`,
     );
   }
   if (toggles?.tags !== false) {
@@ -51,16 +50,14 @@ export function extractTopicCustomdataForPlotly(
       plotlyWrapText(topic?.tags?.join(', ') ?? ''),
     );
     customdata.push(topicTags);
-    hovertemplateBuilder.push(`<b>Tags</b>: %{customdata[${index()}]}<br>`);
+    hovertemplateBuilder.push(`<b>Tags</b>: %{customdata[${index()}]}`);
   }
   if (toggles?.description !== false) {
     const topicDescriptions = topics.map((topic) =>
       plotlyWrapText(topic?.description ?? ''),
     );
     customdata.push(topicDescriptions);
-    hovertemplateBuilder.push(
-      `<b>Description</b>: %{customdata[${index()}]}<br>`,
-    );
+    hovertemplateBuilder.push(`<b>Description</b>: %{customdata[${index()}]}`);
   }
   if (toggles?.words !== false) {
     const topicWords = topics.map((topic) => {
@@ -75,10 +72,10 @@ export function extractTopicCustomdataForPlotly(
       );
     });
     customdata.push(topicWords);
-    hovertemplateBuilder.push(`<b>Words</b>: %{customdata[${index()}]}<br>`);
+    hovertemplateBuilder.push(`<b>Words</b>: %{customdata[${index()}]}`);
   }
   return {
     customdata: customdata as string[][],
-    hovertemplate: hovertemplateBuilder.join(''),
+    hovertemplate: hovertemplateBuilder.join('<br>'),
   };
 }

@@ -483,6 +483,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/topic/{project_id}/evaluation/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Start Topic Evaluation */
+        post: operations["post__start_topic_evaluation_topic__project_id__evaluation_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topic/{project_id}/evaluation/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Topic Evaluation Status */
+        get: operations["get__topic_evaluation_status_topic__project_id__evaluation_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topic/{project_id}/experiment/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Topic Experiment */
+        post: operations["post__topic_experiment_topic__project_id__experiment_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/topic/{project_id}/experiment/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get  Topic Experiment Status */
+        get: operations["get__topic_experiment_status_topic__project_id__experiment_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/userdata/{project_id}/filters": {
         parameters: {
             query?: never;
@@ -899,6 +967,53 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** BERTopicExperimentResult */
+        BERTopicExperimentResult: {
+            /** Trials */
+            trials: components["schemas"]["BERTopicExperimentTrialResult"][];
+            /**
+             * Start At
+             * Format: date-time
+             */
+            start_at: string;
+            /** End At */
+            end_at: string | null;
+            /**
+             * Last Updated At
+             * Format: date-time
+             */
+            last_updated_at: string;
+        };
+        /** BERTopicExperimentTrialResult */
+        BERTopicExperimentTrialResult: {
+            topic_modeling_config: components["schemas"]["TopicModelingConfig"];
+            evaluation: components["schemas"]["TopicEvaluationResult"] | null;
+            /** Error */
+            error: string | null;
+            /**
+             * Timestamp
+             * Format: date-time
+             */
+            timestamp?: string;
+        };
+        /** BERTopicHyperparameterConstraint */
+        BERTopicHyperparameterConstraint: {
+            /** Min Topic Size */
+            min_topic_size: [
+                number,
+                number
+            ] | null;
+            /** Max Topics */
+            max_topics: [
+                number,
+                number
+            ] | null;
+            /** Clustering Conservativeness */
+            clustering_conservativeness: [
+                number,
+                number
+            ] | null;
+        };
         /** BinaryStatisticTestOnContingencyTableMainResource */
         BinaryStatisticTestOnContingencyTableMainResource: {
             /** Rows */
@@ -1018,6 +1133,16 @@ export interface components {
         };
         /** CheckDatasetSchema */
         CheckDatasetSchema: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
+        /** CoherenceVPerTopic */
+        CoherenceVPerTopic: {
+            topic: components["schemas"]["Topic"];
+            /** Coherence */
+            coherence: number;
+            /** Std Dev */
+            std_dev: number;
+            /** Support */
+            support: number;
+        };
         /** ColumnTopicModelingResultResource */
         ColumnTopicModelingResultResource: {
             column: components["schemas"]["TextualSchemaColumn-Output"];
@@ -1771,6 +1896,24 @@ export interface components {
              */
             timestamp?: string;
         };
+        /** TaskResponse[BERTopicExperimentResult] */
+        TaskResponse_BERTopicExperimentResult_: {
+            /** Id */
+            id: string;
+            data: components["schemas"]["BERTopicExperimentResult"] | null;
+            /** Logs */
+            logs: components["schemas"]["TaskLog"][];
+            status: components["schemas"]["TaskStatusEnum"];
+        };
+        /** TaskResponse[TopicEvaluationResult] */
+        TaskResponse_TopicEvaluationResult_: {
+            /** Id */
+            id: string;
+            data: components["schemas"]["TopicEvaluationResult"] | null;
+            /** Logs */
+            logs: components["schemas"]["TaskLog"][];
+            status: components["schemas"]["TaskStatusEnum"];
+        };
         /** TaskResponse[TopicModelingResult] */
         TaskResponse_TopicModelingResult_: {
             /** Id */
@@ -1864,13 +2007,7 @@ export interface components {
              * @default 3
              */
             min_word_length: number;
-            /**
-             * N Gram Range
-             * @default [
-             *       1,
-             *       2
-             *     ]
-             */
+            /** N Gram Range */
             n_gram_range: [
                 number,
                 number
@@ -1942,6 +2079,21 @@ export interface components {
             column1: string;
             /** Column2 */
             column2: string;
+        };
+        /** TopicEvaluationResult */
+        TopicEvaluationResult: {
+            /** Coherence V */
+            coherence_v: number;
+            /** Topic Diversity */
+            topic_diversity: number;
+            /** Coherence V Per Topic */
+            coherence_v_per_topic: components["schemas"]["CoherenceVPerTopic"][];
+        };
+        /** TopicModelExperimentSchema */
+        TopicModelExperimentSchema: {
+            /** N Trials */
+            n_trials: number;
+            constraint: components["schemas"]["BERTopicHyperparameterConstraint"];
         };
         /** TopicModelingConfig */
         TopicModelingConfig: {
@@ -4261,6 +4413,286 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_DocumentTopicsVisualizationResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__start_topic_evaluation_topic__project_id__evaluation_start_post: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__topic_evaluation_status_topic__project_id__evaluation_status_get: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponse_TopicEvaluationResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__topic_experiment_topic__project_id__experiment_start_post: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TopicModelExperimentSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__topic_experiment_status_topic__project_id__experiment_status_get: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponse_BERTopicExperimentResult_"];
                 };
             };
             /** @description Bad Request */

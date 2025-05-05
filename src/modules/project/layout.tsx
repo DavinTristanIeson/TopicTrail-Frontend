@@ -11,6 +11,7 @@ import { Button, Divider, Stack } from '@mantine/core';
 import {
   ArrowCounterClockwise,
   ArrowsLeftRight,
+  Exam,
   FileMagnifyingGlass,
   Gear,
   GitDiff,
@@ -80,6 +81,16 @@ function ProjectNavbar(props: ProjectNavbarProps) {
             icon: <ArrowsLeftRight size={24} />,
             url: {
               pathname: NavigationRoutes.ProjectTopicCorrelation,
+              query: {
+                id,
+              },
+            },
+          },
+          {
+            label: 'Topic Evaluation',
+            icon: <Exam size={24} />,
+            url: {
+              pathname: NavigationRoutes.ProjectTopicEvaluation,
               query: {
                 id,
               },

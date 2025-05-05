@@ -1,54 +1,27 @@
 import { client } from '@/common/api/client';
 import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
 import React from 'react';
-import { usePolling } from '@/hooks/polling';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
-import { TaskStatusEnum } from '@/common/constants/enum';
 import { useTopicAppState } from '../app-state';
+import { usePeriodicTaskStatusCheck } from '@/modules/task/status-check';
 
 function usePeriodicTopicModelingStatusCheck() {
   const project = React.useContext(ProjectContext);
   const column = React.useContext(SchemaColumnContext);
-  const { data, isRefetching, dataUpdatedAt, refetch, error } = client.useQuery(
-    'get',
-    '/topic/{project_id}/status',
-    {
-      params: {
-        path: {
-          project_id: project.id,
-        },
-        query: {
-          column: column.name,
-        },
+  const query = client.useQuery('get', '/topic/{project_id}/status', {
+    params: {
+      path: {
+        project_id: project.id,
+      },
+      query: {
+        column: column.name,
       },
     },
-  );
-
-  React.useEffect(() => {
-    if (error) {
-      console.error(error);
-    }
-  }, [error]);
-
-  const isStillPolling =
-    // Stop when error
-    !error &&
-    // Data is not success or failed; which means that operation is still in Idle/Pending state.
-    data?.status !== TaskStatusEnum.Success &&
-    data?.status !== TaskStatusEnum.Failed;
-  usePolling({
-    fn: refetch,
-    interval: 5000,
-    enabled: isStillPolling,
   });
-  return {
-    progress: data,
-    isCheckingStatus: isRefetching,
-    dataUpdatedAt: !data ? undefined : new Date(dataUpdatedAt),
-    checkAgain: refetch,
-    isStillPolling,
-  };
+  return usePeriodicTaskStatusCheck({
+    query: query,
+  });
 }
 
 function useTopicModelingOptions() {

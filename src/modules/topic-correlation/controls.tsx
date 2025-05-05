@@ -1,16 +1,6 @@
 import React from 'react';
 import { ProjectColumnSelectInput } from '../project/select-column-input';
-import {
-  Card,
-  Text,
-  Divider,
-  Title,
-  Slider,
-  Input,
-  Stack,
-  Button,
-  Group,
-} from '@mantine/core';
+import { Text, Slider, Input, Stack, Button, Group } from '@mantine/core';
 import { AllTopicModelingResultContext } from '../topics/components/context';
 import {
   useCheckTopicCorrelationTargetVisibility,
@@ -24,6 +14,7 @@ import { Eye, EyeSlash, Files } from '@phosphor-icons/react';
 import { sum } from 'lodash-es';
 import { useTopicAppState } from '../topics/app-state';
 import { TopicsPageTab } from '../topics/results';
+import { TaskControlsCard } from '../task/controls';
 
 const SortableTopicCorrelationTopicsDndContext = dynamic(
   () => import('./sortable-correlation-targets-context'),
@@ -157,16 +148,7 @@ export default function TopicCorrelationTopicsManager() {
 
   return (
     <Stack>
-      <Card
-        withBorder
-        p="lg"
-        radius="lg"
-        style={{ backgroundColor: 'white', borderLeft: '5px solid #7a84b9' }}
-      >
-        <Title order={2} c="brand">
-          Topic Correlation Analysis
-        </Title>
-        <Divider my="sm" size="sm" color="#7a84b9" />
+      <TaskControlsCard title="Topic Correlation Analysis">
         <Stack>
           <Text size="sm">
             Understanding the correlation between discovered topics and other
@@ -204,7 +186,7 @@ export default function TopicCorrelationTopicsManager() {
             <ViewTopicsPageButton />
           </Group>
         </Stack>
-      </Card>
+      </TaskControlsCard>
       <SortableTopicCorrelationTopicsSafeguard />
     </Stack>
   );
