@@ -1,19 +1,18 @@
-import { ProjectColumnSelectInput } from '@/modules/project/select-column-input';
 import {
   AllTopicModelingResultContext,
   useTopicModelingResultOfColumn,
 } from '@/modules/topics/components/context';
-import { Alert, Group, Paper, Text } from '@mantine/core';
+import { Alert, Group } from '@mantine/core';
 import React from 'react';
 import ProjectTopicsEmptyPage from '@/modules/topics/empty';
 import ProjectTopicResultsPage from '@/modules/topics/results';
 import { NoTextualColumnWarning } from '@/modules/topics/components/warnings';
-import { SchemaColumnContext } from '@/modules/project/context';
 import TopicResultsPageControls from '@/modules/topics/results/controls';
 import { Warning } from '@phosphor-icons/react';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { NextPageWithLayout } from '@/common/utils/types';
 import { useTopicAppState } from '@/modules/topics/app-state';
+import { ProjectFocusedTextualColumnControls } from '@/modules/topics/components/controls';
 
 interface ProjectTopicSwitcherProps {
   column: string;
@@ -26,7 +25,7 @@ function ProjectTopicPageSwitcher(props: ProjectTopicSwitcherProps) {
     return null;
   }
   return (
-    <SchemaColumnContext.Provider value={topicModelingResult.column}>
+    <>
       {topicModelingResult.result ? (
         topicModelingResult.result.topics.length === 0 ? (
           <Alert color="red" icon={<Warning />}>
@@ -42,65 +41,38 @@ function ProjectTopicPageSwitcher(props: ProjectTopicSwitcherProps) {
       ) : (
         <ProjectTopicsEmptyPage />
       )}
-    </SchemaColumnContext.Provider>
+    </>
   );
 }
 
 const ProjectTopicsPage: NextPageWithLayout = function () {
   const topicModelingResults = React.useContext(AllTopicModelingResultContext);
-
-  const columnName = useTopicAppState((store) => store.column);
-  const setColumn = useTopicAppState((store) => store.setColumn);
-
   const columns = topicModelingResults.map((result) => result.column);
-  const firstColumn = columns[0];
-  // Focus on the first column
-  React.useEffect(() => {
-    if (columnName || !firstColumn) return;
-    setColumn(firstColumn.name);
-  }, [columnName, firstColumn, setColumn]);
-
-  const focusedTopicModelingResult = topicModelingResults
-    ? topicModelingResults.find((result) => result.column.name === columnName)
-    : undefined;
+  const column = useTopicAppState((store) => store.column);
+  const focusedTopicModelingResult =
+    topicModelingResults && column
+      ? topicModelingResults.find(
+          (result) => result.column.name === column.name,
+        )
+      : undefined;
 
   return (
     <>
-      <Paper className="absolute top-0 left-0 w-full p-3" radius={0}>
-        <Group justify="space-between">
-          <ProjectColumnSelectInput
-            data={columns}
-            value={columnName}
-            onChange={(col) => setColumn(col?.name ?? null)}
-            allowDeselect={false}
-            styles={{
-              input: {
-                width: 384,
-              },
-            }}
-            disabled={columns.length === 0}
-            inputContainer={(children) => (
-              <Group>
-                <Text c="gray" size="sm">
-                  Column
-                </Text>
-                {children}
-              </Group>
-            )}
-          />
-          {focusedTopicModelingResult && focusedTopicModelingResult.result && (
+      <ProjectFocusedTextualColumnControls
+        Right={
+          focusedTopicModelingResult &&
+          focusedTopicModelingResult.result && (
             <Group>
               <TopicResultsPageControls
                 column={focusedTopicModelingResult.column}
               />
             </Group>
-          )}
-        </Group>
-      </Paper>
-      <div style={{ height: 72 }} />
+          )
+        }
+      />
       <div>
         {columns.length === 0 && <NoTextualColumnWarning />}
-        {columnName && <ProjectTopicPageSwitcher column={columnName} />}
+        {column && <ProjectTopicPageSwitcher column={column.name} />}
       </div>
     </>
   );

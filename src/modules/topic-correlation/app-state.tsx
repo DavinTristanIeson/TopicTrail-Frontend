@@ -1,7 +1,7 @@
 import {
   findProjectColumn,
   getTopicColumnName,
-  SchemaColumnModel,
+  TextualSchemaColumnModel,
 } from '@/api/project';
 import { TopicModel } from '@/api/topic';
 import { DashboardItemModel } from '@/api/userdata';
@@ -21,8 +21,10 @@ interface TopicCorrelationAppStateContextType {
     state: DashboardItemModel[];
     handlers: UseListStateHandlers<DashboardItemModel>;
   };
-  column: SchemaColumnModel | null;
-  setColumn: React.Dispatch<React.SetStateAction<SchemaColumnModel | null>>;
+  column: TextualSchemaColumnModel | null;
+  setColumn: React.Dispatch<
+    React.SetStateAction<TextualSchemaColumnModel | null>
+  >;
   tab: TopicCorrelationPageTab;
   setTab: React.Dispatch<React.SetStateAction<TopicCorrelationPageTab>>;
   topics: TopicModel[] | null;
@@ -38,7 +40,9 @@ const TopicCorrelationAppStateContext =
 export default function TopicCorrelationAppStateProvider(
   props: React.PropsWithChildren,
 ) {
-  const [column, setColumn] = React.useState<SchemaColumnModel | null>(null);
+  const [column, setColumn] = React.useState<TextualSchemaColumnModel | null>(
+    null,
+  );
   const [tab, setTab] = React.useState<TopicCorrelationPageTab>(
     TopicCorrelationPageTab.TopicsManager,
   );

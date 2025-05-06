@@ -534,6 +534,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/topic/{project_id}/experiment/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Patch  Cancel Topic Experiment */
+        patch: operations["patch__cancel_topic_experiment_topic__project_id__experiment_cancel_patch"];
+        trace?: never;
+    };
     "/topic/{project_id}/experiment/status": {
         parameters: {
             query?: never;
@@ -986,7 +1003,7 @@ export interface components {
         };
         /** BERTopicExperimentTrialResult */
         BERTopicExperimentTrialResult: {
-            topic_modeling_config: components["schemas"]["TopicModelingConfig"];
+            candidate: components["schemas"]["BERTopicHyperparameterCandidate"];
             evaluation: components["schemas"]["TopicEvaluationResult"] | null;
             /** Error */
             error: string | null;
@@ -995,6 +1012,15 @@ export interface components {
              * Format: date-time
              */
             timestamp?: string;
+        };
+        /** BERTopicHyperparameterCandidate */
+        BERTopicHyperparameterCandidate: {
+            /** Min Topic Size */
+            min_topic_size: number | null;
+            /** Max Topics */
+            max_topics: number | null;
+            /** Topic Confidence Threshold */
+            topic_confidence_threshold: number | null;
         };
         /** BERTopicHyperparameterConstraint */
         BERTopicHyperparameterConstraint: {
@@ -1008,8 +1034,8 @@ export interface components {
                 number,
                 number
             ] | null;
-            /** Clustering Conservativeness */
-            clustering_conservativeness: [
+            /** Topic Confidence Threshold */
+            topic_confidence_threshold: [
                 number,
                 number
             ] | null;
@@ -2104,11 +2130,8 @@ export interface components {
             min_topic_size: number;
             /** Max Topic Size */
             max_topic_size?: number | null;
-            /**
-             * Clustering Conservativeness
-             * @default 1
-             */
-            clustering_conservativeness: number;
+            /** Topic Confidence Threshold */
+            topic_confidence_threshold?: number | null;
             /**
              * Reference Document Count
              * @default 15
@@ -4616,6 +4639,75 @@ export interface operations {
                 "application/json": components["schemas"]["TopicModelExperimentSchema"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    patch__cancel_topic_experiment_topic__project_id__experiment_cancel_patch: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

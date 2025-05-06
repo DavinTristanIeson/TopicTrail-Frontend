@@ -25,6 +25,8 @@ export type BERTopicExperimentTrialResultModel =
   components['schemas']['BERTopicExperimentTrialResult'];
 export type BERTopicHyperparameterConstraintModel =
   components['schemas']['BERTopicHyperparameterConstraint'];
+export type TopicModelExperimentInput =
+  components['schemas']['TopicModelExperimentSchema'];
 
 interface GetTopicLabelParams {
   id?: number;

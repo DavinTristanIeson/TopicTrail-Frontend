@@ -13,6 +13,7 @@ import {
 } from '@/common/constants/enum';
 import * as Yup from 'yup';
 import {
+  rangeSchema,
   yupNullableArray,
   yupNullableNumber,
   yupNullableString,
@@ -80,9 +81,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     max_unique_words: Yup.number().positive().required(),
     min_document_length: Yup.number().positive().required(),
     min_word_length: Yup.number().positive().required(),
-    n_gram_range: Yup.array(Yup.number().positive().required())
-      .required()
-      .length(2),
+    n_gram_range: rangeSchema.required(),
   }).when('type', {
     is: SchemaColumnTypeEnum.Textual,
     then: (schema) => schema.required(),
@@ -97,7 +96,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     embedding_method: Yup.string()
       .oneOf(Object.values(DocumentEmbeddingMethodEnum))
       .required(),
-    clustering_conservativeness: Yup.number().positive().max(1).required(),
+    topic_confidence_threshold: yupNullableNumber.positive(),
     reference_document_count: Yup.number().required().positive(),
     top_n_words: Yup.number().min(3).required(),
   }).when('type', {
@@ -178,7 +177,7 @@ export function DefaultProjectSchemaColumnValues(
             no_outliers: false,
             represent_outliers: false,
             embedding_method: DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2,
-            clustering_conservativeness: 1,
+            topic_confidence_threshold: null,
             reference_document_count: 15,
             top_n_words: 50,
           }

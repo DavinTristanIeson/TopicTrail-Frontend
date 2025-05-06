@@ -11,9 +11,9 @@ import TopicCorrelationAppStateProvider, {
 } from '../topic-correlation/app-state';
 import { useRouter } from 'next/router';
 import { createContext, useContextSelector } from 'use-context-selector';
-import TopicEvaluationAppStateProvider, {
-  useTopicEvaluationAppState,
-} from '../topic-evaluation/app-state';
+import TopicModelExperimentAppStateProvider, {
+  useTopicModelExperimentAppState,
+} from '../topic-model-experiment/app-state';
 
 interface ProjectAppStateActionsProps {
   reset(): void;
@@ -36,17 +36,19 @@ function ProjectAppStateActionsProvider(props: React.PropsWithChildren) {
   const resetTable = useTableAppState((store) => store.reset);
   const resetComparison = useComparisonAppState((store) => store.reset);
   const resetCorrelation = useTopicCorrelationAppState((store) => store.reset);
-  const resetEvaluation = useTopicEvaluationAppState((store) => store.reset);
+  const resetExperiment = useTopicModelExperimentAppState(
+    (store) => store.reset,
+  );
   const reset = React.useCallback(() => {
     resetTopics();
     resetTable();
     resetComparison();
     resetCorrelation();
-    resetEvaluation();
+    resetExperiment();
   }, [
     resetComparison,
     resetCorrelation,
-    resetEvaluation,
+    resetExperiment,
     resetTable,
     resetTopics,
   ]);
@@ -64,11 +66,11 @@ export function ProjectAppStateProvider(props: React.PropsWithChildren) {
       <TableAppStateProvider>
         <ComparisonAppStateProvider>
           <TopicCorrelationAppStateProvider>
-            <TopicEvaluationAppStateProvider>
+            <TopicModelExperimentAppStateProvider>
               <ProjectAppStateActionsProvider>
                 {props.children}
               </ProjectAppStateActionsProvider>
-            </TopicEvaluationAppStateProvider>
+            </TopicModelExperimentAppStateProvider>
           </TopicCorrelationAppStateProvider>
         </ComparisonAppStateProvider>
       </TableAppStateProvider>

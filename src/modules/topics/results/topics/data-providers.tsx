@@ -6,8 +6,9 @@ import {
 import { client } from '@/common/api/client';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { WidePlotSkeleton } from '@/components/visual/loading';
-import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
+import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
+import { useTopicAppState } from '../../app-state';
 
 export interface TopicVisualizationRendererProps {
   data: TopicVisualizationModel[];
@@ -23,9 +24,7 @@ export function TopicVisualizationDataProvider(
 ) {
   const { children: Child } = props;
   const project = React.useContext(ProjectContext);
-  const column = React.useContext(
-    SchemaColumnContext,
-  ) as TextualSchemaColumnModel;
+  const column = useTopicAppState((store) => store.column!);
   const query = client.useQuery(
     'get',
     '/topic/{project_id}/visualization/topics',
@@ -65,9 +64,7 @@ export function DocumentTopicsVisualizationDataProvider(
 ) {
   const { children: Child } = props;
   const project = React.useContext(ProjectContext);
-  const column = React.useContext(
-    SchemaColumnContext,
-  ) as TextualSchemaColumnModel;
+  const column = useTopicAppState((store) => store.column!);
   const query = client.useQuery(
     'get',
     '/topic/{project_id}/visualization/documents',

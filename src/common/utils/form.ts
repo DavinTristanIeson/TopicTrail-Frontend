@@ -111,3 +111,7 @@ export const DictionarySchema = (schema: Yup.AnySchema) => {
     return Yup.object(result).required();
   });
 };
+
+export const rangeSchema = Yup.array(Yup.number().positive().required()).length(
+  2,
+);

@@ -9,7 +9,7 @@ export const AllTopicModelingResultContext = React.createContext<
 >(undefined as any);
 
 export function useTopicModelingResultOfColumn(
-  column: string,
+  column: string | null | undefined,
 ): ColumnTopicModelingResultModel | undefined {
   const allTopics = React.useContext(AllTopicModelingResultContext);
   return allTopics.find(

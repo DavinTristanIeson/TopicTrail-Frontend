@@ -186,7 +186,7 @@ function TopicModelingConfigurationFormBody(
           type="number"
           name={`${TOPIC_MODELING_NAME}.min_topic_size`}
           label="Min. Topic Size"
-          min={1}
+          min={2}
           description="The minimal number of similar documents to be considered a topic."
           required
         />
@@ -205,12 +205,12 @@ function TopicModelingConfigurationFormBody(
           description="The maximum number of topics that can be discovered by the model. If the model discovers more topics than this threshold, then the smaller topics will be merged iteratively into a bigger topic."
         />
         <RHFField
-          type="percentage"
-          name={`${TOPIC_MODELING_NAME}.clustering_conservativeness`}
-          label="Clustering Conservativeness"
-          bounded
+          type="number"
+          name={`${TOPIC_MODELING_NAME}.topic_confidence_threshold`}
+          label="Topic Confidence Threshold"
           className="flex-1"
-          description="This controls the strictness of the topic modeling algorithm when clustering documents. A higher conservative clustering (near 100%) will produce more outliers but the topics can be more coherent as only documents that are really semantically close to each other are considered as a topic; while a lower conservative clustering (near 0%) will produce less outliers, but the topics might contain unrelated documents."
+          min={2}
+          description="How many documents with similar meanings are required before we can be sure that the documents are part of the same topic? This may sound similar to Min. Topic Size; but this hyperparameter controls the minimal amount of similar documents to detect, while Min. Topic Size controls the minimal amount of documents for them to be officially recognized as a topic."
         />
         <RHFField
           type="number"
@@ -220,6 +220,7 @@ function TopicModelingConfigurationFormBody(
           classNames={{
             description: 'whitespace-pre-line',
           }}
+          min={2}
           description={
             'The number of documents that are considered at once when finding topics. A higher number of documents results in more generic topics, while a smaller number of documents results in more specific topics. Keep in mind that this number should not be too far apart from Min. Topic Size for optimal results.\nBy default, this value is set to Min. Topic Size.'
           }

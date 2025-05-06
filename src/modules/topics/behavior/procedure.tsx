@@ -1,5 +1,5 @@
 import { client } from '@/common/api/client';
-import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
+import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
 import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
@@ -8,7 +8,7 @@ import { usePeriodicTaskStatusCheck } from '@/modules/task/status-check';
 
 function usePeriodicTopicModelingStatusCheck() {
   const project = React.useContext(ProjectContext);
-  const column = React.useContext(SchemaColumnContext);
+  const column = useTopicAppState((store) => store.column)!;
   const query = client.useQuery('get', '/topic/{project_id}/status', {
     params: {
       path: {

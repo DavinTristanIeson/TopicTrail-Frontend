@@ -15,6 +15,7 @@ import { sum } from 'lodash-es';
 import { useTopicAppState } from '../topics/app-state';
 import { TopicsPageTab } from '../topics/results';
 import { TaskControlsCard } from '../task/controls';
+import { TextualSchemaColumnModel } from '@/api/project';
 
 const SortableTopicCorrelationTopicsDndContext = dynamic(
   () => import('./sortable-correlation-targets-context'),
@@ -118,7 +119,7 @@ function ViewTopicsPageButton() {
   return (
     <Button
       onClick={() => {
-        setTopicAppStateColumn(column.name);
+        setTopicAppStateColumn(column);
         setTopicAppStateTab(TopicsPageTab.Topics);
       }}
       variant="outline"
@@ -172,7 +173,7 @@ export default function TopicCorrelationTopicsManager() {
                   return;
                 }
                 const topics = topicModelingResult.result.topics;
-                setColumn(column);
+                setColumn(column as TextualSchemaColumnModel);
                 setCorrelationTargets(topics);
                 setVisibility(new Map(topics.map((topic) => [topic.id, true])));
               }

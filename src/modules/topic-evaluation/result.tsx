@@ -4,7 +4,6 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { Stack, Group, Title } from '@mantine/core';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
-import { useTopicEvaluationAppState } from './app-state';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { ProjectContext } from '../project/context';
 import { client } from '@/common/api/client';
@@ -12,9 +11,10 @@ import TaskProgressLogs from '../task/progress-logs';
 import { usePeriodicTaskStatusCheck } from '../task/status-check';
 import { extractTopicCustomdataForPlotly } from '../topics/results/topics/utils';
 import { zip } from 'lodash-es';
+import { useTopicAppState } from '../topics/app-state';
 
 function CoherenceVPerTopicBarChart(props: TopicEvaluationResultModel) {
-  const column = useTopicEvaluationAppState((store) => store.column);
+  const column = useTopicAppState((store) => store.column);
   const { coherence_v_per_topic } = props;
   const plot = React.useMemo<PlotParams>(() => {
     const x = coherence_v_per_topic.map((evaluation) => evaluation.coherence);
@@ -69,7 +69,7 @@ function CoherenceVPerTopicBarChart(props: TopicEvaluationResultModel) {
 }
 
 function TopicEvaluationResultRenderer(props: TopicEvaluationResultModel) {
-  const column = useTopicEvaluationAppState((store) => store.column);
+  const column = useTopicAppState((store) => store.column);
   return (
     <Stack className="pt-5">
       <Title order={3} ta="center" c="brand">
@@ -93,7 +93,7 @@ function TopicEvaluationResultRenderer(props: TopicEvaluationResultModel) {
 }
 
 export default function TopicEvaluationResultComponent() {
-  const column = useTopicEvaluationAppState((store) => store.column);
+  const column = useTopicAppState((store) => store.column);
   const project = React.useContext(ProjectContext);
 
   const query = client.useQuery(

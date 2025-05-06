@@ -4,15 +4,16 @@ import { Stack } from '@mantine/core';
 import useTopicModelingActions from '../behavior/procedure';
 import TaskProgressLogs from '../../task/progress-logs';
 import ProjectTopicsEmptyPageControls from './controls';
-import { ProjectContext, SchemaColumnContext } from '@/modules/project/context';
+import { ProjectContext } from '@/modules/project/context';
 import { showNotification } from '@mantine/notifications';
 import { queryClient } from '@/common/api/query-client';
 import { client } from '@/common/api/client';
 import { DefaultErrorViewBoundary } from '@/components/visual/error';
+import { useTopicAppState } from '../app-state';
 
 export default function ProjectTopicsEmptyPage() {
   const project = React.useContext(ProjectContext);
-  const column = React.useContext(SchemaColumnContext);
+  const column = useTopicAppState((store) => store.column!);
   const topicModelingActions = useTopicModelingActions(column.name);
   const { progress } = topicModelingActions;
 

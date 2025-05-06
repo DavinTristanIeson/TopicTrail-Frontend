@@ -5,6 +5,8 @@ import { useTableStateSetup, TableStateType } from '../table/app-state';
 import { TopicModel } from '@/api/topic';
 import { TopicsPageTab } from './results';
 import { useNestedState } from '@/hooks/nested';
+import { TextualSchemaColumnModel } from '@/api/project';
+import { useTopicModelingResultOfColumn } from './components/context';
 
 interface TopicModelingOptionsData {
   shouldUseCachedPreprocessedDocuments: boolean;
@@ -13,8 +15,10 @@ interface TopicModelingOptionsData {
 }
 
 interface TopicAppStateContextType {
-  column: string | null;
-  setColumn: React.Dispatch<React.SetStateAction<string | null>>;
+  column: TextualSchemaColumnModel | null;
+  setColumn: React.Dispatch<
+    React.SetStateAction<TextualSchemaColumnModel | null>
+  >;
 
   tab: TopicsPageTab;
   setTab: React.Dispatch<React.SetStateAction<TopicsPageTab>>;
@@ -52,7 +56,7 @@ const defaultTopicModelingOptions = () =>
   }) as TopicModelingOptionsData;
 
 function useTopicModelingOptionsAppState(
-  column: string | null,
+  column: string | null | undefined,
 ): TopicAppStateContextType['topicModelingOptions'] {
   const [state, setState] = React.useState<
     Record<string, TopicModelingOptionsData>
@@ -93,7 +97,9 @@ const TopicAppStateContext = createContext<TopicAppStateContextType>(
 
 export default function TopicAppStateProvider(props: React.PropsWithChildren) {
   const documentTableState = useTableStateSetup();
-  const [column, setColumn] = React.useState<string | null>(null);
+  const [column, setColumn] = React.useState<TextualSchemaColumnModel | null>(
+    null,
+  );
   const [tab, setTab] = React.useState<TopicsPageTab>(TopicsPageTab.Topics);
   const [topics, setTopics] = React.useState<TopicModel[]>([]);
   const [topicVisualizationMethod, setTopicVisualizationMethod] =
@@ -101,7 +107,7 @@ export default function TopicAppStateProvider(props: React.PropsWithChildren) {
       TopicVisualizationMethodEnum.InterTopicRelationship,
     );
 
-  const topicModelingOptions = useTopicModelingOptionsAppState(column);
+  const topicModelingOptions = useTopicModelingOptionsAppState(column?.name);
 
   const { reset: resetDocuments } = documentTableState;
   const { reset: resetTopicModelingState } = topicModelingOptions;
@@ -146,4 +152,9 @@ export function useTopicAppState<T>(
   selector: (store: TopicAppStateContextType) => T,
 ) {
   return useContextSelector(TopicAppStateContext, selector);
+}
+
+export function useCurrentTopicModelingResult() {
+  const column = useTopicAppState((store) => store.column);
+  return useTopicModelingResultOfColumn(column?.name);
 }

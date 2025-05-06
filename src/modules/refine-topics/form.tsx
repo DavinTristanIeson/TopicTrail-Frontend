@@ -6,7 +6,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { refineTopicsFormSchema, RefineTopicsFormType } from './form-type';
 import { ProjectContext } from '../project/context';
-import { ColumnTopicModelingResultModel } from '@/api/topic';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,13 +20,10 @@ import { DisclosureTrigger } from '@/hooks/disclosure';
 import { RefineTopicsSortTopicsDrawer } from './topic-list/dialogs';
 import { ArrowsDownUp, List } from '@phosphor-icons/react';
 import SubmitButton from '@/components/standard/button/submit';
+import { useCurrentTopicModelingResult } from '../topics/app-state';
 
-interface RefineTopicsFormProps {
-  topicModelingResult: ColumnTopicModelingResultModel;
-}
-
-export default function RefineTopicsForm(props: RefineTopicsFormProps) {
-  const { topicModelingResult } = props;
+export default function RefineTopicsForm() {
+  const topicModelingResult = useCurrentTopicModelingResult()!;
   const project = React.useContext(ProjectContext);
   const { replace } = useRouter();
   const defaultValues = React.useMemo<RefineTopicsFormType>(() => {

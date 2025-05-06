@@ -6,15 +6,22 @@ import {
   invalidateProjectDependencyQueries,
   SchemaColumnModel,
 } from '@/api/project';
-import { ArrowClockwise, CheckCircle, DoorOpen } from '@phosphor-icons/react';
-import { Text, Group, Button, Modal, Tooltip } from '@mantine/core';
+import {
+  ArrowClockwise,
+  CaretDown,
+  CheckCircle,
+  Exam,
+  TestTube,
+  Wrench,
+} from '@phosphor-icons/react';
+import { Text, Group, Button, Modal, Popover, Stack } from '@mantine/core';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
-import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { queryClient } from '@/common/api/query-client';
 import { client } from '@/common/api/client';
 import { CancelButton } from '@/components/standard/button/variants';
 import PromiseButton from '@/components/standard/button/promise';
+import { useRouter } from 'next/router';
 
 interface RediscoverTopicsModalProps {
   column: SchemaColumnModel;
@@ -63,6 +70,37 @@ const RediscoverTopicsModal = React.forwardRef<
   );
 });
 
+interface TopicResultRedirectButtonProps {
+  route: NavigationRoutes;
+  icon: React.ReactNode;
+  label: string;
+}
+
+function TopicResultRedirectButton(props: TopicResultRedirectButtonProps) {
+  const { route, icon, label } = props;
+  const project = React.useContext(ProjectContext);
+  const { push } = useRouter();
+
+  return (
+    <Button
+      variant="subtle"
+      leftSection={icon}
+      onClick={() => {
+        push({
+          pathname: route,
+          query: {
+            id: project.id,
+          },
+        });
+      }}
+      classNames={{
+        label: 'w-full',
+      }}
+    >
+      {label}
+    </Button>
+  );
+}
 interface TopicResultsPageControlsProps {
   column: SchemaColumnModel;
 }
@@ -71,41 +109,45 @@ export default function TopicResultsPageControls(
   props: TopicResultsPageControlsProps,
 ) {
   const { column } = props;
-  const router = useRouter();
-  const project = React.useContext(ProjectContext);
   const modalRemote = React.useRef<DisclosureTrigger | null>(null);
 
   return (
     <>
       <RediscoverTopicsModal ref={modalRemote} column={column} />
-      <Tooltip label="Go to Refine Topics Page" withArrow>
-        <Button
-          onClick={() => {
-            router.push({
-              pathname: NavigationRoutes.ProjectRefineTopics,
-              query: {
-                id: project.id,
-                column: column.name,
-              },
-            });
-          }}
-          leftSection={<DoorOpen />}
-          variant="outline"
-        >
-          Refine Topics
-        </Button>
-      </Tooltip>
-      <Tooltip label="Re-run topic discovery process" withArrow>
-        <Button
-          onClick={() => {
-            modalRemote.current?.open();
-          }}
-          leftSection={<ArrowClockwise />}
-          variant="outline"
-        >
-          Re-discover Topics
-        </Button>
-      </Tooltip>
+      <Popover>
+        <Popover.Target>
+          <Button leftSection={<CaretDown />}>Actions</Button>
+        </Popover.Target>
+        <Popover.Dropdown className="p-1">
+          <Stack>
+            <TopicResultRedirectButton
+              icon={<Wrench />}
+              route={NavigationRoutes.ProjectRefineTopics}
+              label="Refine Topics"
+            />
+            <TopicResultRedirectButton
+              icon={<Exam />}
+              route={NavigationRoutes.ProjectTopicEvaluation}
+              label="Topic Evaluation"
+            />
+            <TopicResultRedirectButton
+              icon={<TestTube />}
+              route={NavigationRoutes.ProjectTopicModelExperiment}
+              label="Topic Model Experiments"
+            />
+          </Stack>
+        </Popover.Dropdown>
+      </Popover>
+
+      <Button
+        onClick={() => {
+          modalRemote.current?.open();
+        }}
+        leftSection={<ArrowClockwise />}
+        variant="outline"
+      >
+        Re-discover Topics
+      </Button>
     </>
   );
 }

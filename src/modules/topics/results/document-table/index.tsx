@@ -1,8 +1,5 @@
 import { client } from '@/common/api/client';
-import {
-  ProjectContext,
-  useCurrentTextualColumn,
-} from '@/modules/project/context';
+import { ProjectContext } from '@/modules/project/context';
 import React from 'react';
 import { TableFilterModel } from '@/api/table';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
@@ -73,7 +70,7 @@ function useDocumentsPerTopicTableFilterState(
 
 export default function DocumentsPerTopicTable() {
   const project = React.useContext(ProjectContext);
-  const column = useCurrentTextualColumn();
+  const column = useTopicAppState((store) => store.column!);
   const topicModelingResult = useTopicModelingResultOfColumn(column.name);
 
   const tableState = useTopicAppState((store) => store.documents.params);
