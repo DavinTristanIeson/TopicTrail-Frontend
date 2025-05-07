@@ -986,6 +986,7 @@ export interface components {
         };
         /** BERTopicExperimentResult */
         BERTopicExperimentResult: {
+            constraint: components["schemas"]["BERTopicHyperparameterConstraint"];
             /** Trials */
             trials: components["schemas"]["BERTopicExperimentTrialResult"][];
             /**
@@ -1003,6 +1004,8 @@ export interface components {
         };
         /** BERTopicExperimentTrialResult */
         BERTopicExperimentTrialResult: {
+            /** Trial Number */
+            trial_number: number;
             candidate: components["schemas"]["BERTopicHyperparameterCandidate"];
             evaluation: components["schemas"]["TopicEvaluationResult"] | null;
             /** Error */
