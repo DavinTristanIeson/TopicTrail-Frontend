@@ -9,12 +9,11 @@ import { VisualizationWordCloudRenderer } from '@/modules/visualization/componen
 export function TopicVisualizationWordCloudRenderer(
   props: TopicVisualizationRendererProps,
 ) {
-  const { data } = props;
+  const { data: topics } = props;
   const [topic, setTopic] = React.useState(() => {
-    return data[0]?.topic ?? null;
+    return topics[0] ?? null;
   });
 
-  const topics = React.useMemo(() => data.map((item) => item.topic), [data]);
   const inputContainer = useSelectLeftRightButtons({
     options: topics,
     onChange: setTopic,

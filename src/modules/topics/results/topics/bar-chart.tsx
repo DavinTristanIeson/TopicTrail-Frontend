@@ -7,25 +7,27 @@ import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { Alert, Anchor, Select, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import { TopicVisualizationRendererProps } from './data-providers';
+import {
+  SemanticTopicVisualizationRendererProps,
+  TopicVisualizationRendererProps,
+} from './data-providers';
 import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/configuration';
 import { useTopNWordsSlider } from '@/modules/visualization/components/textual/renderer';
 
 export function TopicWordsBarChartRenderer(
   props: TopicVisualizationRendererProps,
 ) {
-  const { data, column } = props;
+  const { data: topics, column } = props;
   const { topNWords, Component: TopNWordsSlider } = useTopNWordsSlider();
   const plot: PlotParams = React.useMemo(() => {
     const subplots: PlotParams['data'] = [];
-    const topics = data.map((item) => item.topic);
     const { colors } = generateColorsFromSequence(
       topics.map((topic) => topic.id),
     );
-    const maxX = data.reduce((acc, cur) => {
+    const maxX = topics.reduce((acc, cur) => {
       return Math.max(
         acc,
-        cur.topic.words.reduce((acc, cur) => {
+        cur.words.reduce((acc, cur) => {
           return Math.max(acc, cur[1]);
         }, 0),
       );
@@ -74,7 +76,7 @@ export function TopicWordsBarChartRenderer(
         ...layouts,
       },
     };
-  }, [column.name, data, topNWords]);
+  }, [column.name, topics, topNWords]);
   return (
     <Stack>
       {TopNWordsSlider}
@@ -97,7 +99,7 @@ export function TopicWordsBarChartRenderer(
 }
 
 export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
-  const { data, column } = props;
+  const { data: topics, column } = props;
   const {
     plotlyLayoutProps,
     selectProps,
@@ -105,9 +107,8 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
     needsPercentage,
   } = useCategoricalDataFrequencyModeState();
   const plot: PlotParams = React.useMemo(() => {
-    const topics = data.map((item) => item.topic);
     const y = topics.map((topic) => getTopicLabel(topic));
-    const x = transformFrequencies(data.map((item) => item.frequency));
+    const x = transformFrequencies(topics.map((topic) => topic.frequency));
 
     const { customdata: topicsCustomdata, hovertemplate: topicsHovertemplate } =
       extractTopicCustomdataForPlotly({
@@ -116,7 +117,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
       });
     const customdata = zip(...topicsCustomdata) as string[][];
     const { colors } = generateColorsFromSequence(
-      data.map((item) => item.topic.id),
+      topics.map((topic) => topic.id),
     );
     return {
       data: [
@@ -147,13 +148,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
         },
       },
     };
-  }, [
-    column.name,
-    data,
-    needsPercentage,
-    plotlyLayoutProps,
-    transformFrequencies,
-  ]);
+  }, [column.name, needsPercentage, plotlyLayoutProps, transformFrequencies]);
   return (
     <Stack>
       <Select {...selectProps} maw={512} />

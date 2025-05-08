@@ -5,10 +5,10 @@ import { zip } from 'lodash-es';
 import React from 'react';
 import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
-import { TopicVisualizationRendererProps } from './data-providers';
+import { SemanticTopicVisualizationRendererProps } from './data-providers';
 
 export function TopicVisualizationBubbleChartRenderer(
-  props: TopicVisualizationRendererProps,
+  props: SemanticTopicVisualizationRendererProps,
 ) {
   const { data, column } = props;
   const plot: PlotParams = React.useMemo(() => {

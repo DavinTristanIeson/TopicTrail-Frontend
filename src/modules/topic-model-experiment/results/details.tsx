@@ -10,8 +10,10 @@ import {
 import React from 'react';
 import TopicModelExperimentResultSortByChoiceChips from './details/chip';
 import { TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY } from './component/select';
-import { TopicModelExperimentResultCard } from './details/list-item';
+import { TopicModelExperimentResultListItem } from './details/list-item';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
+import TopicModelExperimentResultTopicsModal from './details/modal';
+import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 
 interface TopicModelExperimentDetailsProps {
   data: BERTopicExperimentResultModel;
@@ -55,31 +57,41 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
     return trials;
   }, [data.trials, showFailed, sortBy]);
 
+  const trialRemote =
+    React.useRef<ParametrizedDisclosureTrigger<BERTopicExperimentTrialResultModel> | null>(
+      null,
+    );
+
   return (
-    <Stack className="h-full">
-      <Card>
-        <SimpleGrid cols={{ md: 2, base: 1 }}>
-          <TopicModelExperimentResultSortByChoiceChips
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            data={data}
-          />
-          <Switch
-            checked={showFailed}
-            onChange={(e) => setShowFailed(e.target.checked)}
-            label="Should the failed trials be shown as well?"
-          />
-        </SimpleGrid>
-      </Card>
-      <Stack className="h-full overflow-y-auto">
-        {trials.map((trial) => (
-          <TopicModelExperimentResultCard
-            trial={trial}
-            key={trial.trial_number}
-          />
-        ))}
+    <>
+      <TopicModelExperimentResultTopicsModal ref={trialRemote} />
+      <Stack className="h-full">
+        <Card>
+          <SimpleGrid cols={{ md: 2, base: 1 }}>
+            <TopicModelExperimentResultSortByChoiceChips
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              data={data}
+            />
+            <Switch
+              checked={showFailed}
+              onChange={(e) => setShowFailed(e.target.checked)}
+              label="Should the failed trials be shown as well?"
+            />
+          </SimpleGrid>
+        </Card>
+        <Stack className="h-full overflow-y-auto">
+          {trials.map((trial) => (
+            <Card key={trial.trial_number}>
+              <TopicModelExperimentResultListItem
+                trial={trial}
+                trialRemote={trialRemote}
+              />
+            </Card>
+          ))}
+        </Stack>
       </Stack>
-    </Stack>
+    </>
   );
 }
 

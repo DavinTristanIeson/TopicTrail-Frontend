@@ -6,6 +6,7 @@ import { TopicVisualizationScatterPlotRenderer } from './scatter-plot';
 import { TopicBarChartRenderer, TopicWordsBarChartRenderer } from './bar-chart';
 import {
   DocumentTopicsVisualizationDataProvider,
+  SemanticTopicVisualizationDataProvider,
   TopicVisualizationDataProvider,
 } from './data-providers';
 import { TopicVisualizationWordCloudRenderer } from './word-cloud';
@@ -20,7 +21,7 @@ export enum TopicVisualizationMethodEnum {
   TopicWordsWordCloud = 'topic-words-word-cloud',
 }
 
-const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
+export const TOPIC_VISUALIZATION_METHOD_DICTIONARY = {
   [TopicVisualizationMethodEnum.InterTopicRelationship]: {
     label: 'Inter-Topic Relationship (Bubble Chart)',
     description:
@@ -85,9 +86,9 @@ export default function TopicVisualizationRenderer() {
         maw={512}
       />
       {method === TopicVisualizationMethodEnum.InterTopicRelationship ? (
-        <TopicVisualizationDataProvider>
+        <SemanticTopicVisualizationDataProvider>
           {TopicVisualizationBubbleChartRenderer}
-        </TopicVisualizationDataProvider>
+        </SemanticTopicVisualizationDataProvider>
       ) : method === TopicVisualizationMethodEnum.DocumentScatterPlot ? (
         <DocumentTopicsVisualizationDataProvider>
           {TopicVisualizationScatterPlotRenderer}

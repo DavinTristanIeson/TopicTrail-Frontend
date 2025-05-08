@@ -13,9 +13,13 @@ import { extractTopicCustomdataForPlotly } from '../topics/results/topics/utils'
 import { zip } from 'lodash-es';
 import { useTopicAppState } from '../topics/app-state';
 
-function CoherenceVPerTopicBarChart(props: TopicEvaluationResultModel) {
-  const column = useTopicAppState((store) => store.column);
-  const { coherence_v_per_topic } = props;
+interface TopicEvaluationResultRendererProps
+  extends TopicEvaluationResultModel {
+  column: string;
+}
+
+function CoherenceVPerTopicBarChart(props: TopicEvaluationResultRendererProps) {
+  const { coherence_v_per_topic, column } = props;
   const plot = React.useMemo<PlotParams>(() => {
     const x = coherence_v_per_topic.map((evaluation) => evaluation.coherence);
     const y = coherence_v_per_topic.map((evaluation) =>
@@ -53,7 +57,7 @@ function CoherenceVPerTopicBarChart(props: TopicEvaluationResultModel) {
         },
       ],
       layout: {
-        title: `Coherence V per Topics of ${column?.name ?? 'Column'}`,
+        title: `Coherence V per Topics of ${column}`,
         xaxis: {
           minallowed: 0,
           automargin: true,
@@ -64,26 +68,33 @@ function CoherenceVPerTopicBarChart(props: TopicEvaluationResultModel) {
         },
       },
     };
-  }, [coherence_v_per_topic, column?.name]);
+  }, [coherence_v_per_topic, column]);
   return <PlotRenderer plot={plot} />;
 }
 
-function TopicEvaluationResultRenderer(props: TopicEvaluationResultModel) {
-  const column = useTopicAppState((store) => store.column);
+export function TopicEvaluationResultRenderer(
+  props: TopicEvaluationResultRendererProps,
+) {
+  const { column, coherence_v, coherence_v_per_topic, topic_diversity } = props;
   return (
     <Stack className="pt-5">
       <Title order={3} ta="center" c="brand">
-        Topic Evaluation Results of {column?.name ?? 'Column'}
+        Topic Evaluation Results of {column}
       </Title>
       <Group justify="space-around" pt={16}>
         <ResultCard
           label="Topic Coherence"
-          value={props.coherence_v.toFixed(4)}
+          value={coherence_v.toFixed(4)}
           info="A score that represents how coherent the topics are. A higher score is better. A topic is considered coherent if its topic words represent the contents of the documents assigned to that topic well."
         />
         <ResultCard
           label="Topic Diversity"
-          value={props.topic_diversity.toFixed(4)}
+          value={topic_diversity.toFixed(4)}
+          info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
+        />
+        <ResultCard
+          label="Topic Count"
+          value={coherence_v_per_topic.length.toString()}
           info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
         />
       </Group>
@@ -118,5 +129,10 @@ export default function TopicEvaluationResultComponent() {
   if (!progress?.data || isStillPolling) {
     return <TaskProgressLogs {...periodicChecks} />;
   }
-  return <TopicEvaluationResultRenderer {...progress.data} />;
+  return (
+    <TopicEvaluationResultRenderer
+      column={column?.name ?? 'Column'}
+      {...progress.data}
+    />
+  );
 }
