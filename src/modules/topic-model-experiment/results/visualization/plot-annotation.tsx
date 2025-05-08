@@ -56,14 +56,13 @@ export function getTrialResultCustomdata(
   return { hovertemplate, customdata };
 }
 
+type BERTopicExperimentTrialResultAccessor =
+  | ((trial: BERTopicExperimentTrialResultModel) => number | null | undefined)
+  | undefined;
 interface UseGetHyperparamerPerTrialsBestCoherenceAnnotationProps {
   result: BERTopicExperimentResultModel;
-  accessorX(
-    trial: BERTopicExperimentTrialResultModel,
-  ): number | null | undefined;
-  accessorY(
-    trial: BERTopicExperimentTrialResultModel,
-  ): number | null | undefined;
+  accessorX: BERTopicExperimentTrialResultAccessor;
+  accessorY: BERTopicExperimentTrialResultAccessor;
   mode: 'line' | 'circle';
 }
 
@@ -73,6 +72,7 @@ export function useGetHyperparamerPerTrialsBestCoherenceAnnotation(
   const { result, accessorX, accessorY, mode } = props;
   const { colors: mantineColors } = useMantineTheme();
   return React.useMemo<PlotParams['layout'] | undefined>(() => {
+    if (!accessorX || !accessorY) return undefined;
     const trials = result.trials
       .filter((trial) => !!trial.evaluation)
       .sort((a, b) => a.evaluation!.coherence_v - b.evaluation!.coherence_v);

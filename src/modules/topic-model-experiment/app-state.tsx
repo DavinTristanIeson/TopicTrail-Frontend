@@ -2,27 +2,20 @@ import { BERTopicHyperparameterConstraintModel } from '@/api/topic';
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
 import { useTopicAppState } from '../topics/app-state';
+import { TopicModelExperimentValueType } from './results/component/select';
+import { client } from '@/common/api/client';
+import { ProjectContext } from '../project/context';
+import { usePeriodicTaskStatusCheck } from '../task/status-check';
 
 export enum TopicModelExperimentTab {
   Constraint = 'constraint',
-  Results = 'results',
+  Summary = 'summary',
+  Details = 'details',
 }
 
-export enum TopicModelExperimentResultVisualizationType {
-  HyperparameterPerTrial = 'hyperparameter-per-trial',
-  EvaluationPerTrial = 'evaluation-per-trial',
-  HyperparameterPerEvaluation = 'hyperparameter-per-evaluation',
-  EvaluationPerHyperparameter = 'evaluation-per-hyperparameter',
-}
-
-export enum TopicModelExperimentResultSortBy {
-  TopicCount = 'topic-count',
-  TopicCoherence = 'topic-coherence',
-  TopicDiversity = 'topic-diversity',
-  TrialNumber = 'trial-number',
-  MaxTopics = 'max-topics',
-  MinTopicSize = 'min-topic-size',
-  TopicConfidenceThreshold = 'topic-confidence-threshold',
+export interface TopicModelExperimentValueSort {
+  type: TopicModelExperimentValueType;
+  asc: boolean;
 }
 
 interface TopicModelExperimentAppStateContextType {
@@ -32,18 +25,31 @@ interface TopicModelExperimentAppStateContextType {
       Record<string, BERTopicHyperparameterConstraintModel | null>
     >
   >;
-  visualizationMethod: TopicModelExperimentResultVisualizationType | null;
-  setVisualizationMethod: React.Dispatch<
-    React.SetStateAction<TopicModelExperimentResultVisualizationType | null>
-  >;
   tab: TopicModelExperimentTab;
   setTab: React.Dispatch<React.SetStateAction<TopicModelExperimentTab>>;
-  sortBy: TopicModelExperimentResultSortBy | null;
-  setSortBy: React.Dispatch<
-    React.SetStateAction<TopicModelExperimentResultSortBy | null>
-  >;
-  showFailed: boolean;
-  setShowFailed: React.Dispatch<React.SetStateAction<boolean>>;
+
+  details: {
+    sortBy: TopicModelExperimentValueSort | null;
+    setSortBy: React.Dispatch<
+      React.SetStateAction<TopicModelExperimentValueSort | null>
+    >;
+    showFailed: boolean;
+    setShowFailed: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  summary: {
+    xType: TopicModelExperimentValueType | null;
+    setXType: React.Dispatch<
+      React.SetStateAction<TopicModelExperimentValueType | null>
+    >;
+    yType: TopicModelExperimentValueType | null;
+    setYType: React.Dispatch<
+      React.SetStateAction<TopicModelExperimentValueType | null>
+    >;
+    colorType: TopicModelExperimentValueType | null;
+    setColorType: React.Dispatch<
+      React.SetStateAction<TopicModelExperimentValueType | null>
+    >;
+  };
   reset(): void;
 }
 
@@ -53,16 +59,27 @@ const TopicModelExperimentAppStateContext =
 export default function TopicModelExperimentAppStateProvider(
   props: React.PropsWithChildren,
 ) {
-  const [constraints, setConstraints] = React.useState({});
+  const [constraints, setConstraints] = React.useState<
+    Record<string, BERTopicHyperparameterConstraintModel | null>
+  >({});
   const [tab, setTab] = React.useState(TopicModelExperimentTab.Constraint);
   const [showFailed, setShowFailed] = React.useState(false);
   const [sortBy, setSortBy] =
-    React.useState<TopicModelExperimentResultSortBy | null>(
-      TopicModelExperimentResultSortBy.TrialNumber,
+    React.useState<TopicModelExperimentValueSort | null>({
+      type: TopicModelExperimentValueType.TrialNumber,
+      asc: true,
+    });
+  const [xType, setXType] =
+    React.useState<TopicModelExperimentValueType | null>(
+      TopicModelExperimentValueType.TrialNumber,
     );
-  const [visualizationMethod, setVisualizationMethod] =
-    React.useState<TopicModelExperimentResultVisualizationType | null>(
-      TopicModelExperimentResultVisualizationType.EvaluationPerTrial,
+  const [yType, setYType] =
+    React.useState<TopicModelExperimentValueType | null>(
+      TopicModelExperimentValueType.TopicCoherence,
+    );
+  const [colorType, setColorType] =
+    React.useState<TopicModelExperimentValueType | null>(
+      TopicModelExperimentValueType.TopicCoherence,
     );
   const reset = React.useCallback(() => {
     setConstraints({});
@@ -74,12 +91,20 @@ export default function TopicModelExperimentAppStateProvider(
         setConstraints,
         tab,
         setTab,
-        sortBy,
-        setSortBy,
-        visualizationMethod,
-        setVisualizationMethod,
-        showFailed,
-        setShowFailed,
+        details: {
+          sortBy,
+          setSortBy,
+          showFailed,
+          setShowFailed,
+        },
+        summary: {
+          xType,
+          setXType,
+          yType,
+          setYType,
+          colorType,
+          setColorType,
+        },
         reset,
       }}
     >
@@ -117,4 +142,25 @@ export function useCurrentTopicModelExperimentAppState() {
       [setConstraints, column],
     ),
   };
+}
+
+export function useTopicModelExperimentStatusQuery() {
+  const project = React.useContext(ProjectContext);
+  const column = useTopicAppState((store) => store.column!);
+  const query = client.useQuery(
+    'get',
+    '/topic/{project_id}/experiment/status',
+    {
+      params: {
+        path: {
+          project_id: project.id,
+        },
+        query: {
+          column: column.name,
+        },
+      },
+    },
+  );
+  const statusCheck = usePeriodicTaskStatusCheck({ query });
+  return { ...statusCheck, query };
 }

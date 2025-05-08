@@ -2,183 +2,93 @@ import {
   BERTopicExperimentResultModel,
   BERTopicExperimentTrialResultModel,
 } from '@/api/topic';
+import { Card, SimpleGrid, Stack, Switch } from '@mantine/core';
 import {
-  Alert,
-  Card,
-  Checkbox,
-  Group,
-  Input,
-  Select,
-  Stack,
-  Switch,
-  Text,
-} from '@mantine/core';
-import dayjs from 'dayjs';
-import {
-  TopicModelExperimentResultSortBy,
   useTopicModelExperimentAppState,
+  useTopicModelExperimentStatusQuery,
 } from '../app-state';
 import React from 'react';
+import TopicModelExperimentResultSortByChoiceChips from './details/chip';
+import { TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY } from './component/select';
+import { TopicModelExperimentResultCard } from './details/list-item';
+import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 
-interface TopicModelExperimentResultScoreProps {
-  label: string;
-  value: number;
+interface TopicModelExperimentDetailsProps {
+  data: BERTopicExperimentResultModel;
 }
 
-function TopicModelExperimentResultScore(
-  props: TopicModelExperimentResultScoreProps,
-) {
-  const { label, value } = props;
-  return (
-    <Stack align="center">
-      <Text fw={500} c="brand">
-        {label}
-      </Text>
-      <Text>{value}</Text>
-    </Stack>
+function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
+  const { data } = props;
+  const sortBy = useTopicModelExperimentAppState(
+    (store) => store.details.sortBy,
   );
-}
-
-interface TopicModelExperimentResultCardProps {
-  trial: BERTopicExperimentTrialResultModel;
-}
-function TopicModelExperimentResultCard(
-  props: TopicModelExperimentResultCardProps,
-) {
-  const { trial } = props;
-  return (
-    <Card>
-      <Group justify="space-between">
-        <Text fw={500} c="brand">{`Trial ${trial.trial_number}`}</Text>
-        {trial.timestamp && (
-          <Text c="gray">
-            {dayjs(trial.timestamp).format('DD MMMM YYYY, HH:mm:ss')}
-          </Text>
-        )}
-      </Group>
-      {trial.evaluation ? (
-        <Group>
-          <TopicModelExperimentResultScore
-            label="Coherence"
-            value={trial.evaluation.coherence_v}
-          />
-          <TopicModelExperimentResultScore
-            label="Diversity"
-            value={trial.evaluation.topic_diversity}
-          />
-          <TopicModelExperimentResultScore
-            label="Topic Count"
-            value={trial.evaluation.coherence_v_per_topic.length}
-          />
-        </Group>
-      ) : (
-        <Alert color="red" title="This trial has failed">
-          {trial.error ??
-            'An unexpected error has occurred that caused this trial to fail.'}
-        </Alert>
-      )}
-    </Card>
+  const setSortBy = useTopicModelExperimentAppState(
+    (store) => store.details.setSortBy,
   );
-}
-
-interface TopicModelExperimentSortBySelectProps {
-  value: TopicModelExperimentResultSortBy | null;
-  onChange: React.Dispatch<
-    React.SetStateAction<TopicModelExperimentResultSortBy | null>
-  >;
-}
-
-export function TopicModelExperimentResultSortBySelect(
-  props: TopicModelExperimentSortBySelectProps,
-) {
-  const { value, onChange } = props;
-  return (
-    <Select
-      value={value}
-      onChange={onChange as React.Dispatch<React.SetStateAction<string | null>>}
-      label="Sort by"
-      allowDeselect={false}
-      data={[
-        {
-          group: 'Hyperparameters',
-          items: [
-            {
-              label: 'Max. Topics',
-              value: TopicModelExperimentResultSortBy.MaxTopics,
-            },
-            {
-              label: 'Min. Topic Size',
-              value: TopicModelExperimentResultSortBy.MinTopicSize,
-            },
-            {
-              label: 'Topic Confidence Threshold',
-              value: TopicModelExperimentResultSortBy.TopicConfidenceThreshold,
-            },
-          ],
-        },
-        {
-          group: 'Evaluation Results',
-          items: [
-            {
-              label: 'Topic Coherence',
-              value: TopicModelExperimentResultSortBy.TopicCoherence,
-            },
-            {
-              label: 'Topic Diversity',
-              value: TopicModelExperimentResultSortBy.TopicDiversity,
-            },
-            {
-              label: 'Topic Count',
-              value: TopicModelExperimentResultSortBy.TopicCount,
-            },
-          ],
-        },
-        {
-          group: 'Others',
-          items: [
-            {
-              label: 'Trial Number',
-              value: TopicModelExperimentResultSortBy.TrialNumber,
-            },
-          ],
-        },
-      ]}
-    />
-  );
-}
-
-interface TopicModelExperimentResultsTabProps {
-  result: BERTopicExperimentResultModel;
-}
-
-export default function TopicModelExperimentResultsTab(
-  props: TopicModelExperimentResultsTabProps,
-) {
-  const { result } = props;
-  const sortBy = useTopicModelExperimentAppState((store) => store.sortBy);
-  const setSortBy = useTopicModelExperimentAppState((store) => store.setSortBy);
   const showFailed = useTopicModelExperimentAppState(
-    (store) => store.showFailed,
+    (store) => store.details.showFailed,
   );
   const setShowFailed = useTopicModelExperimentAppState(
-    (store) => store.setShowFailed,
+    (store) => store.details.setShowFailed,
   );
 
+  const trials = React.useMemo(() => {
+    const accessor = sortBy
+      ? TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY[sortBy.type]?.accessor
+      : undefined;
+    let trials: BERTopicExperimentTrialResultModel[];
+    if (showFailed) {
+      trials = data.trials.slice();
+    } else {
+      trials = data.trials.filter((trial) => !!trial.evaluation);
+    }
+    if (accessor) {
+      trials = data.trials.sort((a, b) => {
+        const accessedA = accessor(a);
+        const accessedB = accessor(b);
+        if (accessedA == null || accessedB == null) {
+          return 1;
+        }
+        return accessedA - accessedB;
+      });
+    }
+    return trials;
+  }, [data.trials, showFailed, sortBy]);
+
   return (
-    <Stack>
-      <Group align="start">
-        <TopicModelExperimentResultSortBySelect
-          value={sortBy}
-          onChange={setSortBy}
-        />
-        <Input.Wrapper label="Show failed trials">
+    <Stack className="h-full">
+      <Card>
+        <SimpleGrid cols={{ md: 2, base: 1 }}>
+          <TopicModelExperimentResultSortByChoiceChips
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            data={data}
+          />
           <Switch
             checked={showFailed}
             onChange={(e) => setShowFailed(e.target.checked)}
             label="Should the failed trials be shown as well?"
           />
-        </Input.Wrapper>
-      </Group>
+        </SimpleGrid>
+      </Card>
+      <Stack className="h-full overflow-y-auto">
+        {trials.map((trial) => (
+          <TopicModelExperimentResultCard
+            trial={trial}
+            key={trial.trial_number}
+          />
+        ))}
+      </Stack>
     </Stack>
+  );
+}
+
+export default function TopicModelExperimentDetailsTab() {
+  const { query } = useTopicModelExperimentStatusQuery();
+  const data = query.data?.data;
+  return (
+    <UseQueryWrapperComponent query={query} isLoading={query.isLoading}>
+      {data && <TopicModelExperimentDetails data={data} />}
+    </UseQueryWrapperComponent>
   );
 }
