@@ -1,16 +1,14 @@
-import { BERTopicExperimentTrialResultModel, TopicModel } from '@/api/topic';
+import { BERTopicExperimentTrialResultModel } from '@/api/topic';
 import {
   ParametrizedDisclosureTrigger,
   useParametrizedDisclosureTrigger,
 } from '@/hooks/disclosure';
-import { Modal, Select, Stack, Tabs } from '@mantine/core';
+import { Alert, Group, Modal, Select, Stack, Tabs, Text } from '@mantine/core';
 import React from 'react';
-import { TopicModelExperimentResultListItem } from './list-item';
 import {
   TopicBarChartRenderer,
   TopicWordsBarChartRenderer,
 } from '@/modules/topics/results/topics/bar-chart';
-import { VisualizationTopicWordsComponent } from '@/modules/visualization/components/textual/topic-words';
 import { VisualizationWeightedWordsDisplayMode } from '@/modules/visualization/configuration/weighted-words';
 import { Book, Exam } from '@phosphor-icons/react';
 import { TopicEvaluationResultRenderer } from '@/modules/topic-evaluation/result';
@@ -21,6 +19,8 @@ import {
 } from '@/modules/topics/results/topics';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { TopicVisualizationWordCloudRenderer } from '@/modules/topics/results/topics/word-cloud';
+import dayjs from 'dayjs';
+import { ResultCard } from '@/components/visual/result-card';
 
 enum TopicModelExperimentResultModalDisplay {
   Topics = 'topics',
@@ -44,7 +44,7 @@ function TopicModelExperimentResultTopicsRenderer(
       evaluation?.coherence_v_per_topic.map((coherence) => coherence.topic) ??
       []
     );
-  }, []);
+  }, [evaluation?.coherence_v_per_topic]);
 
   return (
     <Stack>
@@ -125,18 +125,44 @@ const TopicModelExperimentResultTopicsModal =
       return (
         <Modal opened={!!trial} onClose={close}>
           {trial && (
-            <>
-              <TopicModelExperimentResultListItem
-                trialRemote={null}
-                trial={{
-                  ...trial,
-                  evaluation: null,
-                }}
-              />
+            <Stack>
+              <Group justify="space-between">
+                <Text fw={500} c="brand">{`Trial ${trial.trial_number}`}</Text>
+                <Text c="gray">
+                  {dayjs(trial.timestamp).format('DD MMMM YYYY, HH:mm:ss')}
+                </Text>
+              </Group>
+              <Text fw={500}>Hyperparameters</Text>
+              <Group wrap="wrap">
+                {trial.candidate.max_topics && (
+                  <ResultCard
+                    label="Max. Topics"
+                    value={trial.candidate.max_topics}
+                  />
+                )}
+                {trial.candidate.min_topic_size && (
+                  <ResultCard
+                    label="Min. Topic Size"
+                    value={trial.candidate.min_topic_size}
+                  />
+                )}
+                {trial.candidate.topic_confidence_threshold && (
+                  <ResultCard
+                    label="Topic Confidence Threshold"
+                    value={trial.candidate.topic_confidence_threshold}
+                  />
+                )}
+              </Group>
+              {trial.error && (
+                <Alert color="red" title="This trial has failed">
+                  An unexpected error has occurred that caused this trial to
+                  fail.
+                </Alert>
+              )}
               {trial.evaluation && (
                 <TopicModelExperimentResultTopicsModalTabs {...trial} />
               )}
-            </>
+            </Stack>
           )}
         </Modal>
       );

@@ -987,6 +987,8 @@ export interface components {
         /** BERTopicExperimentResult */
         BERTopicExperimentResult: {
             constraint: components["schemas"]["BERTopicHyperparameterConstraint"];
+            /** Max Trials */
+            max_trials: number;
             /** Trials */
             trials: components["schemas"]["BERTopicExperimentTrialResult"][];
             /**

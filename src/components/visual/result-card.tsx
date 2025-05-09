@@ -3,7 +3,7 @@ import { Info } from '@phosphor-icons/react';
 
 interface StatisticTestResultCardProps {
   label: string;
-  value: string;
+  value: React.ReactNode;
   info?: string;
 }
 
