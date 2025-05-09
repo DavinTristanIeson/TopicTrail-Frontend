@@ -1,4 +1,4 @@
-import { BERTopicHyperparameterConstraintModel } from '@/api/topic';
+import { TopicModelExperimentEnvironment } from '@/api/topic';
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
 import { useTopicAppState } from '../topics/app-state';
@@ -19,11 +19,9 @@ export interface TopicModelExperimentValueSort {
 }
 
 interface TopicModelExperimentAppStateContextType {
-  constraints: Record<string, BERTopicHyperparameterConstraintModel | null>;
-  setConstraints: React.Dispatch<
-    React.SetStateAction<
-      Record<string, BERTopicHyperparameterConstraintModel | null>
-    >
+  environments: Record<string, TopicModelExperimentEnvironment | null>;
+  setEnvironments: React.Dispatch<
+    React.SetStateAction<Record<string, TopicModelExperimentEnvironment | null>>
   >;
   tab: TopicModelExperimentTab;
   setTab: React.Dispatch<React.SetStateAction<TopicModelExperimentTab>>;
@@ -59,8 +57,8 @@ const TopicModelExperimentAppStateContext =
 export default function TopicModelExperimentAppStateProvider(
   props: React.PropsWithChildren,
 ) {
-  const [constraints, setConstraints] = React.useState<
-    Record<string, BERTopicHyperparameterConstraintModel | null>
+  const [environments, setEnvironments] = React.useState<
+    Record<string, TopicModelExperimentEnvironment | null>
   >({});
   const [tab, setTab] = React.useState(TopicModelExperimentTab.Constraint);
   const [showFailed, setShowFailed] = React.useState(false);
@@ -82,13 +80,13 @@ export default function TopicModelExperimentAppStateProvider(
       TopicModelExperimentValueType.TopicCoherence,
     );
   const reset = React.useCallback(() => {
-    setConstraints({});
+    setEnvironments({});
   }, []);
   return (
     <TopicModelExperimentAppStateContext.Provider
       value={{
-        constraints,
-        setConstraints,
+        environments,
+        setEnvironments,
         tab,
         setTab,
         details: {
@@ -121,25 +119,25 @@ export function useTopicModelExperimentAppState<T>(
 
 export function useCurrentTopicModelExperimentAppState() {
   const column = useTopicAppState((store) => store.column);
-  const constraint = useTopicModelExperimentAppState((store) =>
-    column ? (store.constraints[column.name] ?? null) : null,
+  const environment = useTopicModelExperimentAppState((store) =>
+    column ? (store.environments[column.name] ?? null) : null,
   );
-  const setConstraints = useTopicModelExperimentAppState(
-    (store) => store.setConstraints,
+  const setEnvironment = useTopicModelExperimentAppState(
+    (store) => store.setEnvironments,
   );
   return {
-    constraint,
-    setConstraint: React.useCallback(
-      (constraint: BERTopicHyperparameterConstraintModel) => {
+    environment,
+    setEnvironment: React.useCallback(
+      (constraint: TopicModelExperimentEnvironment) => {
         if (!column) return;
-        setConstraints((prev) => {
+        setEnvironment((prev) => {
           return {
             ...prev,
             [column.name]: constraint,
           };
         });
       },
-      [setConstraints, column],
+      [setEnvironment, column],
     ),
   };
 }

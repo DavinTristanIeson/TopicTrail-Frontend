@@ -140,6 +140,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
     data: data.trials,
     columns,
     ...MantineReactTableBehaviors.Default,
+    enableFilters: true,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.Virtualized(data.trials, []),
     enableSorting: true,
@@ -152,11 +153,11 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
       <Stack className="h-full">
         <Card>
           <SimpleGrid cols={{ md: 2, base: 1 }}>
-            <TopicModelExperimentResultSortByChoiceChips
+            {/* <TopicModelExperimentResultSortByChoiceChips
               sortBy={sortBy}
               setSortBy={setSortBy}
               data={data}
-            />
+            /> */}
             <Switch
               checked={showFailed}
               onChange={(e) => setShowFailed(e.target.checked)}

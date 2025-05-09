@@ -57,14 +57,16 @@ function CoherenceVPerTopicBarChart(props: TopicEvaluationResultRendererProps) {
         },
       ],
       layout: {
-        title: `Coherence V per Topics of ${column}`,
+        title: `Coherence per Topics of ${column}`,
         xaxis: {
           minallowed: 0,
           automargin: true,
           range: [0, 1],
+          title: 'Coherence',
         },
         yaxis: {
           automargin: true,
+          title: 'Topics',
         },
       },
     };
@@ -104,7 +106,7 @@ export function TopicEvaluationResultRenderer(
 }
 
 export default function TopicEvaluationResultComponent() {
-  const column = useTopicAppState((store) => store.column);
+  const column = useTopicAppState((store) => store.column!);
   const project = React.useContext(ProjectContext);
 
   const query = client.useQuery(
@@ -116,12 +118,9 @@ export default function TopicEvaluationResultComponent() {
           project_id: project.id,
         },
         query: {
-          column: column?.name ?? '',
+          column: column.name ?? '',
         },
       },
-    },
-    {
-      enabled: !!column,
     },
   );
   const periodicChecks = usePeriodicTaskStatusCheck({ query });

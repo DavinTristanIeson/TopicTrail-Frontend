@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { Lock, LockOpen } from '@phosphor-icons/react';
+import { Lock, LockOpen, X } from '@phosphor-icons/react';
 import { useForm, useFormContext, useWatch } from 'react-hook-form';
 import {
   TopicModelHyperparameterConstraintFormType,
@@ -29,7 +29,7 @@ import { showNotification } from '@mantine/notifications';
 import { FormEditableContext } from '@/components/standard/fields/context';
 import PromiseButton from '@/components/standard/button/promise';
 import { handleError } from '@/common/utils/error';
-import { TopicModelExperimentInput } from '@/api/topic';
+import { TopicModelExperimentEnvironment } from '@/api/topic';
 
 interface NumericHyperparameterRangeFieldProps {
   label: string;
@@ -52,6 +52,7 @@ function NumericHyperparameterRangeField(
     <div>
       <Group className="pb-3">
         <ActionIcon
+          variant="light"
           onClick={() => {
             if (isHyperparameterLocked) {
               setValue(name, [defaultValue, defaultValue]);
@@ -174,23 +175,25 @@ function TopicModelExperimentExplanation() {
 }
 
 export default function TopicModelExperimentHyperparameterControls() {
-  const { constraint } = useCurrentTopicModelExperimentAppState();
+  const { environment, setEnvironment } =
+    useCurrentTopicModelExperimentAppState();
   const form = useForm({
     resolver: yupResolver(topicModelHyperparameterConstraintSchema),
     defaultValues: React.useMemo(() => {
       return {
         constraint: {
-          max_topics: constraint?.max_topics ?? null,
-          min_topic_size: constraint?.min_topic_size ?? null,
+          max_topics: environment?.constraint?.max_topics ?? null,
+          min_topic_size: environment?.constraint?.min_topic_size ?? null,
           topic_confidence_threshold:
-            constraint?.topic_confidence_threshold ?? null,
+            environment?.constraint?.topic_confidence_threshold ?? null,
         },
-        n_trials: 5,
+        n_trials: environment?.n_trials ?? 5,
       } as TopicModelHyperparameterConstraintFormType;
     }, [
-      constraint?.max_topics,
-      constraint?.min_topic_size,
-      constraint?.topic_confidence_threshold,
+      environment?.constraint?.max_topics,
+      environment?.constraint?.min_topic_size,
+      environment?.constraint?.topic_confidence_threshold,
+      environment?.n_trials,
     ]),
   });
 
@@ -218,7 +221,6 @@ export default function TopicModelExperimentHyperparameterControls() {
             params,
           },
         ).queryKey;
-        queryClient.removeQueries({ queryKey });
         queryClient.refetchQueries({ queryKey });
       },
     },
@@ -245,10 +247,10 @@ export default function TopicModelExperimentHyperparameterControls() {
       <Divider className="my-5" />
       <FormWrapper
         form={form}
-        onSubmit={async (values) => {
+        onSubmit={async (values: TopicModelExperimentEnvironment) => {
           const res = await startTopicModelExperiment({
             params,
-            body: values as TopicModelExperimentInput,
+            body: values,
           });
           if (res.message) {
             showNotification({
@@ -256,15 +258,17 @@ export default function TopicModelExperimentHyperparameterControls() {
               color: 'green',
             });
           }
+          setEnvironment(values);
         }}
       >
         <TopicModelExperimentHyperparameterControlsFormBody />
-        <Group justify="end">
+        <Group justify="end" className="pt-5">
           <SubmitButton>Start Experiments</SubmitButton>
           {!editable && (
             <PromiseButton
               variant="outline"
               color="red"
+              leftSection={<X />}
               onClick={async () => {
                 try {
                   await cancelTopicModelExperiment({

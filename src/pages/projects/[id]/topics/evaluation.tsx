@@ -14,6 +14,7 @@ const TopicEvaluationPage: NextPageWithLayout = function () {
   return (
     <Stack>
       <ProjectFocusedTextualColumnControls
+        onlyColumnsWithTopics
         Right={<ReturnToTopicsPageButton />}
       />
       <TopicModelingRequirementSafeguard canSelectColumn>

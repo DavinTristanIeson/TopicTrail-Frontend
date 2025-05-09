@@ -7,10 +7,7 @@ import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { Alert, Anchor, Select, Stack } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
-import {
-  SemanticTopicVisualizationRendererProps,
-  TopicVisualizationRendererProps,
-} from './data-providers';
+import { TopicVisualizationRendererProps } from './data-providers';
 import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/configuration';
 import { useTopNWordsSlider } from '@/modules/visualization/components/textual/renderer';
 
@@ -137,6 +134,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
         xaxis: {
           ...plotlyLayoutProps,
           minallowed: 0,
+          title: 'Frequency',
         },
         height: 720,
         title: {
@@ -144,11 +142,18 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
         },
         minallowed: 0,
         yaxis: {
+          title: 'Topics',
           automargin: true,
         },
       },
     };
-  }, [column.name, needsPercentage, plotlyLayoutProps, transformFrequencies]);
+  }, [
+    column.name,
+    needsPercentage,
+    plotlyLayoutProps,
+    topics,
+    transformFrequencies,
+  ]);
   return (
     <Stack>
       <Select {...selectProps} maw={512} />

@@ -7,11 +7,11 @@ import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
 import { SemanticTopicVisualizationRendererProps } from './data-providers';
 
-export function TopicVisualizationBubbleChartRenderer(
+export function useTopicVisualizationPlotlyData(
   props: SemanticTopicVisualizationRendererProps,
 ) {
-  const { data, column } = props;
-  const plot: PlotParams = React.useMemo(() => {
+  const { data } = props;
+  const plot: PlotParams['data'] = React.useMemo(() => {
     const x = data.map((item) => item.x);
     const y = data.map((item) => item.y);
     const labels = data.map((item) => getTopicLabel(item.topic));
@@ -24,29 +24,48 @@ export function TopicVisualizationBubbleChartRenderer(
     const { colors } = generateColorsFromSequence(
       data.map((item) => item.topic.id),
     );
-    return {
-      data: [
-        {
-          x,
-          y,
-          mode: 'markers+text',
-          hovertemplate: topicsHovertemplate,
-          text: labels,
-          textposition: 'bottom center',
-          customdata,
-          marker: {
-            color: colors,
-            size: sizes as any,
-          },
+    return [
+      {
+        name: 'Topics',
+        x,
+        y,
+        mode: 'markers+text',
+        hovertemplate: topicsHovertemplate,
+        text: labels,
+        textposition: 'bottom center',
+        customdata,
+        marker: {
+          color: colors,
+          size: sizes as any,
         },
-      ],
+      },
+    ];
+  }, [data]);
+
+  return plot;
+}
+
+export function TopicVisualizationBubbleChartRenderer(
+  props: SemanticTopicVisualizationRendererProps,
+) {
+  const { column } = props;
+  const plotData = useTopicVisualizationPlotlyData(props);
+  const plot: PlotParams = React.useMemo(() => {
+    return {
+      data: plotData,
       layout: {
         title: {
           text: `Topics of "${column.name}"`,
         },
         height: 720,
+        xaxis: {
+          title: 'D1',
+        },
+        yaxis: {
+          title: 'D2',
+        },
       },
     };
-  }, [column.name, data]);
+  }, [column.name, plotData]);
   return <PlotRenderer plot={plot} />;
 }

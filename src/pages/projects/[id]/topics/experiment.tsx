@@ -23,6 +23,7 @@ const TopicModelExperimentPage: NextPageWithLayout = function () {
   return (
     <Stack>
       <ProjectFocusedTextualColumnControls
+        onlyColumnsWithTopics
         Right={<ReturnToTopicsPageButton />}
       />
 

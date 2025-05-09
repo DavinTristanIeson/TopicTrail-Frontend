@@ -64,10 +64,10 @@ export function TopicModelExperimentResultSummaryPlot(
           customdata,
           hovertemplate,
           marker: {
-            colors,
+            color: colors,
             cmin: min(colorValues) ?? 0,
             cmax: max(colorValues) ?? 0,
-            colorscale: 'Greens',
+            colorscale: 'Viridis',
             colorbar: {
               title: colorConfig.label,
             },
@@ -78,8 +78,6 @@ export function TopicModelExperimentResultSummaryPlot(
         title: `Topic Model Experiment Result`,
         xaxis: {
           title: xConfig.label,
-          minallowed: 0,
-          maxallowed: (trials[trials.length - 1]?.trial_number ?? 0) + 1,
         },
         yaxis: {
           title: yConfig.label,

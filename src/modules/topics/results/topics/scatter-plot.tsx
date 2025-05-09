@@ -8,6 +8,7 @@ import { useMantineTheme } from '@mantine/core';
 import { DocumentTopicsVisualizationRendererProps } from './data-providers';
 import { plotlyWrapText } from '@/modules/visualization/components/utils';
 import { getTopicLabel } from '@/api/topic';
+import { useTopicVisualizationPlotlyData } from './bubble-chart';
 
 export function TopicVisualizationScatterPlotRenderer(
   props: DocumentTopicsVisualizationRendererProps,
@@ -15,9 +16,14 @@ export function TopicVisualizationScatterPlotRenderer(
   const { data, column } = props;
   const topicModelingResult = useTopicModelingResultOfColumn(column.name)!;
   const { colors: mantineColors } = useMantineTheme();
+
+  const plotData = useTopicVisualizationPlotlyData({
+    data: data.topics,
+    column,
+  });
   const plot: PlotParams = React.useMemo(() => {
     const groups = Object.values(groupBy(data.documents, (item) => item.topic));
-    const subplots: PlotParams['data'] = [];
+    const subplots: PlotParams['data'] = plotData.slice();
     const { colors } = generateColorsFromSequence(groups);
     for (const [group, color] of zip(groups, colors)) {
       if (!group) continue;
@@ -71,13 +77,20 @@ export function TopicVisualizationScatterPlotRenderer(
           text: `Documents of "${column.name}"`,
         },
         height: 720,
+        xaxis: {
+          title: 'D1',
+        },
+        yaxis: {
+          title: 'D2',
+        },
       },
     };
   }, [
     column.name,
     data.documents,
     mantineColors.gray,
-    topicModelingResult.result,
+    plotData,
+    topicModelingResult.result?.topics,
   ]);
   return <PlotRenderer plot={plot} />;
 }

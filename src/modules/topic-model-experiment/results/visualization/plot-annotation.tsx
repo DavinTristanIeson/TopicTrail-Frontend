@@ -75,7 +75,7 @@ export function useGetHyperparamerPerTrialsBestCoherenceAnnotation(
     if (!accessorX || !accessorY) return undefined;
     const trials = result.trials
       .filter((trial) => !!trial.evaluation)
-      .sort((a, b) => a.evaluation!.coherence_v - b.evaluation!.coherence_v);
+      .sort((a, b) => b.evaluation!.coherence_v - a.evaluation!.coherence_v);
     const xvalues = trials.map(accessorX);
     const yvalues = trials.map(accessorY);
     const best = trials[0];

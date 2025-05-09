@@ -39,14 +39,17 @@ export function useTopicModelExperimentValueTypePlot(
     <Select
       value={xType}
       onChange={setXType as any}
+      data={options}
       label="Data for X"
       description="Select the data that will be used for the X axis."
+      searchable={false}
     />
   );
   const SelectY = (
     <Select
       value={yType}
       onChange={setYType as any}
+      data={options}
       label="Data for Y"
       description="Select the data that will be used for the Y axis."
       searchable={false}
@@ -56,6 +59,7 @@ export function useTopicModelExperimentValueTypePlot(
     <Select
       value={colorType}
       label="Data for Color"
+      data={options}
       onChange={setColorType as any}
       description="Select the data that will be used as the color for the scatter plot."
       searchable={false}

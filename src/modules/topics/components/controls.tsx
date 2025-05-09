@@ -112,19 +112,25 @@ export function TopicModelingOptionFlagCheckboxes(
 }
 
 interface TopicColumnControlsProps {
+  onlyColumnsWithTopics?: boolean;
   Right?: React.ReactNode;
 }
 
 export function ProjectFocusedTextualColumnControls(
   props: TopicColumnControlsProps,
 ) {
-  const { Right } = props;
+  const { Right, onlyColumnsWithTopics = false } = props;
   const topicModelingResults = React.useContext(AllTopicModelingResultContext);
 
   const column = useTopicAppState((store) => store.column);
   const setColumn = useTopicAppState((store) => store.setColumn);
 
-  const columns = topicModelingResults.map((result) => result.column);
+  const columns = topicModelingResults
+    .filter((result) => {
+      return !onlyColumnsWithTopics || !!result.result;
+    })
+    .map((result) => result.column);
+
   const firstColumn = columns[0];
   // Focus on the first column
   React.useEffect(() => {
@@ -161,7 +167,7 @@ export function ProjectFocusedTextualColumnControls(
           {Right}
         </Group>
       </Paper>
-      <div style={{ height: Math.max(72, height ?? 0) }} />
+      <div style={{ height: Math.max(24 + 24, height + 24) }} />
     </>
   );
 }

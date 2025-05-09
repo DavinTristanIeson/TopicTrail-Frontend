@@ -83,9 +83,6 @@ export default function TopicEvaluationControls() {
             },
           },
         ).queryKey;
-        queryClient.removeQueries({
-          queryKey: queryKey,
-        });
         queryClient.refetchQueries({
           queryKey: queryKey,
         });

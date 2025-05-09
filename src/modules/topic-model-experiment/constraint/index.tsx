@@ -1,4 +1,4 @@
-import { Stack } from '@mantine/core';
+import { Space } from '@mantine/core';
 import TopicModelExperimentHyperparameterControls from './controls';
 import React from 'react';
 import TaskProgressLogs from '@/modules/task/progress-logs';
@@ -14,11 +14,12 @@ export default function TopicModelExperimentConstraintTab() {
     };
   }, [statusCheck.isCheckingStatus, statusCheck.isStillPolling]);
   return (
-    <Stack>
+    <div className="pb-5">
       <FormEditableContext.Provider value={formEditableState}>
         <TopicModelExperimentHyperparameterControls />
       </FormEditableContext.Provider>
+      <Space h="xl" />
       <TaskProgressLogs {...statusCheck} />
-    </Stack>
+    </div>
   );
 }
