@@ -74,32 +74,46 @@ function CoherenceVPerTopicBarChart(props: TopicEvaluationResultRendererProps) {
   return <PlotRenderer plot={plot} />;
 }
 
+export function TopicEvaluationMetricsRenderer(
+  props: TopicEvaluationResultModel,
+) {
+  const { coherence_v, coherence_v_per_topic, topic_diversity, outlier_count } =
+    props;
+  return (
+    <Group justify="space-around" pt={16}>
+      <ResultCard
+        label="Topic Coherence"
+        value={coherence_v.toFixed(4)}
+        info="A score that represents how coherent the topics are. A higher score is better. A topic is considered coherent if its topic words represent the contents of the documents assigned to that topic well."
+      />
+      <ResultCard
+        label="Topic Diversity"
+        value={topic_diversity.toFixed(4)}
+        info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
+      />
+      <ResultCard
+        label="Topic Count"
+        value={coherence_v_per_topic.length.toString()}
+        info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
+      />
+      <ResultCard
+        label="Outlier Frequency"
+        value={outlier_count}
+        info="The number of rows that are classified as outliers."
+      />
+    </Group>
+  );
+}
+
 export function TopicEvaluationResultRenderer(
   props: TopicEvaluationResultRendererProps,
 ) {
-  const { column, coherence_v, coherence_v_per_topic, topic_diversity } = props;
+  const { column } = props;
   return (
     <Stack className="pt-5">
       <Title order={3} ta="center" c="brand">
         Topic Evaluation Results of {column}
       </Title>
-      <Group justify="space-around" pt={16}>
-        <ResultCard
-          label="Topic Coherence"
-          value={coherence_v.toFixed(4)}
-          info="A score that represents how coherent the topics are. A higher score is better. A topic is considered coherent if its topic words represent the contents of the documents assigned to that topic well."
-        />
-        <ResultCard
-          label="Topic Diversity"
-          value={topic_diversity.toFixed(4)}
-          info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
-        />
-        <ResultCard
-          label="Topic Count"
-          value={coherence_v_per_topic.length.toString()}
-          info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
-        />
-      </Group>
       <CoherenceVPerTopicBarChart {...props} />
     </Stack>
   );

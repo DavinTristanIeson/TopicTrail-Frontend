@@ -26,14 +26,6 @@ interface TopicModelExperimentAppStateContextType {
   tab: TopicModelExperimentTab;
   setTab: React.Dispatch<React.SetStateAction<TopicModelExperimentTab>>;
 
-  details: {
-    sortBy: TopicModelExperimentValueSort | null;
-    setSortBy: React.Dispatch<
-      React.SetStateAction<TopicModelExperimentValueSort | null>
-    >;
-    showFailed: boolean;
-    setShowFailed: React.Dispatch<React.SetStateAction<boolean>>;
-  };
   summary: {
     xType: TopicModelExperimentValueType | null;
     setXType: React.Dispatch<
@@ -61,12 +53,6 @@ export default function TopicModelExperimentAppStateProvider(
     Record<string, TopicModelExperimentEnvironment | null>
   >({});
   const [tab, setTab] = React.useState(TopicModelExperimentTab.Constraint);
-  const [showFailed, setShowFailed] = React.useState(false);
-  const [sortBy, setSortBy] =
-    React.useState<TopicModelExperimentValueSort | null>({
-      type: TopicModelExperimentValueType.TrialNumber,
-      asc: true,
-    });
   const [xType, setXType] =
     React.useState<TopicModelExperimentValueType | null>(
       TopicModelExperimentValueType.TrialNumber,
@@ -89,12 +75,6 @@ export default function TopicModelExperimentAppStateProvider(
         setEnvironments,
         tab,
         setTab,
-        details: {
-          sortBy,
-          setSortBy,
-          showFailed,
-          setShowFailed,
-        },
         summary: {
           xType,
           setXType,

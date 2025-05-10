@@ -3,14 +3,23 @@ import {
   ParametrizedDisclosureTrigger,
   useParametrizedDisclosureTrigger,
 } from '@/hooks/disclosure';
-import { Alert, Group, Modal, Select, Stack, Tabs, Text } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  Group,
+  Modal,
+  Select,
+  Stack,
+  Tabs,
+  Text,
+  Title,
+} from '@mantine/core';
 import React from 'react';
 import {
   TopicBarChartRenderer,
   TopicWordsBarChartRenderer,
 } from '@/modules/topics/results/topics/bar-chart';
-import { VisualizationWeightedWordsDisplayMode } from '@/modules/visualization/configuration/weighted-words';
-import { Book, Exam } from '@phosphor-icons/react';
+import { Book, CheckCircle, Exam } from '@phosphor-icons/react';
 import { TopicEvaluationResultRenderer } from '@/modules/topic-evaluation/result';
 import { useTopicAppState } from '@/modules/topics/app-state';
 import {
@@ -21,6 +30,13 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { TopicVisualizationWordCloudRenderer } from '@/modules/topics/results/topics/word-cloud';
 import dayjs from 'dayjs';
 import { ResultCard } from '@/components/visual/result-card';
+import { client } from '@/common/api/client';
+import { ProjectContext } from '@/modules/project/context';
+import { showNotification } from '@mantine/notifications';
+import { handleErrorFn } from '@/common/utils/error';
+import { invalidateProjectDependencyQueries } from '@/api/project';
+import { useRouter } from 'next/router';
+import NavigationRoutes from '@/common/constants/routes';
 
 enum TopicModelExperimentResultModalDisplay {
   Topics = 'topics',
@@ -53,7 +69,7 @@ function TopicModelExperimentResultTopicsRenderer(
           TopicVisualizationMethodEnum.TopicWordsBarchart,
           TopicVisualizationMethodEnum.TopicWordsWordCloud,
           TopicVisualizationMethodEnum.TopicsBarchart,
-        ]}
+        ].map((value) => TOPIC_VISUALIZATION_METHOD_DICTIONARY[value])}
         label="Visualization method"
         renderOption={renderOption}
         value={method}
@@ -76,11 +92,11 @@ function TopicModelExperimentResultTopicsModalTabs(
   trial: BERTopicExperimentTrialResultModel,
 ) {
   const [display, setDisplay] = React.useState(
-    VisualizationWeightedWordsDisplayMode.WordCloud,
+    TopicModelExperimentResultModalDisplay.Topics,
   );
   const column = useTopicAppState((store) => store.column);
 
-  if (trial.evaluation) return null;
+  if (!trial.evaluation) return null;
 
   return (
     <Tabs
@@ -104,10 +120,16 @@ function TopicModelExperimentResultTopicsModalTabs(
           Evaluation Results
         </Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value={TopicModelExperimentResultModalDisplay.Topics}>
+      <Tabs.Panel
+        value={TopicModelExperimentResultModalDisplay.Topics}
+        className="pt-5"
+      >
         <TopicModelExperimentResultTopicsRenderer {...trial} />
       </Tabs.Panel>
-      <Tabs.Panel value={TopicModelExperimentResultModalDisplay.Evaluation}>
+      <Tabs.Panel
+        value={TopicModelExperimentResultModalDisplay.Evaluation}
+        className="pt-5"
+      >
         <TopicEvaluationResultRenderer
           {...trial.evaluation!}
           column={column?.name ?? 'Column'}
@@ -121,38 +143,86 @@ const TopicModelExperimentResultTopicsModal =
   React.forwardRef<ParametrizedDisclosureTrigger<BERTopicExperimentTrialResultModel> | null>(
     function TopicModelExperimentResultTopicsModal(props, ref) {
       const [trial, { close }] = useParametrizedDisclosureTrigger(ref);
+      const project = React.useContext(ProjectContext);
+      const column = useTopicAppState((store) => store.column!);
+      const { replace } = useRouter();
+      const { mutateAsync: applyTopicModelHyperparameter, isPending } =
+        client.useMutation(
+          'post',
+          '/topic/{project_id}/apply-topic-model-hyperparameter',
+        );
 
       return (
-        <Modal opened={!!trial} onClose={close}>
+        <Modal opened={!!trial} onClose={close} fullScreen>
           {trial && (
-            <Stack>
+            <Stack gap={32}>
               <Group justify="space-between">
-                <Text fw={500} c="brand">{`Trial ${trial.trial_number}`}</Text>
+                <Title
+                  order={2}
+                  fw={500}
+                  c="brand"
+                >{`Trial ${trial.trial_number}`}</Title>
                 <Text c="gray">
                   {dayjs(trial.timestamp).format('DD MMMM YYYY, HH:mm:ss')}
                 </Text>
               </Group>
-              <Text fw={500}>Hyperparameters</Text>
-              <Group wrap="wrap">
-                {trial.candidate.max_topics && (
-                  <ResultCard
-                    label="Max. Topics"
-                    value={trial.candidate.max_topics}
-                  />
-                )}
-                {trial.candidate.min_topic_size && (
-                  <ResultCard
-                    label="Min. Topic Size"
-                    value={trial.candidate.min_topic_size}
-                  />
-                )}
-                {trial.candidate.topic_confidence_threshold && (
-                  <ResultCard
-                    label="Topic Confidence Threshold"
-                    value={trial.candidate.topic_confidence_threshold}
-                  />
-                )}
-              </Group>
+              <Stack>
+                <Text fw={500}>Hyperparameters</Text>
+                <Group wrap="wrap">
+                  {trial.candidate.max_topics && (
+                    <ResultCard
+                      label="Max. Topics"
+                      value={trial.candidate.max_topics}
+                    />
+                  )}
+                  {trial.candidate.min_topic_size && (
+                    <ResultCard
+                      label="Min. Topic Size"
+                      value={trial.candidate.min_topic_size}
+                    />
+                  )}
+                  {trial.candidate.topic_confidence_threshold && (
+                    <ResultCard
+                      label="Topic Confidence Threshold"
+                      value={trial.candidate.topic_confidence_threshold}
+                    />
+                  )}
+                </Group>
+                <Button
+                  loading={isPending}
+                  className="max-w-md"
+                  leftSection={<CheckCircle />}
+                  onClick={handleErrorFn(async () => {
+                    const res = await applyTopicModelHyperparameter({
+                      params: {
+                        path: {
+                          project_id: project.id,
+                        },
+                        query: {
+                          column: column.name,
+                        },
+                      },
+                      body: trial.candidate,
+                    });
+                    if (res.message) {
+                      showNotification({
+                        message: res.message,
+                        color: 'green',
+                      });
+                    }
+                    close();
+                    replace({
+                      pathname: NavigationRoutes.ProjectTopics,
+                      query: {
+                        id: project.id,
+                      },
+                    });
+                    invalidateProjectDependencyQueries(project.id);
+                  })}
+                >
+                  Use these hyperparameters
+                </Button>
+              </Stack>
               {trial.error && (
                 <Alert color="red" title="This trial has failed">
                   An unexpected error has occurred that caused this trial to

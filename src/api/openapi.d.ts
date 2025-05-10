@@ -568,6 +568,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/topic/{project_id}/apply-topic-model-hyperparameter": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get  Apply Topic Model Hyperparameter */
+        post: operations["get__apply_topic_model_hyperparameter_topic__project_id__apply_topic_model_hyperparameter_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/userdata/{project_id}/filters": {
         parameters: {
             query?: never;
@@ -991,6 +1008,7 @@ export interface components {
             max_trials: number;
             /** Trials */
             trials: components["schemas"]["BERTopicExperimentTrialResult"][];
+            evaluation: components["schemas"]["TopicEvaluationResult"];
             /**
              * Start At
              * Format: date-time
@@ -2119,6 +2137,8 @@ export interface components {
             topic_diversity: number;
             /** Coherence V Per Topic */
             coherence_v_per_topic: components["schemas"]["CoherenceVPerTopic"][];
+            /** Outlier Count */
+            outlier_count: number;
         };
         /** TopicModelExperimentSchema */
         TopicModelExperimentSchema: {
@@ -4790,6 +4810,79 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TaskResponse_BERTopicExperimentResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    get__apply_topic_model_hyperparameter_topic__project_id__apply_topic_model_hyperparameter_post: {
+        parameters: {
+            query: {
+                column: string;
+            };
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BERTopicHyperparameterCandidate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_NoneType_"];
                 };
             };
             /** @description Bad Request */

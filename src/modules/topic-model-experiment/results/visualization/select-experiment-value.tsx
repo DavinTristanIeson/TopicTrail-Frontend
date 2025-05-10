@@ -43,6 +43,7 @@ export function useTopicModelExperimentValueTypePlot(
       label="Data for X"
       description="Select the data that will be used for the X axis."
       searchable={false}
+      required
     />
   );
   const SelectY = (
@@ -53,6 +54,7 @@ export function useTopicModelExperimentValueTypePlot(
       label="Data for Y"
       description="Select the data that will be used for the Y axis."
       searchable={false}
+      required
     />
   );
   const SelectColor = (
@@ -63,6 +65,7 @@ export function useTopicModelExperimentValueTypePlot(
       onChange={setColorType as any}
       description="Select the data that will be used as the color for the scatter plot."
       searchable={false}
+      required
     />
   );
 
