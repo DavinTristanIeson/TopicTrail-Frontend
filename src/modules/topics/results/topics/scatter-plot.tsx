@@ -32,7 +32,7 @@ export function TopicVisualizationScatterPlotRenderer(
       const topicOfThisGroup = group[0]?.topic;
       const plotColor =
         topicOfThisGroup === -1 ? mantineColors.gray[4] : color!;
-      const documentContents = data.documents.map((item) =>
+      const documentContents = group.map((item) =>
         plotlyWrapText(item.document),
       );
       const topic = topicModelingResult.result?.topics.find(
@@ -41,7 +41,7 @@ export function TopicVisualizationScatterPlotRenderer(
 
       let hovertemplate: string = '';
       if (topicOfThisGroup === -1) {
-        hovertemplate = `This document is not assigned to any topic (Outlier).<b>Frequency</b>: ${group.length}`;
+        hovertemplate = `This document is not assigned to any topic (Outlier).<br><b>Frequency</b>: ${group.length}`;
       } else if (topic) {
         hovertemplate = [
           `<b>Topic</b>: ${getTopicLabel(topic)}`,

@@ -2139,6 +2139,10 @@ export interface components {
             coherence_v_per_topic: components["schemas"]["CoherenceVPerTopic"][];
             /** Outlier Count */
             outlier_count: number;
+            /** Valid Count */
+            valid_count: number;
+            /** Total Count */
+            total_count: number;
         };
         /** TopicModelExperimentSchema */
         TopicModelExperimentSchema: {

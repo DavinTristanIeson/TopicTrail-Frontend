@@ -1,7 +1,7 @@
 import { getTopicLabel, TopicEvaluationResultModel } from '@/api/topic';
 import { ResultCard } from '@/components/visual/result-card';
 import PlotRenderer from '@/components/widgets/plotly';
-import { Stack, Group, Title } from '@mantine/core';
+import { Stack, Group, Title, Text } from '@mantine/core';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { generateColorsFromSequence } from '@/common/utils/colors';
@@ -77,8 +77,13 @@ function CoherenceVPerTopicBarChart(props: TopicEvaluationResultRendererProps) {
 export function TopicEvaluationMetricsRenderer(
   props: TopicEvaluationResultModel,
 ) {
-  const { coherence_v, coherence_v_per_topic, topic_diversity, outlier_count } =
-    props;
+  const {
+    coherence_v,
+    coherence_v_per_topic,
+    topic_diversity,
+    outlier_count,
+    total_count,
+  } = props;
   return (
     <Group justify="space-around" pt={16}>
       <ResultCard
@@ -98,7 +103,14 @@ export function TopicEvaluationMetricsRenderer(
       />
       <ResultCard
         label="Outlier Frequency"
-        value={outlier_count}
+        value={
+          <Text inherit>
+            <Text span inherit c="red">
+              {outlier_count}
+            </Text>
+            /{total_count}
+          </Text>
+        }
         info="The number of rows that are classified as outliers."
       />
     </Group>
@@ -111,9 +123,10 @@ export function TopicEvaluationResultRenderer(
   const { column } = props;
   return (
     <Stack className="pt-5">
-      <Title order={3} ta="center" c="brand">
+      <Title order={2} ta="center">
         Topic Evaluation Results of {column}
       </Title>
+      <TopicEvaluationMetricsRenderer {...props} />
       <CoherenceVPerTopicBarChart {...props} />
     </Stack>
   );

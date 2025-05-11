@@ -54,13 +54,15 @@ type RefineTopicsSelectTopicFieldProps =
 export function RefineTopicsSelectTopicField(
   props: RefineTopicsSelectTopicFieldProps,
 ) {
-  const { mergedProps } =
+  const { mergedProps, fieldProps } =
     useRHFMantineAdapter<RefineTopicsSelectTopicFieldProps>(props, {
       extractEventValue(e) {
         return e?.id ?? null;
       },
     });
-  return <RefineTopicsSelectTopicInput {...mergedProps} />;
+  return (
+    <RefineTopicsSelectTopicInput {...mergedProps} key={fieldProps.value} />
+  );
 }
 
 export default function RefineTopicsSetTopicsEnMasse() {
@@ -96,6 +98,7 @@ export default function RefineTopicsSetTopicsEnMasse() {
     const newDocumentTopics = fromPairs(
       affectedRows.map((row) => [row.toString(), targetTopic]),
     );
+    console.log(currentDocumentTopics, newDocumentTopics);
 
     setValue('document_topics', {
       ...currentDocumentTopics,

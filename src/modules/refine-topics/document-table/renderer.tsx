@@ -27,6 +27,9 @@ function useDocumentTableColumns(
         accessorKey: 'id',
         header: 'ID',
         size: 100,
+        Cell({ cell: { getValue } }) {
+          return (getValue() as number) + 1;
+        },
       },
       {
         accessorKey: 'original',
