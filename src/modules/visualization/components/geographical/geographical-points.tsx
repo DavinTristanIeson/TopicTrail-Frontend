@@ -7,7 +7,7 @@ import {
   VisualizationGeographicalAggregateValuesConfigType,
   VisualizationGeographicalFrequenciesConfigType,
 } from '../../configuration/geographical-points';
-import { sum } from 'lodash-es';
+import { max, min, sum, zip } from 'lodash-es';
 import {
   PlotInlineConfiguration,
   usePlotRendererHelperProps,
@@ -15,7 +15,8 @@ import {
 import { useVisualizationSubdatasetSelect } from '../configuration/subdatasets';
 import { VISUALIZATION_AGGREGATION_METHOD_DICTIONARY } from '../../configuration/aggregate-values';
 import { DashboardItemModel } from '@/api/userdata';
-import { Select } from '@mantine/core';
+import { Checkbox, Select } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 interface VisualizationGeographicalMapProps {
   valueLabel: string;
@@ -30,6 +31,8 @@ function VisualizationGeographicalMap(
   const { selectProps, viewedData } = useVisualizationSubdatasetSelect({
     data,
   });
+  const [withHeatmap, { toggle: toggleHeatmap }] = useDisclosure(true);
+  const [withScatter, { toggle: toggleScatter }] = useDisclosure(true);
   const plot = React.useMemo<PlotParams | undefined>(() => {
     if (!viewedData) return undefined;
     const { data, name } = viewedData;
@@ -38,27 +41,56 @@ function VisualizationGeographicalMap(
     const averageLatitude = totalLatitudes / data.latitudes.length;
     const averageLongitude = totalLongitudes / data.longitudes.length;
     const hasLabel = !!data.labels;
-    return {
-      data: [
-        {
-          name,
-          type: 'densitymap' as any,
-          mode: 'markers',
-          lat: data.latitudes,
-          lon: data.longitudes,
-          z: data.values,
-          customdata: data.labels ?? undefined,
-          hovertemplate: [
-            hasLabel ? '<b>Location</b>: %{customdata}' : undefined,
-            '<b>Latitude</b>: %{lat}',
-            '<b>Latitude</b>: %{lon}',
-            `<b>${valueLabel}</b>: %{z}`,
-          ]
-            .filter(Boolean)
-            .join('<br>'),
-          colorscale: 'Viridis',
+    const customdata = data.labels
+      ? zip(data.values, data.labels)
+      : zip(data.values);
+    const subplots: PlotParams['data'] = [];
+    if (withHeatmap) {
+      subplots.push({
+        name: `${name} (Density)`,
+        type: 'densitymap' as any,
+        mode: 'markers',
+        lat: data.latitudes,
+        lon: data.longitudes,
+        z: data.values,
+        colorscale: 'Viridis',
+        hoverinfo: 'none',
+        colorbar: {
+          title: `${valueLabel} (Density)`,
+          x: withScatter ? 1.15 : undefined,
         },
-      ],
+      });
+    }
+    if (withScatter) {
+      subplots.push({
+        name,
+        type: 'scattermap' as any,
+        mode: (data.labels ? 'markers+text' : 'markers') as any,
+        text: data.labels ?? undefined,
+        lat: data.latitudes,
+        lon: data.longitudes,
+        customdata: customdata,
+        marker: {
+          color: data.values,
+          cmin: min(data.values) ?? 0,
+          cmax: max(data.values) ?? 0,
+          colorscale: 'Viridis',
+          colorbar: {
+            title: valueLabel,
+          },
+        },
+        hovertemplate: [
+          hasLabel ? '<b>Location</b>: %{customdata[1]}' : undefined,
+          '<b>Latitude</b>: %{lat}',
+          '<b>Latitude</b>: %{lon}',
+          `<b>${valueLabel}</b>: %{customdata[0]}`,
+        ]
+          .filter(Boolean)
+          .join('<br>'),
+      });
+    }
+    return {
+      data: subplots,
       layout: {
         title,
         height: 720,
@@ -72,7 +104,7 @@ function VisualizationGeographicalMap(
         },
       },
     };
-  }, [title, valueLabel, viewedData]);
+  }, [title, valueLabel, viewedData, withHeatmap, withScatter]);
   const plotProps = usePlotRendererHelperProps(item);
   return (
     <>
@@ -81,6 +113,18 @@ function VisualizationGeographicalMap(
           {...selectProps}
           label="Subdataset"
           description="Select a subdataset to visualize its locations."
+        />
+        <Checkbox
+          checked={withHeatmap}
+          onChange={toggleHeatmap}
+          label="Show heatmap"
+          description="Heatmaps show the distribution of data on the map. Brighter colors represent denser regions."
+        />
+        <Checkbox
+          checked={withScatter}
+          onChange={toggleScatter}
+          label="Show scatter plot"
+          description="Scatter plot show the actual data points on the map."
         />
       </PlotInlineConfiguration>
       {plot && <PlotRenderer plot={plot} {...plotProps} />}
