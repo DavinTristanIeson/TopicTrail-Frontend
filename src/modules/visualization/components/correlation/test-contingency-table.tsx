@@ -178,6 +178,9 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
+          colorbar: {
+            title: 'Frequency',
+          },
         },
       ],
       layout: {
@@ -215,6 +218,9 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
+          colorbar: {
+            title: "Yule's Q",
+          },
           ...effectSizeMethodConstraints,
         },
       ],
@@ -249,6 +255,9 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           hovertemplate: hovertemplate.join('<br>'),
           zmin: 0,
           zmax: 100,
+          colorbar: {
+            title: 'Confidence Level',
+          },
         },
       ],
       layout: {

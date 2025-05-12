@@ -21,16 +21,11 @@ export default function ProjectTopicsEmptyPage() {
     null,
   );
 
-  React.useEffect(() => {
-    if (
-      !progress?.data ||
-      hasAcknowledgedSuccessfulTopicModeling.current === column.name
-    ) {
-      return;
-    }
-
+  const { resetCurrentTopicModelingOptions } = topicModelingActions;
+  const acknowledgeSuccess = React.useCallback(() => {
     const message = `We have successfully finished running the topic modeling algorithm on the documents of "${column.name}".`;
     showNotification({
+      id: 'notify-done',
       message,
       color: 'green',
       autoClose: 5000,
@@ -43,13 +38,24 @@ export default function ProjectTopicsEmptyPage() {
         },
       },
     }).queryKey;
-    queryClient.removeQueries({
+    queryClient.refetchQueries({
       queryKey: queryKey,
     });
     invalidateProjectDependencyQueries(project.id);
-    topicModelingActions.resetCurrentTopicModelingOptions();
+    resetCurrentTopicModelingOptions();
+  }, [column.name, project.id, resetCurrentTopicModelingOptions]);
+
+  React.useEffect(() => {
+    if (
+      !progress?.data ||
+      hasAcknowledgedSuccessfulTopicModeling.current === column.name
+    ) {
+      return;
+    }
+    acknowledgeSuccess();
     hasAcknowledgedSuccessfulTopicModeling.current = column.name;
-  }, [column.name, progress?.data, project.id, topicModelingActions]);
+  }, [acknowledgeSuccess, column.name, progress?.data, project.id]);
+
   return (
     <Stack className="pb-8">
       <DefaultErrorViewBoundary>

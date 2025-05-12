@@ -37,6 +37,7 @@ import { handleErrorFn } from '@/common/utils/error';
 import { invalidateProjectDependencyQueries } from '@/api/project';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 enum TopicModelExperimentResultModalDisplay {
   Topics = 'topics',
@@ -124,16 +125,20 @@ function TopicModelExperimentResultTopicsModalTabs(
         value={TopicModelExperimentResultModalDisplay.Topics}
         className="pt-5"
       >
-        <TopicModelExperimentResultTopicsRenderer {...trial} />
+        <DefaultErrorViewBoundary>
+          <TopicModelExperimentResultTopicsRenderer {...trial} />
+        </DefaultErrorViewBoundary>
       </Tabs.Panel>
       <Tabs.Panel
         value={TopicModelExperimentResultModalDisplay.Evaluation}
         className="pt-5"
       >
-        <TopicEvaluationResultRenderer
-          {...trial.evaluation!}
-          column={column?.name ?? 'Column'}
-        />
+        <DefaultErrorViewBoundary>
+          <TopicEvaluationResultRenderer
+            {...trial.evaluation!}
+            column={column?.name ?? 'Column'}
+          />
+        </DefaultErrorViewBoundary>
       </Tabs.Panel>
     </Tabs>
   );

@@ -16,6 +16,8 @@ import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 import { type UseListStateHandlers } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import DashboardTopicCheatsheet from './topic-cheatsheet';
+import { Alert } from '@mantine/core';
+import { Warning } from '@phosphor-icons/react';
 
 interface GridstackDashboardProps {
   dashboard: DashboardItemModel[];
@@ -141,6 +143,12 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
       <DashboardTopicCheatsheet dashboard={dashboard} />
       <div className="rounded color-gray-100">
         <div className="grid-stack" id={id}>
+          {dashboard.length === 0 && (
+            <Alert color="yellow" icon={<Warning />}>
+              There are no dashboard items to visualize your dataset. Please
+              create one from the &quot;Add Visualization&quot; button.
+            </Alert>
+          )}
           {dashboard.map((item) => (
             <div
               className="grid-stack-item"

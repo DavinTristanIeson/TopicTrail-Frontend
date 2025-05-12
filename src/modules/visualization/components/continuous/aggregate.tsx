@@ -74,6 +74,7 @@ export function VisualizationAggregateValuesRenderer(
       });
 
       const [minZ, maxZ] = getBalancedHeatmapZRange(z);
+      const valueLabel = `${aggregationMethod} of ${item.column}`;
       return {
         data: [
           {
@@ -85,11 +86,14 @@ export function VisualizationAggregateValuesRenderer(
             hovertemplate: [
               `<b>${item.config.grouped_by}</b>: %{x}`,
               `<b>Subdataset</b>: %{y}`,
-              `<b>${aggregationMethod} of ${item.column}</b>: %{z}`,
+              `<b>${valueLabel}</b>: %{z}`,
             ].join('<br>'),
             texttemplate: '%{z:.3f}',
             zmin: minZ,
             zmax: maxZ,
+            colorbar: {
+              title: valueLabel,
+            },
           },
         ],
         layout: {

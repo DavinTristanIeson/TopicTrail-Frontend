@@ -1,4 +1,4 @@
-import { Group, Stack } from '@mantine/core';
+import { Alert, Group, Stack } from '@mantine/core';
 import {
   useCheckComparisonSubdatasetsVisibility,
   useComparisonAppState,
@@ -19,6 +19,7 @@ import { useDashboardUserDataSharedBehavior } from '@/modules/table/dashboard';
 import { useDashboardDataManager } from '@/modules/userdata/data-manager';
 import { DashboardItemTypeEnum } from '@/modules/visualization/types/dashboard-item-types';
 import React from 'react';
+import { Warning } from '@phosphor-icons/react';
 
 const GridstackDashboard = dynamic(
   () => import('@/modules/visualization/dashboard'),
@@ -73,22 +74,31 @@ export default function ComparisonDashboard() {
     }, [groups, includeWholeDataset, onlyVisible]);
   const { append } = handlers;
   return (
-    <Stack>
-      <ComparisonDashboardUserDataManager />
-      <Group justify="end">
-        <DashboardResetButton onReset={() => handlers.setState([])} />
-        <AddVisualizationConfigurationButton onSubmit={append} />
-      </Group>
-      <DashboardSubdatasetsContext.Provider value={dashboardSubdatasets}>
-        <DashboardConstraintContext.Provider
-          value={COMPARISON_DASHBOARD_CONSTRAINT}
-        >
-          <GridstackDashboard
-            dashboard={dashboard}
-            dashboardHandlers={handlers}
-          />
-        </DashboardConstraintContext.Provider>
-      </DashboardSubdatasetsContext.Provider>
-    </Stack>
+    <DashboardSubdatasetsContext.Provider value={dashboardSubdatasets}>
+      <DashboardConstraintContext.Provider
+        value={COMPARISON_DASHBOARD_CONSTRAINT}
+      >
+        <Stack>
+          <ComparisonDashboardUserDataManager />
+          <Group justify="end">
+            <DashboardResetButton onReset={() => handlers.setState([])} />
+            <AddVisualizationConfigurationButton onSubmit={append} />
+          </Group>
+          {dashboardSubdatasets.default.length === 0 ? (
+            <Alert color="yellow" icon={<Warning />}>
+              Create at least one subdataset to be visualized from
+              &quot;Subdatasets&quot; tab. If you have already prepared some
+              subdatasets, make sure that at least one of them is visible in the
+              &quot;Subdatasets&quot; tab.
+            </Alert>
+          ) : (
+            <GridstackDashboard
+              dashboard={dashboard}
+              dashboardHandlers={handlers}
+            />
+          )}
+        </Stack>
+      </DashboardConstraintContext.Provider>
+    </DashboardSubdatasetsContext.Provider>
   );
 }

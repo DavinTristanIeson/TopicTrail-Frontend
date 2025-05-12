@@ -21,14 +21,17 @@ export function TopicWordsBarChartRenderer(
     const { colors } = generateColorsFromSequence(
       topics.map((topic) => topic.id),
     );
-    const maxX = topics.reduce((acc, cur) => {
-      return Math.max(
-        acc,
-        cur.words.reduce((acc, cur) => {
-          return Math.max(acc, cur[1]);
-        }, 0),
-      );
-    }, 0);
+    const maxX = Math.min(
+      2,
+      topics.reduce((acc, cur) => {
+        return Math.max(
+          acc,
+          cur.words.reduce((acc, cur) => {
+            return Math.max(acc, cur[1]);
+          }, 0),
+        );
+      }, 0),
+    );
     const layouts: any = {};
     for (let i = 0; i < topics.length; i++) {
       const color = colors[i];

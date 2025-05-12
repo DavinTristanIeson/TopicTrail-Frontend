@@ -98,7 +98,6 @@ export default function RefineTopicsSetTopicsEnMasse() {
     const newDocumentTopics = fromPairs(
       affectedRows.map((row) => [row.toString(), targetTopic]),
     );
-    console.log(currentDocumentTopics, newDocumentTopics);
 
     setValue('document_topics', {
       ...currentDocumentTopics,

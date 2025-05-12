@@ -96,9 +96,11 @@ export function VisualizationWordCloudRenderer(
                 if (color === undefined) {
                   // eslint-disable-next-line import/no-named-as-default-member
                   color = chroma.random();
+                  color = color.set('hsv.v', 0.5 + Math.random() * 0.25);
                 }
-                color.set('lch.c', word.value);
-                return color;
+                color = color.set('hsv.s', word.value);
+                color = color.alpha(word.value);
+                return color.hex();
               },
               getWordTooltip: (rawWord) => {
                 const word = rawWord as VisualizationInternalWordCloudItem;

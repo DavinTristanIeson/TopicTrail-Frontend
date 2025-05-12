@@ -91,6 +91,7 @@ export default function VisualizationFrequencyDistributionComponent(
         );
         return z;
       });
+      const valueLabel = needsPercentage ? 'Proportion' : 'Frequency';
 
       return {
         data: [
@@ -104,10 +105,13 @@ export default function VisualizationFrequencyDistributionComponent(
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,
               `<b>Subdataset</b>: %{y}`,
-              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${character}`,
+              `<b>${valueLabel}</b>: %{z}${character}`,
             ].join('<br>'),
             zmin: 0,
             zmax: needsPercentage ? 100 : undefined,
+            colorbar: {
+              title: valueLabel,
+            },
           },
         ],
         layout: {

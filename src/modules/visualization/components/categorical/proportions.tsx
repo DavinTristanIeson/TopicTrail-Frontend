@@ -80,6 +80,7 @@ export default function VisualizationProportionsComponent(
           (frequencies) => frequencies[uniqueValue] ?? 0,
         );
       });
+      const valueLabel = needsPercentage ? 'Proportion' : 'Frequency';
       return {
         data: [
           {
@@ -91,11 +92,14 @@ export default function VisualizationProportionsComponent(
             hovertemplate: [
               `<b>${item.column}</b>: %{y}`,
               `<b>Subdataset</b>: %{x}`,
-              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{z}${character}`,
+              `<b>${valueLabel}</b>: %{z}${character}`,
             ].join('<br>'),
             texttemplate: needsPercentage ? '%{z:.2f}%' : '%{z}',
             zmin: 0,
             zmax: needsPercentage ? 100 : undefined,
+            colorbar: {
+              title: valueLabel,
+            },
           },
         ],
         layout: {

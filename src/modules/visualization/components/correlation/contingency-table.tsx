@@ -177,6 +177,9 @@ function VisualizationContingencyTableHeatmapInner(
           colorscale: colorscale[method]!,
           zmin: minZ,
           zmax: maxZ,
+          colorbar: {
+            title: 'Frequency',
+          },
         },
       ],
       layout: {

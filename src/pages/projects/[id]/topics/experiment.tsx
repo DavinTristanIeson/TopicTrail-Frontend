@@ -1,4 +1,5 @@
 import { NextPageWithLayout } from '@/common/utils/types';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import {
   TopicModelExperimentTab,
@@ -50,13 +51,15 @@ const TopicModelExperimentPage: NextPageWithLayout = function () {
             </Tabs.Tab>
           </Tabs.List>
         </Tabs>
-        {tab === TopicModelExperimentTab.Constraint ? (
-          <TopicModelExperimentConstraintTab />
-        ) : tab === TopicModelExperimentTab.Summary ? (
-          <TopicModelExperimentResultSummaryTab />
-        ) : tab === TopicModelExperimentTab.Details ? (
-          <TopicModelExperimentDetailsTab />
-        ) : null}
+        <DefaultErrorViewBoundary>
+          {tab === TopicModelExperimentTab.Constraint ? (
+            <TopicModelExperimentConstraintTab />
+          ) : tab === TopicModelExperimentTab.Summary ? (
+            <TopicModelExperimentResultSummaryTab />
+          ) : tab === TopicModelExperimentTab.Details ? (
+            <TopicModelExperimentDetailsTab />
+          ) : null}
+        </DefaultErrorViewBoundary>
       </TopicModelingRequirementSafeguard>
     </Stack>
   );
