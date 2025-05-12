@@ -5,10 +5,6 @@ import { Stack, Group, Title, Text } from '@mantine/core';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { ProjectContext } from '../project/context';
-import { client } from '@/common/api/client';
-import TaskProgressLogs from '../task/progress-logs';
-import { usePeriodicTaskStatusCheck } from '../task/status-check';
 import { extractTopicCustomdataForPlotly } from '../topics/results/topics/utils';
 import { zip } from 'lodash-es';
 import { useTopicAppState } from '../topics/app-state';
@@ -132,33 +128,19 @@ export function TopicEvaluationResultRenderer(
   );
 }
 
-export default function TopicEvaluationResultComponent() {
-  const column = useTopicAppState((store) => store.column!);
-  const project = React.useContext(ProjectContext);
+interface TopicEvaluationResultComponentProps {
+  data: TopicEvaluationResultModel;
+}
 
-  const query = client.useQuery(
-    'get',
-    '/topic/{project_id}/evaluation/status',
-    {
-      params: {
-        path: {
-          project_id: project.id,
-        },
-        query: {
-          column: column.name ?? '',
-        },
-      },
-    },
-  );
-  const periodicChecks = usePeriodicTaskStatusCheck({ query });
-  const { progress, isStillPolling } = periodicChecks;
-  if (!progress?.data || isStillPolling) {
-    return <TaskProgressLogs {...periodicChecks} />;
-  }
+export default function TopicEvaluationResultComponent(
+  props: TopicEvaluationResultComponentProps,
+) {
+  const { data } = props;
+  const column = useTopicAppState((store) => store.column!);
   return (
     <TopicEvaluationResultRenderer
       column={column?.name ?? 'Column'}
-      {...progress.data}
+      {...data}
     />
   );
 }

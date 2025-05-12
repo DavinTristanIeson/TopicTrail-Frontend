@@ -43,7 +43,7 @@ function NumericHyperparameterRangeField(
   props: NumericHyperparameterRangeFieldProps,
 ) {
   const { label, description, name, min, defaultValue } = props;
-  const { setValue } = useFormContext();
+  const { setValue, clearErrors } = useFormContext();
   const hyperparameterRange = useWatch({ name });
   const isHyperparameterLocked = hyperparameterRange == null;
   const { editable } = React.useContext(FormEditableContext);
@@ -59,6 +59,7 @@ function NumericHyperparameterRangeField(
             } else {
               setValue(name, null);
             }
+            clearErrors(name);
           }}
           disabled={!editable}
           color={isHyperparameterLocked ? 'red' : 'green'}

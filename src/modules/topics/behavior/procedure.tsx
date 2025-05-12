@@ -5,6 +5,7 @@ import { showNotification } from '@mantine/notifications';
 import { handleError } from '@/common/utils/error';
 import { useTopicAppState } from '../app-state';
 import { usePeriodicTaskStatusCheck } from '@/modules/task/status-check';
+import { queryClient } from '@/common/api/query-client';
 
 function usePeriodicTopicModelingStatusCheck() {
   const project = React.useContext(ProjectContext);
@@ -133,6 +134,20 @@ export function useStartTopicModeling(column: string) {
           use_cached_umap_vectors: shouldUseCachedUMAPVectors,
           use_preprocessed_documents: shouldUseCachedPreprocessedDocuments,
         },
+      });
+      queryClient.removeQueries({
+        queryKey: [
+          client.queryOptions('get', '/topic/{project_id}/status', {
+            params: {
+              path: {
+                project_id: project.id,
+              },
+              query: {
+                column: column,
+              },
+            },
+          }),
+        ],
       });
       if (res.message) {
         showNotification({

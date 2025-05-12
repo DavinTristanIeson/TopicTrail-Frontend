@@ -6,23 +6,21 @@ import TaskProgressLogs from '../../task/progress-logs';
 import ProjectTopicsEmptyPageControls from './controls';
 import { ProjectContext } from '@/modules/project/context';
 import { showNotification } from '@mantine/notifications';
-import { queryClient } from '@/common/api/query-client';
-import { client } from '@/common/api/client';
 import { DefaultErrorViewBoundary } from '@/components/visual/error';
 import { useTopicAppState } from '../app-state';
+import { TopicModelingResultQueryResetContext } from '../components/context';
 
 export default function ProjectTopicsEmptyPage() {
   const project = React.useContext(ProjectContext);
   const column = useTopicAppState((store) => store.column!);
   const topicModelingActions = useTopicModelingActions(column.name);
+  const refetchTopicModelingResult = React.useContext(
+    TopicModelingResultQueryResetContext,
+  );
   const { progress } = topicModelingActions;
 
-  const hasAcknowledgedSuccessfulTopicModeling = React.useRef<string | null>(
-    null,
-  );
-
   const { resetCurrentTopicModelingOptions } = topicModelingActions;
-  const acknowledgeSuccess = React.useCallback(() => {
+  const acknowledgeSuccess = React.useCallback(async () => {
     const message = `We have successfully finished running the topic modeling algorithm on the documents of "${column.name}".`;
     showNotification({
       id: 'notify-done',
@@ -31,29 +29,22 @@ export default function ProjectTopicsEmptyPage() {
       autoClose: 5000,
     });
 
-    const queryKey = client.queryOptions('get', '/topic/{project_id}/', {
-      params: {
-        path: {
-          project_id: project.id,
-        },
-      },
-    }).queryKey;
-    queryClient.refetchQueries({
-      queryKey: queryKey,
-    });
+    await refetchTopicModelingResult();
+
     invalidateProjectDependencyQueries(project.id);
     resetCurrentTopicModelingOptions();
-  }, [column.name, project.id, resetCurrentTopicModelingOptions]);
+  }, [
+    column.name,
+    project.id,
+    refetchTopicModelingResult,
+    resetCurrentTopicModelingOptions,
+  ]);
 
   React.useEffect(() => {
-    if (
-      !progress?.data ||
-      hasAcknowledgedSuccessfulTopicModeling.current === column.name
-    ) {
+    if (!progress?.data) {
       return;
     }
     acknowledgeSuccess();
-    hasAcknowledgedSuccessfulTopicModeling.current = column.name;
   }, [acknowledgeSuccess, column.name, progress?.data, project.id]);
 
   return (

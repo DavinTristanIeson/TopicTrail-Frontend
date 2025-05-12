@@ -21,7 +21,7 @@ const PromiseButton = React.forwardRef<
     <Button
       ref={ref}
       {...props}
-      loading={loading}
+      loading={loading || props.loading}
       onClick={props.onClick && onClick}
     />
   );

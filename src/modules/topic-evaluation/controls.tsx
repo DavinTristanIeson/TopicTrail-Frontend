@@ -60,7 +60,14 @@ function TopicEvaluationDescription() {
   );
 }
 
-export default function TopicEvaluationControls() {
+interface TopicEvaluationControlsProps {
+  isRunning: boolean;
+}
+
+export default function TopicEvaluationControls(
+  props: TopicEvaluationControlsProps,
+) {
+  const { isRunning } = props;
   const project = React.useContext(ProjectContext);
   const column = useTopicAppState((store) => store.column!);
   const { mutateAsync: startEvaluation } = client.useMutation(
@@ -118,6 +125,7 @@ export default function TopicEvaluationControls() {
               handleError(e);
             }
           }}
+          loading={isRunning}
           disabled={!column}
           leftSection={<Exam weight="fill" />}
           className="max-w-md"

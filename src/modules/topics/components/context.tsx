@@ -8,6 +8,10 @@ export const AllTopicModelingResultContext = React.createContext<
   ColumnTopicModelingResultModel[]
 >(undefined as any);
 
+export const TopicModelingResultQueryResetContext = React.createContext<
+  () => void
+>(undefined as any);
+
 export function useTopicModelingResultOfColumn(
   column: string | null | undefined,
 ): ColumnTopicModelingResultModel | undefined {
@@ -66,16 +70,18 @@ export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
     };
   }, [allTopicModelingResults, project]);
   return (
-    <UseQueryWrapperComponent query={query}>
-      {allTopicModelingResults && (
-        <ProjectContext.Provider value={projectWithoutInvalidColumns}>
-          <AllTopicModelingResultContext.Provider
-            value={allTopicModelingResults}
-          >
-            {children}
-          </AllTopicModelingResultContext.Provider>
-        </ProjectContext.Provider>
-      )}
-    </UseQueryWrapperComponent>
+    <TopicModelingResultQueryResetContext.Provider value={query.refetch}>
+      <UseQueryWrapperComponent query={query}>
+        {allTopicModelingResults && (
+          <ProjectContext.Provider value={projectWithoutInvalidColumns}>
+            <AllTopicModelingResultContext.Provider
+              value={allTopicModelingResults}
+            >
+              {children}
+            </AllTopicModelingResultContext.Provider>
+          </ProjectContext.Provider>
+        )}
+      </UseQueryWrapperComponent>
+    </TopicModelingResultQueryResetContext.Provider>
   );
 }
