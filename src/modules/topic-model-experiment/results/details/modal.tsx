@@ -58,10 +58,9 @@ function TopicModelExperimentResultTopicsRenderer(
   );
   const topics = React.useMemo(() => {
     return (
-      evaluation?.coherence_v_per_topic.map((coherence) => coherence.topic) ??
-      []
+      evaluation?.topics.map((topicEvaluation) => topicEvaluation.topic) ?? []
     );
-  }, [evaluation?.coherence_v_per_topic]);
+  }, [evaluation?.topics]);
 
   return (
     <Stack>
@@ -121,25 +120,18 @@ function TopicModelExperimentResultTopicsModalTabs(
           Evaluation Results
         </Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel
-        value={TopicModelExperimentResultModalDisplay.Topics}
-        className="pt-5"
-      >
+      <div className="pt-5">
         <DefaultErrorViewBoundary>
-          <TopicModelExperimentResultTopicsRenderer {...trial} />
+          {display === TopicModelExperimentResultModalDisplay.Topics ? (
+            <TopicModelExperimentResultTopicsRenderer {...trial} />
+          ) : display === TopicModelExperimentResultModalDisplay.Evaluation ? (
+            <TopicEvaluationResultRenderer
+              {...trial.evaluation!}
+              column={column?.name ?? 'Column'}
+            />
+          ) : undefined}
         </DefaultErrorViewBoundary>
-      </Tabs.Panel>
-      <Tabs.Panel
-        value={TopicModelExperimentResultModalDisplay.Evaluation}
-        className="pt-5"
-      >
-        <DefaultErrorViewBoundary>
-          <TopicEvaluationResultRenderer
-            {...trial.evaluation!}
-            column={column?.name ?? 'Column'}
-          />
-        </DefaultErrorViewBoundary>
-      </Tabs.Panel>
+      </div>
     </Tabs>
   );
 }

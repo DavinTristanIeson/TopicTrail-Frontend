@@ -9,6 +9,7 @@ export enum TopicModelExperimentValueType {
   TopicCount = 'topic-count',
   TopicCoherence = 'topic-coherence',
   TopicDiversity = 'topic-diversity',
+  SilhouetteScore = 'silhouette-score',
   TrialNumber = 'trial-number',
   MaxTopics = 'max-topics',
   MinTopicSize = 'min-topic-size',
@@ -57,11 +58,17 @@ export const TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY: Record<
     accessor: (trial: BERTopicExperimentTrialResultModel) =>
       trial.evaluation?.topic_diversity,
   },
+  [TopicModelExperimentValueType.SilhouetteScore]: {
+    label: 'Silhouette Score',
+    value: TopicModelExperimentValueType.SilhouetteScore,
+    accessor: (trial: BERTopicExperimentTrialResultModel) =>
+      trial.evaluation?.silhouette_score,
+  },
   [TopicModelExperimentValueType.TopicCount]: {
     label: 'Topic Count',
     value: TopicModelExperimentValueType.TopicCount,
     accessor: (trial: BERTopicExperimentTrialResultModel) =>
-      trial.evaluation?.coherence_v_per_topic.length,
+      trial.evaluation?.topics.length,
   },
   [TopicModelExperimentValueType.TrialNumber]: {
     label: 'Trial Number',
@@ -115,6 +122,9 @@ export function useTopicModelExperimentValueOptions(
           ],
           TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY[
             TopicModelExperimentValueType.TopicDiversity
+          ],
+          TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY[
+            TopicModelExperimentValueType.SilhouetteScore
           ],
           TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY[
             TopicModelExperimentValueType.TopicCount

@@ -264,7 +264,7 @@ export default function TopicModelExperimentHyperparameterControls() {
       >
         <TopicModelExperimentHyperparameterControlsFormBody />
         <Group justify="end" className="pt-5">
-          <SubmitButton>Start Experiments</SubmitButton>
+          <SubmitButton disabled={!editable}>Start Experiments</SubmitButton>
           {!editable && (
             <PromiseButton
               variant="outline"

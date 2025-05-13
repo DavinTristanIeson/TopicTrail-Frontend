@@ -1182,16 +1182,6 @@ export interface components {
         };
         /** CheckDatasetSchema */
         CheckDatasetSchema: components["schemas"]["CSVDataSource"] | components["schemas"]["ParquetDataSource"] | components["schemas"]["ExcelDataSource"];
-        /** CoherenceVPerTopic */
-        CoherenceVPerTopic: {
-            topic: components["schemas"]["Topic"];
-            /** Coherence */
-            coherence: number;
-            /** Std Dev */
-            std_dev: number;
-            /** Support */
-            support: number;
-        };
         /** ColumnTopicModelingResultResource */
         ColumnTopicModelingResultResource: {
             column: components["schemas"]["TextualSchemaColumn-Output"];
@@ -1572,6 +1562,13 @@ export interface components {
             type: "has_text";
             /** Value */
             value: string;
+        };
+        /** IndividualTopicEvaluationResult */
+        IndividualTopicEvaluationResult: {
+            topic: components["schemas"]["Topic"];
+            coherence: components["schemas"]["TopicCoherenceV"];
+            /** Silhouette Score */
+            silhouette_score: number;
         };
         /** InferDatasetColumnResource */
         InferDatasetColumnResource: {
@@ -2122,6 +2119,15 @@ export interface components {
             /** Tags */
             tags?: string[] | null;
         };
+        /** TopicCoherenceV */
+        TopicCoherenceV: {
+            /** Coherence */
+            coherence: number;
+            /** Std Dev */
+            std_dev: number;
+            /** Support */
+            support: number;
+        };
         /** TopicCorrelationSchema */
         TopicCorrelationSchema: {
             /** Column1 */
@@ -2133,10 +2139,12 @@ export interface components {
         TopicEvaluationResult: {
             /** Coherence V */
             coherence_v: number;
+            /** Silhouette Score */
+            silhouette_score: number;
             /** Topic Diversity */
             topic_diversity: number;
-            /** Coherence V Per Topic */
-            coherence_v_per_topic: components["schemas"]["CoherenceVPerTopic"][];
+            /** Topics */
+            topics: components["schemas"]["IndividualTopicEvaluationResult"][];
             /** Outlier Count */
             outlier_count: number;
             /** Valid Count */

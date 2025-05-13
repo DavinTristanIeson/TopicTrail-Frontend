@@ -37,7 +37,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
     return (
       max(
         data.trials
-          .map((trial) => trial.evaluation?.coherence_v_per_topic.length)
+          .map((trial) => trial.evaluation?.topics.length)
           .filter((topicCount) => topicCount != null),
       ) ?? 1
     );
@@ -174,6 +174,22 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         },
       },
       {
+        header: 'Silhouette Score',
+        accessorKey: 'evaluation.silhouette_score',
+        filterVariant: 'range-slider',
+        filterFn: 'betweenInclusive',
+        mantineFilterRangeSliderProps: {
+          step: 0.01,
+          min: -1,
+          max: 1,
+          minRange: 0.01,
+        },
+        Cell({ cell: { getValue } }) {
+          const silhouetteScore = getValue() as number | undefined;
+          return silhouetteScore?.toFixed(4);
+        },
+      },
+      {
         header: 'Topic Count',
         key: 'topic_count',
         filterVariant: 'range-slider',
@@ -184,7 +200,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
           max: maxTopicsCount,
         },
         accessorFn(originalRow) {
-          return originalRow.evaluation?.coherence_v_per_topic.length;
+          return originalRow.evaluation?.topics.length;
         },
       },
       {

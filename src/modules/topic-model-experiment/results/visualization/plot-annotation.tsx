@@ -23,7 +23,8 @@ export function getTrialResultCustomdata(
     builder.push(trial.trial_number);
     builder.push(trial.evaluation?.coherence_v ?? 'None');
     builder.push(trial.evaluation?.topic_diversity ?? 'None');
-    builder.push(trial.evaluation?.coherence_v_per_topic.length ?? 'None');
+    builder.push(trial.evaluation?.silhouette_score ?? 'None');
+    builder.push(trial.evaluation?.topics.length ?? 'None');
     if (constraint.max_topics != null) {
       builder.push(trial.candidate.max_topics);
     }
@@ -39,6 +40,7 @@ export function getTrialResultCustomdata(
     '<b>Trial</b>',
     '<b>Coherence</b>',
     '<b>Diversity</b>',
+    '<b>Silhouette Score</b>',
     '<b>Topic Count</b>',
   ];
   if (constraint.max_topics != null) {
