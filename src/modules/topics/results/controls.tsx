@@ -2,10 +2,7 @@ import React from 'react';
 import { useStartTopicModeling } from '../behavior/procedure';
 import { TopicModelingOptionFlagCheckboxes } from '../components/controls';
 import { ProjectContext } from '@/modules/project/context';
-import {
-  invalidateProjectDependencyQueries,
-  SchemaColumnModel,
-} from '@/api/project';
+import { SchemaColumnModel } from '@/api/project';
 import {
   ArrowClockwise,
   CaretDown,
@@ -17,8 +14,6 @@ import {
 import { Text, Group, Button, Modal, Popover, Stack } from '@mantine/core';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import NavigationRoutes from '@/common/constants/routes';
-import { queryClient } from '@/common/api/query-client';
-import { client } from '@/common/api/client';
 import { CancelButton } from '@/components/standard/button/variants';
 import PromiseButton from '@/components/standard/button/promise';
 import { useRouter } from 'next/router';
@@ -33,25 +28,14 @@ const RediscoverTopicsModal = React.forwardRef<
 >(function RediscoverTopicsModal(props, ref) {
   const { column } = props;
   const [opened, { close }] = useDisclosureTrigger(ref);
-  const project = React.useContext(ProjectContext);
-
   const startActions = useStartTopicModeling(column.name);
+
   const { onStartTopicModeling } = startActions;
 
   const onStart = React.useCallback(async () => {
     await onStartTopicModeling();
-    invalidateProjectDependencyQueries(project.id);
-    queryClient.removeQueries({
-      queryKey: client.queryOptions('get', '/topic/{project_id}/', {
-        params: {
-          path: {
-            project_id: project.id,
-          },
-        },
-      }).queryKey,
-    });
     close();
-  }, [close, onStartTopicModeling, project.id]);
+  }, [close, onStartTopicModeling]);
 
   return (
     <Modal opened={opened} onClose={close} title="Re-discover Topics">

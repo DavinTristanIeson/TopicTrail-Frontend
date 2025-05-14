@@ -1,13 +1,60 @@
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { Alert, Input, Slider, Title } from '@mantine/core';
+import {
+  Alert,
+  Burger,
+  Card,
+  Collapse,
+  ColorSwatch,
+  Group,
+  Input,
+  Slider,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { XCircle } from '@phosphor-icons/react';
 import chroma from 'chroma-js';
 import { groupBy, max } from 'lodash-es';
 import React from 'react';
 import ReactWordcloud from 'react-wordcloud';
-import { useDebouncedValue } from '@mantine/hooks';
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { NamedData } from '../../types/base';
 import type { PlotParams } from 'react-plotly.js';
+
+interface VisualizationWordCloudColorMapRendererProps {
+  colorMap: Map<string, string>;
+}
+
+function VisualizationWordCloudColorMapRenderer(
+  props: VisualizationWordCloudColorMapRendererProps,
+) {
+  const { colorMap } = props;
+  const colorMapEntries = Array.from(colorMap.entries()) as [string, string][];
+  const [opened, { toggle }] = useDisclosure(true);
+  return (
+    <div className="absolute top-0 left-0">
+      <Card className="w-fit">
+        <Stack>
+          <Group justify="end">
+            <Burger onClick={toggle} opened={opened} />
+          </Group>
+          <Collapse in={opened}>
+            <Stack>
+              {colorMapEntries.map(([groupName, groupColor]) => {
+                return (
+                  <Group key={groupName!}>
+                    <ColorSwatch color={groupColor!} />
+                    <Text>{groupName}</Text>
+                  </Group>
+                );
+              })}
+            </Stack>
+          </Collapse>
+        </Stack>
+      </Card>
+    </div>
+  );
+}
 
 export interface VisualizationWordCloudItem {
   text: string;
@@ -73,10 +120,15 @@ export function VisualizationWordCloudRenderer(
   }, [words]);
 
   return (
-    <>
+    <Stack className="w-full relative">
       <Title order={3} ta="center">
         {title}
       </Title>
+      {colorMap && (
+        <VisualizationWordCloudColorMapRenderer
+          colorMap={colorMap as Map<string, string>}
+        />
+      )}
       {componentWords ? (
         <div style={{ minHeight: 512, minWidth: 720 }}>
           <ReactWordcloud
@@ -130,7 +182,7 @@ export function VisualizationWordCloudRenderer(
           {noDataPlaceholder}
         </Alert>
       )}
-    </>
+    </Stack>
   );
 }
 

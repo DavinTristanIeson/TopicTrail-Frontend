@@ -19,6 +19,7 @@ export type BaseVisualizationDataProviderHook<TData, TConfig> = (
   data: NamedData<TData>[] | undefined;
   loading: boolean;
   error: string | undefined;
+  refetch(): void;
 };
 
 export interface VisualizationConfigEntry<TData, TConfig> {

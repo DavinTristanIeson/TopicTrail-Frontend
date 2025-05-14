@@ -39,7 +39,9 @@ export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
       staleTime: Infinity,
     },
   );
-  const allTopicModelingResults = query.data?.data;
+  const allTopicModelingResults = query.isFetching
+    ? undefined
+    : query.data?.data;
 
   const projectWithoutInvalidColumns = React.useMemo(() => {
     if (!allTopicModelingResults) return project;

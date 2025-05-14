@@ -102,6 +102,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         accessorKey: 'trial_number',
         filterVariant: 'range-slider',
         filterFn: 'inNumberRange',
+        sortUndefined: 'last',
         mantineFilterRangeSliderProps: {
           minRange: 1,
           min: 1,
@@ -111,6 +112,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
       {
         header: 'Timestamp',
         enableColumnFilter: false,
+        sortUndefined: 'last',
         accessorFn(original) {
           const date = dayjs(original.timestamp);
           if (date.isValid()) return date;
@@ -146,6 +148,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         accessorKey: 'evaluation.coherence_v',
         filterVariant: 'range-slider',
         filterFn: 'inNumberRange',
+        sortUndefined: 'last',
         mantineFilterRangeSliderProps: {
           step: 0.01,
           min: 0,
@@ -162,6 +165,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         accessorKey: 'evaluation.topic_diversity',
         filterVariant: 'range-slider',
         filterFn: 'betweenInclusive',
+        sortUndefined: 'last',
         mantineFilterRangeSliderProps: {
           step: 0.01,
           min: 0,
@@ -178,6 +182,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         accessorKey: 'evaluation.silhouette_score',
         filterVariant: 'range-slider',
         filterFn: 'betweenInclusive',
+        sortUndefined: 'last',
         mantineFilterRangeSliderProps: {
           step: 0.01,
           min: -1,
@@ -194,6 +199,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         key: 'topic_count',
         filterVariant: 'range-slider',
         filterFn: 'betweenInclusive',
+        sortUndefined: 'last',
         mantineFilterRangeSliderProps: {
           minRange: 1,
           min: 1,
@@ -208,6 +214,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         accessorKey: 'evaluation.outlier_count',
         filterVariant: 'range-slider',
         filterFn: 'betweenInclusive',
+        sortUndefined: 'last',
         mantineFilterRangeSliderProps: {
           minRange: 1,
           min: 0,

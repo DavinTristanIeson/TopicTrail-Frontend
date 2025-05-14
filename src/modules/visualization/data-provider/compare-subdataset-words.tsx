@@ -10,7 +10,7 @@ export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizati
 > = function (item) {
   const { groups: rawGroups, params } = usePrepareDataProvider(item);
   const groups = rawGroups.filter((group) => !!group.filter);
-  const { data, error, isFetching } = client.useQuery(
+  const { data, error, isFetching, refetch } = client.useQuery(
     'post',
     '/table/{project_id}/comparison/words',
     {
@@ -32,5 +32,6 @@ export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizati
     }),
     error: error?.message,
     loading: isFetching,
+    refetch,
   };
 };

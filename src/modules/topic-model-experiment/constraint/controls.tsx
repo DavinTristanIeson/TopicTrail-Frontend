@@ -272,9 +272,15 @@ export default function TopicModelExperimentHyperparameterControls() {
               leftSection={<X />}
               onClick={async () => {
                 try {
-                  await cancelTopicModelExperiment({
+                  const res = await cancelTopicModelExperiment({
                     params,
                   });
+                  if (res.message) {
+                    showNotification({
+                      message: res.message,
+                      color: 'green',
+                    });
+                  }
                 } catch (e) {
                   handleError(e);
                 }

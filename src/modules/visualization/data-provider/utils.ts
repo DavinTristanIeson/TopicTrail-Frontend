@@ -29,6 +29,13 @@ export function useAdaptDataProviderQueries<TQuery, TData>(
       }),
     loading: props.queries.some((query) => query.isFetching),
     error: props.queries.find((query) => !!query.error)?.error?.message,
+    refetch: () => {
+      for (const query of props.queries) {
+        if (query.error || !query.data) {
+          query.refetch();
+        }
+      }
+    },
   };
 }
 

@@ -40,12 +40,13 @@ function DashboardItemRendererInternal(
     config: { component: Component, dataProvider: useDataProvider },
   } = props;
 
-  const { data, error, loading } = useDataProvider(item);
+  const { data, error, loading, refetch } = useDataProvider(item);
 
   return (
     <FetchWrapperComponent
       error={error}
       isLoading={loading}
+      onRetry={refetch}
       loadingComponent={<Skeleton className="w-full h-full" />}
     >
       {data &&

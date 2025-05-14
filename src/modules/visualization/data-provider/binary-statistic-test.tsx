@@ -41,6 +41,7 @@ export const useVisualizationBinaryStatisticTestOnDistributionDataProvider: Base
       : [],
     error: query.error?.message,
     loading: query.isFetching,
+    refetch: query.refetch,
   };
 };
 
@@ -75,5 +76,6 @@ export const useVisualizationBinaryStatisticTestOnContingencyTableDataProvider: 
       : [],
     error: query.error?.message,
     loading: query.isFetching,
+    refetch: query.refetch,
   };
 };

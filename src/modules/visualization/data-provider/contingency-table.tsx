@@ -34,5 +34,6 @@ export const useVisualizationContingencyTableDataProvider: BaseVisualizationData
       : [],
     error: query.error?.message,
     loading: query.isFetching,
+    refetch: query.refetch,
   };
 };

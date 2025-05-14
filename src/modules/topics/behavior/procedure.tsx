@@ -6,6 +6,8 @@ import { handleError } from '@/common/utils/error';
 import { useTopicAppState } from '../app-state';
 import { usePeriodicTaskStatusCheck } from '@/modules/task/status-check';
 import { queryClient } from '@/common/api/query-client';
+import { TopicModelingResultQueryResetContext } from '../components/context';
+import { invalidateProjectDependencyQueries } from '@/api/project';
 
 function usePeriodicTopicModelingStatusCheck() {
   const project = React.useContext(ProjectContext);
@@ -118,6 +120,10 @@ export function useStartTopicModeling(column: string) {
     shouldUseCachedPreprocessedDocuments,
   ]);
 
+  const resetTopicModelingResult = React.useContext(
+    TopicModelingResultQueryResetContext,
+  );
+
   const onStartTopicModeling = React.useCallback(async () => {
     try {
       const res = await startTopicModeling({
@@ -135,20 +141,20 @@ export function useStartTopicModeling(column: string) {
           use_preprocessed_documents: shouldUseCachedPreprocessedDocuments,
         },
       });
+      await resetTopicModelingResult();
       queryClient.removeQueries({
-        queryKey: [
-          client.queryOptions('get', '/topic/{project_id}/status', {
-            params: {
-              path: {
-                project_id: project.id,
-              },
-              query: {
-                column: column,
-              },
+        queryKey: client.queryOptions('get', '/topic/{project_id}/status', {
+          params: {
+            path: {
+              project_id: project.id,
             },
-          }),
-        ],
+            query: {
+              column: column,
+            },
+          },
+        }).queryKey,
       });
+      invalidateProjectDependencyQueries(project.id);
       if (res.message) {
         showNotification({
           message: res.message,
@@ -161,6 +167,7 @@ export function useStartTopicModeling(column: string) {
   }, [
     column,
     project.id,
+    resetTopicModelingResult,
     shouldUseCachedDocumentVectors,
     shouldUseCachedPreprocessedDocuments,
     shouldUseCachedUMAPVectors,
