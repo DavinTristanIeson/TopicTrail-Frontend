@@ -24,6 +24,7 @@ import { CancelButton } from '@/components/standard/button/variants';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { handleErrorFn } from '@/common/utils/error';
 import { useResetProjectAppState } from '../project/app-state';
+import { TopicModelingResultQueryResetContext } from '../topics/components/context';
 
 function UpdateProjectDeleteButton() {
   const deleteRemote = React.useRef<DisclosureTrigger | null>(null);
@@ -56,12 +57,16 @@ function UpdateProjectDeleteButton() {
 
 function UpdateProjectReloadDatasetButton() {
   const reset = useResetProjectAppState();
+  const resetTopicModelingResult = React.useContext(
+    TopicModelingResultQueryResetContext,
+  );
   const { mutateAsync: reloadDataset } = client.useMutation(
     'patch',
     '/projects/{project_id}/reload',
     {
       onSuccess(data, variables) {
         reset();
+        resetTopicModelingResult();
         invalidateProjectDependencyQueries(variables.params.path.project_id);
       },
     },

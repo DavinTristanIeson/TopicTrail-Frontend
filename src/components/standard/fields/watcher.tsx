@@ -1,5 +1,6 @@
 import { getAnyError } from '@/common/utils/error';
 import { Alert } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Warning } from '@phosphor-icons/react';
 import { get } from 'lodash-es';
 import React from 'react';
@@ -35,8 +36,11 @@ export function ErrorAlert() {
     formState: { errors },
   } = useFormContext();
   const anyError = getAnyError(errors);
+  const [debouncedAnyError] = useDebouncedValue(anyError?.message, 1000, {
+    leading: false,
+  });
 
-  if (!anyError) {
+  if (!debouncedAnyError) {
     return null;
   }
   return (
@@ -45,7 +49,7 @@ export function ErrorAlert() {
       icon={<Warning size={18} />}
       color="red"
     >
-      {anyError?.message}
+      {debouncedAnyError}
       <br />
       You will not be allowed to submit the form until all errors are resolved.
     </Alert>

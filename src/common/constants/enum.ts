@@ -8,6 +8,7 @@ export enum SchemaColumnTypeEnum {
   Textual = 'textual',
   Unique = 'unique',
   Geospatial = 'geospatial',
+  Boolean = 'boolean',
   Topic = 'topic',
 }
 
@@ -47,6 +48,13 @@ export enum DataSourceTypeEnum {
   Excel = 'excel',
 }
 
+export enum TaskStatusEnum {
+  Idle = 'idle',
+  Pending = 'pending',
+  Success = 'success',
+  Failed = 'failed',
+}
+
 export enum TableFilterTypeEnum {
   And = 'and',
   Or = 'or',
@@ -60,9 +68,8 @@ export enum TableFilterTypeEnum {
   GreaterThanOrEqualTo = 'greater_than_or_equal_to',
   LessThanOrEqualTo = 'less_than_or_equal_to',
   HasText = 'has_text',
-  Includes = 'includes',
-  Excludes = 'excludes',
-  Only = 'only',
+  IsTrue = 'is_true',
+  IsFalse = 'is_false',
 }
 
 export enum TableColumnAggregateMethodEnum {
@@ -72,13 +79,6 @@ export enum TableColumnAggregateMethodEnum {
   StandardDeviation = 'std',
   Max = 'max',
   Min = 'min',
-}
-
-export enum TaskStatusEnum {
-  Idle = 'idle',
-  Pending = 'pending',
-  Success = 'success',
-  Failed = 'failed',
 }
 
 export enum StatisticTestMethodEnum {
@@ -115,9 +115,9 @@ export enum EnumList {
   TemporalColumnFeatureEnum = 'TemporalColumnFeatureEnum',
   TemporalPrecisionEnum = 'TemporalPrecisionEnum',
   DataSourceTypeEnum = 'DataSourceTypeEnum',
+  TaskStatusEnum = 'TaskStatusEnum',
   TableFilterTypeEnum = 'TableFilterTypeEnum',
   TableColumnAggregateMethodEnum = 'TableColumnAggregateMethodEnum',
-  TaskStatusEnum = 'TaskStatusEnum',
   StatisticTestMethodEnum = 'StatisticTestMethodEnum',
   GroupStatisticTestMethodEnum = 'GroupStatisticTestMethodEnum',
   EffectSizeMethodEnum = 'EffectSizeMethodEnum',

@@ -2,7 +2,6 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import {
   List,
   ListNumbers,
-  GridFour,
   ChartBar,
   Clock,
   MapPin,

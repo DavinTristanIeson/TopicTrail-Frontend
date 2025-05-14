@@ -8,11 +8,15 @@ import React from 'react';
 import RHFField from '@/components/standard/fields';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { ProjectConfigColumnContinuousForm } from './continuous-column';
-import { ProjectConfigColumnOrderedCategoricalForm } from './ordered-categorical-column';
+import {
+  ProjectConfigColumnCategoricalForm,
+  ProjectConfigColumnOrderedCategoricalForm,
+} from './ordered-categorical-column';
 import { ProjectConfigColumnGeospatialForm } from './geospatial-column';
 import { ProjectConfigColumnTextualForm } from './textual-column';
 import { ProjectColumnTypeSelectField } from '@/modules/project/select-column-input';
 import { ProjectConfigColumnTemporalForm } from './temporal-column';
+import ProjectConfigColumnBooleanForm from './boolean-column';
 
 interface ProjectConfigColumnFormItemProps {
   index: number;
@@ -48,6 +52,14 @@ function ProjectConfigColumnFormSwitcher(
     }
     case SchemaColumnTypeEnum.Textual: {
       component = <ProjectConfigColumnTextualForm index={index} />;
+      break;
+    }
+    case SchemaColumnTypeEnum.Categorical: {
+      component = <ProjectConfigColumnCategoricalForm index={index} />;
+      break;
+    }
+    case SchemaColumnTypeEnum.Boolean: {
+      component = <ProjectConfigColumnBooleanForm index={index} />;
       break;
     }
     default: {

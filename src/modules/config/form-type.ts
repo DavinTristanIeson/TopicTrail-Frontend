@@ -38,6 +38,13 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     otherwise: (schema) => schema.strip(),
   }),
 
+  min_frequency: yupNullableNumber.when('type', {
+    is: (value: string) =>
+      value === SchemaColumnTypeEnum.Categorical ||
+      value === SchemaColumnTypeEnum.OrderedCategorical,
+    then: (schema) => schema.required().min(0),
+    otherwise: (schema) => schema.strip(),
+  }),
   category_order: yupNullableArray.of(Yup.string().required()).when('type', {
     is: SchemaColumnTypeEnum.OrderedCategorical,
     then: (schema) => schema.required(),
@@ -64,6 +71,18 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   role: yupNullableString.when('type', {
     is: SchemaColumnTypeEnum.Geospatial,
     then: (schema) => schema.oneOf(Object.values(GeospatialRoleEnum)),
+    otherwise: (schema) => schema.strip(),
+  }),
+
+  positive_label: yupNullableString.when('type', {
+    is: SchemaColumnTypeEnum.Boolean,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.strip(),
+  }),
+
+  negative_label: yupNullableString.when('type', {
+    is: SchemaColumnTypeEnum.Boolean,
+    then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   }),
 
@@ -167,7 +186,7 @@ export function DefaultProjectSchemaColumnValues(
             n_gram_range: [1, 2],
             pipeline_type: DocumentPreprocessingMethodEnum.English,
           }
-        : undefined,
+        : null,
     topic_modeling:
       type === SchemaColumnTypeEnum.Textual
         ? {
@@ -181,9 +200,14 @@ export function DefaultProjectSchemaColumnValues(
             reference_document_count: 15,
             top_n_words: 50,
           }
-        : undefined,
+        : null,
     bin_count: type === SchemaColumnTypeEnum.Continuous ? 3 : null,
     bins: null,
+    min_frequency:
+      type === SchemaColumnTypeEnum.Categorical ||
+      type === SchemaColumnTypeEnum.OrderedCategorical
+        ? 0
+        : null,
     category_order:
       type === SchemaColumnTypeEnum.OrderedCategorical ? [] : null,
     role:
@@ -191,7 +215,7 @@ export function DefaultProjectSchemaColumnValues(
         ? name.startsWith('long') || name.startsWith('lng')
           ? GeospatialRoleEnum.Longitude
           : GeospatialRoleEnum.Latitude
-        : undefined,
+        : null,
     datetime_format: null,
     temporal_features:
       type === SchemaColumnTypeEnum.Temporal
@@ -201,6 +225,8 @@ export function DefaultProjectSchemaColumnValues(
             TemporalColumnFeatureEnum.Monthly,
           ]
         : null,
+    positive_label: type === SchemaColumnTypeEnum.Boolean ? '1' : null,
+    negative_label: type === SchemaColumnTypeEnum.Boolean ? '0' : null,
   } as ProjectConfigColumnFormType;
 }
 
@@ -209,7 +235,9 @@ export function ProjectConfigDefaultValues(
 ): ProjectConfigFormType {
   if (data) {
     return {
-      columns: data.data_schema.columns.filter((column) => !column.internal),
+      columns: data.data_schema.columns.filter(
+        (column) => !column.internal,
+      ) as any,
       metadata: data.metadata,
       source: data.source,
     } as ProjectConfigFormType;

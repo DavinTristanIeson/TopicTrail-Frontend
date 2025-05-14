@@ -20,6 +20,9 @@ export type LessThanOrEqualToTableFilterModel =
   components['schemas']['LessThanOrEqualToTableFilter'];
 export type GreaterThanOrEqualToTableFilterModel =
   components['schemas']['GreaterThanOrEqualToTableFilter'];
+export type IsTrueTableFilterModel = components['schemas']['IsTrueTableFilter'];
+export type IsFalseTableFilterModel =
+  components['schemas']['IsFalseTableFilter'];
 
 export type TableFilterModel =
   | OrTableFilterModel
@@ -33,7 +36,9 @@ export type TableFilterModel =
   | NotEmptyTableFilterModel
   | GreaterThanTableFilterModel
   | LessThanOrEqualToTableFilterModel
-  | GreaterThanOrEqualToTableFilterModel;
+  | GreaterThanOrEqualToTableFilterModel
+  | IsTrueTableFilterModel
+  | IsFalseTableFilterModel;
 
 export type TableSortModel = components['schemas']['TableSort'];
 export type PaginationMetaModel = components['schemas']['PaginationMeta'];

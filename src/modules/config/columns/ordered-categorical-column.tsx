@@ -16,6 +16,7 @@ import { ProjectConfigFormType } from '../form-type';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import dynamic from 'next/dynamic';
 import { ListSkeleton } from '@/components/visual/loading';
+import RHFField from '@/components/standard/fields';
 
 const ReorderCategoryOrderDndContext = dynamic(
   () => import('./sortable-category-context'),
@@ -93,6 +94,23 @@ const ReorderCategoryOrderDrawer = React.forwardRef<
   );
 });
 
+export function ProjectConfigColumnCategoricalForm(
+  props: ProjectConfigColumnFormProps,
+) {
+  const { index } = props;
+  const PARENT_NAME = `columns.${index}` as const;
+  return (
+    <RHFField
+      name={`${PARENT_NAME}.min_frequency`}
+      type="number"
+      label="Min. Frequency"
+      min={0}
+      required
+      description="A category should appear at least this amount of rows to be considered a category. Otherwise, it will be considered as a unique value and thus removed from the dataset."
+    />
+  );
+}
+
 export function ProjectConfigColumnOrderedCategoricalForm(
   props: ProjectConfigColumnFormProps,
 ) {
@@ -126,6 +144,7 @@ export function ProjectConfigColumnOrderedCategoricalForm(
           }
         }}
       />
+      <ProjectConfigColumnCategoricalForm {...props} />
       {categories && (
         <>
           <TagsInput

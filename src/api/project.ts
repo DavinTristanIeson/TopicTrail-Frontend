@@ -29,6 +29,8 @@ export type TextualSchemaColumnModel =
 export type TopicSchemaColumnModel = components['schemas']['TopicSchemaColumn'];
 export type UniqueSchemaColumnModel =
   components['schemas']['UniqueSchemaColumn'];
+export type BooleanSchemaColumnModel =
+  components['schemas']['BooleanSchemaColumn'];
 
 export type SchemaColumnModel =
   | CategoricalSchemaColumnModel
@@ -38,7 +40,8 @@ export type SchemaColumnModel =
   | TemporalSchemaColumnModel
   | TextualSchemaColumnModel
   | TopicSchemaColumnModel
-  | UniqueSchemaColumnModel;
+  | UniqueSchemaColumnModel
+  | BooleanSchemaColumnModel;
 
 export type ProjectMutationInput =
   components['schemas']['ProjectMutationSchema'];
@@ -91,10 +94,10 @@ export function findProjectColumn(project: ProjectModel, columnName: string) {
 }
 export function filterProjectColumnsByType(
   project: ProjectModel,
-  types: SchemaColumnTypeEnum[] | SchemaColumnModel['type'][],
+  types: (SchemaColumnTypeEnum | SchemaColumnModel['type'])[],
 ) {
   return project.config.data_schema.columns.filter((column) =>
-    types.includes(column.type as SchemaColumnTypeEnum),
+    types.includes(column.type),
   );
 }
 
