@@ -187,6 +187,7 @@ function VisualizationContingencyTableHeatmapInner(
         yaxis: {
           title: item.column,
           automargin: true,
+          autorange: 'reversed',
         },
         xaxis: {
           title: item.config.target,

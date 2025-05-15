@@ -68,20 +68,27 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
   }, [data.frequencies, data.labels]);
   const cooccurrencesPlot = React.useMemo<PlotParams>(() => {
     const z = map2D(data.cooccurrences, (value, row, col) =>
-      row >= col ? undefined : value,
+      row <= col ? undefined : value,
     ) as number[][];
     return {
       data: [
         {
+          name: 'Co-occurrences',
           x: data.labels,
           y: data.labels,
           z: z,
-          text: z as any,
-          colorscale: 'Greens',
+          texttemplate: '%{z}',
+          colorscale: 'Viridis',
           colorbar: {
             title: 'Frequency',
           },
+          hoverongaps: false,
           type: 'heatmap',
+          hovertemplate: [
+            '<b>Subdataset 1</b>: %{x}',
+            '<b>Subdataset 2</b>: %{y}',
+            '<b>Co-occurrence</b>: %{z}',
+          ].join('<br>'),
         },
       ],
       layout: {
@@ -90,6 +97,7 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
         },
         yaxis: {
           title: 'Subdatasets',
+          autorange: 'reversed',
         },
       },
     };

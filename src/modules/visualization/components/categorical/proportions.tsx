@@ -88,7 +88,7 @@ export default function VisualizationProportionsComponent(
             y,
             z,
             type: 'heatmap',
-            colorscale: 'Greens',
+            colorscale: 'Viridis',
             hovertemplate: [
               `<b>${item.column}</b>: %{y}`,
               `<b>Subdataset</b>: %{x}`,
@@ -109,6 +109,7 @@ export default function VisualizationProportionsComponent(
           },
           yaxis: {
             title: item.column,
+            autorange: 'reversed',
           },
         },
       };

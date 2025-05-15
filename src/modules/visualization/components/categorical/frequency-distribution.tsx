@@ -101,7 +101,7 @@ export default function VisualizationFrequencyDistributionComponent(
             z,
             type: 'heatmap',
             texttemplate: needsPercentage ? '%{z:.2f}%' : '%{z}',
-            colorscale: 'Greens',
+            colorscale: 'Viridis',
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,
               `<b>Subdataset</b>: %{y}`,
@@ -121,6 +121,7 @@ export default function VisualizationFrequencyDistributionComponent(
           },
           yaxis: {
             title: 'Subdatasets',
+            autorange: 'reversed',
           },
         },
       };

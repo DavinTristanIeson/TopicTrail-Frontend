@@ -130,8 +130,8 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       columnIndices,
     );
     const hovertemplate = [
-      `<b>${item.column}</b>: %{x}`,
-      `<b>${item.config.target}</b>: %{y}`,
+      `<b>${item.column}</b>: %{y}`,
+      `<b>${item.config.target}</b>: %{x}`,
       '<b>P Value</b>: %{customdata[0]}',
       '<b>Confidence</b>: %{customdata[1]}%',
       `<b>Chi-Squared Statistic</b>: %{customdata[2]}`,
@@ -188,6 +188,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         yaxis: {
           title: item.column,
           automargin: true,
+          autorange: 'reversed',
         },
         xaxis: {
           title: item.config.target,
@@ -229,6 +230,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         yaxis: {
           title: item.column,
           automargin: true,
+          autorange: 'reversed',
         },
         xaxis: {
           title: item.config.target,
@@ -250,7 +252,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           z: process(confidences),
           texttemplate: '%{z:.3f}',
           hoverongaps: false,
-          colorscale: 'Greens',
+          colorscale: 'Viridis',
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
           zmin: 0,
@@ -265,6 +267,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         yaxis: {
           title: item.column,
           automargin: true,
+          autorange: 'reversed',
         },
         xaxis: {
           title: item.config.target,

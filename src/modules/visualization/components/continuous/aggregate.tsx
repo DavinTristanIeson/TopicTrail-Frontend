@@ -103,6 +103,7 @@ export function VisualizationAggregateValuesRenderer(
           },
           yaxis: {
             title: 'Subdatasets',
+            autorange: 'reversed',
           },
         },
       };
