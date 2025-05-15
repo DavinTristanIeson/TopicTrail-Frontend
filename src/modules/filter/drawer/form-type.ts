@@ -36,12 +36,7 @@ const tableFilterFormSchemaBuilder = {
     otherwise: (schema) => schema.strip(),
   }),
   values: yupNullableArray.of(Yup.mixed().required()).when('type', {
-    is: isAmong([
-      TableFilterTypeEnum.IsOneOf,
-      TableFilterTypeEnum.Excludes,
-      TableFilterTypeEnum.Includes,
-      TableFilterTypeEnum.Only,
-    ]),
+    is: TableFilterTypeEnum.IsOneOf,
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.strip(),
   }),

@@ -140,13 +140,12 @@ export default function TableFilterComponent(props: TableFilterComponentProps) {
       );
       break;
     }
-    case TableFilterTypeEnum.IsOneOf:
-    case TableFilterTypeEnum.Includes:
-    case TableFilterTypeEnum.Excludes:
-    case TableFilterTypeEnum.Only: {
+    case TableFilterTypeEnum.IsOneOf: {
       children = <ValuesBasedTableFilterComponent name={name} />;
       break;
     }
+    case TableFilterTypeEnum.IsTrue:
+    case TableFilterTypeEnum.IsFalse:
     case TableFilterTypeEnum.Empty:
     case TableFilterTypeEnum.NotEmpty: {
       children = undefined;

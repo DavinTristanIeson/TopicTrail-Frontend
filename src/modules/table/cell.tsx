@@ -7,7 +7,7 @@ import {
 import { getPlotColor } from '@/common/utils/colors';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { TopicInfo } from '@/modules/topics/components/info';
-import { Spoiler, Tooltip, Text, HoverCard, Box } from '@mantine/core';
+import { Spoiler, Tooltip, Text, HoverCard, Box, Badge } from '@mantine/core';
 import dayjs from 'dayjs';
 import React from 'react';
 
@@ -181,6 +181,21 @@ function NumericColumnCell(props: NumericColumnCellProps) {
   );
 }
 
+interface BooleanColumnCellProps {
+  value: boolean;
+}
+
+function BooleanColumnCell(props: BooleanColumnCellProps) {
+  if (props.value == null) {
+    return null;
+  }
+  if (props.value) {
+    return <Badge color="green">True</Badge>;
+  } else {
+    return <Badge color="red">False</Badge>;
+  }
+}
+
 interface ColumnCellRendererProps {
   value: any;
   column: SchemaColumnModel;
@@ -213,6 +228,9 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
     case SchemaColumnTypeEnum.OrderedCategorical:
     case SchemaColumnTypeEnum.Categorical: {
       return <HighlightedCell>{props.value}</HighlightedCell>;
+    }
+    case SchemaColumnTypeEnum.Boolean: {
+      return <BooleanColumnCell value={props.value} />;
     }
     default: {
       return <DefaultColumnCell>{props.value}</DefaultColumnCell>;

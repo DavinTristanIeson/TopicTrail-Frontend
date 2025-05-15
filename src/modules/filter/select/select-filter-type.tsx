@@ -63,23 +63,17 @@ const FILTER_COMBOBOXES = {
     description:
       'Select all rows where this column contains a piece of text that is equal to x.',
   },
-  [TableFilterTypeEnum.Excludes]: {
-    value: TableFilterTypeEnum.Excludes,
-    label: "Column doesn't contain x",
+  [TableFilterTypeEnum.IsTrue]: {
+    value: TableFilterTypeEnum.IsTrue,
+    label: 'Column is positive',
     description:
-      "Select all rows where this column doesn't contain any categories in x.",
+      'Select all rows where this column contains a positive/true value.',
   },
-  [TableFilterTypeEnum.Includes]: {
-    value: TableFilterTypeEnum.Includes,
-    label: 'Column contains x',
+  [TableFilterTypeEnum.IsFalse]: {
+    value: TableFilterTypeEnum.IsFalse,
+    label: 'Column is negative',
     description:
-      'Select all rows where this column contains all categories in x; although other categories may also exist besides the ones in x.',
-  },
-  [TableFilterTypeEnum.Only]: {
-    value: TableFilterTypeEnum.Only,
-    label: 'Column only contains x',
-    description:
-      'Select all rows where this column only contains the categories in x. If there are other categories outside of the ones in x, the row will not be included.',
+      'Select all rows where this column contains a negative/false value.',
   },
   [TableFilterTypeEnum.And]: {
     value: TableFilterTypeEnum.And,
@@ -136,6 +130,12 @@ const ALLOWED_FILTER_TYPES_FOR_COLUMNS = {
   [SchemaColumnTypeEnum.Topic]: [
     ...ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS,
     TableFilterTypeEnum.IsOneOf,
+  ],
+  [SchemaColumnTypeEnum.Boolean]: [
+    TableFilterTypeEnum.Empty,
+    TableFilterTypeEnum.NotEmpty,
+    TableFilterTypeEnum.IsTrue,
+    TableFilterTypeEnum.IsFalse,
   ],
 };
 

@@ -56,6 +56,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     ...FOR_ALL_TYPES,
     ...FOR_CATEGORICAL_TYPES,
   ],
+  [SchemaColumnTypeEnum.Boolean]: [...FOR_ALL_TYPES, ...FOR_CATEGORICAL_TYPES],
   [SchemaColumnTypeEnum.Temporal]: [
     ...FOR_ALL_TYPES,
     ...FOR_CATEGORICAL_TYPES,

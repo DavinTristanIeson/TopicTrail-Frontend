@@ -28,6 +28,7 @@ const DEFAULT_COLUMN_SIZES = {
   [SchemaColumnTypeEnum.Textual]: 400,
   [SchemaColumnTypeEnum.Topic]: 250,
   [SchemaColumnTypeEnum.Unique]: 300,
+  [SchemaColumnTypeEnum.Boolean]: 100,
 };
 
 export type SchemaColumnDataTableColumnType = MRT_ColumnDef<
