@@ -54,6 +54,7 @@ const TABLE_DASHBOARD_CONSTRAINT = {
   withoutTypes: [
     DashboardItemTypeEnum.SubdatasetWords,
     DashboardItemTypeEnum.Proportions,
+    DashboardItemTypeEnum.SubdatasetCooccurrence,
   ],
 };
 

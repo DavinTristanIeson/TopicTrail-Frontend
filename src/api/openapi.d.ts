@@ -730,6 +730,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/comparison/co-occurrence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Cooccurrence */
+        post: operations["post__cooccurrence_table__project_id__comparison_co_occurrence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/correlation/binary/test-distribution": {
         parameters: {
             query?: never;
@@ -871,6 +888,12 @@ export interface components {
         /** ApiResult[ProjectResource] */
         ApiResult_ProjectResource_: {
             data: components["schemas"]["ProjectResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[SubdatasetCooccurrenceResource] */
+        ApiResult_SubdatasetCooccurrenceResource_: {
+            data: components["schemas"]["SubdatasetCooccurrenceResource"];
             /** Message */
             message: string | null;
         };
@@ -1215,8 +1238,8 @@ export interface components {
             column: components["schemas"]["TextualSchemaColumn-Output"];
             result: components["schemas"]["TopicModelingResult"] | null;
         };
-        /** ComparisonGroupWordsSchema */
-        ComparisonGroupWordsSchema: {
+        /** CompareSubdatasetsSchema */
+        CompareSubdatasetsSchema: {
             /** Groups */
             groups: components["schemas"]["NamedTableFilter"][];
             /** Column */
@@ -1850,6 +1873,15 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
+        /** SubdatasetCooccurrenceResource */
+        SubdatasetCooccurrenceResource: {
+            /** Labels */
+            labels: string[];
+            /** Cooccurrences */
+            cooccurrences: number[];
+            /** Frequencies */
+            frequencies: number[];
+        };
         /**
          * TableColumnAggregateMethodEnum
          * @enum {string}
@@ -6121,7 +6153,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ComparisonGroupWordsSchema"];
+                "application/json": components["schemas"]["CompareSubdatasetsSchema"];
             };
         };
         responses: {
@@ -6132,6 +6164,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__cooccurrence_table__project_id__comparison_co_occurrence_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompareSubdatasetsSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_SubdatasetCooccurrenceResource_"];
                 };
             };
             /** @description Bad Request */

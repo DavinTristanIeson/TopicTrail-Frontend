@@ -17,14 +17,19 @@ export enum DashboardItemTypeEnum {
   Calendar = 'calendar',
   WordFrequencies = 'word-frequencies',
   TopicWords = 'topic-words',
+
   SubdatasetWords = 'subdataset-words',
+  SubdatasetCooccurrence = 'subdataset-cooccurrence',
 
   ContingencyTable = 'contingency-table',
   BinaryStatisticTestOnContingencyTable = 'binary-statistic-test-on-contingency-table',
   BinaryStatisticTestOnDistribution = 'binary-statistic-test-on-distribution',
 }
 
-const FOR_ALL_TYPES = [DashboardItemTypeEnum.Counts];
+const FOR_ALL_TYPES = [
+  DashboardItemTypeEnum.Counts,
+  DashboardItemTypeEnum.SubdatasetCooccurrence,
+];
 const FOR_CATEGORICAL_TYPES = [
   DashboardItemTypeEnum.FrequencyDistribution,
   DashboardItemTypeEnum.Proportions,

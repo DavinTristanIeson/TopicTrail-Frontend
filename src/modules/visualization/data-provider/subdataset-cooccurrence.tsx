@@ -1,11 +1,11 @@
 import { client } from '@/common/api/client';
 import { BaseVisualizationDataProviderHook } from '../types/base';
 import { usePrepareDataProvider } from './utils';
-import { TopicModel } from '@/api/topic';
-import { zip } from 'lodash-es';
+import { SubdatasetCooccurrenceModel } from '@/api/comparison';
+import React from 'react';
 
-export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizationDataProviderHook<
-  TopicModel,
+export const useVisualizationSubdatasetCooccurrenceDataProvider: BaseVisualizationDataProviderHook<
+  SubdatasetCooccurrenceModel,
   object
 > = function (item) {
   const { groups: rawGroups, params } = usePrepareDataProvider(item);
@@ -13,7 +13,7 @@ export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizati
   const groups = rawGroups.filter((group) => !!group.filter);
   const { data, error, isFetching, refetch } = client.useQuery(
     'post',
-    '/table/{project_id}/comparison/words',
+    '/table/{project_id}/comparison/co-occurrence',
     {
       body: {
         column: item.column,
@@ -23,13 +23,19 @@ export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizati
     },
   );
 
+  const processedData = React.useMemo(() => {
+    return data?.data
+      ? [
+          {
+            data: data?.data,
+            name: 'Default',
+          },
+        ]
+      : [];
+  }, [data?.data]);
+
   return {
-    data: zip(groups, data?.data.topics ?? []).map((value) => {
-      return {
-        data: value[1]!,
-        name: value[0]!.name,
-      };
-    }),
+    data: processedData,
     error: error?.message,
     loading: isFetching,
     refetch,

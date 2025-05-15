@@ -13,3 +13,6 @@ export type EffectSizeResultModel = components['schemas']['EffectSizeResult'];
 
 export type ComparisonStateItemModel =
   components['schemas']['ComparisonStateItem-Output'];
+
+export type SubdatasetCooccurrenceModel =
+  components['schemas']['SubdatasetCooccurrenceResource'];
