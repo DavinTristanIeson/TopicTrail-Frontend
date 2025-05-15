@@ -14,7 +14,6 @@ import {
   type SelectProps,
   Group,
   Select,
-  Stack,
   Text,
 } from '@mantine/core';
 import { capitalize } from 'lodash-es';
@@ -113,7 +112,7 @@ function ProjectColumnTypeComboboxItemRenderer(
   const { option, checked } = combobox;
   return (
     <SelectedComboboxWrapper checked={checked}>
-      <Stack>
+      <div>
         <Group>
           <ProjectSchemaTypeIcon type={option.value} />
           <Text size="sm">{option.label}</Text>
@@ -121,7 +120,7 @@ function ProjectColumnTypeComboboxItemRenderer(
         <Text size="xs" c="gray">
           {option.description}
         </Text>
-      </Stack>
+      </div>
     </SelectedComboboxWrapper>
   );
 }
@@ -171,6 +170,12 @@ export function ProjectColumnTypeSelectInput(props: SelectProps) {
             label: 'Geospatial',
             description:
               'This column contains either the latitude or longitude values of a coordinate.',
+          },
+          {
+            value: SchemaColumnTypeEnum.Boolean,
+            label: 'Boolean',
+            description:
+              'This column contains binary data (such as: yes/no, positive/negative, or true/false)',
           },
           {
             value: SchemaColumnTypeEnum.Unique,

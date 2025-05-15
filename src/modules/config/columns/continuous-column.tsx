@@ -30,15 +30,13 @@ function ProjectConfigColumnContinuousFormBinsPreview(
       const isLast = index === arr.length - 1;
       if (isFirst) {
         acc.push(`Bin ${binNumber}: (-inf, ${cur})`);
-      }
-      if (isLast) {
-        acc.push(`Bin ${binNumber}: (${cur}, inf)`);
-      }
-      if (isFirst || isLast) {
         return acc;
       }
       const prev = arr[index - 1]!;
-      acc.push(`Bin ${binNumber}: (${prev}, ${cur})`);
+      acc.push(`Bin ${binNumber}: [${prev}, ${cur})`);
+      if (isLast) {
+        acc.push(`Bin ${binNumber}: [${cur}, inf)`);
+      }
       return acc;
     }, [] as string[]);
   return (

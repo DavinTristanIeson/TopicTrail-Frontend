@@ -81,8 +81,7 @@ export function ConfigureProjectFlow_CheckDataset(
       <Text>
         Next, we need a dataset to get started. Please specify the file path
         (e.g.: /user/path/to/dataset, ../path/to/dataset,
-        C:/Users/User/path/to/dataset) so that we can access the dataset. Please
-        note that the dataset should be of type CSV, PARQUET, or EXCEL.
+        C:/Users/User/path/to/dataset) so that we can access the dataset.
       </Text>
       <LoadingOverlay visible={isPending} />
       {canUpdateDataset && (

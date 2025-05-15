@@ -84,10 +84,10 @@ export function ProjectConfigDataSourceFormBody(
               label: 'Excel',
               value: DataSourceTypeEnum.Excel,
             },
-            {
-              label: 'Parquet',
-              value: DataSourceTypeEnum.Parquet,
-            },
+            // {
+            //   label: 'Parquet',
+            //   value: DataSourceTypeEnum.Parquet,
+            // },
           ]}
           clearable={false}
           label="Dataset Type"

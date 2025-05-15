@@ -7,7 +7,15 @@ import {
 import { getPlotColor } from '@/common/utils/colors';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { TopicInfo } from '@/modules/topics/components/info';
-import { Spoiler, Tooltip, Text, HoverCard, Box, Badge } from '@mantine/core';
+import {
+  Spoiler,
+  Tooltip,
+  Text,
+  HoverCard,
+  Box,
+  useMantineTheme,
+} from '@mantine/core';
+import { Check, X } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
 import React from 'react';
 
@@ -186,13 +194,14 @@ interface BooleanColumnCellProps {
 }
 
 function BooleanColumnCell(props: BooleanColumnCellProps) {
+  const { colors } = useMantineTheme();
   if (props.value == null) {
     return null;
   }
   if (props.value) {
-    return <Badge color="green">True</Badge>;
+    return <Check color={colors.green[6]} weight="bold" size={24} />;
   } else {
-    return <Badge color="red">False</Badge>;
+    return <X color={colors.red[6]} weight="bold" size={24} />;
   }
 }
 

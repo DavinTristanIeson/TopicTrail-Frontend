@@ -7,6 +7,7 @@ import {
   MapPin,
   TextAUnderline,
   Question,
+  PlusMinus,
 } from '@phosphor-icons/react';
 
 interface ProjectSchemaTypeIconProps {
@@ -31,5 +32,7 @@ export function ProjectSchemaTypeIcon(props: ProjectSchemaTypeIconProps) {
       return <Question />;
     case SchemaColumnTypeEnum.Textual:
       return <TextAUnderline />;
+    case SchemaColumnTypeEnum.Boolean:
+      return <PlusMinus />;
   }
 }

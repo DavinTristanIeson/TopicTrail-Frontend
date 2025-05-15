@@ -7,6 +7,7 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import { Select, Stack } from '@mantine/core';
 import { PlotInlineConfiguration } from '../configuration';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { map2D } from '@/common/utils/iterable';
 
 enum SubdatasetCoocccurrenceDisplayMode {
   Frequencies = 'frequencies',
@@ -60,18 +61,22 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
         },
         yaxis: {
           title: 'Frequencies',
+          minallowed: 0,
         },
       },
     };
   }, [data.frequencies, data.labels]);
   const cooccurrencesPlot = React.useMemo<PlotParams>(() => {
+    const z = map2D(data.cooccurrences, (value, row, col) =>
+      row >= col ? undefined : value,
+    ) as number[][];
     return {
       data: [
         {
           x: data.labels,
           y: data.labels,
-          z: data.cooccurrences,
-          text: data.cooccurrences as any,
+          z: z,
+          text: z as any,
           colorscale: 'Greens',
           colorbar: {
             title: 'Frequency',

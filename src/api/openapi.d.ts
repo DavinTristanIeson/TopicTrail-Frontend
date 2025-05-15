@@ -1174,10 +1174,12 @@ export interface components {
              * @enum {string}
              */
             type: "boolean";
+            /** Infer Boolean */
+            infer_boolean: boolean;
             /** Positive Label */
-            positive_label: string;
+            positive_label: string | null;
             /** Negative Label */
-            negative_label: string;
+            negative_label: string | null;
         };
         /** CSVDataSource */
         CSVDataSource: {
@@ -1878,7 +1880,7 @@ export interface components {
             /** Labels */
             labels: string[];
             /** Cooccurrences */
-            cooccurrences: number[];
+            cooccurrences: number[][];
             /** Frequencies */
             frequencies: number[];
         };
