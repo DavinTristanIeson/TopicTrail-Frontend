@@ -1174,12 +1174,6 @@ export interface components {
              * @enum {string}
              */
             type: "boolean";
-            /** Infer Boolean */
-            infer_boolean: boolean;
-            /** Positive Label */
-            positive_label: string | null;
-            /** Negative Label */
-            negative_label: string | null;
         };
         /** CSVDataSource */
         CSVDataSource: {

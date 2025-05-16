@@ -74,22 +74,6 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     otherwise: (schema) => schema.strip(),
   }),
 
-  infer_boolean: Yup.boolean()
-    .nullable()
-    .when('type', {
-      is: SchemaColumnTypeEnum.Boolean,
-      then: (schema) => schema.required(),
-      otherwise: (schema) => schema.strip(),
-    }),
-  positive_label: yupNullableString.when('type', {
-    is: SchemaColumnTypeEnum.Boolean,
-    otherwise: (schema) => schema.strip(),
-  }),
-  negative_label: yupNullableString.when('type', {
-    is: SchemaColumnTypeEnum.Boolean,
-    otherwise: (schema) => schema.strip(),
-  }),
-
   preprocessing: Yup.object({
     pipeline_type: Yup.string()
       .oneOf(Object.values(DocumentPreprocessingMethodEnum))
@@ -229,9 +213,6 @@ export function DefaultProjectSchemaColumnValues(
             TemporalColumnFeatureEnum.Monthly,
           ]
         : null,
-    infer_boolean: type === SchemaColumnTypeEnum.Boolean ? true : null,
-    positive_label: null,
-    negative_label: null,
   } as ProjectConfigColumnFormType;
 }
 
