@@ -178,23 +178,6 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         },
       },
       {
-        header: 'Silhouette Score',
-        accessorKey: 'evaluation.silhouette_score',
-        filterVariant: 'range-slider',
-        filterFn: 'betweenInclusive',
-        sortUndefined: 'last',
-        mantineFilterRangeSliderProps: {
-          step: 0.01,
-          min: -1,
-          max: 1,
-          minRange: 0.01,
-        },
-        Cell({ cell: { getValue } }) {
-          const silhouetteScore = getValue() as number | undefined;
-          return silhouetteScore?.toFixed(4);
-        },
-      },
-      {
         header: 'Topic Count',
         key: 'topic_count',
         filterVariant: 'range-slider',

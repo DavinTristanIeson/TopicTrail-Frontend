@@ -1614,8 +1614,6 @@ export interface components {
         IndividualTopicEvaluationResult: {
             topic: components["schemas"]["Topic"];
             coherence: components["schemas"]["TopicCoherenceV"];
-            /** Silhouette Score */
-            silhouette_score: number;
         };
         /** InferDatasetColumnResource */
         InferDatasetColumnResource: {
@@ -2224,8 +2222,6 @@ export interface components {
         TopicEvaluationResult: {
             /** Coherence V */
             coherence_v: number;
-            /** Silhouette Score */
-            silhouette_score: number;
             /** Topic Diversity */
             topic_diversity: number;
             /** Topics */

@@ -13,7 +13,6 @@ import {
 } from '@/common/constants/enum';
 import * as Yup from 'yup';
 import {
-  rangeSchema,
   yupNullableArray,
   yupNullableNumber,
   yupNullableString,
@@ -88,7 +87,9 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     max_unique_words: Yup.number().positive().required(),
     min_document_length: Yup.number().positive().required(),
     min_word_length: Yup.number().positive().required(),
-    n_gram_range: rangeSchema.required(),
+    n_gram_range: Yup.array(Yup.number().positive().required())
+      .length(2)
+      .required(),
   }).when('type', {
     is: SchemaColumnTypeEnum.Textual,
     then: (schema) => schema.required(),
