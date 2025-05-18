@@ -12,7 +12,7 @@ import {
   ReturnToTopicsPageButton,
 } from '@/modules/topics/components/controls';
 import { TopicModelingRequirementSafeguard } from '@/modules/topics/components/warnings';
-import { Stack } from '@mantine/core';
+import { Space, Stack } from '@mantine/core';
 import React from 'react';
 
 function TopicEvaluationPageInternal() {
@@ -43,6 +43,7 @@ function TopicEvaluationPageInternal() {
       ) : (
         <TopicEvaluationResultComponent data={data} />
       )}
+      <Space h="md" />
     </>
   );
 }

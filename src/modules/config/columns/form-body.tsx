@@ -16,8 +16,6 @@ import { ProjectConfigColumnGeospatialForm } from './geospatial-column';
 import { ProjectConfigColumnTextualForm } from './textual-column';
 import { ProjectColumnTypeSelectField } from '@/modules/project/select-column-input';
 import { ProjectConfigColumnTemporalForm } from './temporal-column';
-import ProjectConfigColumnBooleanForm from './boolean-column';
-
 interface ProjectConfigColumnFormItemProps {
   index: number;
 }
@@ -56,10 +54,6 @@ function ProjectConfigColumnFormSwitcher(
     }
     case SchemaColumnTypeEnum.Categorical: {
       component = <ProjectConfigColumnCategoricalForm index={index} />;
-      break;
-    }
-    case SchemaColumnTypeEnum.Boolean: {
-      component = <ProjectConfigColumnBooleanForm index={index} />;
       break;
     }
     default: {

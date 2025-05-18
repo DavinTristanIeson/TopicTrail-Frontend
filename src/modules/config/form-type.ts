@@ -13,7 +13,6 @@ import {
 } from '@/common/constants/enum';
 import * as Yup from 'yup';
 import {
-  rangeSchema,
   yupNullableArray,
   yupNullableNumber,
   yupNullableString,
@@ -74,22 +73,6 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     otherwise: (schema) => schema.strip(),
   }),
 
-  infer_boolean: Yup.boolean()
-    .nullable()
-    .when('type', {
-      is: SchemaColumnTypeEnum.Boolean,
-      then: (schema) => schema.required(),
-      otherwise: (schema) => schema.strip(),
-    }),
-  positive_label: yupNullableString.when('type', {
-    is: SchemaColumnTypeEnum.Boolean,
-    otherwise: (schema) => schema.strip(),
-  }),
-  negative_label: yupNullableString.when('type', {
-    is: SchemaColumnTypeEnum.Boolean,
-    otherwise: (schema) => schema.strip(),
-  }),
-
   preprocessing: Yup.object({
     pipeline_type: Yup.string()
       .oneOf(Object.values(DocumentPreprocessingMethodEnum))
@@ -104,7 +87,9 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     max_unique_words: Yup.number().positive().required(),
     min_document_length: Yup.number().positive().required(),
     min_word_length: Yup.number().positive().required(),
-    n_gram_range: rangeSchema.required(),
+    n_gram_range: Yup.array(Yup.number().positive().required())
+      .length(2)
+      .required(),
   }).when('type', {
     is: SchemaColumnTypeEnum.Textual,
     then: (schema) => schema.required(),
@@ -229,9 +214,6 @@ export function DefaultProjectSchemaColumnValues(
             TemporalColumnFeatureEnum.Monthly,
           ]
         : null,
-    infer_boolean: type === SchemaColumnTypeEnum.Boolean ? true : null,
-    positive_label: null,
-    negative_label: null,
   } as ProjectConfigColumnFormType;
 }
 

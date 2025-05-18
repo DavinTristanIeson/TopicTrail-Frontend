@@ -78,7 +78,7 @@ export function TopicWordsBarChartRenderer(
     };
   }, [column.name, topics, topNWords]);
   return (
-    <Stack>
+    <Stack className="w-full">
       {TopNWordsSlider}
       <Alert color="blue" icon={<Info />}>
         The &quot;significance&quot; in question is the c-TF-IDF score of each

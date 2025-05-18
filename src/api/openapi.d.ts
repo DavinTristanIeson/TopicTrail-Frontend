@@ -1174,12 +1174,6 @@ export interface components {
              * @enum {string}
              */
             type: "boolean";
-            /** Infer Boolean */
-            infer_boolean: boolean;
-            /** Positive Label */
-            positive_label: string | null;
-            /** Negative Label */
-            negative_label: string | null;
         };
         /** CSVDataSource */
         CSVDataSource: {
@@ -1620,8 +1614,6 @@ export interface components {
         IndividualTopicEvaluationResult: {
             topic: components["schemas"]["Topic"];
             coherence: components["schemas"]["TopicCoherenceV"];
-            /** Silhouette Score */
-            silhouette_score: number;
         };
         /** InferDatasetColumnResource */
         InferDatasetColumnResource: {
@@ -2230,8 +2222,6 @@ export interface components {
         TopicEvaluationResult: {
             /** Coherence V */
             coherence_v: number;
-            /** Silhouette Score */
-            silhouette_score: number;
             /** Topic Diversity */
             topic_diversity: number;
             /** Topics */
