@@ -92,6 +92,7 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
         },
       ],
       layout: {
+        title: `Subdataset Co-occurrence`,
         xaxis: {
           title: 'Subdatasets',
         },

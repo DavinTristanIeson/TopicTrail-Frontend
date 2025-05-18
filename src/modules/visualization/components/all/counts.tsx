@@ -1,10 +1,49 @@
 import { VisualizationColumnCountsModel } from '@/api/table';
-import { BaseVisualizationComponentProps } from '../../types/base';
+import { BaseVisualizationComponentProps, NamedData } from '../../types/base';
 import React from 'react';
-import { Group, RingProgress, Stack, Text } from '@mantine/core';
+import {
+  Card,
+  ColorSwatch,
+  Group,
+  RingProgress,
+  Stack,
+  Text,
+} from '@mantine/core';
 
 function normalizeRingProgress(value: number, total: number) {
   return (value * 100) / total;
+}
+
+interface VisualizationColumnCountsColorLegendProps {
+  data: NamedData<VisualizationColumnCountsModel>[];
+}
+function VisualizationColumnCountsColorLegend(
+  props: VisualizationColumnCountsColorLegendProps,
+) {
+  const { data } = props;
+  const hasOutlier = data.some((item) => !!item.data.outlier);
+  const colorMapEntries = React.useMemo(() => {
+    return {
+      'Valid Rows': 'green',
+      'Empty Rows': 'red',
+      'Rows Outside Subdataset': 'gray',
+      ...(hasOutlier && { Outliers: 'yellow' }),
+    };
+  }, [hasOutlier]);
+  return (
+    <Card className="w-fit">
+      <Group gap={32}>
+        {Object.entries(colorMapEntries).map(([groupName, groupColor]) => {
+          return (
+            <Group key={groupName!} gap={8}>
+              <ColorSwatch color={groupColor!} />
+              <Text>{groupName}</Text>
+            </Group>
+          );
+        })}
+      </Group>
+    </Card>
+  );
 }
 
 export default function VisualizationColumnCountsRingChart(
@@ -15,14 +54,15 @@ export default function VisualizationColumnCountsRingChart(
 ) {
   const { data, item } = props;
   return (
-    <Stack>
+    <Stack align="center">
       <Text ta="center" size="xl" fw={500}>
         Value Counts of{' '}
         <Text c="brand" inherit span>
           {item.column}
         </Text>
       </Text>
-      <Group wrap="wrap" align="stretch" className="pt-5">
+      <VisualizationColumnCountsColorLegend data={data} />
+      <Group wrap="wrap" align="stretch" justify="center" className="pt-5">
         {data.map(({ name, data }) => {
           const sections = [
             {
@@ -37,7 +77,7 @@ export default function VisualizationColumnCountsRingChart(
             },
             {
               value: normalizeRingProgress(data.outside, data.total),
-              tooltip: `Rows Not Included in Subdataset: ${data.outside}`,
+              tooltip: `Rows Outside Subdataset: ${data.outside}`,
               color: 'gray',
             },
             {
@@ -57,7 +97,13 @@ export default function VisualizationColumnCountsRingChart(
                 label={
                   <div>
                     <Text size="lg" fw="bold" c="brand" ta="center" lh={1}>
-                      {data.total}
+                      {data.valid}
+                      <Text c="black" span inherit>
+                        /
+                      </Text>
+                      <Text span fw="bold" c="black" size="sm" lh={1}>
+                        {data.total}
+                      </Text>
                     </Text>
                     <Text c="gray" size="xs" ta="center" lh={1}>
                       rows

@@ -52,8 +52,8 @@ export const EFFECT_SIZE_DICTIONARY = {
   [EffectSizeMethodEnum.CohensD]: {
     label: "Cohen's D",
     value: EffectSizeMethodEnum.CohensD,
-    rangeString: `[0, Inf)`,
-    range: [0, undefined],
+    rangeString: `(Inf, Inf)`,
+    range: [undefined, undefined],
     description:
       'Measures the difference of means between the two groups relative to their standard deviations. A value of 0.5 means that the means of both groups differ by 0.5 standard deviations.',
   },

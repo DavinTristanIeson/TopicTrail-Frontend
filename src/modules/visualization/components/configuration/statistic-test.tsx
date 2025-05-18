@@ -8,6 +8,7 @@ import {
   Alert,
   Button,
   Collapse,
+  Group,
   Input,
   type InputWrapperProps,
   Select,
@@ -21,19 +22,26 @@ import React from 'react';
 
 export function useVisualizationAlphaSlider() {
   const [alpha, setAlpha] = React.useState(0.05);
+  const label = `Alpha: ${alpha} | Confidence Level: ${Math.round(100 - alpha * 100)}%`;
   const Component = (
     <Input.Wrapper
       label="Alpha"
       description="The p-value for the results of a statistic test to be considered significant."
     >
-      <Slider
-        value={alpha}
-        min={0}
-        max={1}
-        step={0.01}
-        onChange={setAlpha}
-        label={`Alpha: ${alpha} | Confidence Level: ${100 - alpha * 100}%`}
-      />
+      <Group>
+        <Text c="brand" size="sm" fw={500} miw={240}>
+          {label}
+        </Text>
+        <Slider
+          value={alpha}
+          min={0}
+          max={1}
+          step={0.01}
+          onChange={setAlpha}
+          label={label}
+          className="flex-1"
+        />
+      </Group>
     </Input.Wrapper>
   );
 
@@ -61,17 +69,23 @@ export function useVisualizationMinFrequencySlider(
   const [minFrequency, setMinFrequency] = React.useState(6);
   const Component = (
     <Input.Wrapper
-      label="Min. Frequency"
+      label={`Min. Frequency`}
       description="The minimal number of rows for a category to be shown. Set this to a higher number to filter out results that are too few to be relevant."
       {...inputProps}
     >
-      <Slider
-        value={minFrequency}
-        min={0}
-        max={max}
-        step={1}
-        onChange={setMinFrequency}
-      />
+      <Group>
+        <Text c="brand" fw={500} size="sm" miw={60}>
+          {minFrequency} rows
+        </Text>
+        <Slider
+          value={minFrequency}
+          min={0}
+          max={max}
+          step={1}
+          onChange={setMinFrequency}
+          className="flex-1"
+        />
+      </Group>
     </Input.Wrapper>
   );
 

@@ -71,6 +71,10 @@ export function VisualizationContinuousDataDistributionHistogram(
         name,
         x: data,
         type: 'histogram',
+        hovertemplate: [
+          `<b>${item.column}</b>: %{x}`,
+          '<b>Frequency</b>: %{y}',
+        ].join('<br>'),
         marker: {
           color: colors[idx],
         },

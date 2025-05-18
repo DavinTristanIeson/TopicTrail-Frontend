@@ -125,8 +125,8 @@ function VisualizationContingencyTableHeatmapInner(
         data.standardized_residuals,
     };
     const colorscale = {
-      [ContingencyTableVisualizationMethod.Observed]: 'Greens',
-      [ContingencyTableVisualizationMethod.Expected]: 'Greens',
+      [ContingencyTableVisualizationMethod.Observed]: 'Viridis',
+      [ContingencyTableVisualizationMethod.Expected]: 'Viridis',
       [ContingencyTableVisualizationMethod.Residuals]: 'RdBu',
       [ContingencyTableVisualizationMethod.StandardizedResiduals]: 'RdBu',
     };
@@ -160,6 +160,9 @@ function VisualizationContingencyTableHeatmapInner(
     );
 
     const [minZ, maxZ] = getBalancedHeatmapZRange(usedValue);
+    const needsMinMaxZ =
+      method === ContingencyTableVisualizationMethod.Residuals ||
+      method === ContingencyTableVisualizationMethod.StandardizedResiduals;
 
     return {
       data: [
@@ -171,12 +174,12 @@ function VisualizationContingencyTableHeatmapInner(
               : '%{z:.3f}',
           x: columns,
           y: rows,
-          z: mask2D(usedValue, invalidFrequencyMask, 0),
+          z: mask2D(usedValue, invalidFrequencyMask, undefined as any),
           customdata: customdata as any,
           hovertemplate: hovertemplates.join('<br>'),
           colorscale: colorscale[method]!,
-          zmin: minZ,
-          zmax: maxZ,
+          zmin: needsMinMaxZ ? minZ : undefined,
+          zmax: needsMinMaxZ ? maxZ : undefined,
           colorbar: {
             title: 'Frequency',
           },

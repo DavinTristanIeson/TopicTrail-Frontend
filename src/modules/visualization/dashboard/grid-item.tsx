@@ -110,6 +110,7 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
     <div className="relative">
       <DashboardItemRendererInternal
         config={dashboardConfig}
+        key={JSON.stringify(rawConfig)}
         item={{
           ...props,
           config: dashboardItemInternalConfig,
