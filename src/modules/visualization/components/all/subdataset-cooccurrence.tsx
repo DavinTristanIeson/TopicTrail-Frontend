@@ -5,7 +5,10 @@ import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { Select, Stack } from '@mantine/core';
-import { PlotInlineConfiguration } from '../configuration';
+import {
+  PlotInlineConfiguration,
+  usePlotRendererHelperProps,
+} from '../configuration';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { map2D } from '@/common/utils/iterable';
 
@@ -31,7 +34,7 @@ const SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY = {
 export default function VisualizationSubdatasetCooccurrenceComponent(
   props: BaseVisualizationComponentProps<SubdatasetCooccurrenceModel, object>,
 ) {
-  const { data: originalData } = props;
+  const { data: originalData, item } = props;
   const data = originalData[0]?.data;
   if (!data) {
     throw new Error(
@@ -107,6 +110,7 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
   const renderOption = useDescriptionBasedRenderOption(
     SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY,
   );
+  const plotProps = usePlotRendererHelperProps(item);
   return (
     <Stack>
       <PlotInlineConfiguration>
@@ -129,6 +133,7 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
               ? frequenciesPlot
               : cooccurrencesPlot
           }
+          {...plotProps}
         />
       )}
     </Stack>

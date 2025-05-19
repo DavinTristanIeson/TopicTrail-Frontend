@@ -88,7 +88,7 @@ const mantineTheme = createTheme({
     Drawer: Drawer.extend({
       defaultProps: {
         position: 'right',
-        size: 'lg',
+        size: 'xl',
       },
     }),
     Modal: Modal.extend({

@@ -132,7 +132,7 @@ const EditUserDataModal = React.forwardRef<
   const isModalOpened = !!data;
   React.useEffect(() => {
     dismissDeleteConfirmation();
-  }, [isModalOpened]);
+  }, [dismissDeleteConfirmation, isModalOpened]);
 
   return (
     <Modal opened={!!data} onClose={close} title={`Save ${label}`}>
@@ -144,7 +144,6 @@ const EditUserDataModal = React.forwardRef<
             title="Delete Confirmation"
             withCloseButton
             onClose={() => {
-              close();
               dismissDeleteConfirmation();
             }}
           >

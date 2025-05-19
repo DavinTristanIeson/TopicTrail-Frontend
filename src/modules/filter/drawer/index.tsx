@@ -177,6 +177,7 @@ const TableFilterDrawer = React.forwardRef<
       onClose={close}
       closeOnClickOutside={false}
       closeOnEscape={false}
+      size="xl"
     >
       {opened && <TableFilterDrawerForm {...props} onClose={close} />}
     </Drawer>

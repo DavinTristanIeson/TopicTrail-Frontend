@@ -8,6 +8,7 @@ import {
 } from '@/hooks/gridstack';
 import { TopicWordsRenderer } from '@/modules/topics/components/info';
 import { TopicUpdateFormType } from '../form-type';
+import { getTopicLabel } from '@/api/topic';
 
 interface ReorderTopicOrderDndContextProps {
   topics: TopicUpdateFormType[];
@@ -29,7 +30,7 @@ export default function ReorderTopicOrderDndContext(
       ...SortableGridStackDefaultOptions({
         itemsCount: topics.length,
       }),
-      cellHeight: 100,
+      cellHeight: 130,
     },
   });
 
@@ -51,7 +52,9 @@ export default function ReorderTopicOrderDndContext(
             <Stack>
               <Group>
                 {!topic.original && <Badge>New</Badge>}
-                <Text>{topic.label}</Text>
+                <Text>
+                  {topic.original ? getTopicLabel(topic.original) : topic.label}
+                </Text>
               </Group>
               {topic.original && (
                 <TopicWordsRenderer words={topic.original?.words} />
