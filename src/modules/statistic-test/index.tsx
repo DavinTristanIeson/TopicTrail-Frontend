@@ -1,12 +1,10 @@
 import { Alert, Divider, LoadingOverlay, Stack, Title } from '@mantine/core';
 import React from 'react';
-import StatisticTestForm from './form';
-import StatisticTestPageResultsRenderer from './result';
 import { Warning } from '@phosphor-icons/react';
 import { ProjectContext } from '@/modules/project/context';
 import { client } from '@/common/api/client';
-import { StatisticTestFormType } from './form-type';
-import { useComparisonAppState } from '../app-state';
+import { useComparisonAppState } from '../comparison/app-state';
+import { TwoSampleStatisticTestConfig } from './configuration/two-sample';
 
 export default function ComparisonStatisticTest() {
   const project = React.useContext(ProjectContext);
@@ -16,7 +14,7 @@ export default function ComparisonStatisticTest() {
     '/table/{project_id}/comparison/statistic-test',
   );
   const onSubmit = React.useCallback(
-    async (values: StatisticTestFormType) => {
+    async (values: TwoSampleStatisticTestConfig) => {
       await mutateAsync({
         body: {
           ...values,
@@ -48,7 +46,7 @@ export default function ComparisonStatisticTest() {
           {error.message}
         </Alert>
       )}
-      <StatisticTestForm onSubmit={onSubmit} />
+      <ComparisonStatisticTest onSubmit={onSubmit} />
       {data && !isPending && !error && (
         <>
           <Divider />

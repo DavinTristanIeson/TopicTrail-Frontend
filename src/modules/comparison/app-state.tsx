@@ -141,3 +141,12 @@ export function useCheckComparisonSubdatasetsSpecificVisibility(name: string) {
   }, [name, setVisibility]);
   return { visible, toggle };
 }
+
+export function useVisibleComparisonGroups() {
+  const { onlyVisible } = useCheckComparisonSubdatasetsVisibility();
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  return React.useMemo(
+    () => onlyVisible(comparisonGroups),
+    [comparisonGroups, onlyVisible],
+  );
+}

@@ -696,23 +696,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/comparison/statistic-test": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Statistic Test */
-        post: operations["post__statistic_test_table__project_id__comparison_statistic_test_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/table/{project_id}/comparison/words": {
         parameters: {
             query?: never;
@@ -747,7 +730,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/correlation/binary/test-distribution": {
+    "/statistic-test/{project_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Statistic Test */
+        post: operations["post__statistic_test_statistic_test__project_id__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistic-test/{project_id}/pairwise": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Pairwise Statistic Test */
+        post: operations["post__pairwise_statistic_test_statistic_test__project_id__pairwise_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistic-test/{project_id}/omnibus": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Omnibus Statistic Test */
+        post: operations["post__omnibus_statistic_test_statistic_test__project_id__omnibus_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistic-test/{project_id}/contingency-table": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Contingency Table */
+        post: operations["post__contingency_table_statistic_test__project_id__contingency_table_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistic-test/{project_id}/binary-test-distribution": {
         parameters: {
             query?: never;
             header?: never;
@@ -757,31 +808,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Test Distribution */
-        post: operations["post__test_distribution_table__project_id__correlation_binary_test_distribution_post"];
+        post: operations["post__test_distribution_statistic_test__project_id__binary_test_distribution_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/correlation/contingency-table": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Topics Contingency Table */
-        post: operations["post__topics_contingency_table_table__project_id__correlation_contingency_table_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/table/{project_id}/correlation/binary/test-contingency-table": {
+    "/statistic-test/{project_id}/binary-test-contingency-table": {
         parameters: {
             query?: never;
             header?: never;
@@ -791,7 +825,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Test Contingency Table */
-        post: operations["post__test_contingency_table_table__project_id__correlation_binary_test_contingency_table_post"];
+        post: operations["post__test_contingency_table_statistic_test__project_id__binary_test_contingency_table_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -836,15 +870,15 @@ export interface components {
             /** Message */
             message: string | null;
         };
-        /** ApiResult[BinaryStatisticTestOnContingencyTableMainResource] */
-        ApiResult_BinaryStatisticTestOnContingencyTableMainResource_: {
-            data: components["schemas"]["BinaryStatisticTestOnContingencyTableMainResource"];
+        /** ApiResult[BinaryStatisticTestOnContingencyTableResultMainResource] */
+        ApiResult_BinaryStatisticTestOnContingencyTableResultMainResource_: {
+            data: components["schemas"]["BinaryStatisticTestOnContingencyTableResultMainResource"];
             /** Message */
             message: string | null;
         };
-        /** ApiResult[BinaryStatisticTestOnDistributionMainResource] */
-        ApiResult_BinaryStatisticTestOnDistributionMainResource_: {
-            data: components["schemas"]["BinaryStatisticTestOnDistributionMainResource"];
+        /** ApiResult[BinaryStatisticTestOnDistributionResultResource] */
+        ApiResult_BinaryStatisticTestOnDistributionResultResource_: {
+            data: components["schemas"]["BinaryStatisticTestOnDistributionResultResource"];
             /** Message */
             message: string | null;
         };
@@ -885,9 +919,21 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[PairwiseStatisticTestResultResource] */
+        ApiResult_PairwiseStatisticTestResultResource_: {
+            data: components["schemas"]["PairwiseStatisticTestResultResource"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[ProjectResource] */
         ApiResult_ProjectResource_: {
             data: components["schemas"]["ProjectResource"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[StatisticTestResult] */
+        ApiResult_StatisticTestResult_: {
+            data: components["schemas"]["StatisticTestResult"];
             /** Message */
             message: string | null;
         };
@@ -924,12 +970,6 @@ export interface components {
         /** ApiResult[TableColumnValuesResource] */
         ApiResult_TableColumnValuesResource_: {
             data: components["schemas"]["TableColumnValuesResource"];
-            /** Message */
-            message: string | null;
-        };
-        /** ApiResult[TableComparisonResult] */
-        ApiResult_TableComparisonResult_: {
-            data: components["schemas"]["TableComparisonResult"];
             /** Message */
             message: string | null;
         };
@@ -1086,25 +1126,19 @@ export interface components {
                 number
             ] | null;
         };
-        /** BinaryStatisticTestOnContingencyTableMainResource */
-        BinaryStatisticTestOnContingencyTableMainResource: {
+        /** BinaryStatisticTestOnContingencyTableResultMainResource */
+        BinaryStatisticTestOnContingencyTableResultMainResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
             /** Rows */
             rows: string[];
             /** Columns */
             columns: string[];
-            /** Column1 */
-            column1: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
-            /** Column2 */
-            column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
             /** Results */
-            results: components["schemas"]["BinaryStatisticTestOnContingencyTableResource"][][];
-            /** Warnings */
-            warnings: string[];
-            significance: components["schemas"]["SignificanceResult"];
-            effect_size: components["schemas"]["EffectSizeResult"];
+            results: components["schemas"]["BinaryStatisticTestOnContingencyTableResultResource"][][];
         };
-        /** BinaryStatisticTestOnContingencyTableResource */
-        BinaryStatisticTestOnContingencyTableResource: {
+        /** BinaryStatisticTestOnContingencyTableResultResource */
+        BinaryStatisticTestOnContingencyTableResultResource: {
             /** Discriminator1 */
             discriminator1: string;
             /** Discriminator2 */
@@ -1116,45 +1150,23 @@ export interface components {
             significance: components["schemas"]["SignificanceResult"];
             effect_size: components["schemas"]["EffectSizeResult"];
         };
-        /** BinaryStatisticTestOnDistributionMainResource */
-        BinaryStatisticTestOnDistributionMainResource: {
-            /** Discriminators */
-            discriminators: string[];
-            /** Discriminator Column */
-            discriminator_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
-            /** Target Column */
-            target_column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
+        /** BinaryStatisticTestOnDistributionResultResource */
+        BinaryStatisticTestOnDistributionResultResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
+            /** Groups */
+            groups: string[];
             /** Results */
-            results: components["schemas"]["BinaryStatisticTestOnDistributionResource"][];
-            significance: components["schemas"]["SignificanceResult"];
-            effect_size: components["schemas"]["EffectSizeResult"];
-            /** Warnings */
-            warnings: string[];
-        };
-        /** BinaryStatisticTestOnDistributionResource */
-        BinaryStatisticTestOnDistributionResource: {
-            /** Discriminator */
-            discriminator: string;
-            /** Yes Count */
-            yes_count: number;
-            /** No Count */
-            no_count: number;
-            /** Invalid Count */
-            invalid_count: number;
-            /** Warnings */
-            warnings: string[];
-            significance: components["schemas"]["SignificanceResult"];
-            effect_size: components["schemas"]["EffectSizeResult"];
+            results: components["schemas"]["StatisticTestResult"][];
         };
         /** BinaryStatisticTestSchema */
         BinaryStatisticTestSchema: {
-            /** Column1 */
-            column1: string;
-            /** Column2 */
-            column2: string;
+            /** Column */
+            column: string;
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
             statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
             effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
-            main_statistic_test_preference: components["schemas"]["GroupStatisticTestMethodEnum"];
         };
         /** BooleanSchemaColumn */
         BooleanSchemaColumn: {
@@ -1241,6 +1253,17 @@ export interface components {
             /** Column */
             column: string;
         };
+        /** ComparisonGroupInfo */
+        ComparisonGroupInfo: {
+            /** Name */
+            name: string;
+            /** Empty Count */
+            empty_count: number;
+            /** Valid Count */
+            valid_count: number;
+            /** Total Count */
+            total_count: number;
+        };
         /** ComparisonState */
         "ComparisonState-Input": {
             /** Groups */
@@ -1265,17 +1288,6 @@ export interface components {
             /** Filter */
             filter: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IsTrueTableFilter"] | components["schemas"]["IsFalseTableFilter"];
         };
-        /** ComparisonStatisticTestSchema */
-        ComparisonStatisticTestSchema: {
-            group1: components["schemas"]["NamedTableFilter"];
-            group2: components["schemas"]["NamedTableFilter"];
-            /** Column */
-            column: string;
-            statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
-            effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
-            /** Exclude Overlapping Rows */
-            exclude_overlapping_rows: boolean;
-        };
         /** Config */
         Config: {
             /**
@@ -1292,10 +1304,8 @@ export interface components {
         };
         /** ContingencyTableResource */
         ContingencyTableResource: {
-            /** Column1 */
-            column1: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
-            /** Column2 */
-            column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
             /** Rows */
             rows: string[];
             /** Columns */
@@ -1527,6 +1537,13 @@ export interface components {
             type: "geospatial";
             role: components["schemas"]["GeospatialRoleEnum"];
         };
+        /** GetContingencyTableSchema */
+        GetContingencyTableSchema: {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Column */
+            column: string;
+        };
         /** GetTableColumnAggregateValuesSchema */
         GetTableColumnAggregateValuesSchema: {
             /** Column */
@@ -1593,11 +1610,6 @@ export interface components {
             /** Value */
             value: string | number;
         };
-        /**
-         * GroupStatisticTestMethodEnum
-         * @enum {string}
-         */
-        GroupStatisticTestMethodEnum: "anova" | "kruskal-wallis" | "chi-squared";
         /** HasTextTableFilter */
         HasTextTableFilter: {
             /** Target */
@@ -1719,6 +1731,19 @@ export interface components {
             /** Operand */
             operand: components["schemas"]["AndTableFilter-Output"] | components["schemas"]["OrTableFilter-Output"] | components["schemas"]["NotTableFilter-Output"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IsTrueTableFilter"] | components["schemas"]["IsFalseTableFilter"];
         };
+        /**
+         * OmnibusStatisticTestMethodEnum
+         * @enum {string}
+         */
+        OmnibusStatisticTestMethodEnum: "anova" | "kruskal-wallis" | "chi-squared";
+        /** OmnibusStatisticTestSchema */
+        OmnibusStatisticTestSchema: {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Column */
+            column: string;
+            statistic_test_preference: components["schemas"]["OmnibusStatisticTestMethodEnum"];
+        };
         /** OrTableFilter */
         "OrTableFilter-Input": {
             /**
@@ -1787,6 +1812,24 @@ export interface components {
             /** Filter */
             filter?: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IsTrueTableFilter"] | components["schemas"]["IsFalseTableFilter"]) | null;
             sort?: components["schemas"]["TableSort"] | null;
+        };
+        /** PairwiseStatisticTestResultResource */
+        PairwiseStatisticTestResultResource: {
+            /** Column */
+            column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
+            /** Groups */
+            groups: string[];
+            /** Results */
+            results: components["schemas"]["StatisticTestResult"][];
+        };
+        /** PairwiseStatisticTestSchema */
+        PairwiseStatisticTestSchema: {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Column */
+            column: string;
+            statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
+            effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
         };
         /** ParquetDataSource */
         ParquetDataSource: {
@@ -1867,6 +1910,24 @@ export interface components {
          * @enum {string}
          */
         StatisticTestMethodEnum: "t" | "mann-whitney-u" | "chi-squared";
+        /** StatisticTestResult */
+        StatisticTestResult: {
+            /** Warnings */
+            warnings: string[];
+            /** Groups */
+            groups: components["schemas"]["ComparisonGroupInfo"][];
+            significance: components["schemas"]["SignificanceResult"];
+            effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** StatisticTestSchema */
+        StatisticTestSchema: {
+            group1: components["schemas"]["NamedTableFilter"];
+            group2: components["schemas"]["NamedTableFilter"];
+            /** Column */
+            column: string;
+            statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
+            effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
+        };
         /** SubdatasetCooccurrenceResource */
         SubdatasetCooccurrenceResource: {
             /** Labels */
@@ -1941,28 +2002,6 @@ export interface components {
             column: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
             /** Values */
             values: unknown[];
-        };
-        /** TableComparisonGroupInfo */
-        TableComparisonGroupInfo: {
-            /** Name */
-            name: string;
-            /** Empty Count */
-            empty_count: number;
-            /** Overlap Count */
-            overlap_count: number;
-            /** Valid Count */
-            valid_count: number;
-            /** Total Count */
-            total_count: number;
-        };
-        /** TableComparisonResult */
-        TableComparisonResult: {
-            /** Warnings */
-            warnings: string[];
-            /** Groups */
-            groups: components["schemas"]["TableComparisonGroupInfo"][];
-            significance: components["schemas"]["SignificanceResult"];
-            effect_size: components["schemas"]["EffectSizeResult"];
         };
         /** TableDescriptiveStatisticsResource */
         TableDescriptiveStatisticsResource: {
@@ -2210,13 +2249,6 @@ export interface components {
             std_dev: number;
             /** Support */
             support: number;
-        };
-        /** TopicCorrelationSchema */
-        TopicCorrelationSchema: {
-            /** Column1 */
-            column1: string;
-            /** Column2 */
-            column2: string;
         };
         /** TopicEvaluationResult */
         TopicEvaluationResult: {
@@ -6063,77 +6095,6 @@ export interface operations {
             };
         };
     };
-    post__statistic_test_table__project_id__comparison_statistic_test_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ComparisonStatisticTestSchema"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_TableComparisonResult_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
     post__compare_group_words_table__project_id__comparison_words_post: {
         parameters: {
             query?: never;
@@ -6276,7 +6237,7 @@ export interface operations {
             };
         };
     };
-    post__test_distribution_table__project_id__correlation_binary_test_distribution_post: {
+    post__statistic_test_statistic_test__project_id__post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6287,7 +6248,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
+                "application/json": components["schemas"]["StatisticTestSchema"];
             };
         };
         responses: {
@@ -6297,7 +6258,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnDistributionMainResource_"];
+                    "application/json": components["schemas"]["ApiResult_StatisticTestResult_"];
                 };
             };
             /** @description Bad Request */
@@ -6347,7 +6308,7 @@ export interface operations {
             };
         };
     };
-    post__topics_contingency_table_table__project_id__correlation_contingency_table_post: {
+    post__pairwise_statistic_test_statistic_test__project_id__pairwise_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6358,7 +6319,149 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TopicCorrelationSchema"];
+                "application/json": components["schemas"]["PairwiseStatisticTestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_PairwiseStatisticTestResultResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__omnibus_statistic_test_statistic_test__project_id__omnibus_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OmnibusStatisticTestSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_StatisticTestResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__contingency_table_statistic_test__project_id__contingency_table_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetContingencyTableSchema"];
             };
         };
         responses: {
@@ -6418,7 +6521,7 @@ export interface operations {
             };
         };
     };
-    post__test_contingency_table_table__project_id__correlation_binary_test_contingency_table_post: {
+    post__test_distribution_statistic_test__project_id__binary_test_distribution_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6429,7 +6532,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TopicCorrelationSchema"];
+                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
             };
         };
         responses: {
@@ -6439,7 +6542,78 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnContingencyTableMainResource_"];
+                    "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnDistributionResultResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__test_contingency_table_statistic_test__project_id__binary_test_contingency_table_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetContingencyTableSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnContingencyTableResultMainResource_"];
                 };
             };
             /** @description Bad Request */

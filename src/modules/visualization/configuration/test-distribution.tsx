@@ -13,7 +13,7 @@ import {
   StatisticMethodSelectField,
   EffectSizeSelectField,
   GroupStatisticMethodSelectField,
-} from '@/modules/comparison/statistic-test/select-statistic-test-method';
+} from '@/modules/statistic-test/configuration/select-statistic-test-method';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { Alert, Group } from '@mantine/core';

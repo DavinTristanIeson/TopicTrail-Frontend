@@ -1,38 +1,67 @@
 import {
+  ComparisonGroupInfoModel,
   EffectSizeResultModel,
   SignificanceResultModel,
-  TableComparisonGroupInfoModel,
-  TableComparisonResultModel,
-} from '@/api/comparison';
-import { Alert, Group, Paper, RingProgress, Stack, Text } from '@mantine/core';
-import { Warning } from '@phosphor-icons/react';
-import React from 'react';
+} from '@/api/statistic-test';
 import {
-  EFFECT_SIZE_DICTIONARY,
-  GROUP_EFFECT_SIZE_DICTIONARY,
-  GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
-  STATISTIC_TEST_METHOD_DICTIONARY,
-} from './dictionary';
-import {
+  StatisticTestMethodEnum,
+  GroupStatisticTestMethodEnum,
   EffectSizeMethodEnum,
   GroupEffectSizeMethodEnum,
-  GroupStatisticTestMethodEnum,
-  StatisticTestMethodEnum,
 } from '@/common/constants/enum';
 import { ResultCard } from '@/components/visual/result-card';
+import {
+  Text,
+  Alert,
+  Card,
+  Stack,
+  RingProgress,
+  Progress,
+  Tooltip,
+  Group,
+} from '@mantine/core';
+import { Warning } from '@phosphor-icons/react';
+import { max, sum } from 'lodash-es';
+import {
+  STATISTIC_TEST_METHOD_DICTIONARY,
+  GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
+  EFFECT_SIZE_DICTIONARY,
+  GROUP_EFFECT_SIZE_DICTIONARY,
+} from '../dictionary';
 
-function GroupCountsInfoCard(props: TableComparisonGroupInfoModel) {
+interface StatisticTestWarningsRendererProps {
+  warnings: string[] | null | undefined;
+}
+
+export function StatisticTestWarningsRenderer(
+  props: StatisticTestWarningsRendererProps,
+) {
+  const { warnings } = props;
+  if (!warnings || warnings.length === 0) {
+    return null;
+  }
+  return (
+    <Alert
+      title={`There are ${warnings.length} warning(s)`}
+      color="yellow"
+      icon={<Warning size={20} />}
+    >
+      {warnings.map((warning, index) => (
+        <Text key={`${warning}-${index}`}>{warning}</Text>
+      ))}
+    </Alert>
+  );
+}
+
+export function GroupCountsInfoCard(props: ComparisonGroupInfoModel) {
   const emptyProportion = Math.round(
     (props.empty_count * 100) / props.total_count,
-  );
-  const overlapProportion = Math.round(
-    (props.overlap_count * 100) / props.total_count,
   );
   const validProportion = Math.round(
     (props.valid_count * 100) / props.total_count,
   );
   return (
-    <Paper className="flex-1 p-2">
+    <Card className="flex-1">
       <Stack align="center" gap={0}>
         <Text ta="center" fw={500}>
           {`Sample Sizes of ${props.name}`}
@@ -59,15 +88,54 @@ function GroupCountsInfoCard(props: TableComparisonGroupInfoModel) {
               tooltip: `Empty Rows: ${props.empty_count}`,
               color: 'red',
             },
-            {
-              value: overlapProportion,
-              tooltip: `Overlapping Rows: ${props.empty_count}`,
-              color: 'yellow',
-            },
           ]}
         />
       </Stack>
-    </Paper>
+    </Card>
+  );
+}
+
+interface GroupCountsRendererProps {
+  column: string;
+  groups: ComparisonGroupInfoModel[];
+}
+
+export function GroupCountsRenderer(props: GroupCountsRendererProps) {
+  const { column, groups } = props;
+  const totalCount = max(groups.map((group) => group.total_count)) ?? 0;
+  const emptyCount = sum(groups.map((group) => group.empty_count)) ?? 0;
+  if (groups.length === 0 || totalCount === 0) return null;
+
+  return (
+    <Card className="w-full">
+      <Text fw={500} size="lg">
+        Subdataset Proportions of {column}
+      </Text>
+      <Progress.Root size={32}>
+        {groups.map((group) => {
+          const groupProportion = group.valid_count / totalCount;
+          return (
+            <Tooltip
+              label={`${group.name}: ${group.valid_count} (${groupProportion.toFixed(2)}%) Rows`}
+              key={group.name}
+            >
+              <Progress.Section value={groupProportion * 100}>
+                {group.name}
+              </Progress.Section>
+            </Tooltip>
+          );
+        })}
+        {emptyCount > 0 && (
+          <Tooltip
+            label={`Empty: ${emptyCount} (${(emptyCount / totalCount).toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
+          >
+            <Progress.Section value={(emptyCount / totalCount) * 100}>
+              Empty Rows
+            </Progress.Section>
+          </Tooltip>
+        )}
+      </Progress.Root>
+    </Card>
   );
 }
 
@@ -119,48 +187,18 @@ function EffectSizeResultRenderer(props: EffectSizeResultModel) {
   );
 }
 
-interface StatisticTestResultRendererProps {
+interface SignificanceAndEffectSizeComponentsProps {
   significance: SignificanceResultModel;
   effectSize: EffectSizeResultModel;
 }
 
-export function StatisticTestResultRenderer(
-  props: StatisticTestResultRendererProps,
+export function SignificanceAndEffectSizeComponents(
+  props: SignificanceAndEffectSizeComponentsProps,
 ) {
   return (
     <Group align="stretch" wrap="wrap">
       <SignificanceResultRenderer {...props.significance} />
       <EffectSizeResultRenderer {...props.effectSize} />
     </Group>
-  );
-}
-
-export default function StatisticTestPageResultsRenderer(
-  data: TableComparisonResultModel,
-) {
-  const warnings = data.warnings;
-  return (
-    <>
-      {warnings && warnings.length > 0 && (
-        <Alert
-          title={`There are ${warnings.length} warning(s) regarding the groups used in this statistic test`}
-          color="yellow"
-          icon={<Warning size={20} />}
-        >
-          {warnings.map((warning, index) => (
-            <Text key={`${warning}-${index}`}>{warning}</Text>
-          ))}
-        </Alert>
-      )}
-      <Group>
-        {data?.groups.map((group) => (
-          <GroupCountsInfoCard key={group.name} {...group} />
-        ))}
-      </Group>
-      <Group align="stretch">
-        <SignificanceResultRenderer {...data?.significance} />
-        <EffectSizeResultRenderer {...data?.effect_size} />
-      </Group>
-    </>
   );
 }

@@ -1,7 +1,7 @@
 import { Alert, Group, Stack } from '@mantine/core';
 import {
-  useCheckComparisonSubdatasetsVisibility,
   useComparisonAppState,
+  useVisibleComparisonGroups,
 } from '../app-state';
 import { GridSkeleton } from '@/components/visual/loading';
 import dynamic from 'next/dynamic';
@@ -53,15 +53,14 @@ const COMPARISON_DASHBOARD_CONSTRAINT = {
 export default function ComparisonDashboard() {
   const dashboard = useComparisonAppState((store) => store.dashboard.state);
   const handlers = useComparisonAppState((store) => store.dashboard.handlers);
-  const groups = useComparisonAppState((store) => store.groups.state);
   const includeWholeDataset = useComparisonAppState(
     (store) => store.groups.includeWholeDataset,
   );
-  const { onlyVisible } = useCheckComparisonSubdatasetsVisibility();
+  const groups = useVisibleComparisonGroups();
 
   const dashboardSubdatasets =
     React.useMemo<DashboardSubdatasetsContextType>(() => {
-      const defaultSubdatasets = onlyVisible(groups);
+      const defaultSubdatasets = groups;
       if (includeWholeDataset) {
         defaultSubdatasets.unshift({
           name: 'Dataset',
@@ -71,7 +70,7 @@ export default function ComparisonDashboard() {
       return {
         default: defaultSubdatasets,
       };
-    }, [groups, includeWholeDataset, onlyVisible]);
+    }, [groups, includeWholeDataset]);
   const { append } = handlers;
   return (
     <DashboardSubdatasetsContext.Provider value={dashboardSubdatasets}>

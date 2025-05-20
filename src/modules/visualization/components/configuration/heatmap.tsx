@@ -3,6 +3,7 @@ export function getRawHeatmapZRange(Z: number[][]) {
   let minZ = 0;
   for (const row of Z) {
     for (const col of row) {
+      if (col == null) continue;
       maxZ = Math.max(col, maxZ);
       minZ = Math.min(col, minZ);
     }

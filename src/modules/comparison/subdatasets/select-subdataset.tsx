@@ -4,28 +4,33 @@ import {
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import { type ComboboxItem, Select, type SelectProps } from '@mantine/core';
+import { useComparisonAppState } from '../app-state';
 
 interface NamedFilterSelectInputProps
   extends Omit<SelectProps, 'data' | 'onChange'> {
-  data: ComparisonStateItemModel[];
   onChange?(filter: ComparisonStateItemModel | null): void;
 }
 
 export function ComparisonSubdatasetSelectInput(
   props: NamedFilterSelectInputProps,
 ) {
-  const { onChange, data, ...selectProps } = props;
+  const { onChange, ...selectProps } = props;
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   return (
     <Select
       {...selectProps}
-      data={data.map((item) => {
+      data={comparisonGroups.map((item) => {
         return {
           label: item.name,
           value: item.name,
         } as ComboboxItem;
       })}
       onChange={(value) => {
-        onChange?.(value ? (data.find((x) => x.name === value) ?? null) : null);
+        onChange?.(
+          value
+            ? (comparisonGroups.find((x) => x.name === value) ?? null)
+            : null,
+        );
       }}
       placeholder="Pick a group"
     />

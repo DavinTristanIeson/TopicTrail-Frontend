@@ -1,23 +1,15 @@
-import {
-  EffectSizeResultModel,
-  SignificanceResultModel,
-} from '@/api/comparison';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { StatisticTestResultRenderer } from '@/modules/comparison/statistic-test/result';
 import {
   Alert,
-  Button,
-  Collapse,
   Group,
   Input,
   type InputWrapperProps,
   Select,
   Slider,
-  Stack,
   Text,
 } from '@mantine/core';
-import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
-import { TestTube, Warning } from '@phosphor-icons/react';
+import { useDebouncedValue } from '@mantine/hooks';
+import { Warning } from '@phosphor-icons/react';
 import React from 'react';
 
 export function useVisualizationAlphaSlider() {
@@ -153,44 +145,38 @@ export function useBinaryStatisticTestVisualizationMethodSelect() {
   return { Component, type };
 }
 
-interface VisualizationCorrelationStatisticTestResultsRendererProps {
-  significance: SignificanceResultModel;
-  effectSize: EffectSizeResultModel;
-  column1: string;
-  column2: string;
-  warnings: string[];
+interface EmptyPlotWarningProps {
+  invalid: boolean;
+  hasAlpha: boolean;
+  hasFrequency: boolean;
+  hasRowsCols: boolean;
+  children?: React.ReactNode;
 }
 
-export function VisualizationCorrelationStatisticTestResultsRenderer(
-  props: VisualizationCorrelationStatisticTestResultsRendererProps,
-) {
-  const { significance, effectSize, column1, column2, warnings } = props;
-  const [opened, { toggle }] = useDisclosure(true);
+export function StatisticTestEmptyPlotWarning(props: EmptyPlotWarningProps) {
+  const { invalid, hasAlpha, hasFrequency, hasRowsCols, children } = props;
+  if (!invalid) {
+    return children;
+  }
+  const alternatives: string[] = [];
+  if (hasRowsCols) {
+    alternatives.push('choosing a few rows/columns');
+  }
+  if (hasAlpha) {
+    alternatives.push('increasing the alpha constraint');
+  }
+  if (hasFrequency) {
+    alternatives.push('lowering the min. frequency');
+  }
+  const joinedString =
+    alternatives.length <= 1
+      ? (alternatives[0] ?? '')
+      : alternatives.slice(0, alternatives.length - 1).join(', ') +
+        ', or ' +
+        alternatives[alternatives.length - 1];
   return (
-    <>
-      <Button onClick={toggle} variant="subtle" leftSection={<TestTube />}>
-        {opened ? 'Hide' : 'Show'} Results
-      </Button>
-      <Collapse in={opened}>
-        <Stack>
-          <Text ta="center" fw={500} size="lg">
-            Does {column1} influence {column2}?
-          </Text>
-          <StatisticTestResultRenderer
-            effectSize={effectSize}
-            significance={significance}
-          />
-          {warnings.length > 0 && (
-            <Alert color="yellow" icon={<Warning />}>
-              {warnings.map((warning) => (
-                <Text inherit key={warning}>
-                  {warning}
-                </Text>
-              ))}
-            </Alert>
-          )}
-        </Stack>
-      </Collapse>
-    </>
+    <Alert color="yellow" icon={<Warning />}>
+      {joinedString}
+    </Alert>
   );
 }

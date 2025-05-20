@@ -18,7 +18,7 @@ import {
   GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
   STATISTIC_METHOD_CONSTRAINTS,
   STATISTIC_TEST_METHOD_DICTIONARY,
-} from './dictionary';
+} from '../dictionary';
 
 interface StatisticMethodSelectFieldProps extends SelectFieldProps {
   columnType: SchemaColumnTypeEnum;
