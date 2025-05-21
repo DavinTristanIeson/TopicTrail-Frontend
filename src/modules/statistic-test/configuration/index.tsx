@@ -5,7 +5,7 @@ import { Group } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
 import { useForm } from 'react-hook-form';
 import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
-import { StatisticTestPurpose } from '../types';
+import { StatisticTestHistoryEntry, StatisticTestPurpose } from '../types';
 import React from 'react';
 import { useComparisonAppState } from '@/modules/comparison/app-state';
 
@@ -16,29 +16,38 @@ interface StatisticTestFormProps {
 export default function StatisticTestForm(props: StatisticTestFormProps) {
   const { purpose } = props;
   const configItem = STATISTIC_TEST_CONFIGURATION[purpose];
-  const currentConfig = useComparisonAppState(
+  const currentInput = useComparisonAppState(
     (store) => store.statisticTest.current,
   );
-  const setCurrentConfig = useComparisonAppState(
+  const setCurrentInput = useComparisonAppState(
     (store) => store.statisticTest.setCurrent,
+  );
+  const appendHistory = useComparisonAppState(
+    (store) => store.statisticTest.appendHistory,
   );
   if (!configItem) {
     throw new Error(`Statistic test for ${purpose} is not implemented.`);
   }
 
   const form = useForm({
-    defaultValues: currentConfig ?? configItem.configValidator.getDefault(),
+    defaultValues:
+      currentInput?.config ?? configItem.configValidator.getDefault(),
     resolver: yupResolver(configItem.configValidator),
   });
 
   const onSubmit = React.useCallback(
     (values: any) => {
-      const newConfig = configItem.configValidator.cast(values, {
+      const statisticTestInput = configItem.configValidator.cast(values, {
         stripUnknown: true,
       });
-      return setCurrentConfig(newConfig);
+      const input: StatisticTestHistoryEntry = {
+        type: purpose,
+        config: statisticTestInput,
+      };
+      setCurrentInput(input);
+      appendHistory(input);
     },
-    [configItem.configValidator, setCurrentConfig],
+    [appendHistory, configItem.configValidator, purpose, setCurrentInput],
   );
 
   const ConfigForm = configItem.configForm;

@@ -52,8 +52,14 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     configForm: ContingencyTableConfigForm,
     configValidator: contingencyTableFormSchema,
     dataProvider: useBinaryStatisticTestOnContingencyTableDataProvider,
-    description: '',
+    description:
+      'Each pair of subdataset and category will be used to create a 2 x 2 contingency table. This contingency table will be analyzed to calculate the correlation between the subdataset and category.',
     label: 'Binary Statistic Test on Contingency Table',
+    getParams(config) {
+      return {
+        Column: config.column,
+      };
+    },
   } as StatisticTestConfigurationEntry<
     BinaryStatisticTestOnContingencyTableMainResultModel,
     ContingencyTableConfig
@@ -64,8 +70,16 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     configForm: BinaryStatisticTestConfigForm,
     configValidator: binaryStatisticTestFormSchema,
     dataProvider: useBinaryStatisticTestOnDistributionDataProvider,
-    description: '',
+    description:
+      'Each subdataset will be treated as a binary variable that splits the dataset into two groups. Both groups will be compared with each other using a statistic test.',
     label: 'Binary Statistic Test on Distribution',
+    getParams(config) {
+      return {
+        Column: config.column,
+        'Statistic Test': config.statistic_test_preference,
+        'Effect Size': config.effect_size_preference,
+      };
+    },
   } as StatisticTestConfigurationEntry<
     BinaryStatisticTestOnDistributionResultModel,
     BinaryStatisticTestConfig
@@ -76,8 +90,14 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     configForm: ContingencyTableConfigForm,
     configValidator: contingencyTableFormSchema,
     dataProvider: useContingencyTableStatisticTestDataProvider,
-    description: '',
+    description:
+      'Calculates a contingency table for each pair of subdataset and category; consisting of the observed frequencies, the expected frequencies, the residuals, and the standardized residuals.',
     label: 'Contingency Table',
+    getParams(config) {
+      return {
+        Column: config.column,
+      };
+    },
   } as StatisticTestConfigurationEntry<
     ContingencyTableModel,
     ContingencyTableConfig
@@ -88,8 +108,15 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     configForm: OmnibusStatisticTestConfigForm,
     configValidator: omnibusStatisticTestFormSchema,
     dataProvider: useOmnibusStatisticTestDataProvider,
-    description: '',
+    description:
+      'Test if the subdatasets can explain the variance observed in the data.',
     label: 'Omnibus Statistic Test',
+    getParams(config) {
+      return {
+        Column: config.column,
+        'Statistic Test': config.statistic_test_preference,
+      };
+    },
   } as StatisticTestConfigurationEntry<
     StatisticTestResultModel,
     OmnibusStatisticTestConfig
@@ -100,8 +127,18 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     configForm: TwoSampleStatisticTestConfigForm,
     configValidator: twoSampleStatisticTestFormSchema,
     dataProvider: useTwoSampleStatisticTestDataProvider,
-    description: '',
+    description:
+      'Test if there is a statistically significant difference between two subdatasets.',
     label: 'Two-Sample Statistic Test',
+    getParams(config) {
+      return {
+        Column: config.column,
+        'Subdataset 1': config.group1,
+        'Subdataset 2': config.group2,
+        'Statistic Test': config.statistic_test_preference,
+        'Effect Size': config.effect_size_preference,
+      };
+    },
   } as StatisticTestConfigurationEntry<
     StatisticTestResultModel,
     TwoSampleStatisticTestConfig
@@ -112,8 +149,16 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     configForm: TwoSampleStatisticTestConfigForm,
     configValidator: twoSampleStatisticTestFormSchema,
     dataProvider: usePairwiseTwoSampleStatisticTestDataProvider,
-    description: '',
+    description:
+      'Test all possible pairs of subdatasets to see which pairs have statistically significantly difference with each other.',
     label: 'Pairwise Two-Sample Statistic Test',
+    getParams(config) {
+      return {
+        Column: config.column,
+        'Statistic Test': config.statistic_test_preference,
+        'Effect Size': config.effect_size_preference,
+      };
+    },
   } as StatisticTestConfigurationEntry<
     PairwiseStatisticTestResultModel,
     TwoSampleStatisticTestConfig

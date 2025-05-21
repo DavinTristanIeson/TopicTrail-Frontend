@@ -27,16 +27,6 @@ export enum StatisticTestPurpose {
   BinaryTestDistribution = 'binary-test-distribution',
 }
 
-export interface StatisticTestConfigurationEntry<TData, TConfig> {
-  type: StatisticTestPurpose;
-  label: string;
-  description: string;
-  dataProvider: BaseStatisticTestDataProviderHook<TData, TConfig>;
-  configForm: React.FC<object>;
-  configValidator: Yup.AnyObjectSchema;
-  component: React.FC<BaseStatisticTestResultRendererProps<TData, TConfig>>;
-}
-
 export type StatisticTestConfig =
   | BinaryStatisticTestConfig
   | OmnibusStatisticTestConfig
@@ -45,4 +35,15 @@ export type StatisticTestConfig =
 export interface StatisticTestHistoryEntry {
   type: StatisticTestPurpose;
   config: StatisticTestConfig;
+}
+
+export interface StatisticTestConfigurationEntry<TData, TConfig> {
+  type: StatisticTestPurpose;
+  label: string;
+  description: string;
+  dataProvider: BaseStatisticTestDataProviderHook<TData, TConfig>;
+  configForm: React.FC<object>;
+  configValidator: Yup.AnyObjectSchema;
+  component: React.FC<BaseStatisticTestResultRendererProps<TData, TConfig>>;
+  getParams(config: TConfig): Record<string, string>;
 }

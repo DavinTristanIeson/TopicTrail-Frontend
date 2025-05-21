@@ -4,6 +4,7 @@ import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
 import { StatisticTestHistoryEntry } from '../statistic-test/types';
+import { uniqBy } from 'lodash-es';
 
 export enum ComparisonPageTab {
   GroupsManager = 'group-manager',
@@ -33,7 +34,7 @@ interface ComparisonAppStateContextType {
     >;
 
     history: StatisticTestHistoryEntry[];
-    historyHandlers: UseListStateHandlers<StatisticTestHistoryEntry>;
+    appendHistory(config: StatisticTestHistoryEntry): void;
   };
   reset(): void;
 }
@@ -42,6 +43,7 @@ const ComparisonAppStateContext = createContext<ComparisonAppStateContextType>(
   null as any,
 );
 
+const STATISTIC_TEST_HISTORY_LIMIT = 10;
 export default function ComparisonAppStateProvider(
   props: React.PropsWithChildren,
 ) {
@@ -56,7 +58,22 @@ export default function ComparisonAppStateProvider(
 
   const [currentStatisticTestEntry, setCurrentStatisticTestEntry] =
     React.useState<StatisticTestHistoryEntry | null>(null);
-  const [history, historyHandlers] = useListState<StatisticTestHistoryEntry>(
+  const [history, setHistory] = React.useState<StatisticTestHistoryEntry[]>([]);
+
+  const appendHistory = React.useCallback(
+    (newEntry: StatisticTestHistoryEntry) => {
+      setHistory((history) => {
+        history.push(newEntry);
+        const uniqueEntries = uniqBy(
+          history,
+          (entry) => `${entry.type}-${JSON.stringify(entry.config)}`,
+        );
+        while (uniqueEntries.length > STATISTIC_TEST_HISTORY_LIMIT) {
+          uniqueEntries.shift();
+        }
+        return uniqueEntries;
+      });
+    },
     [],
   );
 
@@ -66,7 +83,6 @@ export default function ComparisonAppStateProvider(
 
   const { setState: setGroups } = groupHandlers;
   const { setState: setDashboard } = dashboardHandlers;
-  const { setState: setHistory } = historyHandlers;
 
   const reset = React.useCallback(() => {
     setGroups([]);
@@ -74,7 +90,7 @@ export default function ComparisonAppStateProvider(
     setGroupVisibility(new Map());
     setCurrentStatisticTestEntry(null);
     setHistory([]);
-  }, [setDashboard, setGroups, setHistory]);
+  }, [setDashboard, setGroups]);
 
   return (
     <ComparisonAppStateContext.Provider
@@ -97,7 +113,7 @@ export default function ComparisonAppStateProvider(
           current: currentStatisticTestEntry,
           setCurrent: setCurrentStatisticTestEntry,
           history,
-          historyHandlers,
+          appendHistory,
         },
         reset,
       }}
