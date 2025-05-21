@@ -6,9 +6,6 @@ import TopicAppStateProvider, { useTopicAppState } from '../topics/app-state';
 import ComparisonAppStateProvider, {
   useComparisonAppState,
 } from '../comparison/app-state';
-import TopicCorrelationAppStateProvider, {
-  useTopicCorrelationAppState,
-} from '../topic-correlation/app-state';
 import { useRouter } from 'next/router';
 import { createContext, useContextSelector } from 'use-context-selector';
 import TopicModelExperimentAppStateProvider, {
@@ -35,7 +32,6 @@ function ProjectAppStateActionsProvider(props: React.PropsWithChildren) {
   const resetTopics = useTopicAppState((store) => store.reset);
   const resetTable = useTableAppState((store) => store.reset);
   const resetComparison = useComparisonAppState((store) => store.reset);
-  const resetCorrelation = useTopicCorrelationAppState((store) => store.reset);
   const resetExperiment = useTopicModelExperimentAppState(
     (store) => store.reset,
   );
@@ -43,15 +39,8 @@ function ProjectAppStateActionsProvider(props: React.PropsWithChildren) {
     resetTopics();
     resetTable();
     resetComparison();
-    resetCorrelation();
     resetExperiment();
-  }, [
-    resetComparison,
-    resetCorrelation,
-    resetExperiment,
-    resetTable,
-    resetTopics,
-  ]);
+  }, [resetComparison, resetExperiment, resetTable, resetTopics]);
   return (
     <ProjectAppStateActionsContext.Provider value={{ reset }}>
       {props.children}
@@ -65,13 +54,11 @@ export function ProjectAppStateProvider(props: React.PropsWithChildren) {
     <TopicAppStateProvider>
       <TableAppStateProvider>
         <ComparisonAppStateProvider>
-          <TopicCorrelationAppStateProvider>
-            <TopicModelExperimentAppStateProvider>
-              <ProjectAppStateActionsProvider>
-                {props.children}
-              </ProjectAppStateActionsProvider>
-            </TopicModelExperimentAppStateProvider>
-          </TopicCorrelationAppStateProvider>
+          <TopicModelExperimentAppStateProvider>
+            <ProjectAppStateActionsProvider>
+              {props.children}
+            </ProjectAppStateActionsProvider>
+          </TopicModelExperimentAppStateProvider>
         </ComparisonAppStateProvider>
       </TableAppStateProvider>
     </TopicAppStateProvider>
