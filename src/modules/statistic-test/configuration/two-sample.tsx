@@ -33,7 +33,7 @@ export function TwoSampleStatisticTestConfigForm() {
   return (
     <Stack>
       <StatisticTestProjectColumnSelectField />
-      <Group gap={8} className="w-full">
+      <Group className="w-full">
         <ComparisonSubdatasetSelectField
           name="group1"
           className="flex-1"

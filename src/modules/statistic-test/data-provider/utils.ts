@@ -16,6 +16,7 @@ export function useStatisticTestDataProviderParams(
     if (groups == null) {
       return comparisonGroups;
     }
+    console.log(groups);
     return groups.map((group) => {
       const foundSubdataset = comparisonGroups.find(
         (subdataset) => subdataset.name === group,

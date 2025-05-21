@@ -1,5 +1,5 @@
 import {
-  GroupStatisticTestMethodEnum,
+  OmnibusStatisticTestMethodEnum,
   SchemaColumnTypeEnum,
 } from '@/common/constants/enum';
 import * as Yup from 'yup';
@@ -14,7 +14,7 @@ import { StatisticTestProjectColumnSelectField } from './utils';
 export const omnibusStatisticTestFormSchema = Yup.object({
   column: Yup.string().required(),
   statistic_test_preference: Yup.string()
-    .oneOf(Object.values(GroupStatisticTestMethodEnum))
+    .oneOf(Object.values(OmnibusStatisticTestMethodEnum))
     .required(),
 });
 

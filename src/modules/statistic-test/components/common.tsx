@@ -5,9 +5,9 @@ import {
 } from '@/api/statistic-test';
 import {
   StatisticTestMethodEnum,
-  GroupStatisticTestMethodEnum,
+  OmnibusStatisticTestMethodEnum,
   EffectSizeMethodEnum,
-  GroupEffectSizeMethodEnum,
+  OmnibusEffectSizeMethodEnum,
 } from '@/common/constants/enum';
 import { ResultCard } from '@/components/visual/result-card';
 import {
@@ -24,10 +24,11 @@ import { Warning } from '@phosphor-icons/react';
 import { max, sum } from 'lodash-es';
 import {
   STATISTIC_TEST_METHOD_DICTIONARY,
-  GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
+  OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY,
   EFFECT_SIZE_DICTIONARY,
-  GROUP_EFFECT_SIZE_DICTIONARY,
+  OMNIBUS_EFFECT_SIZE_DICTIONARY,
 } from '../dictionary';
+import { generateColorsFromSequence } from '@/common/utils/colors';
 
 interface StatisticTestWarningsRendererProps {
   warnings: string[] | null | undefined;
@@ -104,37 +105,39 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
   const { column, groups } = props;
   const totalCount = max(groups.map((group) => group.total_count)) ?? 0;
   const emptyCount = sum(groups.map((group) => group.empty_count)) ?? 0;
+  const emptyProportion = (emptyCount / totalCount) * 100;
   if (groups.length === 0 || totalCount === 0) return null;
+  const { colors } = generateColorsFromSequence(groups);
 
   return (
     <Card className="w-full">
-      <Text fw={500} size="lg">
-        Subdataset Proportions of {column}
-      </Text>
-      <Progress.Root size={32}>
-        {groups.map((group) => {
-          const groupProportion = group.valid_count / totalCount;
-          return (
+      <Stack>
+        <Text fw={500}>Subdataset Proportions of {column}</Text>
+        <Progress.Root size={32}>
+          {groups.map((group, index) => {
+            const groupProportion = (group.valid_count / totalCount) * 100;
+            return (
+              <Tooltip
+                label={`${group.name}: ${group.valid_count} (${groupProportion.toFixed(2)}%) Rows`}
+                key={group.name}
+              >
+                <Progress.Section value={groupProportion} color={colors[index]}>
+                  {group.name}
+                </Progress.Section>
+              </Tooltip>
+            );
+          })}
+          {emptyCount > 0 && (
             <Tooltip
-              label={`${group.name}: ${group.valid_count} (${groupProportion.toFixed(2)}%) Rows`}
-              key={group.name}
+              label={`Empty: ${emptyCount} (${emptyProportion.toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
             >
-              <Progress.Section value={groupProportion * 100}>
-                {group.name}
+              <Progress.Section value={emptyProportion} color="red">
+                Empty Rows
               </Progress.Section>
             </Tooltip>
-          );
-        })}
-        {emptyCount > 0 && (
-          <Tooltip
-            label={`Empty: ${emptyCount} (${(emptyCount / totalCount).toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
-          >
-            <Progress.Section value={(emptyCount / totalCount) * 100}>
-              Empty Rows
-            </Progress.Section>
-          </Tooltip>
-        )}
-      </Progress.Root>
+          )}
+        </Progress.Root>
+      </Stack>
     </Card>
   );
 }
@@ -142,8 +145,8 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
 function SignificanceResultRenderer(props: SignificanceResultModel) {
   const dictionaryEntry =
     STATISTIC_TEST_METHOD_DICTIONARY[props.type as StatisticTestMethodEnum] ??
-    GROUP_STATISTIC_TEST_METHOD_DICTIONARY[
-      props.type as GroupStatisticTestMethodEnum
+    OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY[
+      props.type as OmnibusStatisticTestMethodEnum
     ];
   const confidence = (1 - props.p_value) * 100;
   return (
@@ -172,7 +175,7 @@ function SignificanceResultRenderer(props: SignificanceResultModel) {
 function EffectSizeResultRenderer(props: EffectSizeResultModel) {
   const dictionaryEntry =
     EFFECT_SIZE_DICTIONARY[props.type as EffectSizeMethodEnum] ??
-    GROUP_EFFECT_SIZE_DICTIONARY[props.type as GroupEffectSizeMethodEnum];
+    OMNIBUS_EFFECT_SIZE_DICTIONARY[props.type as OmnibusEffectSizeMethodEnum];
 
   return (
     <ResultCard

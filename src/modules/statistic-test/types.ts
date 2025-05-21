@@ -32,7 +32,7 @@ export type StatisticTestConfig =
   | OmnibusStatisticTestConfig
   | TwoSampleStatisticTestConfig
   | ContingencyTableConfig;
-export interface StatisticTestHistoryEntry {
+export interface StatisticTestStateItem {
   type: StatisticTestPurpose;
   config: StatisticTestConfig;
 }

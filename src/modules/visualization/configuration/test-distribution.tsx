@@ -5,7 +5,7 @@ import {
 } from '@/api/project';
 import {
   EffectSizeMethodEnum,
-  GroupStatisticTestMethodEnum,
+  OmnibusStatisticTestMethodEnum,
   SchemaColumnTypeEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
@@ -31,7 +31,7 @@ export const VisualizationBinaryStatisticTestOnDistributionConfigSchema =
       .oneOf(Object.values(EffectSizeMethodEnum))
       .required(),
     main_statistic_test_preference: Yup.string()
-      .oneOf(Object.values(GroupStatisticTestMethodEnum))
+      .oneOf(Object.values(OmnibusStatisticTestMethodEnum))
       .required(),
   });
 

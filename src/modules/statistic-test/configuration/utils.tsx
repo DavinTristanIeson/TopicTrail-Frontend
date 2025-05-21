@@ -20,7 +20,7 @@ export function StatisticTestMethodFormBody() {
     | undefined;
   if (!columnType) return;
   return (
-    <Group gap={8} className="w-full">
+    <Group className="w-full">
       <StatisticMethodSelectField
         name="statistic_test_preference"
         type="select"

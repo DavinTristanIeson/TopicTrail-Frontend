@@ -41,6 +41,31 @@ import BinaryStatisticTestOnDistributionResultRenderer from './components/binary
 import ContingencyTableResultRenderer from './components/contingency-table';
 import StatisticTestResultRenderer from './components/results';
 import { PairwiseStatisticTestResultRenderer } from './components/pairwise';
+import {
+  EFFECT_SIZE_DICTIONARY,
+  OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY,
+  STATISTIC_TEST_METHOD_DICTIONARY,
+} from './dictionary';
+import {
+  EffectSizeMethodEnum,
+  StatisticTestMethodEnum,
+} from '@/common/constants/enum';
+
+function getBasicStatisticTestParams(config: {
+  column: string;
+  statistic_test_preference: StatisticTestMethodEnum;
+  effect_size_preference: EffectSizeMethodEnum;
+}) {
+  return {
+    Column: config.column,
+    'Statistic Test':
+      STATISTIC_TEST_METHOD_DICTIONARY[config.statistic_test_preference]
+        ?.label ?? config.statistic_test_preference,
+    'Effect Size':
+      EFFECT_SIZE_DICTIONARY[config.effect_size_preference]?.label ??
+      config.effect_size_preference,
+  };
+}
 
 export const STATISTIC_TEST_CONFIGURATION: Record<
   StatisticTestPurpose,
@@ -73,13 +98,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     description:
       'Each subdataset will be treated as a binary variable that splits the dataset into two groups. Both groups will be compared with each other using a statistic test.',
     label: 'Binary Statistic Test on Distribution',
-    getParams(config) {
-      return {
-        Column: config.column,
-        'Statistic Test': config.statistic_test_preference,
-        'Effect Size': config.effect_size_preference,
-      };
-    },
+    getParams: getBasicStatisticTestParams,
   } as StatisticTestConfigurationEntry<
     BinaryStatisticTestOnDistributionResultModel,
     BinaryStatisticTestConfig
@@ -114,7 +133,10 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     getParams(config) {
       return {
         Column: config.column,
-        'Statistic Test': config.statistic_test_preference,
+        'Statistic Test':
+          OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY[
+            config.statistic_test_preference
+          ]?.label ?? config.statistic_test_preference,
       };
     },
   } as StatisticTestConfigurationEntry<
@@ -132,11 +154,9 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     label: 'Two-Sample Statistic Test',
     getParams(config) {
       return {
-        Column: config.column,
         'Subdataset 1': config.group1,
         'Subdataset 2': config.group2,
-        'Statistic Test': config.statistic_test_preference,
-        'Effect Size': config.effect_size_preference,
+        ...getBasicStatisticTestParams(config),
       };
     },
   } as StatisticTestConfigurationEntry<
@@ -152,13 +172,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     description:
       'Test all possible pairs of subdatasets to see which pairs have statistically significantly difference with each other.',
     label: 'Pairwise Two-Sample Statistic Test',
-    getParams(config) {
-      return {
-        Column: config.column,
-        'Statistic Test': config.statistic_test_preference,
-        'Effect Size': config.effect_size_preference,
-      };
-    },
+    getParams: getBasicStatisticTestParams,
   } as StatisticTestConfigurationEntry<
     PairwiseStatisticTestResultModel,
     TwoSampleStatisticTestConfig
