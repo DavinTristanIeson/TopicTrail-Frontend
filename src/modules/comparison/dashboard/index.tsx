@@ -10,14 +10,12 @@ import {
   DashboardResetButton,
 } from '@/modules/visualization/dashboard/modals';
 import {
-  DashboardConstraintContext,
   DashboardSubdatasetsContext,
   DashboardSubdatasetsContextType,
 } from '@/modules/visualization/types/context';
 import UserDataManager from '@/modules/userdata';
 import { useDashboardUserDataSharedBehavior } from '@/modules/table/dashboard';
 import { useDashboardDataManager } from '@/modules/userdata/data-manager';
-import { DashboardItemTypeEnum } from '@/modules/visualization/types/dashboard-item-types';
 import React from 'react';
 import { Warning } from '@phosphor-icons/react';
 
@@ -41,14 +39,6 @@ function ComparisonDashboardUserDataManager() {
   );
   return <UserDataManager {...rendererProps} label="Dashboard" />;
 }
-
-const COMPARISON_DASHBOARD_CONSTRAINT = {
-  withoutTypes: [
-    DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
-    DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
-    DashboardItemTypeEnum.ContingencyTable,
-  ],
-};
 
 export default function ComparisonDashboard() {
   const dashboard = useComparisonAppState((store) => store.dashboard.state);
@@ -74,30 +64,26 @@ export default function ComparisonDashboard() {
   const { append } = handlers;
   return (
     <DashboardSubdatasetsContext.Provider value={dashboardSubdatasets}>
-      <DashboardConstraintContext.Provider
-        value={COMPARISON_DASHBOARD_CONSTRAINT}
-      >
-        <Stack>
-          <ComparisonDashboardUserDataManager />
-          <Group justify="end">
-            <DashboardResetButton onReset={() => handlers.setState([])} />
-            <AddVisualizationConfigurationButton onSubmit={append} />
-          </Group>
-          {dashboardSubdatasets.default.length === 0 ? (
-            <Alert color="yellow" icon={<Warning />}>
-              Create at least one subdataset to be visualized from
-              &quot;Subdatasets&quot; tab. If you have already prepared some
-              subdatasets, make sure that at least one of them is visible in the
-              &quot;Subdatasets&quot; tab.
-            </Alert>
-          ) : (
-            <GridstackDashboard
-              dashboard={dashboard}
-              dashboardHandlers={handlers}
-            />
-          )}
-        </Stack>
-      </DashboardConstraintContext.Provider>
+      <Stack>
+        <ComparisonDashboardUserDataManager />
+        <Group justify="end">
+          <DashboardResetButton onReset={() => handlers.setState([])} />
+          <AddVisualizationConfigurationButton onSubmit={append} />
+        </Group>
+        {dashboardSubdatasets.default.length === 0 ? (
+          <Alert color="yellow" icon={<Warning />}>
+            Create at least one subdataset to be visualized from
+            &quot;Subdatasets&quot; tab. If you have already prepared some
+            subdatasets, make sure that at least one of them is visible in the
+            &quot;Subdatasets&quot; tab.
+          </Alert>
+        ) : (
+          <GridstackDashboard
+            dashboard={dashboard}
+            dashboardHandlers={handlers}
+          />
+        )}
+      </Stack>
     </DashboardSubdatasetsContext.Provider>
   );
 }
