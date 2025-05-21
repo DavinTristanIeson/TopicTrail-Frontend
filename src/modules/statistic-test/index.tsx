@@ -1,59 +1,63 @@
-import { Alert, Divider, LoadingOverlay, Stack, Title } from '@mantine/core';
+import { Alert, Divider, Select, Stack } from '@mantine/core';
 import React from 'react';
 import { Warning } from '@phosphor-icons/react';
-import { ProjectContext } from '@/modules/project/context';
-import { client } from '@/common/api/client';
 import { useComparisonAppState } from '../comparison/app-state';
-import { TwoSampleStatisticTestConfig } from './configuration/two-sample';
+import { StatisticTestPurpose } from './types';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { STATISTIC_TEST_CONFIGURATION } from './statistic-test-config';
+import StatisticTestForm from './configuration';
+import StatisticTestResultRenderer from './components';
 
-export default function ComparisonStatisticTest() {
-  const project = React.useContext(ProjectContext);
-  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
-  const { data, error, isPending, mutateAsync } = client.useMutation(
-    'post',
-    '/table/{project_id}/comparison/statistic-test',
+interface StatisticTestSwitcherProps {
+  purpose: StatisticTestPurpose;
+}
+
+function StatisticTestSwitcher(props: StatisticTestSwitcherProps) {
+  const { purpose } = props;
+  const statisticTestConfig = STATISTIC_TEST_CONFIGURATION[purpose];
+  if (!statisticTestConfig) return null;
+  return (
+    <>
+      <StatisticTestForm purpose={purpose} />
+      <Divider />
+      <StatisticTestResultRenderer purpose={purpose} />
+    </>
   );
-  const onSubmit = React.useCallback(
-    async (values: TwoSampleStatisticTestConfig) => {
-      await mutateAsync({
-        body: {
-          ...values,
-          group1: comparisonGroups.find(
-            (group) => values.group1 === group.name,
-          )!,
-          group2: comparisonGroups.find(
-            (group) => values.group2 === group.name,
-          )!,
-        },
-        params: {
-          path: {
-            project_id: project.id,
-          },
-        },
-      });
-    },
-    [comparisonGroups, mutateAsync, project.id],
+}
+
+export default function StatisticTestPage() {
+  const current = useComparisonAppState((store) => store.statisticTest.current);
+  const [purpose, setPurpose] = React.useState(
+    current?.type ?? StatisticTestPurpose.TwoSample,
+  );
+  const renderOption = useDescriptionBasedRenderOption(
+    STATISTIC_TEST_CONFIGURATION,
   );
   return (
-    <Stack className="relative">
-      <LoadingOverlay visible={isPending} />
-      {error && (
-        <Alert
-          title="An error occurred while running the statistic test!"
-          color="red"
-          icon={<Warning size={20} />}
-        >
-          {error.message}
-        </Alert>
-      )}
-      <ComparisonStatisticTest onSubmit={onSubmit} />
-      {data && !isPending && !error && (
-        <>
-          <Divider />
-          <Title order={3}>Result</Title>
-          <StatisticTestPageResultsRenderer {...data.data} />
-        </>
-      )}
+    <Stack>
+      <Select
+        value={purpose}
+        onChange={
+          setPurpose as React.Dispatch<React.SetStateAction<string | null>>
+        }
+        data={Object.values(STATISTIC_TEST_CONFIGURATION).map((config) => {
+          return {
+            label: config.label,
+            value: config.type,
+          };
+        })}
+        label="Type"
+        description="What kind of statistic test would you like to perform?"
+        required
+        allowDeselect={false}
+        renderOption={renderOption}
+      />
+      <Alert color="yellow" icon={<Warning />}>
+        Please make sure that all of your subdatasets are mutually exclusive.
+        Statistical tests may produce unreliable results if there are
+        overlapping data samples.
+      </Alert>
+      <StatisticTestSwitcher purpose={purpose} />
     </Stack>
   );
 }

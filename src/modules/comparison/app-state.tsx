@@ -3,6 +3,7 @@ import { DashboardItemModel } from '@/api/userdata';
 import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
+import { StatisticTestHistoryEntry } from '../statistic-test/types';
 
 export enum ComparisonPageTab {
   GroupsManager = 'group-manager',
@@ -25,6 +26,15 @@ interface ComparisonAppStateContextType {
     includeWholeDataset: boolean;
     setIncludeWholeDataset: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  statisticTest: {
+    current: StatisticTestHistoryEntry | null;
+    setCurrent: React.Dispatch<
+      React.SetStateAction<StatisticTestHistoryEntry | null>
+    >;
+
+    history: StatisticTestHistoryEntry[];
+    historyHandlers: UseListStateHandlers<StatisticTestHistoryEntry>;
+  };
   reset(): void;
 }
 
@@ -44,18 +54,27 @@ export default function ComparisonAppStateProvider(
     React.useState<boolean>(false);
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
 
+  const [currentStatisticTestEntry, setCurrentStatisticTestEntry] =
+    React.useState<StatisticTestHistoryEntry | null>(null);
+  const [history, historyHandlers] = useListState<StatisticTestHistoryEntry>(
+    [],
+  );
+
   React.useEffect(() => {
     setTab(ComparisonPageTab.GroupsManager);
   }, [groups]);
 
   const { setState: setGroups } = groupHandlers;
-  const { setState: setDashboard } = groupHandlers;
+  const { setState: setDashboard } = dashboardHandlers;
+  const { setState: setHistory } = historyHandlers;
 
   const reset = React.useCallback(() => {
     setGroups([]);
     setDashboard([]);
     setGroupVisibility(new Map());
-  }, [setDashboard, setGroups]);
+    setCurrentStatisticTestEntry(null);
+    setHistory([]);
+  }, [setDashboard, setGroups, setHistory]);
 
   return (
     <ComparisonAppStateContext.Provider
@@ -73,6 +92,12 @@ export default function ComparisonAppStateProvider(
         dashboard: {
           state: dashboard,
           handlers: dashboardHandlers,
+        },
+        statisticTest: {
+          current: currentStatisticTestEntry,
+          setCurrent: setCurrentStatisticTestEntry,
+          history,
+          historyHandlers,
         },
         reset,
       }}
