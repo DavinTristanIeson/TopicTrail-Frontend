@@ -71,6 +71,80 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
   StatisticTestPurpose,
   StatisticTestConfigurationEntry<any, any>
 > = {
+  [StatisticTestPurpose.TwoSample]: {
+    type: StatisticTestPurpose.TwoSample,
+    component: StatisticTestResultRenderer,
+    configForm: TwoSampleStatisticTestConfigForm,
+    configValidator: twoSampleStatisticTestFormSchema,
+    dataProvider: useTwoSampleStatisticTestDataProvider,
+    description:
+      'Test if there is a statistically significant difference between two subdatasets.',
+    label: 'Two-Sample Statistic Test',
+    getParams(config) {
+      return {
+        'Subdataset 1': config.group1,
+        'Subdataset 2': config.group2,
+        ...getBasicStatisticTestParams(config),
+      };
+    },
+  } as StatisticTestConfigurationEntry<
+    StatisticTestResultModel,
+    TwoSampleStatisticTestConfig
+  >,
+  [StatisticTestPurpose.Omnibus]: {
+    type: StatisticTestPurpose.Omnibus,
+    component: StatisticTestResultRenderer,
+    configForm: OmnibusStatisticTestConfigForm,
+    configValidator: omnibusStatisticTestFormSchema,
+    dataProvider: useOmnibusStatisticTestDataProvider,
+    description:
+      'Test if the subdatasets can explain the variance observed in the data.',
+    label: 'Omnibus Statistic Test',
+    getParams(config) {
+      return {
+        Column: config.column,
+        'Statistic Test':
+          OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY[
+            config.statistic_test_preference
+          ]?.label ?? config.statistic_test_preference,
+      };
+    },
+  } as StatisticTestConfigurationEntry<
+    StatisticTestResultModel,
+    OmnibusStatisticTestConfig
+  >,
+  [StatisticTestPurpose.Pairwise]: {
+    type: StatisticTestPurpose.Pairwise,
+    component: PairwiseStatisticTestResultRenderer,
+    configForm: BinaryStatisticTestConfigForm,
+    configValidator: binaryStatisticTestFormSchema,
+    dataProvider: usePairwiseTwoSampleStatisticTestDataProvider,
+    description:
+      'Test all possible pairs of subdatasets to see which pairs have statistically significantly difference with each other.',
+    label: 'Pairwise Two-Sample Statistic Test',
+    getParams: getBasicStatisticTestParams,
+  } as StatisticTestConfigurationEntry<
+    PairwiseStatisticTestResultModel,
+    TwoSampleStatisticTestConfig
+  >,
+  [StatisticTestPurpose.ContingencyTable]: {
+    type: StatisticTestPurpose.ContingencyTable,
+    component: ContingencyTableResultRenderer,
+    configForm: ContingencyTableConfigForm,
+    configValidator: contingencyTableFormSchema,
+    dataProvider: useContingencyTableStatisticTestDataProvider,
+    description:
+      'Calculates a contingency table for each pair of subdataset and category; consisting of the observed frequencies, the expected frequencies, the residuals, and the standardized residuals.',
+    label: 'Contingency Table',
+    getParams(config) {
+      return {
+        Column: config.column,
+      };
+    },
+  } as StatisticTestConfigurationEntry<
+    ContingencyTableModel,
+    ContingencyTableConfig
+  >,
   [StatisticTestPurpose.BinaryTestContingencyTable]: {
     type: StatisticTestPurpose.BinaryTestContingencyTable,
     component: BinaryStatisticTestOnContingencyTableResultRenderer,
@@ -102,79 +176,5 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
   } as StatisticTestConfigurationEntry<
     BinaryStatisticTestOnDistributionResultModel,
     BinaryStatisticTestConfig
-  >,
-  [StatisticTestPurpose.ContingencyTable]: {
-    type: StatisticTestPurpose.ContingencyTable,
-    component: ContingencyTableResultRenderer,
-    configForm: ContingencyTableConfigForm,
-    configValidator: contingencyTableFormSchema,
-    dataProvider: useContingencyTableStatisticTestDataProvider,
-    description:
-      'Calculates a contingency table for each pair of subdataset and category; consisting of the observed frequencies, the expected frequencies, the residuals, and the standardized residuals.',
-    label: 'Contingency Table',
-    getParams(config) {
-      return {
-        Column: config.column,
-      };
-    },
-  } as StatisticTestConfigurationEntry<
-    ContingencyTableModel,
-    ContingencyTableConfig
-  >,
-  [StatisticTestPurpose.Omnibus]: {
-    type: StatisticTestPurpose.Omnibus,
-    component: StatisticTestResultRenderer,
-    configForm: OmnibusStatisticTestConfigForm,
-    configValidator: omnibusStatisticTestFormSchema,
-    dataProvider: useOmnibusStatisticTestDataProvider,
-    description:
-      'Test if the subdatasets can explain the variance observed in the data.',
-    label: 'Omnibus Statistic Test',
-    getParams(config) {
-      return {
-        Column: config.column,
-        'Statistic Test':
-          OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY[
-            config.statistic_test_preference
-          ]?.label ?? config.statistic_test_preference,
-      };
-    },
-  } as StatisticTestConfigurationEntry<
-    StatisticTestResultModel,
-    OmnibusStatisticTestConfig
-  >,
-  [StatisticTestPurpose.TwoSample]: {
-    type: StatisticTestPurpose.TwoSample,
-    component: StatisticTestResultRenderer,
-    configForm: TwoSampleStatisticTestConfigForm,
-    configValidator: twoSampleStatisticTestFormSchema,
-    dataProvider: useTwoSampleStatisticTestDataProvider,
-    description:
-      'Test if there is a statistically significant difference between two subdatasets.',
-    label: 'Two-Sample Statistic Test',
-    getParams(config) {
-      return {
-        'Subdataset 1': config.group1,
-        'Subdataset 2': config.group2,
-        ...getBasicStatisticTestParams(config),
-      };
-    },
-  } as StatisticTestConfigurationEntry<
-    StatisticTestResultModel,
-    TwoSampleStatisticTestConfig
-  >,
-  [StatisticTestPurpose.Pairwise]: {
-    type: StatisticTestPurpose.Pairwise,
-    component: PairwiseStatisticTestResultRenderer,
-    configForm: TwoSampleStatisticTestConfigForm,
-    configValidator: twoSampleStatisticTestFormSchema,
-    dataProvider: usePairwiseTwoSampleStatisticTestDataProvider,
-    description:
-      'Test all possible pairs of subdatasets to see which pairs have statistically significantly difference with each other.',
-    label: 'Pairwise Two-Sample Statistic Test',
-    getParams: getBasicStatisticTestParams,
-  } as StatisticTestConfigurationEntry<
-    PairwiseStatisticTestResultModel,
-    TwoSampleStatisticTestConfig
   >,
 };

@@ -171,11 +171,12 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: map2D(process(frequencies), (value) => value ?? 0),
+          z: process(frequencies),
           texttemplate: '%{z}',
           hoverongaps: false,
           customdata: customdata as any,
           hovertemplate: hovertemplate.join('<br>'),
+          colorscale: 'Viridis',
           colorbar: {
             title: 'Frequency',
           },

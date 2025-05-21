@@ -16,7 +16,6 @@ export function useStatisticTestDataProviderParams(
     if (groups == null) {
       return comparisonGroups;
     }
-    console.log(groups);
     return groups.map((group) => {
       const foundSubdataset = comparisonGroups.find(
         (subdataset) => subdataset.name === group,
@@ -48,6 +47,7 @@ export function usePrepareStatisticTestDataProvider<T>(
   props: UsePrepareStatisticTestDataProviderProps<T>,
 ) {
   const { query } = props;
+
   return {
     data: query.data?.data,
     loading: query.isFetching,

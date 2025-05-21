@@ -3,15 +3,29 @@ import FormWrapper from '@/components/utility/form/wrapper';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Group, Space } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState } from 'react-hook-form';
 import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
 import { StatisticTestConfig, StatisticTestPurpose } from '../types';
 import React from 'react';
 
 interface StatisticTestFormProps {
   purpose: StatisticTestPurpose;
-  defaultValues: StatisticTestConfig | undefined;
+  defaultValues: StatisticTestConfig | null | undefined;
   onSubmit(config: StatisticTestConfig): void;
+}
+
+function PerformStatisticTestButton() {
+  const { isDirty } = useFormState();
+  return (
+    <SubmitButton
+      leftSection={<TestTube />}
+      fullWidth
+      className="max-w-md"
+      disabled={!isDirty}
+    >
+      Perform Statistic Test
+    </SubmitButton>
+  );
 }
 
 export default function StatisticTestForm(props: StatisticTestFormProps) {
@@ -32,7 +46,7 @@ export default function StatisticTestForm(props: StatisticTestFormProps) {
       const statisticTestInput = configItem.configValidator.cast(values, {
         stripUnknown: true,
       });
-      return onSubmit(statisticTestInput);
+      onSubmit(statisticTestInput);
     },
     [configItem.configValidator, onSubmit],
   );
@@ -43,9 +57,7 @@ export default function StatisticTestForm(props: StatisticTestFormProps) {
       <ConfigForm />
       <Space h="lg" />
       <Group justify="center">
-        <SubmitButton leftSection={<TestTube />} fullWidth className="max-w-md">
-          Perform Statistic Test
-        </SubmitButton>
+        <PerformStatisticTestButton />
       </Group>
     </FormWrapper>
   );

@@ -18,7 +18,7 @@ import {
   RingProgress,
   Progress,
   Tooltip,
-  Group,
+  SimpleGrid,
 } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
 import { max, sum } from 'lodash-es';
@@ -113,23 +113,25 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
     <Card className="w-full">
       <Stack>
         <Text fw={500}>Subdataset Proportions of {column}</Text>
-        <Progress.Root size={32}>
+        <Progress.Root size={48}>
           {groups.map((group, index) => {
             const groupProportion = (group.valid_count / totalCount) * 100;
             return (
               <Tooltip
-                label={`${group.name}: ${group.valid_count} (${groupProportion.toFixed(2)}%) Rows`}
+                label={`${group.name}: ${group.valid_count} / ${totalCount} (${groupProportion.toFixed(2)}%) Rows`}
                 key={group.name}
               >
                 <Progress.Section value={groupProportion} color={colors[index]}>
-                  {group.name}
+                  <Text size="xs" fw={500} ta="center">
+                    {group.name}
+                  </Text>
                 </Progress.Section>
               </Tooltip>
             );
           })}
           {emptyCount > 0 && (
             <Tooltip
-              label={`Empty: ${emptyCount} (${emptyProportion.toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
+              label={`Empty: ${emptyCount} / ${totalCount} (${emptyProportion.toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
             >
               <Progress.Section value={emptyProportion} color="red">
                 Empty Rows
@@ -199,9 +201,9 @@ export function SignificanceAndEffectSizeComponents(
   props: SignificanceAndEffectSizeComponentsProps,
 ) {
   return (
-    <Group align="stretch" wrap="wrap">
+    <SimpleGrid cols={{ base: 2, lg: 4 }}>
       <SignificanceResultRenderer {...props.significance} />
       <EffectSizeResultRenderer {...props.effectSize} />
-    </Group>
+    </SimpleGrid>
   );
 }

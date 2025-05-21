@@ -1,11 +1,12 @@
+import React from 'react';
 import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
-import { StatisticTestStateItem, StatisticTestPurpose } from '../types';
+import { StatisticTestPurpose, StatisticTestConfig } from '../types';
 import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
 import { Skeleton } from '@mantine/core';
 
 interface StatisticTestResultRendererProps {
   purpose: StatisticTestPurpose;
-  input: StatisticTestStateItem;
+  input: StatisticTestConfig;
 }
 
 export default function StatisticTestResultRenderer(
@@ -19,7 +20,7 @@ export default function StatisticTestResultRenderer(
   if (!configItem) {
     throw new Error(`Statistic test for ${purpose} is not implemented.`);
   }
-  const { data, error, loading, refetch } = useDataProvider(input.config);
+  const { data, error, loading, refetch } = useDataProvider(input);
 
   return (
     <FetchWrapperComponent
@@ -28,7 +29,7 @@ export default function StatisticTestResultRenderer(
       error={error}
       onRetry={refetch}
     >
-      <ResultRenderer config={input.config} data={data} />
+      <ResultRenderer config={input} data={data} />
     </FetchWrapperComponent>
   );
 }

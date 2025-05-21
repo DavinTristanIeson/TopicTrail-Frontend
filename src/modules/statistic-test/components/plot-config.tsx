@@ -176,7 +176,7 @@ export function StatisticTestEmptyPlotWarning(props: EmptyPlotWarningProps) {
         alternatives[alternatives.length - 1];
   return (
     <Alert color="yellow" icon={<Warning />}>
-      {joinedString}
+      {`There are no data to be shown; your constraints may be too strict! Try ${joinedString}`}
     </Alert>
   );
 }

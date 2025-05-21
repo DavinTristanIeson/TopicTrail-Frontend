@@ -13,6 +13,7 @@ import {
   useVisualizationAlphaSlider,
 } from '@/modules/visualization/components/configuration';
 import { getBalancedHeatmapZRange } from '@/modules/visualization/components/configuration/heatmap';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 
 enum PairwiseStatisticTestVisualizationMethod {
   Confidence = 'confidence',
@@ -86,10 +87,11 @@ export function PairwiseStatisticTestResultRenderer(
       return chosenSubdatasets.map((col) => {
         return data.results.find(
           (result) =>
-            result.groups[0]?.name === row && result.groups[1]?.name === col,
+            result.groups[0]?.name === col && result.groups[1]?.name === row,
         );
       });
     });
+
     const confidenceLevels = map2D(results, (result) =>
       result == null ? undefined : (1 - result.significance.p_value) * 100,
     );
@@ -110,11 +112,18 @@ export function PairwiseStatisticTestResultRenderer(
       results,
       (x) => !!x && !filterAlpha(x?.significance.p_value),
     );
+    const z = mask2D(usedValue, invalidMask, undefined as any);
+    const hasValues = z.some((row) => row.some(Boolean));
+    if (!hasValues) return undefined;
 
-    const [minZ, maxZ] = getBalancedHeatmapZRange(usedValue as number[][]);
-    const needsMinMaxZ =
-      method === PairwiseStatisticTestVisualizationMethod.EffectSize;
-
+    let minZ: number | undefined = undefined;
+    let maxZ: number | undefined = undefined;
+    if (method === PairwiseStatisticTestVisualizationMethod.EffectSize) {
+      [minZ, maxZ] = getBalancedHeatmapZRange(usedValue as number[][]);
+    } else if (method === PairwiseStatisticTestVisualizationMethod.Confidence) {
+      minZ = 0;
+      maxZ = 100;
+    }
     return {
       data: [
         {
@@ -122,14 +131,15 @@ export function PairwiseStatisticTestResultRenderer(
           texttemplate: '%{z:.3f}',
           x: chosenSubdatasets,
           y: chosenSubdatasets,
-          z: mask2D(usedValue, invalidMask, undefined as any),
+          z,
           customdata: customdata as any,
+          hoverongaps: false,
           hovertemplate: hovertemplates.join('<br>'),
           colorscale: dictionaryEntry.colorscale,
-          zmin: needsMinMaxZ ? minZ : undefined,
-          zmax: needsMinMaxZ ? maxZ : undefined,
+          zmin: minZ,
+          zmax: maxZ,
           colorbar: {
-            title: usedTitle,
+            title: dictionaryEntry.hoverLabel,
           },
         },
       ],
@@ -148,6 +158,10 @@ export function PairwiseStatisticTestResultRenderer(
     };
   }, [method, config.column, chosenSubdatasets, data.results, filterAlpha]);
 
+  const renderOption = useDescriptionBasedRenderOption(
+    PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY,
+  );
+
   return (
     <Stack>
       <PlotInlineConfiguration>
@@ -155,6 +169,9 @@ export function PairwiseStatisticTestResultRenderer(
           data={PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_OPTIONS}
           value={method}
           onChange={setMethod as any}
+          label="Visualization Method"
+          required
+          renderOption={renderOption}
           allowDeselect={false}
         />
         <MultiSelect

@@ -175,6 +175,7 @@ export default function ContingencyTableResultRenderer(
           z: mask2D(usedValue, invalidFrequencyMask, undefined as any),
           customdata: customdata as any,
           hovertemplate: hovertemplates.join('<br>'),
+          hoverongaps: false,
           colorscale: colorscale[method]!,
           zmin: needsMinMaxZ ? minZ : undefined,
           zmax: needsMinMaxZ ? maxZ : undefined,
