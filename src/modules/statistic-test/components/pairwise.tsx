@@ -1,7 +1,7 @@
 import { PairwiseStatisticTestResultModel } from '@/api/statistic-test';
 import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
-import { MultiSelect, Select, Stack } from '@mantine/core';
+import { Alert, MultiSelect, Select, Stack } from '@mantine/core';
 import type { PlotParams } from 'react-plotly.js';
 import { map2D, mask2D, zip2D } from '@/common/utils/iterable';
 import { BaseStatisticTestResultRendererProps } from '../types';
@@ -14,6 +14,7 @@ import {
 } from '@/modules/visualization/components/configuration';
 import { getBalancedHeatmapZRange } from '@/modules/visualization/components/configuration/heatmap';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { Info } from '@phosphor-icons/react';
 
 enum PairwiseStatisticTestVisualizationMethod {
   Confidence = 'confidence',
@@ -22,7 +23,7 @@ enum PairwiseStatisticTestVisualizationMethod {
 
 const PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY = {
   [PairwiseStatisticTestVisualizationMethod.Confidence]: {
-    label: 'Error-Corrected Confidence Level',
+    label: 'Confidence Level',
     value: PairwiseStatisticTestVisualizationMethod.Confidence,
     description:
       'Show the confidence level that there is a statistically significant difference between each pair of groups.',
@@ -72,7 +73,7 @@ export function PairwiseStatisticTestResultRenderer(
       PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY[method];
     const usedTitle = `Pairwise ${dictionaryEntry!.label}s of the Subdatasets on ${config.column} Data`;
     const hovertemplates = [
-      `<b>Subdataset</b>: %{y}<br><b>${config.column}</b>: %{x}<br>`,
+      `<b>Subdataset 1</b>: %{y}<br><b>Subdataset 2</b>: %{x}<br>`,
     ];
 
     const methodOptions = Object.values(
@@ -82,6 +83,9 @@ export function PairwiseStatisticTestResultRenderer(
       const entry = methodOptions[i]!;
       hovertemplates.push(`<b>${entry.hoverLabel}</b>: %{customdata[${i}]}`);
     }
+    hovertemplates.push(
+      `<b>Warnings</b>:<br>%{customdata[${hovertemplates.length - 1}]}`,
+    );
 
     const results = chosenSubdatasets.map((row) => {
       return chosenSubdatasets.map((col) => {
@@ -98,8 +102,13 @@ export function PairwiseStatisticTestResultRenderer(
     const effectSizes = map2D(results, (result) =>
       result == null ? undefined : result.effect_size.value,
     );
+    const warnings = map2D(results, (result) =>
+      result == null
+        ? undefined
+        : result.warnings.map((warning) => `- ${warning}`).join('<br>'),
+    );
 
-    const customdata = zip2D([confidenceLevels, effectSizes]);
+    const customdata = zip2D([confidenceLevels, effectSizes, warnings as any]);
     let usedValue: (number | undefined)[][];
     if (method === PairwiseStatisticTestVisualizationMethod.Confidence) {
       usedValue = confidenceLevels;
@@ -187,6 +196,10 @@ export function PairwiseStatisticTestResultRenderer(
         hasFrequency={false}
         hasAlpha
       >
+        <Alert color="blue" icon={<Info />}>
+          The p values of the pairwise statistic tests have been corrected using
+          the Benjamini-Hochberg correction in order to prevent false positives.
+        </Alert>
         {plot && <PlotRenderer plot={plot} scrollZoom={false} />}
       </StatisticTestEmptyPlotWarning>
     </Stack>

@@ -19,6 +19,7 @@ import {
   Progress,
   Tooltip,
   SimpleGrid,
+  Switch,
 } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
 import { max, sum } from 'lodash-es';
@@ -29,6 +30,7 @@ import {
   OMNIBUS_EFFECT_SIZE_DICTIONARY,
 } from '../dictionary';
 import { generateColorsFromSequence } from '@/common/utils/colors';
+import { useDisclosure } from '@mantine/hooks';
 
 interface StatisticTestWarningsRendererProps {
   warnings: string[] | null | undefined;
@@ -103,16 +105,30 @@ interface GroupCountsRendererProps {
 
 export function GroupCountsRenderer(props: GroupCountsRendererProps) {
   const { column, groups } = props;
-  const totalCount = max(groups.map((group) => group.total_count)) ?? 0;
+
+  const [relativeToDataset, { toggle: toggleRelativeToDataset }] =
+    useDisclosure(false);
+  let totalCount = 0;
+  if (relativeToDataset) {
+    totalCount = max(groups.map((group) => group.total_count)) ?? 0;
+  } else {
+    totalCount = sum(groups.map((group) => group.valid_count));
+  }
+  if (groups.length === 0 || totalCount === 0) return null;
   const emptyCount = sum(groups.map((group) => group.empty_count)) ?? 0;
   const emptyProportion = (emptyCount / totalCount) * 100;
-  if (groups.length === 0 || totalCount === 0) return null;
   const { colors } = generateColorsFromSequence(groups);
 
   return (
     <Card className="w-full">
       <Stack>
         <Text fw={500}>Subdataset Proportions of {column}</Text>
+        <Switch
+          label="Proportion relative to whole dataset"
+          description="Do you want us to only show the proportions relative to the number of rows involved in the statistic test, or relative to the whole dataset?"
+          onChange={toggleRelativeToDataset}
+          checked={relativeToDataset}
+        />
         <Progress.Root size={48}>
           {groups.map((group, index) => {
             const groupProportion = (group.valid_count / totalCount) * 100;
@@ -133,9 +149,7 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
             <Tooltip
               label={`Empty: ${emptyCount} / ${totalCount} (${emptyProportion.toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
             >
-              <Progress.Section value={emptyProportion} color="red">
-                Empty Rows
-              </Progress.Section>
+              <Progress.Section value={emptyProportion} color="red" />
             </Tooltip>
           )}
         </Progress.Root>

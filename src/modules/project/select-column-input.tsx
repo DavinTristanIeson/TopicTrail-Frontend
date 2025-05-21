@@ -12,11 +12,15 @@ import {
   type ComboboxItem,
   type ComboboxLikeRenderOptionInput,
   type SelectProps,
+  type MultiSelectProps,
+  type OptionsFilter,
   Group,
+  MultiSelect,
   Select,
   Text,
 } from '@mantine/core';
 import { capitalize } from 'lodash-es';
+import React from 'react';
 
 export interface ProjectColumnComboboxItem extends ComboboxItem {
   data: SchemaColumnModel;
@@ -41,6 +45,36 @@ function ProjectColumnComboboxItemRenderer(
   );
 }
 
+function useProjectColumnSelectProps(data: SchemaColumnModel[]) {
+  return {
+    renderOption:
+      ProjectColumnComboboxItemRenderer as SelectProps['renderOption'],
+    data: data.map((item) => {
+      return {
+        label: item.name,
+        value: item.name,
+        data: item,
+      } as ProjectColumnComboboxItem;
+    }),
+    filter: React.useCallback<OptionsFilter>((input) => {
+      const data = input.options.map(
+        (option) => (option as ProjectColumnComboboxItem).data,
+      );
+      const indices = filterByString(
+        input.search,
+        data.map((item) => {
+          return {
+            name: item.type,
+            type: item.type,
+          };
+        }),
+      );
+      return pickArrayByIndex(input.options, indices);
+    }, []),
+    placeholder: 'Pick a column',
+  };
+}
+
 interface ProjectColumnSelectInputProps
   extends Omit<SelectProps, 'onChange' | 'data'> {
   data: SchemaColumnModel[];
@@ -50,38 +84,14 @@ interface ProjectColumnSelectInputProps
 
 export function ProjectColumnSelectInput(props: ProjectColumnSelectInputProps) {
   const { onChange, data, ...selectProps } = props;
+  const projectSelectProps = useProjectColumnSelectProps(data);
   return (
     <Select
       {...selectProps}
-      renderOption={
-        ProjectColumnComboboxItemRenderer as SelectProps['renderOption']
-      }
-      data={data.map((item) => {
-        return {
-          label: item.name,
-          value: item.name,
-          data: item,
-        } as ProjectColumnComboboxItem;
-      })}
-      filter={(input) => {
-        const data = input.options.map(
-          (option) => (option as ProjectColumnComboboxItem).data,
-        );
-        const indices = filterByString(
-          input.search,
-          data.map((item) => {
-            return {
-              name: item.type,
-              type: item.type,
-            };
-          }),
-        );
-        return pickArrayByIndex(input.options, indices);
-      }}
+      {...projectSelectProps}
       onChange={(value) => {
         onChange?.(value ? (data.find((x) => x.name === value) ?? null) : null);
       }}
-      placeholder="Pick a column"
     />
   );
 }
@@ -99,6 +109,50 @@ export function ProjectColumnSelectField(props: ProjectColumnSelectFieldProps) {
     },
   );
   return <ProjectColumnSelectInput {...mergedProps} />;
+}
+
+interface ProjectColumnMultiSelectInputProps
+  extends Omit<MultiSelectProps, 'onChange' | 'data'> {
+  data: SchemaColumnModel[];
+  value?: string[];
+  onChange?(column: SchemaColumnModel[]): void;
+}
+
+export function ProjectColumnMultiSelectInput(
+  props: ProjectColumnMultiSelectInputProps,
+) {
+  const { onChange, data, ...selectProps } = props;
+  const projectSelectProps = useProjectColumnSelectProps(data);
+  return (
+    <MultiSelect
+      {...selectProps}
+      {...projectSelectProps}
+      onChange={(values) => {
+        onChange?.(
+          values
+            .map((value) => {
+              return data.find((x) => x.name === value)!;
+            })
+            .filter(Boolean),
+        );
+      }}
+    />
+  );
+}
+
+type ProjectColumnMultiSelectFieldProps = ProjectColumnMultiSelectInputProps &
+  IRHFMantineAdaptable<ProjectColumnMultiSelectInputProps>;
+
+export function ProjectColumnMultiSelectField(
+  props: ProjectColumnMultiSelectFieldProps,
+) {
+  const { mergedProps } =
+    useRHFMantineAdapter<ProjectColumnMultiSelectInputProps>(props, {
+      extractEventValue(e) {
+        return e.map((column) => column.name);
+      },
+    });
+  return <ProjectColumnMultiSelectInput {...mergedProps} />;
 }
 
 interface ProjectColumnTypeComboboxItem extends ComboboxItem {

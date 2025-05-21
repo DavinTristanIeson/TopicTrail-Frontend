@@ -101,7 +101,7 @@ export default function StatisticTestPage() {
 
   return (
     <Stack>
-      <Group justify="space-between" align="end">
+      <Group justify="space-between" align="start">
         <StatisticTestSelectPurpose
           purpose={purpose}
           setPurpose={(value) => {
@@ -109,10 +109,12 @@ export default function StatisticTestPage() {
             setInput(null);
           }}
         />
-        <StatisticTestHistoryButton
-          setPurpose={setPurpose}
-          setInput={setInput}
-        />
+        <div className="pt-6">
+          <StatisticTestHistoryButton
+            setPurpose={setPurpose}
+            setInput={setInput}
+          />
+        </div>
       </Group>
       <Alert color="yellow" icon={<Warning />}>
         Please make sure that all of your subdatasets are mutually exclusive.

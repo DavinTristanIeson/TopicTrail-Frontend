@@ -6,16 +6,22 @@ import {
 import { type ComboboxItem, Select, type SelectProps } from '@mantine/core';
 import { useComparisonAppState } from '../app-state';
 
-interface NamedFilterSelectInputProps
+interface ComparisonSubdatasetSelectInput
   extends Omit<SelectProps, 'data' | 'onChange'> {
   onChange?(filter: ComparisonStateItemModel | null): void;
+  withWholeDataset: boolean;
 }
 
 export function ComparisonSubdatasetSelectInput(
-  props: NamedFilterSelectInputProps,
+  props: ComparisonSubdatasetSelectInput,
 ) {
-  const { onChange, ...selectProps } = props;
-  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const { onChange, withWholeDataset, ...selectProps } = props;
+  const originalComparisonGroups = useComparisonAppState(
+    (store) => store.groups.state,
+  );
+  const comparisonGroups = withWholeDataset
+    ? originalComparisonGroups
+    : originalComparisonGroups.filter((group) => !!group.filter);
   return (
     <Select
       {...selectProps}
@@ -37,8 +43,8 @@ export function ComparisonSubdatasetSelectInput(
   );
 }
 
-type ComparisonSubdatasetSelectFieldProps = NamedFilterSelectInputProps &
-  IRHFMantineAdaptable<NamedFilterSelectInputProps>;
+type ComparisonSubdatasetSelectFieldProps = ComparisonSubdatasetSelectInput &
+  IRHFMantineAdaptable<ComparisonSubdatasetSelectInput>;
 export function ComparisonSubdatasetSelectField(
   props: ComparisonSubdatasetSelectFieldProps,
 ) {

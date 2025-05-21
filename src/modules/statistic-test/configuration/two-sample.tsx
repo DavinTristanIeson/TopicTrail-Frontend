@@ -38,11 +38,13 @@ export function TwoSampleStatisticTestConfigForm() {
           name="group1"
           className="flex-1"
           label="Group 1"
+          withWholeDataset={false}
         />
         <ComparisonSubdatasetSelectField
           name="group2"
           className="flex-1"
           label="Group 2"
+          withWholeDataset={false}
         />
       </Group>
       <StatisticTestMethodFormBody />

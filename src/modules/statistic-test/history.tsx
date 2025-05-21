@@ -7,6 +7,7 @@ import {
   Button,
   Group,
   Stack,
+  Alert,
 } from '@mantine/core';
 import React from 'react';
 import { useComparisonAppState } from '../comparison/app-state';
@@ -17,7 +18,7 @@ import {
   StatisticTestPurpose,
   StatisticTestStateItem,
 } from './types';
-import { TestTube } from '@phosphor-icons/react';
+import { TestTube, Warning } from '@phosphor-icons/react';
 
 interface StatisticTestHistoryProps {
   setPurpose: React.Dispatch<React.SetStateAction<StatisticTestPurpose | null>>;
@@ -75,6 +76,12 @@ function StatisticTestHistoryBody() {
       {historyEntries.map((historyEntry, idx) => {
         return <StatisticTestHistoryEntryCard {...historyEntry} key={idx} />;
       })}
+      {historyEntries.length === 0 && (
+        <Alert color="yellow" icon={<Warning />}>
+          You haven&apos;t performed any statistic tests yet. Any tests that you
+          have performed will appear here.
+        </Alert>
+      )}
     </Stack>
   );
 }

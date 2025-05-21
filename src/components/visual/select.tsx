@@ -129,3 +129,34 @@ export function useSelectLeftRightButtons<T>(
   );
   return inputContainer;
 }
+
+interface UseMultiSelectSelectAllCheckboxProps<TData, TValue> {
+  data: TData[];
+  value: TValue[];
+  onChange: (value: TValue[]) => void;
+  accessor(data: TData): TValue;
+}
+
+export function useMultiSelectSelectAllCheckbox<TData, TValue>(
+  props: UseMultiSelectSelectAllCheckboxProps<TData, TValue>,
+) {
+  const { data, value, onChange, accessor } = props;
+  const inputContainer = (children: React.ReactNode) => (
+    <Group className="w-full">
+      <div className="flex-1">{children}</div>
+      <Button
+        onClick={() => {
+          if (value.length === data.length) {
+            onChange([]);
+          } else {
+            onChange(data.map(accessor));
+          }
+        }}
+        variant="subtle"
+      >
+        {value.length === data.length ? 'Deselect' : 'Select'} All
+      </Button>
+    </Group>
+  );
+  return inputContainer;
+}

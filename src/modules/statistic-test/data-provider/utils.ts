@@ -1,4 +1,4 @@
-import { useComparisonAppState } from '@/modules/comparison/app-state';
+import { useVisibleComparisonGroups } from '@/modules/comparison/app-state';
 import { ProjectContext } from '@/modules/project/context';
 import { UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
@@ -11,10 +11,10 @@ export function useStatisticTestDataProviderParams(
   props: UseStatisticTestDataProviderPropsProps,
 ) {
   const { groups } = props;
-  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const comparisonGroups = useVisibleComparisonGroups();
   const subdatasets = React.useMemo(() => {
     if (groups == null) {
-      return comparisonGroups;
+      return comparisonGroups.filter((group) => !!group.filter);
     }
     return groups.map((group) => {
       const foundSubdataset = comparisonGroups.find(
