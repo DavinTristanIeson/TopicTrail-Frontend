@@ -9,6 +9,7 @@ import { zip } from 'lodash-es';
 import { useComparisonAppState } from '../../app-state';
 import { assignUniqueNames } from './utils';
 import React from 'react';
+import { List } from '@phosphor-icons/react';
 
 interface EnumerateValuesActionsProps {
   column: SchemaColumnModel;
@@ -86,6 +87,7 @@ export default function EnumerateCategoricalValuesActions(
       loading={isPending}
       disabled={!column}
       className="max-w-sm"
+      leftSection={<List />}
     >
       Enumerate Values of {column.name}
     </Button>

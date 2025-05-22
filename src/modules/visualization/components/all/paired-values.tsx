@@ -18,15 +18,22 @@ export default function VisualizationPairedValuesComponent(
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
     );
-    const scatterPlots: PlotParams['data'] = data.map((item, index) => {
+    const scatterPlots: PlotParams['data'] = data.map((scatterData, index) => {
       return {
-        name: item.name,
-        x: item.data.x as number[],
-        y: item.data.y as number[],
+        name: scatterData.name,
+        x: scatterData.data.x as number[],
+        y: scatterData.data.y as number[],
         type: 'scattergl',
+        mode: 'markers',
+        customdata: scatterData.data.frequencies,
+        hovertemplate: [
+          `<b>${item.column}</b>: %{y}`,
+          `<b>${item.config.column2}</b>: %{x}`,
+          `<b>Frequency</b>: %{customdata}`,
+        ].join('<br>'),
         marker: {
           color: colors[index],
-          size: item.data.frequencies,
+          size: scatterData.data.frequencies,
         },
       };
     });

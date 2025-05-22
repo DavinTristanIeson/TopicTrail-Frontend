@@ -30,7 +30,6 @@ const FOR_ALL_TYPES = [
 const FOR_CATEGORICAL_TYPES = [
   DashboardItemTypeEnum.FrequencyDistribution,
   DashboardItemTypeEnum.Proportions,
-  DashboardItemTypeEnum.PairedValues,
 ];
 
 export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
@@ -61,6 +60,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
   [SchemaColumnTypeEnum.Temporal]: [
     ...FOR_ALL_TYPES,
     ...FOR_CATEGORICAL_TYPES,
+    DashboardItemTypeEnum.PairedValues,
     DashboardItemTypeEnum.Calendar,
     DashboardItemTypeEnum.DataDistribution,
   ],

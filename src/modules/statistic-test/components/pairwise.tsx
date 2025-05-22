@@ -19,6 +19,7 @@ import { Info } from '@phosphor-icons/react';
 enum PairwiseStatisticTestVisualizationMethod {
   Confidence = 'confidence',
   EffectSize = 'effect_size',
+  SampleSize = 'sample_size',
 }
 
 const PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY = {
@@ -36,6 +37,13 @@ const PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY = {
     description: 'Show the effect size between each pair of groups.',
     hoverLabel: 'Effect Size',
     colorscale: 'RdBu',
+  },
+  [PairwiseStatisticTestVisualizationMethod.SampleSize]: {
+    label: 'Sample Size',
+    value: PairwiseStatisticTestVisualizationMethod.SampleSize,
+    description: 'Show the sample sizes of each statistic test.',
+    hoverLabel: 'Confidence',
+    colorscale: 'Viridis',
   },
 };
 const PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_OPTIONS = Object.values(
@@ -73,7 +81,7 @@ export function PairwiseStatisticTestResultRenderer(
       PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY[method];
     const usedTitle = `Pairwise ${dictionaryEntry!.label}s of the Subdatasets on ${config.column} Data`;
     const hovertemplates = [
-      `<b>Subdataset 1</b>: %{y}<br><b>Subdataset 2</b>: %{x}<br>`,
+      `<b>Subdataset 1</b>: %{y}</b><b>Subdataset 2</b>: %{x}`,
     ];
 
     const methodOptions = Object.values(
@@ -102,18 +110,28 @@ export function PairwiseStatisticTestResultRenderer(
     const effectSizes = map2D(results, (result) =>
       result == null ? undefined : result.effect_size.value,
     );
+    const sampleSizes = map2D(results, (result) =>
+      result == null ? undefined : result.sample_size,
+    );
     const warnings = map2D(results, (result) =>
       result == null
         ? undefined
         : result.warnings.map((warning) => `- ${warning}`).join('<br>'),
     );
 
-    const customdata = zip2D([confidenceLevels, effectSizes, warnings as any]);
+    const customdata = zip2D([
+      confidenceLevels,
+      effectSizes,
+      sampleSizes,
+      warnings as any,
+    ]);
     let usedValue: (number | undefined)[][];
     if (method === PairwiseStatisticTestVisualizationMethod.Confidence) {
       usedValue = confidenceLevels;
     } else if (method === PairwiseStatisticTestVisualizationMethod.EffectSize) {
       usedValue = effectSizes;
+    } else if (method === PairwiseStatisticTestVisualizationMethod.SampleSize) {
+      usedValue = sampleSizes;
     } else {
       return undefined;
     }
@@ -137,7 +155,10 @@ export function PairwiseStatisticTestResultRenderer(
       data: [
         {
           type: 'heatmap',
-          texttemplate: '%{z:.3f}',
+          texttemplate:
+            method === PairwiseStatisticTestVisualizationMethod.SampleSize
+              ? '%{z}'
+              : '%{z:.3f}',
           x: chosenSubdatasets,
           y: chosenSubdatasets,
           z,

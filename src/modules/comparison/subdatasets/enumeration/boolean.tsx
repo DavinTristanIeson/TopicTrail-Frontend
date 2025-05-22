@@ -4,10 +4,11 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import { useMultiSelectSelectAllCheckbox } from '@/components/visual/select';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnMultiSelectInput } from '@/modules/project/select-column-input';
-import { Button, List, Text } from '@mantine/core';
+import { Button, Text } from '@mantine/core';
 import { identity } from 'lodash-es';
 import React from 'react';
 import { useComparisonAppState } from '../../app-state';
+import { List } from '@phosphor-icons/react';
 
 export default function EnumerationSubdatasetsBooleanColumns() {
   const project = React.useContext(ProjectContext);

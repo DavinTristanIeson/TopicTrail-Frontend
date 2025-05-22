@@ -9,6 +9,8 @@ import {
   BinaryStatisticTestConfigForm,
   binaryStatisticTestFormSchema,
   BinaryStatisticTestConfig,
+  pairwiseStatisticTestFormSchema,
+  PairwiseStatisticTestConfigForm,
 } from './configuration/binary';
 import {
   ContingencyTableConfigForm,
@@ -128,8 +130,8 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
   [StatisticTestPurpose.Pairwise]: {
     type: StatisticTestPurpose.Pairwise,
     component: PairwiseStatisticTestResultRenderer,
-    configForm: BinaryStatisticTestConfigForm,
-    configValidator: binaryStatisticTestFormSchema,
+    configForm: PairwiseStatisticTestConfigForm,
+    configValidator: pairwiseStatisticTestFormSchema,
     dataProvider: usePairwiseTwoSampleStatisticTestDataProvider,
     description:
       'Test all possible pairs of subdatasets to see which pairs have statistically significantly difference with each other.',

@@ -129,17 +129,31 @@ export default function TopicUpdateForm(props: TopicUpdateFormProps) {
         });
       } else {
         setValue(`topics.${focusedTopicIndex}`, values);
-        showNotification({
-          message: `The metadata for topic "${getTopicLabel({
-            ...values.original,
-            label: values.label,
-          })}" has been successfully updated.`,
-          color: 'green',
-        });
+        if (focusedTopic) {
+          showNotification({
+            message: `The metadata for topic "${getTopicLabel({
+              ...focusedTopic.original,
+              label: focusedTopic.label,
+            })}" has been successfully updated.`,
+            color: 'green',
+          });
+        } else {
+          showNotification({
+            message: `The metadata for the topic has been successfully updated.`,
+            color: 'green',
+          });
+        }
       }
       onClose();
     },
-    [focusedTopicIndex, getValues, isCreatingNewTopic, onClose, setValue],
+    [
+      focusedTopic,
+      focusedTopicIndex,
+      getValues,
+      isCreatingNewTopic,
+      onClose,
+      setValue,
+    ],
   );
 
   const form = useForm({

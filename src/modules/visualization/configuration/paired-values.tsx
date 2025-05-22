@@ -2,10 +2,8 @@ import * as Yup from 'yup';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import React from 'react';
 import { ProjectContext } from '@/modules/project/context';
-import {
-  ANALYZABLE_SCHEMA_COLUMN_TYPES,
-  filterProjectColumnsByType,
-} from '@/api/project';
+import { filterProjectColumnsByType } from '@/api/project';
+import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 
 export const VisualizationPairedValuesConfigSchema = Yup.object({
   column2: Yup.string().required(),
@@ -17,10 +15,10 @@ export type VisualizationPairedValuesConfigType = Yup.InferType<
 
 export function VisualizationPairedValuesConfigForm() {
   const project = React.useContext(ProjectContext);
-  const columns = filterProjectColumnsByType(
-    project,
-    ANALYZABLE_SCHEMA_COLUMN_TYPES,
-  );
+  const columns = filterProjectColumnsByType(project, [
+    SchemaColumnTypeEnum.Temporal,
+    SchemaColumnTypeEnum.Continuous,
+  ]);
   return (
     <ProjectColumnSelectField
       name="config.column2"

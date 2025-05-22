@@ -62,16 +62,16 @@ interface TemporalColumnCellProps {
   precision: TemporalPrecisionEnum | null;
 }
 
-function TemporalColumnCell(props: TemporalColumnCellProps) {
-  if (!props.date) {
-    return null;
-  }
-  const date = dayjs(props.date);
+export function formatTemporalValueByPrecision(
+  rawDate: Date,
+  precision: TemporalPrecisionEnum | null,
+) {
+  const date = dayjs(rawDate);
   if (!date.isValid()) {
     return null;
   }
   let value: string;
-  switch (props.precision) {
+  switch (precision) {
     case TemporalPrecisionEnum.Year: {
       value = date.format('YYYY');
       break;
@@ -89,6 +89,14 @@ function TemporalColumnCell(props: TemporalColumnCellProps) {
       break;
     }
   }
+  return value;
+}
+
+function TemporalColumnCell(props: TemporalColumnCellProps) {
+  if (!props.date) {
+    return null;
+  }
+  const value = formatTemporalValueByPrecision(props.date, props.precision);
   return <DefaultColumnCell>{value}</DefaultColumnCell>;
 }
 

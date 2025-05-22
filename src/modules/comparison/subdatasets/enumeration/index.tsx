@@ -11,6 +11,7 @@ import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import EnumerateTopicValuesActions from './topic';
 import EnumerateCategoricalValuesActions from './categorical';
 import EnumerationSubdatasetsBooleanColumns from './boolean';
+import { List } from '@phosphor-icons/react';
 
 export function EnumerationSubdatasetSelectInput() {
   const project = React.useContext(ProjectContext);
@@ -44,7 +45,7 @@ export function EnumerationSubdatasetSelectInput() {
           <EnumerateCategoricalValuesActions column={column} />
         ))}
       {!column && (
-        <Button disabled className="max-w-sm">
+        <Button disabled className="max-w-sm" leftSection={<List />}>
           Enumerate Values
         </Button>
       )}

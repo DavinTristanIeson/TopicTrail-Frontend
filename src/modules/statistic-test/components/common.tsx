@@ -20,6 +20,7 @@ import {
   Tooltip,
   SimpleGrid,
   Switch,
+  Spoiler,
 } from '@mantine/core';
 import { Warning } from '@phosphor-icons/react';
 import { max, sum } from 'lodash-es';
@@ -49,9 +50,11 @@ export function StatisticTestWarningsRenderer(
       color="yellow"
       icon={<Warning size={20} />}
     >
-      {warnings.map((warning, index) => (
-        <Text key={`${warning}-${index}`}>{warning}</Text>
-      ))}
+      <Spoiler hideLabel="Hide" showLabel="Show More">
+        {warnings.map((warning, index) => (
+          <Text key={`${warning}-${index}`}>{warning}</Text>
+        ))}
+      </Spoiler>
     </Alert>
   );
 }
@@ -117,6 +120,9 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
   if (groups.length === 0 || totalCount === 0) return null;
   const emptyCount = sum(groups.map((group) => group.empty_count)) ?? 0;
   const emptyProportion = (emptyCount / totalCount) * 100;
+
+  const overlapCount = sum(groups.map((group) => group.overlap_count)) ?? 0;
+  const overlapProportion = (overlapCount / totalCount) * 100;
   const { colors } = generateColorsFromSequence(groups);
 
   return (
@@ -150,6 +156,13 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
               label={`Empty: ${emptyCount} / ${totalCount} (${emptyProportion.toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
             >
               <Progress.Section value={emptyProportion} color="red" />
+            </Tooltip>
+          )}
+          {overlapCount > 0 && (
+            <Tooltip
+              label={`Overlap: ${overlapCount} / ${totalCount} (${overlapProportion.toFixed(2)}%) Rows. This number includes all rows that are shared by two or more subdatasets.`}
+            >
+              <Progress.Section value={overlapProportion} color="yellow" />
             </Tooltip>
           )}
         </Progress.Root>

@@ -9,6 +9,7 @@ import {
   filterProjectColumnsByType,
 } from '@/api/project';
 import { ExcludeOverlappingRowsCheckbox } from './utils';
+import { Stack } from '@mantine/core';
 
 export const binaryContingencyTableFormSchema = Yup.object({
   column: Yup.string().required().default(''),
@@ -51,9 +52,9 @@ export type ContingencyTableConfig = Yup.InferType<
 
 export function ContingencyTableConfigForm() {
   return (
-    <>
+    <Stack>
       <BinaryContingencyTableConfigForm />
       <ExcludeOverlappingRowsCheckbox />
-    </>
+    </Stack>
   );
 }

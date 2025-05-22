@@ -8,6 +8,8 @@ import {
   VisualizationContinuousDataDistributionDisplayMode,
 } from '../../configuration/continuous-data-distribution';
 import { usePlotRendererHelperProps } from '../configuration';
+import { useProjectColumn } from '@/modules/project/context';
+import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 
 function VisualizationContinuousDataDistributionViolinBoxPlot(
   props: BaseVisualizationComponentProps<
@@ -62,6 +64,7 @@ export function VisualizationContinuousDataDistributionHistogram(
   >,
 ) {
   const { data, item } = props;
+  const column = useProjectColumn(item.column);
   const plot = React.useMemo<PlotParams>(() => {
     const { colors } = generateColorsFromSequence(
       data.map((data) => data.name),
@@ -80,6 +83,69 @@ export function VisualizationContinuousDataDistributionHistogram(
         },
       };
     });
+    const buttons = [
+      {
+        type: 'dropdown',
+        direction: 'down',
+        buttons: [
+          {
+            label: 'Auto',
+            method: 'restyle',
+            args: [
+              {
+                xbins: {
+                  size: undefined,
+                },
+              },
+            ],
+          },
+          {
+            label: 'Daily',
+            method: 'restyle',
+            args: [
+              {
+                xbins: {
+                  size: 'D1',
+                },
+              },
+            ],
+          },
+          {
+            label: 'Monthly',
+            method: 'restyle',
+            args: [
+              {
+                xbins: {
+                  size: 'M1',
+                },
+              },
+            ],
+          },
+          {
+            label: 'Quarterly',
+            method: 'restyle',
+            args: [
+              {
+                xbins: {
+                  size: 'M4',
+                },
+              },
+            ],
+          },
+          {
+            label: 'Yearly',
+            method: 'restyle',
+            args: [
+              {
+                xbins: {
+                  size: 'M12',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ] as PlotParams['layout']['updatemenus'];
     return {
       data: subplots,
       layout: {
@@ -88,9 +154,11 @@ export function VisualizationContinuousDataDistributionHistogram(
           minallowed: 0,
         },
         barmode: 'group',
+        updatemenus:
+          column?.type === SchemaColumnTypeEnum.Temporal ? buttons : undefined,
       },
     };
-  }, [data, item.column]);
+  }, [column?.type, data, item.column]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
 
