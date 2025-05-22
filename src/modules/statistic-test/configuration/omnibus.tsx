@@ -9,13 +9,17 @@ import React from 'react';
 import { Stack } from '@mantine/core';
 import { GroupStatisticMethodSelectField } from './select-statistic-test-method';
 import { useProjectColumnField } from '@/modules/project/context';
-import { StatisticTestProjectColumnSelectField } from './utils';
+import {
+  ExcludeOverlappingRowsCheckbox,
+  StatisticTestProjectColumnSelectField,
+} from './utils';
 
 export const omnibusStatisticTestFormSchema = Yup.object({
   column: Yup.string().required(),
   statistic_test_preference: Yup.string()
     .oneOf(Object.values(OmnibusStatisticTestMethodEnum))
     .required(),
+  exclude_overlapping_rows: Yup.boolean().required().default(true),
 });
 
 export type OmnibusStatisticTestConfig = Yup.InferType<
@@ -40,6 +44,7 @@ export function OmnibusStatisticTestConfigForm() {
           required
         />
       )}
+      <ExcludeOverlappingRowsCheckbox />
     </Stack>
   );
 }

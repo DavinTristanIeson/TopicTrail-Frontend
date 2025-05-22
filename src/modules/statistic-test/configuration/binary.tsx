@@ -20,6 +20,7 @@ export const binaryStatisticTestFormSchema = Yup.object({
     .oneOf(Object.values(EffectSizeMethodEnum))
     .required()
     .default(null),
+  exclude_overlapping_rows: Yup.boolean().required().default(true),
 });
 
 export type BinaryStatisticTestConfig = Yup.InferType<

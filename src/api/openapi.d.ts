@@ -1143,12 +1143,25 @@ export interface components {
             discriminator1: string;
             /** Discriminator2 */
             discriminator2: string;
-            /** Frequency */
-            frequency: number;
+            /** Tt */
+            TT: number;
+            /** Tf */
+            TF: number;
+            /** Ft */
+            FT: number;
+            /** Ff */
+            FF: number;
             /** Warnings */
             warnings: string[];
             significance: components["schemas"]["SignificanceResult"];
             effect_size: components["schemas"]["EffectSizeResult"];
+        };
+        /** BinaryStatisticTestOnContingencyTableSchema */
+        BinaryStatisticTestOnContingencyTableSchema: {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Column */
+            column: string;
         };
         /** BinaryStatisticTestOnDistributionResultResource */
         BinaryStatisticTestOnDistributionResultResource: {
@@ -1159,8 +1172,8 @@ export interface components {
             /** Results */
             results: components["schemas"]["StatisticTestResult"][];
         };
-        /** BinaryStatisticTestSchema */
-        BinaryStatisticTestSchema: {
+        /** BinaryStatisticTestOnDistributionSchema */
+        BinaryStatisticTestOnDistributionSchema: {
             /** Column */
             column: string;
             /** Groups */
@@ -1263,6 +1276,8 @@ export interface components {
             valid_count: number;
             /** Total Count */
             total_count: number;
+            /** Overlap Count */
+            overlap_count: number;
         };
         /** ComparisonState */
         "ComparisonState-Input": {
@@ -1543,6 +1558,8 @@ export interface components {
             groups: components["schemas"]["NamedTableFilter"][];
             /** Column */
             column: string;
+            /** Exclude Overlapping Rows */
+            exclude_overlapping_rows: boolean;
         };
         /** GetTableColumnAggregateValuesSchema */
         GetTableColumnAggregateValuesSchema: {
@@ -1743,6 +1760,8 @@ export interface components {
             /** Column */
             column: string;
             statistic_test_preference: components["schemas"]["OmnibusStatisticTestMethodEnum"];
+            /** Exclude Overlapping Rows */
+            exclude_overlapping_rows: boolean;
         };
         /** OrTableFilter */
         "OrTableFilter-Input": {
@@ -1830,6 +1849,8 @@ export interface components {
             column: string;
             statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
             effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
+            /** Exclude Overlapping Rows */
+            exclude_overlapping_rows: boolean;
         };
         /** ParquetDataSource */
         ParquetDataSource: {
@@ -1918,6 +1939,8 @@ export interface components {
             groups: components["schemas"]["ComparisonGroupInfo"][];
             significance: components["schemas"]["SignificanceResult"];
             effect_size: components["schemas"]["EffectSizeResult"];
+            /** Sample Size */
+            sample_size: number;
         };
         /** StatisticTestSchema */
         StatisticTestSchema: {
@@ -1927,6 +1950,8 @@ export interface components {
             column: string;
             statistic_test_preference: components["schemas"]["StatisticTestMethodEnum"];
             effect_size_preference: components["schemas"]["EffectSizeMethodEnum"];
+            /** Exclude Overlapping Rows */
+            exclude_overlapping_rows: boolean;
         };
         /** SubdatasetCooccurrenceResource */
         SubdatasetCooccurrenceResource: {
@@ -6532,7 +6557,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BinaryStatisticTestSchema"];
+                "application/json": components["schemas"]["BinaryStatisticTestOnDistributionSchema"];
             };
         };
         responses: {
@@ -6603,7 +6628,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["GetContingencyTableSchema"];
+                "application/json": components["schemas"]["BinaryStatisticTestOnContingencyTableSchema"];
             };
         };
         responses: {

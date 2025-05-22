@@ -22,6 +22,7 @@ const useOmnibusStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
         column: config.column,
         groups: subdatasets,
         statistic_test_preference: config.statistic_test_preference,
+        exclude_overlapping_rows: config.exclude_overlapping_rows,
       },
       params,
     },

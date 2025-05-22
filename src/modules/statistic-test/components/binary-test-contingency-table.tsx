@@ -55,7 +55,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
     return (
       max(
         data.results.map((result) =>
-          max(result.map((resultEntry) => resultEntry.frequency) ?? 0),
+          max(result.map((resultEntry) => resultEntry.TT) ?? 0),
         ),
       ) ?? 0
     );
@@ -72,8 +72,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
   const values = React.useMemo(() => {
     const invalid = map2D(data.results, (result) => {
       return (
-        !filterAlpha(result.significance.p_value) ||
-        !filterFrequency(result.frequency)
+        !filterAlpha(result.significance.p_value) || !filterFrequency(result.TT)
       );
     });
     const isAllInvalid = invalid.every((row) => row.every((col) => col));
@@ -101,7 +100,10 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
       data.results,
       (result) => result.significance.statistic,
     );
-    const frequencies = map2D(data.results, (result) => result.frequency);
+    const TT = map2D(data.results, (result) => result.TT);
+    const TF = map2D(data.results, (result) => result.TF);
+    const FT = map2D(data.results, (result) => result.FT);
+    const FF = map2D(data.results, (result) => result.FF);
     const warnings = map2D(data.results, (result) => {
       if (result.warnings.length === 0) {
         return 'None';
@@ -121,7 +123,10 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
         confidences,
         statistics,
         effectSizes,
-        frequencies,
+        TT,
+        TF,
+        FT,
+        FF,
         warnings,
       ]),
       rowIndices,
@@ -134,9 +139,13 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
       '<b>Confidence</b>: %{customdata[1]}%',
       `<b>Chi-Squared Statistic</b>: %{customdata[2]}`,
       `<b>Yule's Q</b>: %{customdata[3]}`,
-      '<b>Frequency</b>: %{customdata[4]}',
-      '<br><b>Warnings</b>:<br>%{customdata[5]}',
-    ];
+      '<b>Contingency Table</b>:',
+      '<b>- TT:</b> %{customdata[4]}',
+      '<b>- TF:</b> %{customdata[5]}',
+      '<b>- FT:</b> %{customdata[6]}',
+      '<b>- FF:</b> %{customdata[7]}',
+      '<b>Warnings</b>:<br>%{customdata[8]}',
+    ].join('<br>');
 
     return {
       effectSizes,
@@ -144,7 +153,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
       confidences,
       statistics,
       valid: invalid,
-      frequencies,
+      frequencies: TT,
       customdata,
       hovertemplate,
       effectSizeMethodConstraints,
@@ -175,7 +184,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           texttemplate: '%{z}',
           hoverongaps: false,
           customdata: customdata as any,
-          hovertemplate: hovertemplate.join('<br>'),
+          hovertemplate: hovertemplate,
           colorscale: 'Viridis',
           colorbar: {
             title: 'Frequency',
@@ -217,7 +226,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           colorscale: 'RdBu',
           hoverongaps: false,
           customdata: customdata as any,
-          hovertemplate: hovertemplate.join('<br>'),
+          hovertemplate: hovertemplate,
           colorbar: {
             title: "Yule's Q",
           },
@@ -253,7 +262,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           hoverongaps: false,
           colorscale: 'Viridis',
           customdata: customdata as any,
-          hovertemplate: hovertemplate.join('<br>'),
+          hovertemplate: hovertemplate,
           zmin: 0,
           zmax: 100,
           colorbar: {

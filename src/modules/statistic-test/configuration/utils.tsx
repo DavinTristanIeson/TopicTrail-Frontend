@@ -13,6 +13,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { filterProjectColumnsByType } from '@/api/project';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
+import RHFField from '@/components/standard/fields';
 
 export function StatisticTestMethodFormBody() {
   const columnType = useProjectColumnField('column')?.type as
@@ -75,6 +76,17 @@ export function StatisticTestProjectColumnSelectField() {
           setValue('statistic_test_preference', null as any);
         }
       }}
+    />
+  );
+}
+
+export function ExcludeOverlappingRowsCheckbox() {
+  return (
+    <RHFField
+      name="exclude_overlapping_rows"
+      label="Exclude overlapping rows"
+      description="Statistic tests that assume independence can be unreliable if the samples are non-independent or have overlapping data points. We recommend that you ensure all of your subdatasets are independent or have very few overlap with each other. Alternatively, you can also exclude overlapping rows to ensure independence, but at the loss of the statistical test's power - especially if there are a lot of overlapping rows between your subdatasets."
+      type="switch"
     />
   );
 }

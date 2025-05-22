@@ -21,6 +21,7 @@ const useContingencyTableStatisticTestDataProvider: BaseStatisticTestDataProvide
       body: {
         column: config.column,
         groups: subdatasets,
+        exclude_overlapping_rows: config.exclude_overlapping_rows,
       },
       params,
     },

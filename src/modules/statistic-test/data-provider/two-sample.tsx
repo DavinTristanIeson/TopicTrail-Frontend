@@ -28,6 +28,7 @@ export const useTwoSampleStatisticTestDataProvider: BaseStatisticTestDataProvide
       group1: subdatasets[0]!,
       group2: subdatasets[1]!,
       statistic_test_preference: config.statistic_test_preference,
+      exclude_overlapping_rows: config.exclude_overlapping_rows,
     },
     params,
   });
@@ -50,6 +51,7 @@ export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticTestDat
         groups: subdatasets,
         effect_size_preference: config.effect_size_preference,
         statistic_test_preference: config.statistic_test_preference,
+        exclude_overlapping_rows: config.exclude_overlapping_rows,
       },
       params,
     },

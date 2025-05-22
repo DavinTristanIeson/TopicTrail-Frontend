@@ -14,6 +14,8 @@ import {
   ContingencyTableConfigForm,
   ContingencyTableConfig,
   contingencyTableFormSchema,
+  BinaryContingencyTableConfigForm,
+  binaryContingencyTableFormSchema,
 } from './configuration/contingency-table';
 import {
   OmnibusStatisticTestConfig,
@@ -67,6 +69,14 @@ function getBasicStatisticTestParams(config: {
   };
 }
 
+function getExcludeOverlappingRowsParams(config: {
+  exclude_overlapping_rows: boolean;
+}) {
+  return {
+    'Exclude Overlapping Rows': config.exclude_overlapping_rows ? 'Yes' : 'No',
+  };
+}
+
 export const STATISTIC_TEST_CONFIGURATION: Record<
   StatisticTestPurpose,
   StatisticTestConfigurationEntry<any, any>
@@ -85,6 +95,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
         'Subdataset 1': config.group1,
         'Subdataset 2': config.group2,
         ...getBasicStatisticTestParams(config),
+        ...getExcludeOverlappingRowsParams(config),
       };
     },
   } as StatisticTestConfigurationEntry<
@@ -107,6 +118,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
           OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY[
             config.statistic_test_preference
           ]?.label ?? config.statistic_test_preference,
+        ...getExcludeOverlappingRowsParams(config),
       };
     },
   } as StatisticTestConfigurationEntry<
@@ -122,7 +134,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     description:
       'Test all possible pairs of subdatasets to see which pairs have statistically significantly difference with each other.',
     label: 'Pairwise Two-Sample Statistic Test',
-    getParams: getBasicStatisticTestParams,
+    getParams(config) {
+      return {
+        ...getBasicStatisticTestParams(config),
+        ...getExcludeOverlappingRowsParams(config),
+      };
+    },
   } as StatisticTestConfigurationEntry<
     PairwiseStatisticTestResultModel,
     TwoSampleStatisticTestConfig
@@ -139,6 +156,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     getParams(config) {
       return {
         Column: config.column,
+        ...getExcludeOverlappingRowsParams(config),
       };
     },
   } as StatisticTestConfigurationEntry<
@@ -148,8 +166,8 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
   [StatisticTestPurpose.BinaryTestContingencyTable]: {
     type: StatisticTestPurpose.BinaryTestContingencyTable,
     component: BinaryStatisticTestOnContingencyTableResultRenderer,
-    configForm: ContingencyTableConfigForm,
-    configValidator: contingencyTableFormSchema,
+    configForm: BinaryContingencyTableConfigForm,
+    configValidator: binaryContingencyTableFormSchema,
     dataProvider: useBinaryStatisticTestOnContingencyTableDataProvider,
     description:
       'Each pair of subdataset and category will be used to create a 2 x 2 contingency table. This contingency table will be analyzed to calculate the correlation between the subdataset and category.',

@@ -8,16 +8,17 @@ import {
   CATEGORICAL_SCHEMA_COLUMN_TYPES,
   filterProjectColumnsByType,
 } from '@/api/project';
+import { ExcludeOverlappingRowsCheckbox } from './utils';
 
-export const contingencyTableFormSchema = Yup.object({
-  column: Yup.string().required(),
+export const binaryContingencyTableFormSchema = Yup.object({
+  column: Yup.string().required().default(''),
 });
 
-export type ContingencyTableConfig = Yup.InferType<
+export type BinaryContingencyTableConfig = Yup.InferType<
   typeof contingencyTableFormSchema
 >;
 
-export function ContingencyTableConfigForm() {
+export function BinaryContingencyTableConfigForm() {
   const project = React.useContext(ProjectContext);
   const columns = filterProjectColumnsByType(
     project,
@@ -36,5 +37,23 @@ export function ContingencyTableConfigForm() {
       }
       description="The column that will be used for the statistic test."
     />
+  );
+}
+
+export const contingencyTableFormSchema = Yup.object({
+  column: Yup.string().required().default(''),
+  exclude_overlapping_rows: Yup.boolean().required().default(true),
+});
+
+export type ContingencyTableConfig = Yup.InferType<
+  typeof contingencyTableFormSchema
+>;
+
+export function ContingencyTableConfigForm() {
+  return (
+    <>
+      <BinaryContingencyTableConfigForm />
+      <ExcludeOverlappingRowsCheckbox />
+    </>
   );
 }
