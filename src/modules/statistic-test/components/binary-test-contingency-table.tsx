@@ -1,34 +1,32 @@
-import { BaseVisualizationComponentProps } from '../../types/base';
-import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../configuration/test-distribution';
 import React from 'react';
 import type { PlotParams } from 'react-plotly.js';
-import { Alert, MultiSelect, Stack } from '@mantine/core';
-import { VisualizationBinaryStatisticTestOnContingencyTableMainModel } from '@/api/correlation';
+import { MultiSelect, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
+
+import { max } from 'lodash-es';
+import { BaseStatisticTestResultRendererProps } from '../types';
+import { BinaryStatisticTestOnContingencyTableMainResultModel } from '@/api/statistic-test';
+import { ContingencyTableConfig } from '../configuration/contingency-table';
 import {
   BinaryStatisticTestVisualizationType,
   PlotInlineConfiguration,
+  StatisticTestEmptyPlotWarning,
   useBinaryStatisticTestVisualizationMethodSelect,
   useCategoriesAxisMultiSelect,
-  usePlotRendererHelperProps,
   useVisualizationAlphaSlider,
   useVisualizationMinFrequencySlider,
-  VisualizationCorrelationStatisticTestResultsRenderer,
-} from '../configuration';
-import { max } from 'lodash-es';
-import { plotlyWrapText } from '../utils';
-import { Warning } from '@phosphor-icons/react';
+} from '@/modules/visualization/components/configuration';
+import { plotlyWrapText } from '@/modules/visualization/components/utils';
 
-export default function VisualizationBinaryStatisticTestOnContingencyTable(
-  props: BaseVisualizationComponentProps<
-    VisualizationBinaryStatisticTestOnContingencyTableMainModel,
-    VisualizationBinaryStatisticTestonDistributionConfigType
+export default function BinaryStatisticTestOnContingencyTableResultRenderer(
+  props: BaseStatisticTestResultRendererProps<
+    BinaryStatisticTestOnContingencyTableMainResultModel,
+    ContingencyTableConfig
   >,
 ) {
-  const { item } = props;
-  const data = props.data[0]!.data!;
+  const { config, data } = props;
 
   // region Configuration
   const {
@@ -37,7 +35,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
     indexed: indexColumns,
   } = useCategoriesAxisMultiSelect({
     supportedCategories: data.columns,
-    column: data.column2,
+    column: data.column,
   });
   const {
     multiSelectProps: rowsSelectProps,
@@ -45,7 +43,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
     indexed: indexRows,
   } = useCategoriesAxisMultiSelect({
     supportedCategories: data.rows,
-    column: data.column1,
+    column: undefined,
   });
 
   const { Component: AlphaSlider, filter: filterAlpha } =
@@ -57,7 +55,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
     return (
       max(
         data.results.map((result) =>
-          max(result.map((resultEntry) => resultEntry.frequency) ?? 0),
+          max(result.map((resultEntry) => resultEntry.TT) ?? 0),
         ),
       ) ?? 0
     );
@@ -74,8 +72,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
   const values = React.useMemo(() => {
     const invalid = map2D(data.results, (result) => {
       return (
-        !filterAlpha(result.significance.p_value) ||
-        !filterFrequency(result.frequency)
+        !filterAlpha(result.significance.p_value) || !filterFrequency(result.TT)
       );
     });
     const isAllInvalid = invalid.every((row) => row.every((col) => col));
@@ -103,7 +100,10 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       data.results,
       (result) => result.significance.statistic,
     );
-    const frequencies = map2D(data.results, (result) => result.frequency);
+    const TT = map2D(data.results, (result) => result.TT);
+    const TF = map2D(data.results, (result) => result.TF);
+    const FT = map2D(data.results, (result) => result.FT);
+    const FF = map2D(data.results, (result) => result.FF);
     const warnings = map2D(data.results, (result) => {
       if (result.warnings.length === 0) {
         return 'None';
@@ -123,22 +123,29 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         confidences,
         statistics,
         effectSizes,
-        frequencies,
+        TT,
+        TF,
+        FT,
+        FF,
         warnings,
       ]),
       rowIndices,
       columnIndices,
     );
     const hovertemplate = [
-      `<b>${item.column}</b>: %{y}`,
-      `<b>${item.config.target}</b>: %{x}`,
+      `<b>Subdataset</b>: %{y}`,
+      `<b>${config.column}</b>: %{x}`,
       '<b>P Value</b>: %{customdata[0]}',
       '<b>Confidence</b>: %{customdata[1]}%',
       `<b>Chi-Squared Statistic</b>: %{customdata[2]}`,
       `<b>Yule's Q</b>: %{customdata[3]}`,
-      '<b>Frequency</b>: %{customdata[4]}',
-      '<br><b>Warnings</b>:<br>%{customdata[5]}',
-    ];
+      '<b>Contingency Table</b>:',
+      '<b>- TT:</b> %{customdata[4]}',
+      '<b>- TF:</b> %{customdata[5]}',
+      '<b>- FT:</b> %{customdata[6]}',
+      '<b>- FF:</b> %{customdata[7]}',
+      '<b>Warnings</b>:<br>%{customdata[8]}',
+    ].join('<br>');
 
     return {
       effectSizes,
@@ -146,7 +153,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       confidences,
       statistics,
       valid: invalid,
-      frequencies,
+      frequencies: TT,
       customdata,
       hovertemplate,
       effectSizeMethodConstraints,
@@ -154,12 +161,12 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
       isAllInvalid,
     };
   }, [
-    data,
+    data.results,
     indexRows,
     rows,
     indexColumns,
     columns,
-    item,
+    config.column,
     filterAlpha,
     filterFrequency,
   ]);
@@ -173,30 +180,31 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           type: 'heatmap',
           x: columns,
           y: rows,
-          z: map2D(process(frequencies), (value) => value ?? 0),
+          z: process(frequencies),
           texttemplate: '%{z}',
           hoverongaps: false,
           customdata: customdata as any,
-          hovertemplate: hovertemplate.join('<br>'),
+          hovertemplate: hovertemplate,
+          colorscale: 'Viridis',
           colorbar: {
             title: 'Frequency',
           },
         },
       ],
       layout: {
-        title: `Frequencies of ${item.column}`,
+        title: `Cooccurrence of Subdataset and ${config.column}`,
         yaxis: {
-          title: item.column,
+          title: config.column,
           automargin: true,
           autorange: 'reversed',
         },
         xaxis: {
-          title: item.config.target,
+          title: config.column,
           automargin: true,
         },
       },
     };
-  }, [columns, item.column, item.config.target, rows, values]);
+  }, [columns, config.column, rows, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
     const {
@@ -218,7 +226,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           colorscale: 'RdBu',
           hoverongaps: false,
           customdata: customdata as any,
-          hovertemplate: hovertemplate.join('<br>'),
+          hovertemplate: hovertemplate,
           colorbar: {
             title: "Yule's Q",
           },
@@ -226,19 +234,19 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         },
       ],
       layout: {
-        title: `Effect Sizes of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
+        title: `Effect Sizes of How the Subdatasets Correlates With Values of ${config.column}`,
         yaxis: {
-          title: item.column,
+          title: 'Subdatasets',
           automargin: true,
           autorange: 'reversed',
         },
         xaxis: {
-          title: item.config.target,
+          title: config.column,
           automargin: true,
         },
       },
     };
-  }, [columns, item, rows, values]);
+  }, [columns, config.column, rows, values]);
 
   const confidenceLevelsPlot = React.useMemo<PlotParams>(() => {
     const { confidences, customdata, hovertemplate, process } = values;
@@ -254,7 +262,7 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
           hoverongaps: false,
           colorscale: 'Viridis',
           customdata: customdata as any,
-          hovertemplate: hovertemplate.join('<br>'),
+          hovertemplate: hovertemplate,
           zmin: 0,
           zmax: 100,
           colorbar: {
@@ -263,19 +271,19 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         },
       ],
       layout: {
-        title: `Confidence Level of How Values of ${item.column} Correlates With Values of ${item.config.target}`,
+        title: `Confidence Level of How the Subdatasets Correlates With Values of ${config.column}`,
         yaxis: {
-          title: item.column,
+          title: 'Subdatasets',
           automargin: true,
           autorange: 'reversed',
         },
         xaxis: {
-          title: item.config.target,
+          title: config.column,
           automargin: true,
         },
       },
     };
-  }, [columns, item, rows, values]);
+  }, [columns, config.column, rows, values]);
 
   let usedPlot: PlotParams;
   if (vistype === BinaryStatisticTestVisualizationType.Frequencies) {
@@ -286,7 +294,6 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
     usedPlot = effectSizesPlot;
   }
 
-  const plotProps = usePlotRendererHelperProps(item);
   return (
     <Stack>
       <PlotInlineConfiguration>
@@ -304,21 +311,14 @@ export default function VisualizationBinaryStatisticTestOnContingencyTable(
         {AlphaSlider}
         {FrequencySlider}
       </PlotInlineConfiguration>
-      <VisualizationCorrelationStatisticTestResultsRenderer
-        column1={item.column}
-        column2={item.config.target}
-        effectSize={data.effect_size}
-        significance={data.significance}
-        warnings={[]}
-      />
-      {values.isAllInvalid ? (
-        <Alert color="yellow" icon={<Warning />}>
-          Your filters are too strict. Try choosing a few rows/columns,
-          increasing the alpha constraint, or lowering the min. frequency.
-        </Alert>
-      ) : (
-        <PlotRenderer plot={usedPlot} {...plotProps} scrollZoom={false} />
-      )}
+      <StatisticTestEmptyPlotWarning
+        invalid={values.isAllInvalid}
+        hasRowsCols
+        hasAlpha
+        hasFrequency
+      >
+        <PlotRenderer plot={usedPlot} scrollZoom={false} />
+      </StatisticTestEmptyPlotWarning>
     </Stack>
   );
 }

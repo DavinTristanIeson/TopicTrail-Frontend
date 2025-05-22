@@ -5,7 +5,7 @@ import {
 } from '@/api/project';
 import {
   EffectSizeMethodEnum,
-  GroupStatisticTestMethodEnum,
+  OmnibusStatisticTestMethodEnum,
   SchemaColumnTypeEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
@@ -13,7 +13,7 @@ import {
   StatisticMethodSelectField,
   EffectSizeSelectField,
   GroupStatisticMethodSelectField,
-} from '@/modules/comparison/statistic-test/select-statistic-test-method';
+} from '@/modules/statistic-test/configuration/select-statistic-test-method';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
 import { Alert, Group } from '@mantine/core';
@@ -31,7 +31,7 @@ export const VisualizationBinaryStatisticTestOnDistributionConfigSchema =
       .oneOf(Object.values(EffectSizeMethodEnum))
       .required(),
     main_statistic_test_preference: Yup.string()
-      .oneOf(Object.values(GroupStatisticTestMethodEnum))
+      .oneOf(Object.values(OmnibusStatisticTestMethodEnum))
       .required(),
   });
 

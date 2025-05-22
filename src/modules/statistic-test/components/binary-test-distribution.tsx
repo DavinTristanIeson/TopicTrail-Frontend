@@ -1,41 +1,39 @@
-import { BaseVisualizationComponentProps } from '../../types/base';
-import { VisualizationBinaryStatisticTestonDistributionConfigType } from '../../configuration/test-distribution';
 import React from 'react';
 import type { PlotParams } from 'react-plotly.js';
 import { MultiSelect, Stack, useMantineTheme } from '@mantine/core';
-import { VisualizationBinaryStatisticTestOnDistributionMainModel } from '@/api/correlation';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { max, zip } from 'lodash-es';
 import {
   EFFECT_SIZE_DICTIONARY,
   STATISTIC_TEST_METHOD_DICTIONARY,
-} from '@/modules/comparison/statistic-test/dictionary';
+} from '@/modules/statistic-test/dictionary';
 import PlotRenderer from '@/components/widgets/plotly';
 import { ProjectContext } from '@/modules/project/context';
 
 import { pickArrayByIndex } from '@/common/utils/iterable';
+
+import { findProjectColumn } from '@/api/project';
+import { BaseStatisticTestResultRendererProps } from '../types';
+import { BinaryStatisticTestOnDistributionResultModel } from '@/api/statistic-test';
+import { BinaryStatisticTestConfig } from '../configuration/binary';
 import {
-  useVisualizationAlphaSlider,
-  useBinaryStatisticTestVisualizationMethodSelect,
-  useCategoriesAxisMultiSelect,
   BinaryStatisticTestVisualizationType,
   PlotInlineConfiguration,
-  usePlotRendererHelperProps,
+  useBinaryStatisticTestVisualizationMethodSelect,
+  useCategoriesAxisMultiSelect,
+  useVisualizationAlphaSlider,
   useVisualizationMinFrequencySlider,
-  VisualizationCorrelationStatisticTestResultsRenderer,
-} from '../configuration';
-import { findProjectColumn } from '@/api/project';
-import { plotlyWrapText } from '../utils';
+} from '@/modules/visualization/components/configuration';
+import { plotlyWrapText } from '@/modules/visualization/components/utils';
 
-export default function VisualizationBinaryStatisticTestOnDistribution(
-  props: BaseVisualizationComponentProps<
-    VisualizationBinaryStatisticTestOnDistributionMainModel,
-    VisualizationBinaryStatisticTestonDistributionConfigType
+export default function BinaryStatisticTestOnDistributionResultRenderer(
+  props: BaseStatisticTestResultRendererProps<
+    BinaryStatisticTestOnDistributionResultModel,
+    BinaryStatisticTestConfig
   >,
 ) {
-  const { item } = props;
+  const { data, config } = props;
   const { colors: mantineColors } = useMantineTheme();
-  const mainData = props.data[0]!.data!;
 
   // region Configuration
   const { Component: AlphaSlider, filter: filterAlpha } =
@@ -44,8 +42,8 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
     useBinaryStatisticTestVisualizationMethodSelect();
 
   const project = React.useContext(ProjectContext);
-  const column = findProjectColumn(project, item.column);
-  const discriminators = mainData.discriminators;
+  const column = findProjectColumn(project, config.column);
+  const discriminators = data.groups;
   const { multiSelectProps: discriminatorSelectProps, indexed } =
     useCategoriesAxisMultiSelect({
       supportedCategories: discriminators,
@@ -53,38 +51,54 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
     });
 
   const maxFrequency = React.useMemo(
-    () => max(mainData.results.map((item) => item.yes_count)) ?? 0,
-    [mainData.results],
+    () =>
+      max(data.results.map((item) => item.groups[0]?.valid_count ?? 0)) ?? 0,
+    [data.results],
   );
   const { Component: MinFrequencySlider, filter: filterFrequency } =
     useVisualizationMinFrequencySlider({ max: maxFrequency });
 
   // region Plot
   const values = React.useMemo(() => {
-    const data = mainData.results;
+    const results = data.results;
     const discriminatorIndices = indexed(discriminators);
     const process = function <T>(arr: T[]) {
       return pickArrayByIndex(arr, discriminatorIndices);
     };
     const x = process(discriminators);
-    const effectSizes = process(data.map((datum) => datum.effect_size.value));
-    const pValues = process(data.map((datum) => datum.significance.p_value));
+    const effectSizes = process(
+      results.map((result) => result.effect_size.value),
+    );
+    const pValues = process(
+      results.map((result) => result.significance.p_value),
+    );
     const confidences = process(
-      data.map((datum) => (1 - datum.significance.p_value) * 100),
+      results.map((result) => (1 - result.significance.p_value) * 100),
     );
     const statistics = process(
-      data.map((datum) => datum.significance.statistic),
+      results.map((result) => result.significance.statistic),
     );
 
-    const invalidCounts = process(data.map((datum) => datum.invalid_count));
-    const noCounts = process(data.map((datum) => datum.no_count));
-    const yesCounts = process(data.map((datum) => datum.yes_count));
+    const invalidCounts = process(
+      results.map((result) => {
+        return (
+          (result.groups[0]?.empty_count ?? 0) +
+          (result.groups[1]?.empty_count ?? 0)
+        );
+      }),
+    );
+    const noCounts = process(
+      results.map((result) => result.groups[1]?.valid_count ?? 0),
+    );
+    const yesCounts = process(
+      results.map((result) => result.groups[0]?.valid_count ?? 0),
+    );
     const warnings = process(
-      data.map((datum) => {
-        if (datum.warnings.length === 0) {
+      results.map((result) => {
+        if (result.warnings.length === 0) {
           return 'None';
         }
-        return datum.warnings
+        return result.warnings
           .map((warning) => plotlyWrapText(`- ${warning}`))
           .join('<br>');
       }),
@@ -100,13 +114,13 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
     );
 
     const statisticTestMethod =
-      STATISTIC_TEST_METHOD_DICTIONARY[item.config.statistic_test_preference];
+      STATISTIC_TEST_METHOD_DICTIONARY[config.statistic_test_preference];
     const statisticTestMethodLabel =
-      statisticTestMethod?.label ?? item.config.statistic_test_preference;
+      statisticTestMethod?.label ?? config.statistic_test_preference;
     const effectSizeMethod =
-      EFFECT_SIZE_DICTIONARY[item.config.effect_size_preference];
+      EFFECT_SIZE_DICTIONARY[config.effect_size_preference];
     const effectSizeMethodLabel =
-      effectSizeMethod?.label ?? item.config.effect_size_preference;
+      effectSizeMethod?.label ?? config.effect_size_preference;
     const effectSizeMethodYAxis = {
       range: effectSizeMethod.range.every(Boolean)
         ? effectSizeMethod.range
@@ -125,7 +139,7 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
       warnings,
     ) as any;
     const hovertemplate = [
-      `<b>${item.column}</b>: %{x}`,
+      `<b>Subdataset</b>: %{x}`,
       '<b>P Value</b>: %{customdata[0]}',
       '<b>Confidence</b>: %{customdata[1]}%',
       `<b>${statisticTestMethodLabel} Statistic</b>: %{customdata[2]}`,
@@ -151,12 +165,13 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
       effectSizeMethodYAxis,
     };
   }, [
+    data.results,
+    indexed,
     discriminators,
+    config.statistic_test_preference,
+    config.effect_size_preference,
     filterAlpha,
     filterFrequency,
-    indexed,
-    item,
-    mainData.results,
     mantineColors.gray,
   ]);
 
@@ -196,25 +211,18 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
         },
       ],
       layout: {
-        title: `Frequencies of ${item.config.target} Grouped by ${item.column}`,
+        title: `Frequencies of Each Subdataset`,
         barmode: 'stack',
         yaxis: {
           minallowed: 0,
           title: 'Frequency',
         },
         xaxis: {
-          title: item.config.target,
+          title: 'Subdatasets',
         },
       },
     };
-  }, [
-    item.column,
-    item.config.target,
-    mantineColors.gray,
-    mantineColors.green,
-    mantineColors.red,
-    values,
-  ]);
+  }, [mantineColors.gray, mantineColors.green, mantineColors.red, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
     const {
@@ -240,17 +248,17 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
         },
       ],
       layout: {
-        title: `Effect Sizes of How ${item.column} Affects ${item.config.target}`,
+        title: `Effect Sizes of How Subdatasets Affects ${config.column}`,
         yaxis: {
           ...effectSizeMethodYAxis,
           title: 'Effect Size',
         },
         xaxis: {
-          title: item.config.target,
+          title: 'Subdatasets',
         },
       },
     };
-  }, [item, values]);
+  }, [config.column, values]);
 
   const confidenceLevelsPlot = React.useMemo<PlotParams>(() => {
     const {
@@ -275,7 +283,7 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
         },
       ],
       layout: {
-        title: `Confidence Level of How ${item.column} Affects ${item.config.target}`,
+        title: `Confidence Level of How Subdatasets Affects ${config.column}`,
         yaxis: {
           range: [0, 100],
           minallowed: 0,
@@ -283,11 +291,11 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
           title: 'Confidence Level',
         },
         xaxis: {
-          title: item.config.target,
+          title: 'Subdatasets',
         },
       },
     };
-  }, [item, values]);
+  }, [config.column, values]);
 
   let usedPlot: PlotParams;
   if (vistype === BinaryStatisticTestVisualizationType.Frequencies) {
@@ -302,20 +310,13 @@ export default function VisualizationBinaryStatisticTestOnDistribution(
       <PlotInlineConfiguration>
         <MultiSelect
           {...discriminatorSelectProps}
-          label={`Values of ${item.column}`}
+          label={`Values of ${config.column}`}
         />
         {VisualizationMethodSelect}
         {AlphaSlider}
         {MinFrequencySlider}
       </PlotInlineConfiguration>
-      <VisualizationCorrelationStatisticTestResultsRenderer
-        column1={item.column}
-        column2={item.config.target}
-        effectSize={mainData.effect_size}
-        significance={mainData.significance}
-        warnings={mainData.warnings}
-      />
-      <PlotRenderer plot={usedPlot} {...usePlotRendererHelperProps(item)} />
+      <PlotRenderer plot={usedPlot} />
     </Stack>
   );
 }

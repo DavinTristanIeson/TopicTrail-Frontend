@@ -4,6 +4,7 @@ import {
   VisualizationColumnCountsModel,
   VisualizationFrequencyDistributionModel,
   VisualizationGeographicalPointsModel,
+  VisualizationPairedValuesModel,
   VisualizationTableWordFrequenciesModel,
 } from '@/api/table';
 import { DescriptiveStatisticsTableComponent } from '../components/continuous/descriptive-statistics';
@@ -31,7 +32,10 @@ import {
   VisualizationContinuousDataDistributionConfigSchema,
   VisualizationContinuousDataDistributionConfigType,
 } from '../configuration/continuous-data-distribution';
-import { useVisualizationValuesDataProvider } from '../data-provider/values';
+import {
+  useVisualizationPairedValuesDataProvider,
+  useVisualizationValuesDataProvider,
+} from '../data-provider/values';
 import { VisualizationContinuousDataDistributionRenderer } from '../components/continuous/continuous-data-distribution';
 import VisualizationCalendarComponent from '../components/temporal/calendar';
 import {
@@ -53,33 +57,6 @@ import { useVisualizationTopicWordsDataProvider } from '../data-provider/topic-w
 import { TopicModel } from '@/api/topic';
 import { VisualizationCompareSubdatasetWords } from '../components/textual/compare-subdataset-words';
 import { useVisualizationCompareSubdatasetWordsDataProvider } from '../data-provider/compare-subdataset-words';
-import {
-  VisualizationContingencyTableConfigForm,
-  VisualizationContingencyTableConfigSchema,
-  VisualizationContingencyTableConfigType,
-} from '../configuration/contingency-table';
-import { useVisualizationContingencyTableDataProvider } from '../data-provider/contingency-table';
-import { VisualizationContingencyTableHeatmap } from '../components/correlation/contingency-table';
-import {
-  VisualizationBinaryStatisticTestOnContingencyTableMainModel,
-  VisualizationBinaryStatisticTestOnDistributionMainModel,
-  VisualizationContingencyTableModel,
-} from '@/api/correlation';
-import VisualizationBinaryStatisticTestOnDistributionComponent from '../components/correlation/test-distribution';
-import {
-  useVisualizationBinaryStatisticTestOnContingencyTableDataProvider,
-  useVisualizationBinaryStatisticTestOnDistributionDataProvider,
-} from '../data-provider/binary-statistic-test';
-import {
-  VisualizationBinaryStatisticTestOnDistributionConfigSchema,
-  VisualizationBinaryStatisticTestonDistributionConfigType,
-  VisualizationBinaryStatisticTestOnDistributionConfigForm,
-} from '../configuration/test-distribution';
-import VisualizationBinaryStatisticTestOnContingencyTableComponent from '../components/correlation/test-contingency-table';
-import {
-  VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
-  VisualizationBinaryStatisticTestOnContingencyTableConfigSchema,
-} from '../configuration/test-contingency-table';
 import VisualizationProportionsComponent from '../components/categorical/proportions';
 import {
   VisualizationProportionsConfigForm,
@@ -103,6 +80,12 @@ import {
 import VisualizationSubdatasetCooccurrenceComponent from '../components/all/subdataset-cooccurrence';
 import { useVisualizationSubdatasetCooccurrenceDataProvider } from '../data-provider/subdataset-cooccurrence';
 import { SubdatasetCooccurrenceModel } from '@/api/comparison';
+import {
+  VisualizationPairedValuesConfigForm,
+  VisualizationPairedValuesConfigSchema,
+  VisualizationPairedValuesConfigType,
+} from '../configuration/paired-values';
+import VisualizationPairedValuesComponent from '../components/all/paired-values';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -130,19 +113,6 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     configForm: VisualizationCalendarConfigForm,
     configValidator: VisualizationCalendarConfigSchema,
   } as VisualizationConfigEntry<string[], VisualizationCalendarConfigType>,
-  [DashboardItemTypeEnum.ContingencyTable]: {
-    type: DashboardItemTypeEnum.ContingencyTable,
-    label: 'Contingency Table',
-    description:
-      'Show the joint frequencies of two different columns as a heatmap. For example, you might be interested in seeing what other categories occur frequently with the topic. You can also see how much the frequency deviates from expectations to identify abnormalities or outliers in the dataset.',
-    component: VisualizationContingencyTableHeatmap,
-    dataProvider: useVisualizationContingencyTableDataProvider,
-    configForm: VisualizationContingencyTableConfigForm,
-    configValidator: VisualizationContingencyTableConfigSchema,
-  } as VisualizationConfigEntry<
-    VisualizationContingencyTableModel,
-    VisualizationContingencyTableConfigType
-  >,
   [DashboardItemTypeEnum.Counts]: {
     type: DashboardItemTypeEnum.Counts,
     label: 'Counts',
@@ -226,33 +196,18 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     VisualizationGeographicalPointsModel,
     VisualizationGeographicalAggregateValuesConfigType
   >,
-  [DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable]: {
-    type: DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
-    label: 'Statistical Test on Contingency Table',
+  [DashboardItemTypeEnum.PairedValues]: {
+    type: DashboardItemTypeEnum.PairedValues,
+    label: 'Paired Data Distribution',
     description:
-      'Perform a statistic test between the two columns containing discrete data (wherein each "item" is considered a binary variable) to figure out the correlation of each pair of categories/values between both columns.',
-    component: VisualizationBinaryStatisticTestOnContingencyTableComponent,
-    dataProvider:
-      useVisualizationBinaryStatisticTestOnContingencyTableDataProvider,
-    configForm: VisualizationBinaryStatisticTestOnContingencyTableConfigForm,
-    configValidator:
-      VisualizationBinaryStatisticTestOnContingencyTableConfigSchema,
+      'Examine how the distribution of values between two columns to see if they correlate with each other or not.',
+    component: VisualizationPairedValuesComponent,
+    dataProvider: useVisualizationPairedValuesDataProvider,
+    configForm: VisualizationPairedValuesConfigForm,
+    configValidator: VisualizationPairedValuesConfigSchema,
   } as VisualizationConfigEntry<
-    VisualizationBinaryStatisticTestOnContingencyTableMainModel,
-    VisualizationBinaryStatisticTestonDistributionConfigType
-  >,
-  [DashboardItemTypeEnum.BinaryStatisticTestOnDistribution]: {
-    type: DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
-    label: 'Statistical Test on Distribution',
-    description:
-      'Perform a statistic test using the subdatasets (wherein each subdataset is considered as a binary variable: all rows in the subdataset, and all rows outside of the subdataset) to figure out its impact on the data distribution of this column.',
-    component: VisualizationBinaryStatisticTestOnDistributionComponent,
-    dataProvider: useVisualizationBinaryStatisticTestOnDistributionDataProvider,
-    configForm: VisualizationBinaryStatisticTestOnDistributionConfigForm,
-    configValidator: VisualizationBinaryStatisticTestOnDistributionConfigSchema,
-  } as VisualizationConfigEntry<
-    VisualizationBinaryStatisticTestOnDistributionMainModel,
-    VisualizationBinaryStatisticTestonDistributionConfigType
+    VisualizationPairedValuesModel,
+    VisualizationPairedValuesConfigType
   >,
   [DashboardItemTypeEnum.SubdatasetCooccurrence]: {
     type: DashboardItemTypeEnum.SubdatasetCooccurrence,

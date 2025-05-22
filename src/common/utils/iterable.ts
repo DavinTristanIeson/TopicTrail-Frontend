@@ -16,7 +16,7 @@ export function pickArrayById<T>(
   predicate: (value: T) => string | number,
 ): T[] {
   const arrayMapper = fromPairs(
-    array.map((value) => [predicate(value), value]),
+    array.map((value) => [predicate(value), value]).filter((x) => !!x[0]),
   );
   return ids.map((id) => arrayMapper[id]!).filter(Boolean);
 }

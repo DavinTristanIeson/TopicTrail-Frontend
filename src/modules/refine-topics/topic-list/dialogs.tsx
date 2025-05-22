@@ -19,8 +19,13 @@ export const UpdateTopicLabelDialog =
       const [topicId, { close }] = useParametrizedDisclosureTrigger(ref);
 
       return (
-        <Modal opened={!!topicId} onClose={close} title="Update Topic Metadata">
-          {topicId && (
+        <Modal
+          opened={topicId != null}
+          onClose={close}
+          title="Update Topic Metadata"
+          size={1200}
+        >
+          {topicId != null && (
             <>
               <Alert color="blue" icon={<Info />}>
                 By default, we use the first three topic words as the label of a

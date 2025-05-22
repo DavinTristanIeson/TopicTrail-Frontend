@@ -8,26 +8,34 @@ import {
 } from '../form-type';
 import { yupResolver } from '@hookform/resolvers/yup';
 import FormWrapper from '@/components/utility/form/wrapper';
-import { Group, Stack } from '@mantine/core';
+import { Button, Collapse, Group, Stack } from '@mantine/core';
 import SubmitButton from '@/components/standard/button/submit';
 import RHFField from '@/components/standard/fields';
 import { showNotification } from '@mantine/notifications';
-import { getTopicLabel } from '@/api/topic';
+import { getTopicLabel, TopicModel } from '@/api/topic';
+import { VisualizationWordCloudRenderer } from '@/modules/visualization/components/textual/renderer';
+import { useDisclosure } from '@mantine/hooks';
+import { Eye } from '@phosphor-icons/react';
 
 interface TopicUpdateFormProps {
   topicId: number;
   onClose(): void;
 }
 
-function TopicUpdateFormBody() {
+interface TopicUpdateFormBodyProps {
+  isCreate: boolean;
+}
+
+function TopicUpdateFormBody(props: TopicUpdateFormBodyProps) {
+  const { isCreate } = props;
   return (
     <>
       <RHFField
         type="text"
         name="label"
         label="Label"
-        required
         description="A label to describe the topic. By default, the label used is a combination of the first three topic words; however, this kind of label might be harder to interpret during your analysis."
+        required={isCreate}
       />
       <RHFField
         type="tags"
@@ -41,6 +49,41 @@ function TopicUpdateFormBody() {
         label="Description"
         description="A brief description to explain the analyst's understanding of the topic."
       />
+    </>
+  );
+}
+
+interface TopicUpdateWordsRendererProps {
+  topic: TopicModel;
+}
+
+function TopicUpdateWordsRenderer(props: TopicUpdateWordsRendererProps) {
+  const { topic } = props;
+  const [viewingTopic, { toggle: toggleViewingTopic }] = useDisclosure(false);
+  return (
+    <>
+      <Button
+        variant="subtle"
+        leftSection={<Eye />}
+        onClick={toggleViewingTopic}
+      >
+        View Topic Words
+      </Button>
+      <Collapse in={viewingTopic}>
+        {viewingTopic && (
+          <VisualizationWordCloudRenderer
+            words={topic.words.map((word) => {
+              return {
+                text: word[0],
+                value: word[1],
+              };
+            })}
+            title={getTopicLabel(topic)}
+            noDataPlaceholder={''}
+            valueLabel={'C-TF-IDF'}
+          />
+        )}
+      </Collapse>
     </>
   );
 }
@@ -86,17 +129,31 @@ export default function TopicUpdateForm(props: TopicUpdateFormProps) {
         });
       } else {
         setValue(`topics.${focusedTopicIndex}`, values);
-        showNotification({
-          message: `The metadata for topic "${getTopicLabel({
-            ...values.original,
-            label: values.label,
-          })}" has been successfully updated.`,
-          color: 'green',
-        });
+        if (focusedTopic) {
+          showNotification({
+            message: `The metadata for topic "${getTopicLabel({
+              ...focusedTopic.original,
+              label: focusedTopic.label,
+            })}" has been successfully updated.`,
+            color: 'green',
+          });
+        } else {
+          showNotification({
+            message: `The metadata for the topic has been successfully updated.`,
+            color: 'green',
+          });
+        }
       }
       onClose();
     },
-    [focusedTopicIndex, getValues, isCreatingNewTopic, onClose, setValue],
+    [
+      focusedTopic,
+      focusedTopicIndex,
+      getValues,
+      isCreatingNewTopic,
+      onClose,
+      setValue,
+    ],
   );
 
   const form = useForm({
@@ -110,10 +167,13 @@ export default function TopicUpdateForm(props: TopicUpdateFormProps) {
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
       <Stack className="pt-5">
-        <TopicUpdateFormBody />
+        {focusedTopic?.original && (
+          <TopicUpdateWordsRenderer topic={focusedTopic.original} />
+        )}
+        <TopicUpdateFormBody isCreate={isCreatingNewTopic} />
         <Group justify="end">
           <SubmitButton>
-            {isCreatingNewTopic ? 'Update Topic Metadata' : 'Create New Topic'}
+            {isCreatingNewTopic ? 'Create New Topic' : 'Update Topic Metadata'}
           </SubmitButton>
         </Group>
       </Stack>

@@ -87,7 +87,7 @@ export enum StatisticTestMethodEnum {
   ChiSquared = 'chi-squared',
 }
 
-export enum GroupStatisticTestMethodEnum {
+export enum OmnibusStatisticTestMethodEnum {
   ANOVA = 'anova',
   KruskalWallis = 'kruskal-wallis',
   ChiSquared = 'chi-squared',
@@ -101,7 +101,7 @@ export enum EffectSizeMethodEnum {
   CramerV = 'cramer-v',
 }
 
-export enum GroupEffectSizeMethodEnum {
+export enum OmnibusEffectSizeMethodEnum {
   EtaSquared = 'eta-squared',
   EpsilonSquared = 'epsilon-squared',
   CramerV = 'cramer-v',
@@ -119,7 +119,7 @@ export enum EnumList {
   TableFilterTypeEnum = 'TableFilterTypeEnum',
   TableColumnAggregateMethodEnum = 'TableColumnAggregateMethodEnum',
   StatisticTestMethodEnum = 'StatisticTestMethodEnum',
-  GroupStatisticTestMethodEnum = 'GroupStatisticTestMethodEnum',
+  OmnibusStatisticTestMethodEnum = 'OmnibusStatisticTestMethodEnum',
   EffectSizeMethodEnum = 'EffectSizeMethodEnum',
-  GroupEffectSizeMethodEnum = 'GroupEffectSizeMethodEnum',
+  OmnibusEffectSizeMethodEnum = 'OmnibusEffectSizeMethodEnum',
 }

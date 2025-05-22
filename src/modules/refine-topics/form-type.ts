@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 
 export const createNewTopicFormSchema = Yup.object({
   id: Yup.number().integer().required(),
-  label: Yup.string(),
+  label: Yup.string().required(),
   description: yupNullableString,
   tags: yupNullableArray.of(Yup.string().required()),
 }).required();

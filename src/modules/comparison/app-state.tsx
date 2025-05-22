@@ -3,6 +3,8 @@ import { DashboardItemModel } from '@/api/userdata';
 import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
+import { StatisticTestStateItem } from '../statistic-test/types';
+import { isEqual } from 'lodash-es';
 
 export enum ComparisonPageTab {
   GroupsManager = 'group-manager',
@@ -25,12 +27,47 @@ interface ComparisonAppStateContextType {
     includeWholeDataset: boolean;
     setIncludeWholeDataset: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  statisticTest: {
+    input: StatisticTestStateItem | null;
+    setInput: (state: StatisticTestStateItem | null) => void;
+    history: StatisticTestStateItem[];
+  };
   reset(): void;
 }
 
 const ComparisonAppStateContext = createContext<ComparisonAppStateContextType>(
   null as any,
 );
+
+const STATISTIC_TEST_HISTORY_LIMIT = 10;
+function useComparisonStatisticTestAppState() {
+  const [history, setHistory] = React.useState<StatisticTestStateItem[]>([]);
+  const statisticTestInput =
+    history.length === 0 ? null : history[history.length - 1]!;
+  const setStatisticTestInput = React.useCallback(
+    (newEntry: StatisticTestStateItem | null) => {
+      if (newEntry == null) return;
+      setHistory((prev) => {
+        let history = prev.filter((entry) => !isEqual(entry, newEntry));
+        history.push(newEntry);
+
+        if (history.length > STATISTIC_TEST_HISTORY_LIMIT) {
+          history = history.slice(
+            history.length - STATISTIC_TEST_HISTORY_LIMIT,
+          );
+        }
+        return history;
+      });
+    },
+    [],
+  );
+  return {
+    input: statisticTestInput,
+    setInput: setStatisticTestInput,
+    history,
+    setHistory,
+  };
+}
 
 export default function ComparisonAppStateProvider(
   props: React.PropsWithChildren,
@@ -49,13 +86,17 @@ export default function ComparisonAppStateProvider(
   }, [groups]);
 
   const { setState: setGroups } = groupHandlers;
-  const { setState: setDashboard } = groupHandlers;
+  const { setState: setDashboard } = dashboardHandlers;
+
+  const statisticTest = useComparisonStatisticTestAppState();
+  const { setHistory } = statisticTest;
 
   const reset = React.useCallback(() => {
     setGroups([]);
     setDashboard([]);
     setGroupVisibility(new Map());
-  }, [setDashboard, setGroups]);
+    setHistory([]);
+  }, [setDashboard, setGroups, setHistory]);
 
   return (
     <ComparisonAppStateContext.Provider
@@ -74,6 +115,7 @@ export default function ComparisonAppStateProvider(
           state: dashboard,
           handlers: dashboardHandlers,
         },
+        statisticTest,
         reset,
       }}
     >
@@ -140,4 +182,13 @@ export function useCheckComparisonSubdatasetsSpecificVisibility(name: string) {
     });
   }, [name, setVisibility]);
   return { visible, toggle };
+}
+
+export function useVisibleComparisonGroups() {
+  const { onlyVisible } = useCheckComparisonSubdatasetsVisibility();
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  return React.useMemo(
+    () => onlyVisible(comparisonGroups),
+    [comparisonGroups, onlyVisible],
+  );
 }

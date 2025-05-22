@@ -17,13 +17,10 @@ export enum DashboardItemTypeEnum {
   Calendar = 'calendar',
   WordFrequencies = 'word-frequencies',
   TopicWords = 'topic-words',
+  PairedValues = 'paired-values',
 
   SubdatasetWords = 'subdataset-words',
   SubdatasetCooccurrence = 'subdataset-cooccurrence',
-
-  ContingencyTable = 'contingency-table',
-  BinaryStatisticTestOnContingencyTable = 'binary-statistic-test-on-contingency-table',
-  BinaryStatisticTestOnDistribution = 'binary-statistic-test-on-distribution',
 }
 
 const FOR_ALL_TYPES = [
@@ -33,9 +30,6 @@ const FOR_ALL_TYPES = [
 const FOR_CATEGORICAL_TYPES = [
   DashboardItemTypeEnum.FrequencyDistribution,
   DashboardItemTypeEnum.Proportions,
-  DashboardItemTypeEnum.ContingencyTable,
-  DashboardItemTypeEnum.BinaryStatisticTestOnContingencyTable,
-  DashboardItemTypeEnum.BinaryStatisticTestOnDistribution,
 ];
 
 export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
@@ -48,6 +42,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
   ],
   [SchemaColumnTypeEnum.Continuous]: [
     ...FOR_ALL_TYPES,
+    DashboardItemTypeEnum.PairedValues,
     DashboardItemTypeEnum.DescriptiveStatistics,
     DashboardItemTypeEnum.DataDistribution,
     DashboardItemTypeEnum.Aggregate,
@@ -65,6 +60,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
   [SchemaColumnTypeEnum.Temporal]: [
     ...FOR_ALL_TYPES,
     ...FOR_CATEGORICAL_TYPES,
+    DashboardItemTypeEnum.PairedValues,
     DashboardItemTypeEnum.Calendar,
     DashboardItemTypeEnum.DataDistribution,
   ],

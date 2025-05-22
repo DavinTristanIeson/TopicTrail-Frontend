@@ -7,7 +7,7 @@ import {
 import dynamic from 'next/dynamic';
 import React from 'react';
 import ComparisonFilterDrawer from './drawer';
-import { Button, Checkbox, Fieldset, Group, Stack } from '@mantine/core';
+import { Button, Checkbox, Group, Stack } from '@mantine/core';
 import { Eye, EyeSlash, Plus, Warning } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { ComparisonStateItemModel } from '@/api/comparison';
@@ -18,10 +18,7 @@ import {
   useComparisonAppState,
 } from '../app-state';
 import ConfirmationDialog from '@/components/widgets/confirmation';
-import {
-  EnumerationSubdatasetsBooleanColumns,
-  EnumerationSubdatasetSelectInput,
-} from './enumeration';
+import { EnumerationSubdatasets } from './enumeration';
 
 const SortableNamedTableFilterDndContext = dynamic(
   () => import('./sortable-filter-context'),
@@ -57,20 +54,7 @@ function ComparisonStateDataManager() {
     }, [comparisonGroups]),
   });
 
-  return (
-    <UserDataManager
-      {...rendererProps}
-      label="Subdatasets"
-      Bottom={
-        <Fieldset legend="Enumeration" className="w-full">
-          <Stack>
-            <EnumerationSubdatasetSelectInput />
-            <EnumerationSubdatasetsBooleanColumns />
-          </Stack>
-        </Fieldset>
-      }
-    />
-  );
+  return <UserDataManager {...rendererProps} label="Subdatasets" />;
 }
 
 function ComparisonStateManagerShowHideAllButton() {
@@ -131,6 +115,7 @@ export default function NamedFiltersManager() {
     <>
       <Stack>
         <ComparisonStateDataManager />
+        <EnumerationSubdatasets />
         {comparisonGroups.length > 0 && (
           <ComparisonStateManagerWholeDatasetCheckbox />
         )}

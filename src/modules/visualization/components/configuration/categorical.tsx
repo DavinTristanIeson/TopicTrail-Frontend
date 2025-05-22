@@ -1,14 +1,21 @@
 import { SchemaColumnModel } from '@/api/project';
-import { SchemaColumnTypeEnum } from '@/common/constants/enum';
-import { Group, Button, type SelectProps } from '@mantine/core';
+import {
+  SchemaColumnTypeEnum,
+  TemporalPrecisionEnum,
+} from '@/common/constants/enum';
+import { type SelectProps } from '@mantine/core';
 import dayjs from 'dayjs';
-import { fromPairs, sum, uniq } from 'lodash-es';
+import { fromPairs, identity, sum, uniq } from 'lodash-es';
 import React from 'react';
-import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import {
+  useDescriptionBasedRenderOption,
+  useMultiSelectSelectAllCheckbox,
+} from '@/components/visual/select';
 import { BaseVisualizationComponentProps } from '../../types/base';
 import { VisualizationFrequencyDistributionModel } from '@/api/table';
 import { useProjectColumn } from '@/modules/project/context';
 import { useDebouncedValue } from '@mantine/hooks';
+import { formatTemporalValueByPrecision } from '@/modules/table/cell';
 
 interface useCategoriesAxisMultiSelectProps {
   supportedCategories: string[];
@@ -18,81 +25,84 @@ interface useCategoriesAxisMultiSelectProps {
 export function useCategoriesAxisMultiSelect(
   props: useCategoriesAxisMultiSelectProps,
 ) {
-  const { supportedCategories, column } = props;
-  const [categories, setCategories] =
-    React.useState<string[]>(supportedCategories);
+  const { supportedCategories: rawSupportedCategories, column } = props;
 
-  const inputContainer = (children: React.ReactNode) => (
-    <Group>
-      <div className="flex-1">{children}</div>
-      <Button
-        onClick={() => {
-          if (categories.length === supportedCategories.length) {
-            setCategories([]);
-          } else {
-            setCategories(supportedCategories);
-          }
-        }}
-        variant="subtle"
-      >
-        {categories.length === supportedCategories.length
-          ? 'Deselect'
-          : 'Select'}{' '}
-        All
-      </Button>
-      <Button
-        onClick={() => {
-          if (!column) {
-            setCategories((categories) => categories.slice().sort());
-            return;
-          }
-          if (column.type === SchemaColumnTypeEnum.Temporal) {
-            setCategories((categories) => {
-              const newCategories = categories
-                .map(
-                  (category) =>
-                    [dayjs(category), category] as [dayjs.Dayjs, string],
-                )
-                .filter((x) => x[0].isValid())
-                .sort((a, b) => a[0].diff(b[0]))
-                .map((x) => x[1]);
-              return newCategories;
-            });
-          } else if (
-            column.type === SchemaColumnTypeEnum.OrderedCategorical &&
-            column.category_order
-          ) {
-            const categoryOrder = column.category_order!;
-            setCategories((categories) => {
-              const newCategories = categories
-                .map(
-                  (category) =>
-                    [category, categoryOrder.indexOf(category)] as [
-                      string,
-                      number,
-                    ],
-                )
-                .map((x) => (x[1] === -1 ? ([x[0], 0] as [string, number]) : x))
-                .sort((a, b) => a[1] - b[1])
-                .map((x) => x[0]);
-              return newCategories;
-            });
-          } else {
-            setCategories((categories) => categories.slice().sort());
-          }
-        }}
-        variant="subtle"
-      >
-        Sort
-      </Button>
-    </Group>
+  const sortValues = React.useCallback(
+    (values: string[]) => {
+      if (!column) return values;
+      if (column.type === SchemaColumnTypeEnum.Temporal) {
+        return values
+          .map(
+            (category) => [dayjs(category), category] as [dayjs.Dayjs, string],
+          )
+          .filter((x) => x[0].isValid())
+          .sort((a, b) => a[0].diff(b[0]))
+          .map((x) => x[1]);
+      } else if (column.type === SchemaColumnTypeEnum.Boolean) {
+        return values.slice().sort().reverse();
+      } else if (column.type === SchemaColumnTypeEnum.OrderedCategorical) {
+        if (!column.category_order) {
+          return values.slice().sort();
+        }
+        return values
+          .map(
+            (category) =>
+              [category, column.category_order!.indexOf(category)] as [
+                string,
+                number,
+              ],
+          )
+          .map((x) => (x[1] === -1 ? ([x[0], 0] as [string, number]) : x))
+          .sort((a, b) => a[1] - b[1])
+          .map((x) => x[0]);
+      } else {
+        return values;
+      }
+    },
+    [column],
   );
+
+  const supportedCategories = React.useMemo(
+    () => sortValues(rawSupportedCategories),
+    [rawSupportedCategories, sortValues],
+  );
+  const [categories, setCategories] = React.useState<string[]>(() =>
+    sortValues(supportedCategories),
+  );
+
+  const onChange = React.useCallback(
+    (values: string[]) => {
+      setCategories(sortValues(values));
+    },
+    [sortValues],
+  );
+
+  const inputContainer = useMultiSelectSelectAllCheckbox({
+    value: categories,
+    onChange,
+    data: supportedCategories,
+    accessor: identity,
+  });
 
   const multiSelectProps = {
     value: categories,
     inputContainer,
-    onChange: setCategories,
-    data: supportedCategories,
+    onChange,
+    data: supportedCategories.map((category) => {
+      if (column?.type === SchemaColumnTypeEnum.Temporal) {
+        const label = formatTemporalValueByPrecision(
+          new Date(category),
+          column.temporal_precision as TemporalPrecisionEnum | null,
+        );
+        console.log(label, category, column.temporal_precision);
+        if (!label) return category;
+        return {
+          label,
+          value: category,
+        };
+      }
+      return category;
+    }),
     searchable: true,
   };
 

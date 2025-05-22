@@ -15,10 +15,10 @@ import {
   EFFECT_SIZE_CONSTRAINTS,
   EFFECT_SIZE_DICTIONARY,
   GROUP_STATISTIC_METHOD_CONSTRAINTS,
-  GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
+  OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY,
   STATISTIC_METHOD_CONSTRAINTS,
   STATISTIC_TEST_METHOD_DICTIONARY,
-} from './dictionary';
+} from '../dictionary';
 
 interface StatisticMethodSelectFieldProps extends SelectFieldProps {
   columnType: SchemaColumnTypeEnum;
@@ -55,11 +55,11 @@ export function GroupStatisticMethodSelectField(
 ) {
   const { columnType, ...restProps } = props;
   const renderOption = useDescriptionBasedRenderOption(
-    GROUP_STATISTIC_TEST_METHOD_DICTIONARY,
+    OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY,
   );
   const supportedMethods = (
     GROUP_STATISTIC_METHOD_CONSTRAINTS[columnType] ?? []
-  ).map((value) => GROUP_STATISTIC_TEST_METHOD_DICTIONARY[value]);
+  ).map((value) => OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY[value]);
   return (
     <RHFField
       {...restProps}

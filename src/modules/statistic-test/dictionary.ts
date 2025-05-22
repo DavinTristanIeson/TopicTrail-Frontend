@@ -1,7 +1,7 @@
 import {
   EffectSizeMethodEnum,
-  GroupEffectSizeMethodEnum,
-  GroupStatisticTestMethodEnum,
+  OmnibusEffectSizeMethodEnum,
+  OmnibusStatisticTestMethodEnum,
   SchemaColumnTypeEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
@@ -27,20 +27,20 @@ export const STATISTIC_TEST_METHOD_DICTIONARY = {
   },
 };
 
-export const GROUP_STATISTIC_TEST_METHOD_DICTIONARY = {
-  [GroupStatisticTestMethodEnum.ANOVA]: {
+export const OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY = {
+  [OmnibusStatisticTestMethodEnum.ANOVA]: {
     label: 'One-Way ANOVA F-Test',
-    value: GroupStatisticTestMethodEnum.ANOVA,
+    value: OmnibusStatisticTestMethodEnum.ANOVA,
     description:
       "Use this method if the chosen column contains continuous data and can be assumed to be normally distributed. This test checks if the groups have equal means. If the data doesn't follow a normal distribution, use Kruskal-Wallis H Test instead.",
   },
-  [GroupStatisticTestMethodEnum.KruskalWallis]: {
+  [OmnibusStatisticTestMethodEnum.KruskalWallis]: {
     label: 'Kruskal-Wallis H Test',
-    value: GroupStatisticTestMethodEnum.KruskalWallis,
+    value: OmnibusStatisticTestMethodEnum.KruskalWallis,
     description:
       'Use this method if the chosen column contains ordered data (such as continuous data, temporal data, or ordered categorical data). This test checks if the groups have equal medians',
   },
-  [GroupStatisticTestMethodEnum.ChiSquared]: {
+  [OmnibusStatisticTestMethodEnum.ChiSquared]: {
     label: 'Chi-Squared Test',
     value: StatisticTestMethodEnum.ChiSquared,
     description:
@@ -91,18 +91,18 @@ export const EFFECT_SIZE_DICTIONARY = {
   },
 };
 
-export const GROUP_EFFECT_SIZE_DICTIONARY = {
-  [GroupEffectSizeMethodEnum.EtaSquared]: {
+export const OMNIBUS_EFFECT_SIZE_DICTIONARY = {
+  [OmnibusEffectSizeMethodEnum.EtaSquared]: {
     label: 'Eta-Squared',
-    value: GroupEffectSizeMethodEnum.EtaSquared,
+    value: OmnibusEffectSizeMethodEnum.EtaSquared,
     rangeString: `[0, Inf)`,
     range: [0, undefined],
     description:
       'Measures how much of the variation in the second column (dependent variable) is explained by the first column (independent variable).',
   },
-  [GroupEffectSizeMethodEnum.EpsilonSquared]: {
+  [OmnibusEffectSizeMethodEnum.EpsilonSquared]: {
     label: 'Epsilon-Squared',
-    value: GroupEffectSizeMethodEnum.EpsilonSquared,
+    value: OmnibusEffectSizeMethodEnum.EpsilonSquared,
     rangeString: `(-Inf, Inf)`,
     range: [undefined, undefined],
     description:
@@ -138,22 +138,24 @@ export const STATISTIC_METHOD_CONSTRAINTS: Partial<
 };
 
 const CATEGORICAL_GROUP_STATISTIC_METHOD_CONSTRAINTS = [
-  GroupStatisticTestMethodEnum.ChiSquared,
+  OmnibusStatisticTestMethodEnum.ChiSquared,
 ];
 export const GROUP_STATISTIC_METHOD_CONSTRAINTS: Partial<
-  Record<SchemaColumnTypeEnum, GroupStatisticTestMethodEnum[]>
+  Record<SchemaColumnTypeEnum, OmnibusStatisticTestMethodEnum[]>
 > = {
   [SchemaColumnTypeEnum.Continuous]: [
-    GroupStatisticTestMethodEnum.ANOVA,
-    GroupStatisticTestMethodEnum.KruskalWallis,
+    OmnibusStatisticTestMethodEnum.ANOVA,
+    OmnibusStatisticTestMethodEnum.KruskalWallis,
   ],
   [SchemaColumnTypeEnum.Categorical]:
     CATEGORICAL_GROUP_STATISTIC_METHOD_CONSTRAINTS,
   [SchemaColumnTypeEnum.OrderedCategorical]: [
-    GroupStatisticTestMethodEnum.KruskalWallis,
-    GroupStatisticTestMethodEnum.ChiSquared,
+    OmnibusStatisticTestMethodEnum.KruskalWallis,
+    OmnibusStatisticTestMethodEnum.ChiSquared,
   ],
-  [SchemaColumnTypeEnum.Temporal]: [GroupStatisticTestMethodEnum.KruskalWallis],
+  [SchemaColumnTypeEnum.Temporal]: [
+    OmnibusStatisticTestMethodEnum.KruskalWallis,
+  ],
   [SchemaColumnTypeEnum.Topic]: CATEGORICAL_GROUP_STATISTIC_METHOD_CONSTRAINTS,
 };
 

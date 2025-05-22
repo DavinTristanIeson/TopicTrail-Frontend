@@ -1,6 +1,4 @@
-import { VisualizationContingencyTableModel } from '@/api/correlation';
-import { BaseVisualizationComponentProps } from '../../types/base';
-import { VisualizationContingencyTableConfigType } from '../../configuration/contingency-table';
+import { ContingencyTableModel } from '@/api/statistic-test';
 import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
 import { MultiSelect, Select, Stack } from '@mantine/core';
@@ -8,13 +6,15 @@ import { useSelectLeftRightButtons } from '@/components/visual/select';
 import type { PlotParams } from 'react-plotly.js';
 import { fromPairs, max } from 'lodash-es';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
+import { BaseStatisticTestResultRendererProps } from '../types';
+import { ContingencyTableConfig } from '../configuration/contingency-table';
 import {
   PlotInlineConfiguration,
+  StatisticTestEmptyPlotWarning,
   useCategoriesAxisMultiSelect,
-  usePlotRendererHelperProps,
   useVisualizationMinFrequencySlider,
-} from '../configuration';
-import { getBalancedHeatmapZRange } from '../configuration/heatmap';
+} from '@/modules/visualization/components/configuration';
+import { getBalancedHeatmapZRange } from '@/modules/visualization/components/configuration/heatmap';
 
 enum ContingencyTableVisualizationMethod {
   Observed = 'observed',
@@ -63,15 +63,13 @@ const CONTINGENCY_TABLE_METHOD_OPTIONS = Object.values(
   CONTINGENCY_TABLE_METHOD_DICTIONARY,
 );
 
-function VisualizationContingencyTableHeatmapInner(
-  props: BaseVisualizationComponentProps<
-    VisualizationContingencyTableModel,
-    VisualizationContingencyTableConfigType
+export default function ContingencyTableResultRenderer(
+  props: BaseStatisticTestResultRendererProps<
+    ContingencyTableModel,
+    ContingencyTableConfig
   >,
 ) {
-  const { data: dataContainer, item } = props;
-
-  const { data } = dataContainer[0]!;
+  const { data, config } = props;
 
   // region Configuration
   const [method, setMethod] = React.useState(
@@ -90,7 +88,7 @@ function VisualizationContingencyTableHeatmapInner(
     indexed: indexColumns,
   } = useCategoriesAxisMultiSelect({
     supportedCategories: data.columns,
-    column: data.column2,
+    column: data.column,
   });
   const {
     multiSelectProps: rowsSelectProps,
@@ -98,7 +96,7 @@ function VisualizationContingencyTableHeatmapInner(
     indexed: indexRows,
   } = useCategoriesAxisMultiSelect({
     supportedCategories: data.rows,
-    column: data.column1,
+    column: undefined,
   });
 
   const maxFrequency = React.useMemo(
@@ -145,7 +143,7 @@ function VisualizationContingencyTableHeatmapInner(
 
     const usedTitle = CONTINGENCY_TABLE_METHOD_DICTIONARY[method].title;
     const hovertemplates = [
-      `<b>${data.column1.name}</b>: %{y}<br><b>${data.column2.name}</b>: %{x}<br>`,
+      `<b>Subdataset</b>: %{y}<br><b>${config.column}</b>: %{x}<br>`,
     ];
 
     const methodOptions = Object.values(CONTINGENCY_TABLE_METHOD_DICTIONARY);
@@ -177,6 +175,7 @@ function VisualizationContingencyTableHeatmapInner(
           z: mask2D(usedValue, invalidFrequencyMask, undefined as any),
           customdata: customdata as any,
           hovertemplate: hovertemplates.join('<br>'),
+          hoverongaps: false,
           colorscale: colorscale[method]!,
           zmin: needsMinMaxZ ? minZ : undefined,
           zmax: needsMinMaxZ ? maxZ : undefined,
@@ -188,12 +187,12 @@ function VisualizationContingencyTableHeatmapInner(
       layout: {
         title: usedTitle,
         yaxis: {
-          title: item.column,
+          title: 'Subdatasets',
           automargin: true,
           autorange: 'reversed',
         },
         xaxis: {
-          title: item.config.target,
+          title: config.column,
           automargin: true,
         },
       },
@@ -201,15 +200,18 @@ function VisualizationContingencyTableHeatmapInner(
   }, [
     rows,
     columns,
-    data,
+    data.observed,
+    data.expected,
+    data.residuals,
+    data.standardized_residuals,
+    data.rows,
+    data.columns,
     method,
-    item,
+    config.column,
     indexRows,
     indexColumns,
     filterFrequency,
   ]);
-
-  const plotProps = usePlotRendererHelperProps(item);
 
   return (
     <Stack>
@@ -233,33 +235,14 @@ function VisualizationContingencyTableHeatmapInner(
         />
         {FrequencySlider}
       </PlotInlineConfiguration>
-      {plot && <PlotRenderer plot={plot} {...plotProps} scrollZoom={false} />}
+      <StatisticTestEmptyPlotWarning
+        invalid={!plot}
+        hasRowsCols
+        hasFrequency
+        hasAlpha={false}
+      >
+        {plot && <PlotRenderer plot={plot} scrollZoom={false} />}
+      </StatisticTestEmptyPlotWarning>
     </Stack>
   );
-}
-
-export function VisualizationContingencyTableHeatmap(
-  props: BaseVisualizationComponentProps<
-    VisualizationContingencyTableModel,
-    VisualizationContingencyTableConfigType
-  >,
-) {
-  const { data } = props;
-  if (data.length === 0) {
-    throw new Error(
-      'There are no subdatasets to view the contingency table of.',
-    );
-  }
-  const first = data[0]!;
-  if (first.data.rows.length === 0) {
-    throw new Error(
-      `It seems that ${first.data.column1} doesn't contain any categories at all in the dataset so we cannot calculate the contingency table.`,
-    );
-  }
-  if (first.data.columns.length === 0) {
-    throw new Error(
-      `It seems that ${first.data.column2} doesn't contain any categories at all in the dataset so we cannot calculate the contingency table.`,
-    );
-  }
-  return <VisualizationContingencyTableHeatmapInner {...props} />;
 }

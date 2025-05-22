@@ -112,6 +112,7 @@ const mantineTheme = createTheme({
       defaultProps: {
         color: 'white',
         c: 'black',
+        className: 'border border-solid border-gray',
         multiline: true,
       },
     }),

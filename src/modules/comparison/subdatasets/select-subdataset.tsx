@@ -4,36 +4,47 @@ import {
   useRHFMantineAdapter,
 } from '@/components/standard/fields/adapter';
 import { type ComboboxItem, Select, type SelectProps } from '@mantine/core';
+import { useComparisonAppState } from '../app-state';
 
-interface NamedFilterSelectInputProps
+interface ComparisonSubdatasetSelectInput
   extends Omit<SelectProps, 'data' | 'onChange'> {
-  data: ComparisonStateItemModel[];
   onChange?(filter: ComparisonStateItemModel | null): void;
+  withWholeDataset: boolean;
 }
 
 export function ComparisonSubdatasetSelectInput(
-  props: NamedFilterSelectInputProps,
+  props: ComparisonSubdatasetSelectInput,
 ) {
-  const { onChange, data, ...selectProps } = props;
+  const { onChange, withWholeDataset, ...selectProps } = props;
+  const originalComparisonGroups = useComparisonAppState(
+    (store) => store.groups.state,
+  );
+  const comparisonGroups = withWholeDataset
+    ? originalComparisonGroups
+    : originalComparisonGroups.filter((group) => !!group.filter);
   return (
     <Select
       {...selectProps}
-      data={data.map((item) => {
+      data={comparisonGroups.map((item) => {
         return {
           label: item.name,
           value: item.name,
         } as ComboboxItem;
       })}
       onChange={(value) => {
-        onChange?.(value ? (data.find((x) => x.name === value) ?? null) : null);
+        onChange?.(
+          value
+            ? (comparisonGroups.find((x) => x.name === value) ?? null)
+            : null,
+        );
       }}
       placeholder="Pick a group"
     />
   );
 }
 
-type ComparisonSubdatasetSelectFieldProps = NamedFilterSelectInputProps &
-  IRHFMantineAdaptable<NamedFilterSelectInputProps>;
+type ComparisonSubdatasetSelectFieldProps = ComparisonSubdatasetSelectInput &
+  IRHFMantineAdaptable<ComparisonSubdatasetSelectInput>;
 export function ComparisonSubdatasetSelectField(
   props: ComparisonSubdatasetSelectFieldProps,
 ) {

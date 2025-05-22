@@ -10,7 +10,6 @@ import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
 import { Button, Divider, Stack } from '@mantine/core';
 import {
   ArrowCounterClockwise,
-  ArrowsLeftRight,
   FileMagnifyingGlass,
   Gear,
   GitDiff,
@@ -70,16 +69,6 @@ function ProjectNavbar(props: ProjectNavbarProps) {
             icon: <GitDiff size={24} />,
             url: {
               pathname: NavigationRoutes.ProjectComparison,
-              query: {
-                id,
-              },
-            },
-          },
-          {
-            label: 'Topic Correlation',
-            icon: <ArrowsLeftRight size={24} />,
-            url: {
-              pathname: NavigationRoutes.ProjectTopicCorrelation,
               query: {
                 id,
               },

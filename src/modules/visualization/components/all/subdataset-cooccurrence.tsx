@@ -10,11 +10,13 @@ import {
   usePlotRendererHelperProps,
 } from '../configuration';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { map2D } from '@/common/utils/iterable';
+import { map2D, zip2D } from '@/common/utils/iterable';
+import { max } from 'lodash-es';
 
 enum SubdatasetCoocccurrenceDisplayMode {
   Frequencies = 'frequencies',
   Cooccurrences = 'cooccurrences',
+  CooccurrenceProportions = 'cooccurrence-proportions',
 }
 
 const SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY = {
@@ -23,6 +25,12 @@ const SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY = {
     value: SubdatasetCoocccurrenceDisplayMode.Cooccurrences,
     description:
       'Show how many rows overlap between every pair of subdatasets.',
+  },
+  [SubdatasetCoocccurrenceDisplayMode.CooccurrenceProportions]: {
+    label: 'Co-occurrence Proportions',
+    value: SubdatasetCoocccurrenceDisplayMode.CooccurrenceProportions,
+    description:
+      'Show how the proportions of overlapping rows compared to the actual frequencies.',
   },
   [SubdatasetCoocccurrenceDisplayMode.Frequencies]: {
     label: 'Frequencies',
@@ -56,6 +64,10 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
           marker: {
             color: colors,
           },
+          hovertemplate: [
+            '<b>Subdataset</b>: %{x}',
+            '<b>Frequency</b>: %{y}',
+          ].join('<br>'),
         },
       ],
       layout: {
@@ -70,27 +82,42 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
     };
   }, [data.frequencies, data.labels]);
   const cooccurrencesPlot = React.useMemo<PlotParams>(() => {
-    const z = map2D(data.cooccurrences, (value, row, col) =>
-      row <= col ? undefined : value,
-    ) as number[][];
+    const z = data.cooccurrences;
+    const maxZ = max(data.cooccurrences.map((row) => max(row) ?? 0)) ?? 0;
+    const frequencies = map2D(
+      data.cooccurrences,
+      (value, row, col) => data.frequencies[col],
+    );
+    const isProportion =
+      display == SubdatasetCoocccurrenceDisplayMode.CooccurrenceProportions;
+    const proportionsZ = map2D(data.cooccurrences, (value) =>
+      value == null ? undefined : maxZ == 0 ? 0 : (value * 100) / maxZ,
+    );
     return {
       data: [
         {
           name: 'Co-occurrences',
           x: data.labels,
           y: data.labels,
-          z: z,
-          texttemplate: '%{z}',
+          z: map2D(isProportion ? proportionsZ : z, (value, row, col) =>
+            row <= col ? undefined : value,
+          ) as number[][],
+          zmin: isProportion ? 0 : undefined,
+          zmax: isProportion ? 100 : undefined,
+          texttemplate: isProportion ? '%{z:.3f}%' : '%{z}',
           colorscale: 'Viridis',
           colorbar: {
-            title: 'Frequency',
+            title: isProportion ? 'Proportion' : 'Frequency',
           },
           hoverongaps: false,
           type: 'heatmap',
+          customdata: zip2D([z, proportionsZ, frequencies]) as any,
           hovertemplate: [
             '<b>Subdataset 1</b>: %{x}',
             '<b>Subdataset 2</b>: %{y}',
-            '<b>Co-occurrence</b>: %{z}',
+            '<b>Co-occurrence</b>: %{customdata[0]}',
+            '<b>Proportion</b>: %{customdata[1]:.3f}%',
+            '<b>Marginal Frequency</b>: %{customdata[2]}',
           ].join('<br>'),
         },
       ],
@@ -105,7 +132,7 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
         },
       },
     };
-  }, [data.cooccurrences, data.labels]);
+  }, [data.cooccurrences, data.frequencies, data.labels, display]);
 
   const renderOption = useDescriptionBasedRenderOption(
     SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY,
