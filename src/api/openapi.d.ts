@@ -245,6 +245,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/column/paired-values": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Get Table Paired Column */
+        post: operations["post__get_table_paired_column_table__project_id__column_paired_values_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/table/{project_id}/column/geographical": {
         parameters: {
             query?: never;
@@ -967,6 +984,12 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[TableColumnPairedValuesResource] */
+        ApiResult_TableColumnPairedValuesResource_: {
+            data: components["schemas"]["TableColumnPairedValuesResource"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[TableColumnValuesResource] */
         ApiResult_TableColumnValuesResource_: {
             data: components["schemas"]["TableColumnValuesResource"];
@@ -1603,6 +1626,15 @@ export interface components {
             /** Label Column */
             label_column: string | null;
         };
+        /** GetTablePairedColumnSchema */
+        GetTablePairedColumnSchema: {
+            /** Column1 */
+            column1: string;
+            /** Column2 */
+            column2: string;
+            /** Filter */
+            filter: (components["schemas"]["AndTableFilter-Input"] | components["schemas"]["OrTableFilter-Input"] | components["schemas"]["NotTableFilter-Input"] | components["schemas"]["EmptyTableFilter"] | components["schemas"]["NotEmptyTableFilter"] | components["schemas"]["EqualToTableFilter"] | components["schemas"]["IsOneOfTableFilter"] | components["schemas"]["GreaterThanTableFilter"] | components["schemas"]["LessThanTableFilter"] | components["schemas"]["GreaterThanOrEqualToTableFilter"] | components["schemas"]["LessThanOrEqualToTableFilter"] | components["schemas"]["HasTextTableFilter"] | components["schemas"]["IsTrueTableFilter"] | components["schemas"]["IsFalseTableFilter"]) | null;
+        };
         /** GreaterThanOrEqualToTableFilter */
         GreaterThanOrEqualToTableFilter: {
             /** Target */
@@ -2020,6 +2052,19 @@ export interface components {
             labels: string[] | null;
             /** Values */
             values: (number)[];
+        };
+        /** TableColumnPairedValuesResource */
+        TableColumnPairedValuesResource: {
+            /** Column1 */
+            column1: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
+            /** Column2 */
+            column2: components["schemas"]["UniqueSchemaColumn"] | components["schemas"]["CategoricalSchemaColumn"] | components["schemas"]["OrderedCategoricalSchemaColumn"] | components["schemas"]["TextualSchemaColumn-Output"] | components["schemas"]["ContinuousSchemaColumn"] | components["schemas"]["TemporalSchemaColumn"] | components["schemas"]["GeospatialSchemaColumn"] | components["schemas"]["TopicSchemaColumn"] | components["schemas"]["BooleanSchemaColumn"];
+            /** X */
+            x: unknown[];
+            /** Y */
+            y: unknown[];
+            /** Frequencies */
+            frequencies: number[];
         };
         /** TableColumnValuesResource */
         TableColumnValuesResource: {
@@ -3619,6 +3664,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_TableColumnValuesResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__get_table_paired_column_table__project_id__column_paired_values_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetTablePairedColumnSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TableColumnPairedValuesResource_"];
                 };
             };
             /** @description Bad Request */
