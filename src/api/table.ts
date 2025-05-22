@@ -57,6 +57,8 @@ export type VisualizationAggregateValuesModel =
   components['schemas']['TableColumnAggregateValuesResource'];
 export type VisualizationGeographicalPointsModel =
   components['schemas']['TableColumnGeographicalPointsResource'];
+export type VisualizationPairedValuesModel =
+  components['schemas']['TableColumnPairedValuesResource'];
 export type VisualizationTableWordFrequenciesModel =
   components['schemas']['TableWordFrequenciesResource'];
 

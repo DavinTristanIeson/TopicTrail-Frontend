@@ -17,6 +17,7 @@ export enum DashboardItemTypeEnum {
   Calendar = 'calendar',
   WordFrequencies = 'word-frequencies',
   TopicWords = 'topic-words',
+  PairedValues = 'paired-values',
 
   SubdatasetWords = 'subdataset-words',
   SubdatasetCooccurrence = 'subdataset-cooccurrence',

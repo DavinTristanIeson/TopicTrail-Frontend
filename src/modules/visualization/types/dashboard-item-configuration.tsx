@@ -4,6 +4,7 @@ import {
   VisualizationColumnCountsModel,
   VisualizationFrequencyDistributionModel,
   VisualizationGeographicalPointsModel,
+  VisualizationPairedValuesModel,
   VisualizationTableWordFrequenciesModel,
 } from '@/api/table';
 import { DescriptiveStatisticsTableComponent } from '../components/continuous/descriptive-statistics';
@@ -31,7 +32,10 @@ import {
   VisualizationContinuousDataDistributionConfigSchema,
   VisualizationContinuousDataDistributionConfigType,
 } from '../configuration/continuous-data-distribution';
-import { useVisualizationValuesDataProvider } from '../data-provider/values';
+import {
+  useVisualizationPairedValuesDataProvider,
+  useVisualizationValuesDataProvider,
+} from '../data-provider/values';
 import { VisualizationContinuousDataDistributionRenderer } from '../components/continuous/continuous-data-distribution';
 import VisualizationCalendarComponent from '../components/temporal/calendar';
 import {
@@ -76,6 +80,12 @@ import {
 import VisualizationSubdatasetCooccurrenceComponent from '../components/all/subdataset-cooccurrence';
 import { useVisualizationSubdatasetCooccurrenceDataProvider } from '../data-provider/subdataset-cooccurrence';
 import { SubdatasetCooccurrenceModel } from '@/api/comparison';
+import {
+  VisualizationPairedValuesConfigForm,
+  VisualizationPairedValuesConfigSchema,
+  VisualizationPairedValuesConfigType,
+} from '../configuration/paired-values';
+import VisualizationPairedValuesComponent from '../components/all/paired-values';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -185,6 +195,19 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
   } as VisualizationConfigEntry<
     VisualizationGeographicalPointsModel,
     VisualizationGeographicalAggregateValuesConfigType
+  >,
+  [DashboardItemTypeEnum.PairedValues]: {
+    type: DashboardItemTypeEnum.PairedValues,
+    label: 'Paired Data Distribution',
+    description:
+      'Examine how the distribution of values between two columns to see if they correlate with each other or not.',
+    component: VisualizationPairedValuesComponent,
+    dataProvider: useVisualizationPairedValuesDataProvider,
+    configForm: VisualizationPairedValuesConfigForm,
+    configValidator: VisualizationPairedValuesConfigSchema,
+  } as VisualizationConfigEntry<
+    VisualizationPairedValuesModel,
+    VisualizationPairedValuesConfigType
   >,
   [DashboardItemTypeEnum.SubdatasetCooccurrence]: {
     type: DashboardItemTypeEnum.SubdatasetCooccurrence,
