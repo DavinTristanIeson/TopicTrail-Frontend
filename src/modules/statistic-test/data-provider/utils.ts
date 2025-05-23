@@ -1,4 +1,7 @@
-import { useVisibleComparisonGroups } from '@/modules/comparison/app-state';
+import {
+  useCheckComparisonSubdatasetsVisibility,
+  useComparisonAppState,
+} from '@/modules/comparison/app-state';
 import { ProjectContext } from '@/modules/project/context';
 import { UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
@@ -11,10 +14,11 @@ export function useStatisticTestDataProviderParams(
   props: UseStatisticTestDataProviderPropsProps,
 ) {
   const { groups } = props;
-  const comparisonGroups = useVisibleComparisonGroups();
+  const comparisonGroups = useComparisonAppState((store) => store.groups.state);
+  const { onlyVisible } = useCheckComparisonSubdatasetsVisibility();
   const subdatasets = React.useMemo(() => {
     if (groups == null) {
-      return comparisonGroups.filter((group) => !!group.filter);
+      return onlyVisible(comparisonGroups.filter((group) => !!group.filter));
     }
     return groups.map((group) => {
       const foundSubdataset = comparisonGroups.find(
@@ -27,7 +31,7 @@ export function useStatisticTestDataProviderParams(
       }
       return foundSubdataset;
     });
-  }, [comparisonGroups, groups]);
+  }, [comparisonGroups, groups, onlyVisible]);
   const project = React.useContext(ProjectContext);
   return {
     subdatasets,

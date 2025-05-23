@@ -73,13 +73,21 @@ export const EFFECT_SIZE_DICTIONARY = {
     description:
       'Measures the difference of medians between the two groups. A negative value means the median of the first group is smaller than the median of the second group.',
   },
+  [EffectSizeMethodEnum.PointBiserialCorrelation]: {
+    label: 'Point Biserial Correlation',
+    rangeString: `[-1, 1]`,
+    range: [-1, 1],
+    value: EffectSizeMethodEnum.PointBiserialCorrelation,
+    description:
+      'Measures the difference in means between the two groups. A positive number approaching 1 means that the first group generally has higher values than the second group, while a negative number approaching -1 means that the first group generally has lower values than the second group.',
+  },
   [EffectSizeMethodEnum.RankBiserialCorrelation]: {
     label: 'Rank Biserial Correlation',
     rangeString: `[-1, 1]`,
     range: [-1, 1],
     value: EffectSizeMethodEnum.RankBiserialCorrelation,
     description:
-      'Measures the difference in ranks between the two groups. A negative number approaching -1 means that the first group has higher ranks than the second group, while a positive number approaching 1 means that the first group has lower ranks than the second group.',
+      'Measures the difference in ranks between the two groups. A positive number approaching 1 means that the first group generally has higher ranks than the second group, while a negative number approaching -1 means that the first group generally has lower ranks than the second group.',
   },
   [EffectSizeMethodEnum.CramerV]: {
     label: "Cramer's V",
@@ -165,6 +173,7 @@ export const EFFECT_SIZE_CONSTRAINTS: Partial<
 > = {
   [SchemaColumnTypeEnum.Continuous]: [
     EffectSizeMethodEnum.CohensD,
+    EffectSizeMethodEnum.PointBiserialCorrelation,
     EffectSizeMethodEnum.MeanDifference,
     EffectSizeMethodEnum.MedianDifference,
     EffectSizeMethodEnum.RankBiserialCorrelation,

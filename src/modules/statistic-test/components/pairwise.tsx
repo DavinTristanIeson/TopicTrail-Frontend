@@ -42,7 +42,7 @@ const PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY = {
     label: 'Sample Size',
     value: PairwiseStatisticTestVisualizationMethod.SampleSize,
     description: 'Show the sample sizes of each statistic test.',
-    hoverLabel: 'Confidence',
+    hoverLabel: 'Sample Size',
     colorscale: 'Viridis',
   },
 };
@@ -81,7 +81,7 @@ export function PairwiseStatisticTestResultRenderer(
       PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_DICTIONARY[method];
     const usedTitle = `Pairwise ${dictionaryEntry!.label}s of the Subdatasets on ${config.column} Data`;
     const hovertemplates = [
-      `<b>Subdataset 1</b>: %{y}</b><b>Subdataset 2</b>: %{x}`,
+      `<b>Subdataset 1</b>: %{y}</b><br><b>Subdataset 2</b>: %{x}`,
     ];
 
     const methodOptions = Object.values(
@@ -94,12 +94,13 @@ export function PairwiseStatisticTestResultRenderer(
     hovertemplates.push(
       `<b>Warnings</b>:<br>%{customdata[${hovertemplates.length - 1}]}`,
     );
-
     const results = chosenSubdatasets.map((row) => {
       return chosenSubdatasets.map((col) => {
         return data.results.find(
           (result) =>
-            result.groups[0]?.name === col && result.groups[1]?.name === row,
+            (result.groups[0]?.name === col &&
+              result.groups[1]?.name === row) ||
+            (result.groups[0]?.name === row && result.groups[1]?.name === col),
         );
       });
     });

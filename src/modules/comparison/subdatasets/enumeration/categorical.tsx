@@ -10,6 +10,8 @@ import { useComparisonAppState } from '../../app-state';
 import { assignUniqueNames } from './utils';
 import React from 'react';
 import { List } from '@phosphor-icons/react';
+import { formatTemporalValueByPrecision } from '@/modules/table/cell';
+import { TemporalPrecisionEnum } from '@/common/constants/enum';
 
 interface EnumerateValuesActionsProps {
   column: SchemaColumnModel;
@@ -47,6 +49,13 @@ export default function EnumerateCategoricalValuesActions(
       const uniqueNames = assignUniqueNames(res.data.values);
       const subdatasets = zip(uniqueNames, res.data.values).map(
         ([label, value]) => {
+          if (column.type === 'temporal') {
+            label =
+              formatTemporalValueByPrecision(
+                new Date(label!),
+                column.temporal_precision as TemporalPrecisionEnum,
+              ) ?? label!;
+          }
           return {
             name: label!,
             visible: true,

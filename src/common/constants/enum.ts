@@ -98,6 +98,7 @@ export enum EffectSizeMethodEnum {
   MedianDifference = 'median-difference',
   CohensD = 'cohen-d',
   RankBiserialCorrelation = 'rank-biserial-correlation',
+  PointBiserialCorrelation = 'point-biserial-correlation',
   CramerV = 'cramer-v',
 }
 
