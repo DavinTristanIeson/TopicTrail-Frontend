@@ -3,29 +3,16 @@ import FormWrapper from '@/components/utility/form/wrapper';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Group, Space } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
-import { useForm, useFormState } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
 import { StatisticTestConfig, StatisticTestPurpose } from '../types';
 import React from 'react';
+import { showNotification } from '@mantine/notifications';
 
 interface StatisticTestFormProps {
   purpose: StatisticTestPurpose;
   defaultValues: StatisticTestConfig | null | undefined;
   onSubmit(config: StatisticTestConfig): void;
-}
-
-function PerformStatisticTestButton() {
-  const { isDirty } = useFormState();
-  return (
-    <SubmitButton
-      leftSection={<TestTube />}
-      fullWidth
-      className="max-w-md"
-      disabled={!isDirty}
-    >
-      Perform Statistic Test
-    </SubmitButton>
-  );
 }
 
 export default function StatisticTestForm(props: StatisticTestFormProps) {
@@ -47,17 +34,23 @@ export default function StatisticTestForm(props: StatisticTestFormProps) {
         stripUnknown: true,
       });
       onSubmit(statisticTestInput);
+      showNotification({
+        message: `Performing statistic test... this may take a while depending on the number of your subdatasets and dataset size.`,
+        color: 'green',
+      });
     },
     [configItem.configValidator, onSubmit],
   );
 
-  const ConfigForm = configItem.configForm;
+  const ConfigForm = configItem?.configForm;
   return (
     <FormWrapper form={form} onSubmit={handleSubmit}>
       <ConfigForm />
       <Space h="lg" />
       <Group justify="center">
-        <PerformStatisticTestButton />
+        <SubmitButton leftSection={<TestTube />} fullWidth className="max-w-md">
+          Perform Statistic Test
+        </SubmitButton>
       </Group>
     </FormWrapper>
   );

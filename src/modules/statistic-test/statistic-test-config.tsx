@@ -54,6 +54,10 @@ import {
   EffectSizeMethodEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
+import SubdatasetCooccurrenceResultRenderer from './components/subdataset-cooccurrence';
+import { useStatisticTestSubdatasetCooccurrenceDataProvider } from './data-provider/subdataset-cooccurrence';
+import { SubdatasetCooccurrenceModel } from '@/api/comparison';
+import * as Yup from 'yup';
 
 function getBasicStatisticTestParams(config: {
   column: string;
@@ -146,6 +150,19 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     PairwiseStatisticTestResultModel,
     TwoSampleStatisticTestConfig
   >,
+  [StatisticTestPurpose.SubdatasetCooccurrence]: {
+    type: StatisticTestPurpose.SubdatasetCooccurrence,
+    component: SubdatasetCooccurrenceResultRenderer,
+    configForm: () => <></>,
+    configValidator: Yup.object().default({}),
+    dataProvider: useStatisticTestSubdatasetCooccurrenceDataProvider,
+    description:
+      'Examine the number of rows that overlap for each available subdatasets to see if the filter criteria for those subdatasets tend to co-occur with each other.',
+    label: 'Subdataset Co-occurrence',
+    getParams() {
+      return {};
+    },
+  } as StatisticTestConfigurationEntry<SubdatasetCooccurrenceModel, object>,
   [StatisticTestPurpose.ContingencyTable]: {
     type: StatisticTestPurpose.ContingencyTable,
     component: ContingencyTableResultRenderer,

@@ -11,6 +11,7 @@ import { GroupStatisticMethodSelectField } from './select-statistic-test-method'
 import { useProjectColumnField } from '@/modules/project/context';
 import {
   ExcludeOverlappingRowsCheckbox,
+  StatisticTestOverlappingSubdatasetsWarning,
   StatisticTestProjectColumnSelectField,
 } from './utils';
 
@@ -32,7 +33,10 @@ export function OmnibusStatisticTestConfigForm() {
     | undefined;
   return (
     <Stack>
-      <StatisticTestProjectColumnSelectField />
+      <StatisticTestOverlappingSubdatasetsWarning />
+      <StatisticTestProjectColumnSelectField
+        resets={['statistic_test_preference']}
+      />
       {columnType && (
         <GroupStatisticMethodSelectField
           name="statistic_test_preference"

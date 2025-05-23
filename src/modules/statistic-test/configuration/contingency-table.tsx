@@ -2,13 +2,12 @@ import * as Yup from 'yup';
 
 import React from 'react';
 
-import { ProjectContext } from '@/modules/project/context';
-import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
+import { CATEGORICAL_SCHEMA_COLUMN_TYPES } from '@/api/project';
 import {
-  CATEGORICAL_SCHEMA_COLUMN_TYPES,
-  filterProjectColumnsByType,
-} from '@/api/project';
-import { ExcludeOverlappingRowsCheckbox } from './utils';
+  ExcludeOverlappingRowsCheckbox,
+  StatisticTestOverlappingSubdatasetsWarning,
+  StatisticTestProjectColumnSelectField,
+} from './utils';
 import { Stack } from '@mantine/core';
 
 export const binaryContingencyTableFormSchema = Yup.object({
@@ -20,23 +19,9 @@ export type BinaryContingencyTableConfig = Yup.InferType<
 >;
 
 export function BinaryContingencyTableConfigForm() {
-  const project = React.useContext(ProjectContext);
-  const columns = filterProjectColumnsByType(
-    project,
-    CATEGORICAL_SCHEMA_COLUMN_TYPES,
-  );
   return (
-    <ProjectColumnSelectField
-      data={columns}
-      name="column"
-      label="Target"
-      required
-      error={
-        columns.length === 0
-          ? 'There are no columns in your dataset that supports statistic tests.'
-          : undefined
-      }
-      description="The column that will be used for the statistic test."
+    <StatisticTestProjectColumnSelectField
+      supportedTypes={CATEGORICAL_SCHEMA_COLUMN_TYPES}
     />
   );
 }
@@ -53,6 +38,7 @@ export type ContingencyTableConfig = Yup.InferType<
 export function ContingencyTableConfigForm() {
   return (
     <Stack>
+      <StatisticTestOverlappingSubdatasetsWarning />
       <BinaryContingencyTableConfigForm />
       <ExcludeOverlappingRowsCheckbox />
     </Stack>

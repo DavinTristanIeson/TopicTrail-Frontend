@@ -8,6 +8,7 @@ import React from 'react';
 import {
   ExcludeOverlappingRowsCheckbox,
   StatisticTestMethodFormBody,
+  StatisticTestOverlappingSubdatasetsWarning,
   StatisticTestProjectColumnSelectField,
 } from './utils';
 
@@ -30,7 +31,9 @@ export type BinaryStatisticTestConfig = Yup.InferType<
 export function BinaryStatisticTestConfigForm() {
   return (
     <Stack>
-      <StatisticTestProjectColumnSelectField />
+      <StatisticTestProjectColumnSelectField
+        resets={['statistic_test_preference', 'effect_size_preference']}
+      />
       <StatisticTestMethodFormBody />
     </Stack>
   );
@@ -56,7 +59,10 @@ export type PairwiseStatisticTestConfig = Yup.InferType<
 export function PairwiseStatisticTestConfigForm() {
   return (
     <Stack>
-      <StatisticTestProjectColumnSelectField />
+      <StatisticTestOverlappingSubdatasetsWarning />
+      <StatisticTestProjectColumnSelectField
+        resets={['statistic_test_preference', 'effect_size_preference']}
+      />
       <StatisticTestMethodFormBody />
       <ExcludeOverlappingRowsCheckbox />
     </Stack>

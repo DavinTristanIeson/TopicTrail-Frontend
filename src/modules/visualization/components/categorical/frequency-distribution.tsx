@@ -100,7 +100,7 @@ export default function VisualizationFrequencyDistributionComponent(
             y,
             z,
             type: 'heatmap',
-            texttemplate: needsPercentage ? '%{z:.2f}%' : '%{z}',
+            texttemplate: needsPercentage ? '%{z:.3f}%' : '%{z}',
             colorscale: 'Viridis',
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,

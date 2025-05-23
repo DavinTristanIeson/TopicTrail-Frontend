@@ -364,6 +364,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/table/{project_id}/compare/words": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Compare Group Words */
+        post: operations["post__compare_group_words_table__project_id__compare_words_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/topic/{project_id}/start": {
         parameters: {
             query?: never;
@@ -713,40 +730,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/table/{project_id}/comparison/words": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Compare Group Words */
-        post: operations["post__compare_group_words_table__project_id__comparison_words_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/table/{project_id}/comparison/co-occurrence": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  Cooccurrence */
-        post: operations["post__cooccurrence_table__project_id__comparison_co_occurrence_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/statistic-test/{project_id}": {
         parameters: {
             query?: never;
@@ -843,6 +826,23 @@ export interface paths {
         put?: never;
         /** Post  Test Contingency Table */
         post: operations["post__test_contingency_table_statistic_test__project_id__binary_test_contingency_table_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistic-test/{project_id}/co-occurrence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Cooccurrence */
+        post: operations["post__cooccurrence_statistic_test__project_id__co_occurrence_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1583,6 +1583,11 @@ export interface components {
             column: string;
             /** Exclude Overlapping Rows */
             exclude_overlapping_rows: boolean;
+        };
+        /** GetSubdatasetCooccurrenceSchema */
+        GetSubdatasetCooccurrenceSchema: {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
         };
         /** GetTableColumnAggregateValuesSchema */
         GetTableColumnAggregateValuesSchema: {
@@ -4210,6 +4215,77 @@ export interface operations {
             };
         };
     };
+    post__compare_group_words_table__project_id__compare_words_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompareSubdatasetsSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
     post__start_topic_modeling_topic__project_id__start_post: {
         parameters: {
             query: {
@@ -6236,148 +6312,6 @@ export interface operations {
             };
         };
     };
-    post__compare_group_words_table__project_id__comparison_words_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CompareSubdatasetsSchema"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_TableTopicsResource_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    post__cooccurrence_table__project_id__comparison_co_occurrence_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CompareSubdatasetsSchema"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_SubdatasetCooccurrenceResource_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
     post__statistic_test_statistic_test__project_id__post: {
         parameters: {
             query?: never;
@@ -6755,6 +6689,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_BinaryStatisticTestOnContingencyTableResultMainResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__cooccurrence_statistic_test__project_id__co_occurrence_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GetSubdatasetCooccurrenceSchema"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_SubdatasetCooccurrenceResource_"];
                 };
             };
             /** @description Bad Request */

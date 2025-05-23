@@ -11,6 +11,7 @@ import { ComparisonSubdatasetSelectField } from '@/modules/comparison/subdataset
 import {
   ExcludeOverlappingRowsCheckbox,
   StatisticTestMethodFormBody,
+  StatisticTestOverlappingSubdatasetsWarning,
   StatisticTestProjectColumnSelectField,
 } from './utils';
 
@@ -36,7 +37,10 @@ export type TwoSampleStatisticTestConfig = Yup.InferType<
 export function TwoSampleStatisticTestConfigForm() {
   return (
     <Stack>
-      <StatisticTestProjectColumnSelectField />
+      <StatisticTestOverlappingSubdatasetsWarning />
+      <StatisticTestProjectColumnSelectField
+        resets={['statistic_test_preference', 'effect_size_preference']}
+      />
       <Group className="w-full">
         <ComparisonSubdatasetSelectField
           name="group1"

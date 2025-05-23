@@ -1,17 +1,14 @@
 import { SubdatasetCooccurrenceModel } from '@/api/comparison';
-import { BaseVisualizationComponentProps } from '../../types/base';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { Select, Stack } from '@mantine/core';
-import {
-  PlotInlineConfiguration,
-  usePlotRendererHelperProps,
-} from '../configuration';
+import { PlotInlineConfiguration } from '@/modules/visualization/components/configuration';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { map2D, zip2D } from '@/common/utils/iterable';
 import { max } from 'lodash-es';
+import { BaseStatisticTestResultRendererProps } from '../types';
 
 enum SubdatasetCoocccurrenceDisplayMode {
   Frequencies = 'frequencies',
@@ -39,20 +36,18 @@ const SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY = {
   },
 };
 
-export default function VisualizationSubdatasetCooccurrenceComponent(
-  props: BaseVisualizationComponentProps<SubdatasetCooccurrenceModel, object>,
+export default function SubdatasetCooccurrenceResultRenderer(
+  props: BaseStatisticTestResultRendererProps<
+    SubdatasetCooccurrenceModel,
+    object
+  >,
 ) {
-  const { data: originalData, item } = props;
-  const data = originalData[0]?.data;
-  if (!data) {
-    throw new Error(
-      'There is no data provided for subdataset co-occurrence component. This may be a developer oversight.',
-    );
-  }
+  const { data } = props;
 
   const [display, setDisplay] = React.useState(
     SubdatasetCoocccurrenceDisplayMode.Cooccurrences,
   );
+
   const frequenciesPlot = React.useMemo<PlotParams>(() => {
     const { colors } = generateColorsFromSequence(data.labels);
     return {
@@ -137,7 +132,6 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
   const renderOption = useDescriptionBasedRenderOption(
     SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY,
   );
-  const plotProps = usePlotRendererHelperProps(item);
   return (
     <Stack>
       <PlotInlineConfiguration>
@@ -160,7 +154,6 @@ export default function VisualizationSubdatasetCooccurrenceComponent(
               ? frequenciesPlot
               : cooccurrencesPlot
           }
-          {...plotProps}
         />
       )}
     </Stack>

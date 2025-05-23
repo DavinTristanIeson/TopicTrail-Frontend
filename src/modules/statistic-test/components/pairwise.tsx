@@ -158,7 +158,9 @@ export function PairwiseStatisticTestResultRenderer(
           texttemplate:
             method === PairwiseStatisticTestVisualizationMethod.SampleSize
               ? '%{z}'
-              : '%{z:.3f}',
+              : method === PairwiseStatisticTestVisualizationMethod.Confidence
+                ? '%{z:.3f}%'
+                : '%{z:.3f}',
           x: chosenSubdatasets,
           y: chosenSubdatasets,
           z,

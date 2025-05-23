@@ -258,7 +258,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           x: columns,
           y: rows,
           z: process(confidences),
-          texttemplate: '%{z:.3f}',
+          texttemplate: '%{z:.3f}%',
           hoverongaps: false,
           colorscale: 'Viridis',
           customdata: customdata as any,

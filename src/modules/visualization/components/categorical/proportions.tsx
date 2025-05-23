@@ -94,7 +94,7 @@ export default function VisualizationProportionsComponent(
               `<b>Subdataset</b>: %{x}`,
               `<b>${valueLabel}</b>: %{z}${character}`,
             ].join('<br>'),
-            texttemplate: needsPercentage ? '%{z:.2f}%' : '%{z}',
+            texttemplate: needsPercentage ? '%{z:.3f}%' : '%{z}',
             zmin: 0,
             zmax: needsPercentage ? 100 : undefined,
             colorbar: {

@@ -20,13 +20,9 @@ export enum DashboardItemTypeEnum {
   PairedValues = 'paired-values',
 
   SubdatasetWords = 'subdataset-words',
-  SubdatasetCooccurrence = 'subdataset-cooccurrence',
 }
 
-const FOR_ALL_TYPES = [
-  DashboardItemTypeEnum.Counts,
-  DashboardItemTypeEnum.SubdatasetCooccurrence,
-];
+const FOR_ALL_TYPES = [DashboardItemTypeEnum.Counts];
 const FOR_CATEGORICAL_TYPES = [
   DashboardItemTypeEnum.FrequencyDistribution,
   DashboardItemTypeEnum.Proportions,

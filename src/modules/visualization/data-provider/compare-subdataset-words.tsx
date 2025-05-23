@@ -13,7 +13,7 @@ export const useVisualizationCompareSubdatasetWordsDataProvider: BaseVisualizati
   const groups = rawGroups.filter((group) => !!group.filter);
   const { data, error, isFetching, refetch } = client.useQuery(
     'post',
-    '/table/{project_id}/comparison/words',
+    '/table/{project_id}/compare/words',
     {
       body: {
         column: item.column,

@@ -77,15 +77,12 @@ import {
   VisualizationCalendarConfigSchema,
   VisualizationCalendarConfigType,
 } from '../configuration/calendar';
-import VisualizationSubdatasetCooccurrenceComponent from '../components/all/subdataset-cooccurrence';
-import { useVisualizationSubdatasetCooccurrenceDataProvider } from '../data-provider/subdataset-cooccurrence';
-import { SubdatasetCooccurrenceModel } from '@/api/comparison';
 import {
   VisualizationPairedValuesConfigForm,
   VisualizationPairedValuesConfigSchema,
   VisualizationPairedValuesConfigType,
 } from '../configuration/paired-values';
-import VisualizationPairedValuesComponent from '../components/all/paired-values';
+import VisualizationPairedValuesComponent from '../components/continuous/paired-values';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -209,16 +206,6 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     VisualizationPairedValuesModel,
     VisualizationPairedValuesConfigType
   >,
-  [DashboardItemTypeEnum.SubdatasetCooccurrence]: {
-    type: DashboardItemTypeEnum.SubdatasetCooccurrence,
-    label: 'Subdataset Co-occurrence',
-    description:
-      'Examine the number of rows that overlap for each available subdatasets to see if the filter criteria for those subdatasets tend to co-occur with each other. This visualization type is not affected by the column that you choose so you can simply choose any column you like.',
-    component: VisualizationSubdatasetCooccurrenceComponent,
-    dataProvider: useVisualizationSubdatasetCooccurrenceDataProvider,
-    configForm: null,
-    configValidator: null,
-  } as VisualizationConfigEntry<SubdatasetCooccurrenceModel, object>,
   [DashboardItemTypeEnum.SubdatasetWords]: {
     type: DashboardItemTypeEnum.SubdatasetWords,
     label: 'Compare Subdataset Words',

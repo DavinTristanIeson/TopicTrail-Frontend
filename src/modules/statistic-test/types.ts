@@ -22,6 +22,7 @@ export enum StatisticTestPurpose {
   TwoSample = 'two-sample',
   Pairwise = 'pairwise',
   Omnibus = 'omnibus',
+  SubdatasetCooccurrence = 'subdataset-cooccurrence',
   ContingencyTable = 'contingency-table',
   BinaryTestContingencyTable = 'binary-test-contingency-table',
   BinaryTestDistribution = 'binary-test-distribution',

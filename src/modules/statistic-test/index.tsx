@@ -1,6 +1,5 @@
-import { Alert, Divider, Group, Select, Stack } from '@mantine/core';
+import { Divider, Group, Select, Stack } from '@mantine/core';
 import React from 'react';
-import { Warning } from '@phosphor-icons/react';
 import { useComparisonAppState } from '../comparison/app-state';
 import { StatisticTestConfig, StatisticTestPurpose } from './types';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
@@ -116,11 +115,6 @@ export default function StatisticTestPage() {
           />
         </div>
       </Group>
-      <Alert color="yellow" icon={<Warning />}>
-        Please make sure that all of your subdatasets are mutually exclusive.
-        Statistical tests may produce unreliable results if there are
-        overlapping data samples.
-      </Alert>
       {purpose && (
         <StatisticTestSwitcher
           purpose={purpose}

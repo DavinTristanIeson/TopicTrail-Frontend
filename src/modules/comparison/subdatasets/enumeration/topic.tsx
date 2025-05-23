@@ -7,7 +7,7 @@ import { useMultiSelectSelectAllCheckbox } from '@/components/visual/select';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { Switch, MultiSelect, Button, Alert, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { Warning } from '@phosphor-icons/react';
+import { List, Warning } from '@phosphor-icons/react';
 import { uniq, identity, zip } from 'lodash-es';
 import { useComparisonAppState } from '../../app-state';
 import { assignUniqueNames } from './utils';
@@ -201,6 +201,7 @@ function EnumerateTopicValuesActionsInner(
       <Button
         onClick={enumerateSubdatasets}
         disabled={!column}
+        leftSection={<List />}
         className="max-w-sm"
       >
         Enumerate Topics of {column.name}
