@@ -68,11 +68,13 @@ export const MantineReactTableBehaviors = {
     manualPagination: true,
   },
   ColumnActions: {
-    enableColumnDragging: true,
     enableColumnOrdering: true,
     enableColumnFilters: false,
     enableColumnPinning: true,
     enableColumnResizing: true,
+    // Don't render the additional buttons
+    enableColumnDragging: false,
+    enableColumnActions: false,
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Virtualized(rows: any[], columns: any[]) {

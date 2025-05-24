@@ -58,7 +58,7 @@ export function ProjectAllTopicsProvider(props: React.PropsWithChildren) {
             }
             const columnTopicModelResult = allTopicModelingResults.find(
               (topicModelingResult) =>
-                topicModelingResult.column.name === column.name,
+                topicModelingResult.column.name === column.source_name,
             );
             // Not textual column. Don't have to care.
             if (!columnTopicModelResult) {

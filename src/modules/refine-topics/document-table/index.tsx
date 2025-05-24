@@ -8,8 +8,6 @@ import { RefineTopicsDocumentTableRenderer } from './renderer';
 import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
 import { TableSkeleton } from '@/components/visual/loading';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Alert, Text } from '@mantine/core';
-import { Info } from '@phosphor-icons/react';
 import { useTableStateSetup } from '@/modules/table/app-state';
 import { FilterStateContext } from '@/modules/filter/context';
 
@@ -54,16 +52,6 @@ export function RefineTopicsDocumentTable(
 
   return (
     <TableStateContext.Provider value={tableState}>
-      <Alert color="blue" icon={<Info />} className="mb-3">
-        You can view how the documents are grouped into topics in this tab in
-        order to help you figure out why the topic modeling algorithm assumes
-        that these documents are part of the same topic. To find get a quick
-        overview of the topics, considering using the &quot;
-        <Text fw={500} inherit span>
-          Topics
-        </Text>
-        &quot; tab instead.
-      </Alert>
       <FetchWrapperComponent
         error={error}
         onRetry={refetch}

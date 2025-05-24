@@ -90,7 +90,7 @@ function topicsToComboboxes(
   const topicComboboxes = topics.map((topic) => {
     return {
       label: getTopicLabel(topic),
-      value: topic.id.toString(),
+      value: String(topic.id),
       data: topic,
     } as TopicComboboxItem;
   });
@@ -101,7 +101,7 @@ function topicsToComboboxes(
     ...topicComboboxes,
     {
       label: OUTLIER_TOPIC.label,
-      value: OUTLIER_TOPIC.id.toString(),
+      value: String(OUTLIER_TOPIC.id),
       data: null,
     } as ComboboxItem,
   ];
@@ -130,6 +130,7 @@ export function TopicSelectInput(props: TopicSelectInputProps) {
       filter={topicFilterFunction}
       data={topicsToComboboxes(data, withOutlier)}
       onChange={(value, item) => {
+        console.log(item);
         if (value == null) {
           onChange?.(null, item);
           return;
@@ -137,6 +138,7 @@ export function TopicSelectInput(props: TopicSelectInputProps) {
         const topicId = parseInt(value);
         if (withOutlier && topicId === OUTLIER_TOPIC.id) {
           onChange?.(OUTLIER_TOPIC, item);
+          return;
         }
         const chosenTopic = data.find((x) => x.id === topicId) ?? null;
         onChange?.(chosenTopic, item);

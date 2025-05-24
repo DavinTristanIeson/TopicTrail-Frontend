@@ -112,7 +112,7 @@ function PreprocessingConfigurationFormBody(
         />
         <RHFField
           name={`${PREPROCESSING_NAME}.min_df`}
-          label="Min. Word Frequency"
+          label="Min. Document Frequency for Words"
           type="number"
           min={1}
           description="Words with frequencies below this threshold will be removed from the documents. This ensures that rare, uninformative words are not included in the topic representation. You may have to lower this value if your dataset is small."
@@ -120,7 +120,7 @@ function PreprocessingConfigurationFormBody(
         <RHFField
           type="percentage"
           name={`${PREPROCESSING_NAME}.max_df`}
-          label="Max. Word Frequency"
+          label="Max. Document Frequency for Words"
           bounded
           description="Words with frequencies above this threshold will be removed from the documents. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
         />
@@ -239,12 +239,6 @@ function TopicModelingConfigurationFormBody(
             label="No Outliers"
             description={`Should the model produce any outliers? If this is set to false, all documents will be assigned to one topic. Note that this option alone only affects the document-topic assignments. It doesn't affect the topic representations (and frequencies) if you don't enable "Represent Outliers".`}
             name={`${TOPIC_MODELING_NAME}.no_outliers`}
-          />
-          <RHFField
-            type="switch"
-            label="Represent Outliers"
-            description="Should the outliers be included in the topic representation? This is only enabled if No Outliers is set to true. Note that by enabling this option, you risk polluting the topic representations found by the model with irrelevant words."
-            name={`${TOPIC_MODELING_NAME}.represent_outliers`}
           />
         </Group>
       </Stack>
