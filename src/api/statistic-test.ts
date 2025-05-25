@@ -16,3 +16,18 @@ export type ContingencyTableModel =
   components['schemas']['ContingencyTableResource'];
 export type PairwiseStatisticTestResultModel =
   components['schemas']['PairwiseStatisticTestResultResource'];
+
+export type LinearRegressionResultModel =
+  components['schemas']['LinearRegressionResult'];
+export type LogisticRegressionResultModel =
+  components['schemas']['LogisticRegressionResult'];
+export type OneVsRestLogisticRegressionResultModel =
+  components['schemas']['OneVsRestLogisticRegressionResult'];
+export type MultinomialLogisticRegressionResultModel =
+  components['schemas']['MultinomialLogisticRegressionResult'];
+export type MultinomialLogisticRegressionFacetResultModel =
+  components['schemas']['MultinomialLogisticRegressionFacetResult'];
+export type OrdinalRegressionResultModel =
+  components['schemas']['OrdinalRegressionResult'];
+export type OrdinalRegressionCutpointModel =
+  components['schemas']['OrdinalRegressionCutpoint'];
