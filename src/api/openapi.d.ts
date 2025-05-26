@@ -1912,8 +1912,8 @@ export interface components {
             variance_inflation_factor: number;
             /** Statistic */
             statistic: number;
-            /** Odds */
-            readonly odds: number;
+            /** Odds Ratio */
+            readonly odds_ratio: number;
         };
         /** LogisticRegressionInput */
         LogisticRegressionInput: {
