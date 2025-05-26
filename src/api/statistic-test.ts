@@ -21,8 +21,6 @@ export type LinearRegressionResultModel =
   components['schemas']['LinearRegressionResult'];
 export type LogisticRegressionResultModel =
   components['schemas']['LogisticRegressionResult'];
-export type OneVsRestLogisticRegressionResultModel =
-  components['schemas']['OneVsRestLogisticRegressionResult'];
 export type MultinomialLogisticRegressionResultModel =
   components['schemas']['MultinomialLogisticRegressionResult'];
 export type MultinomialLogisticRegressionFacetResultModel =

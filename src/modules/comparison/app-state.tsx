@@ -39,7 +39,7 @@ const ComparisonAppStateContext = createContext<ComparisonAppStateContextType>(
   null as any,
 );
 
-const STATISTIC_TEST_HISTORY_LIMIT = 10;
+const STATISTIC_TEST_HISTORY_LIMIT = 100;
 function useComparisonStatisticTestAppState() {
   const [history, setHistory] = React.useState<StatisticTestStateItem[]>([]);
   const statisticTestInput =

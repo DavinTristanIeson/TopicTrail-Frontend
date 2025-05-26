@@ -118,13 +118,15 @@ function RegressionInterpretationSelectInput() {
 interface CommonRegressionConfigFormProps {
   supportedTypes: SchemaColumnTypeEnum[];
   onChangeColumn?(): void;
+  DependentVariableComponent?: React.ReactNode;
   Bottom?: React.ReactNode;
 }
 
 export function CommonRegressionConfigForm(
   props: CommonRegressionConfigFormProps,
 ) {
-  const { supportedTypes, onChangeColumn, Bottom } = props;
+  const { supportedTypes, onChangeColumn, Bottom, DependentVariableComponent } =
+    props;
   const project = React.useContext(ProjectContext);
   const columns = filterProjectColumnsByType(project, supportedTypes);
   return (
@@ -135,13 +137,15 @@ export function CommonRegressionConfigForm(
         coefficients of each subdataset represents the effect of the independent
         variables on the dependent variable.
       </Alert>
-      <ProjectColumnSelectField
-        label="Dependent Variable"
-        name="target"
-        data={columns}
-        placeholder="Choose the column that will be used as the dependent variable for the regression."
-        onChange={onChangeColumn}
-      />
+      {DependentVariableComponent ?? (
+        <ProjectColumnSelectField
+          label="Dependent Variable"
+          name="target"
+          data={columns}
+          placeholder="Choose the column that will be used as the dependent variable for the regression."
+          onChange={onChangeColumn}
+        />
+      )}
       <RegressionInterpretationSelectInput />
       <ConstrainByGroupsCheckbox />
       <ReferenceSelectInput />

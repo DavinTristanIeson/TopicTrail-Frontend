@@ -66,7 +66,6 @@ import {
   LinearRegressionConfigForm,
   LinearRegressionConfigType,
   linearRegressionInputSchema,
-  LogisticRegressionConfigForm,
   MultinomialLogisticRegressionConfigForm,
   MultinomialLogisticRegressionConfigType,
   multinomialLogisticRegressionInputSchema,
@@ -82,6 +81,11 @@ import {
   RegressionConfigType,
   regressionInputSchema,
 } from './configuration/regression-common';
+import {
+  LogisticRegressionConfigForm,
+  LogisticRegressionConfigType,
+  logisticRegressionInputSchema,
+} from './configuration/logistic-regression';
 
 function getBasicStatisticTestParams(config: {
   column: string;
@@ -149,15 +153,20 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     type: StatisticTestPurpose.LogisticRegression,
     component: null as any,
     configForm: LogisticRegressionConfigForm,
-    configValidator: regressionInputSchema,
+    configValidator: logisticRegressionInputSchema,
     dataProvider: useLogisticRegressionDataProvider,
     description:
       'Use each subdataset as the independent variable of a linear regression to figure out how the criteria of each subdataset contributes to the odds of predicting whether the dependent variable is true or false.',
     label: 'Logistic Regression',
-    getParams: getRegressionParams,
+    getParams(config) {
+      return getRegressionParams({
+        ...config,
+        target: config.target.name,
+      });
+    },
   } as StatisticTestConfigurationEntry<
     LogisticRegressionResultModel,
-    RegressionConfigType
+    LogisticRegressionConfigType
   >,
   [StatisticTestPurpose.MultinomialLogisticRegression]: {
     type: StatisticTestPurpose.MultinomialLogisticRegression,

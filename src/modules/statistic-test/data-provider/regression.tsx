@@ -7,7 +7,6 @@ import {
   LinearRegressionResultModel,
   LogisticRegressionResultModel,
   MultinomialLogisticRegressionResultModel,
-  OneVsRestLogisticRegressionResultModel,
   OrdinalRegressionResultModel,
 } from '@/api/statistic-test';
 import { BaseStatisticTestDataProviderHook } from '../types';
@@ -16,6 +15,8 @@ import {
   MultinomialLogisticRegressionConfigType,
 } from '../configuration/regression';
 import { RegressionConfigType } from '../configuration/regression-common';
+import { LogisticRegressionConfigType } from '../configuration/logistic-regression';
+import { NamedTableFilterModel } from '@/api/comparison';
 
 export const useLinearRegressionDataProvider: BaseStatisticTestDataProviderHook<
   LinearRegressionResultModel,
@@ -44,7 +45,7 @@ export const useLinearRegressionDataProvider: BaseStatisticTestDataProviderHook<
 
 export const useLogisticRegressionDataProvider: BaseStatisticTestDataProviderHook<
   LogisticRegressionResultModel,
-  RegressionConfigType
+  LogisticRegressionConfigType
 > = function (config) {
   const { subdatasets, params } = useStatisticTestDataProviderParams({
     groups: null,
@@ -57,31 +58,7 @@ export const useLogisticRegressionDataProvider: BaseStatisticTestDataProviderHoo
         constrain_by_groups: config.constrain_by_groups,
         interpretation: config.interpretation,
         reference: config.reference ?? null,
-        target: config.target,
-        groups: subdatasets,
-      },
-      params,
-    },
-  );
-  return usePrepareStatisticTestDataProvider({ query });
-};
-
-export const useOneVsRestLogisticRegressionDataProvider: BaseStatisticTestDataProviderHook<
-  OneVsRestLogisticRegressionResultModel,
-  RegressionConfigType
-> = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
-    groups: null,
-  });
-  const query = client.useQuery(
-    'post',
-    '/statistic-test/{project_id}/regression/logistic/one-vs-rest',
-    {
-      body: {
-        constrain_by_groups: config.constrain_by_groups,
-        interpretation: config.interpretation,
-        reference: config.reference ?? null,
-        target: config.target,
+        target: config.target as NamedTableFilterModel,
         groups: subdatasets,
       },
       params,

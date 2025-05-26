@@ -883,23 +883,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}/regression/logistic/one-vs-rest": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Post  One Vs Rest Logistic Regression */
-        post: operations["post__one_vs_rest_logistic_regression_statistic_test__project_id__regression_logistic_one_vs_rest_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/statistic-test/{project_id}/regression/logistic/multinomial": {
         parameters: {
             query?: never;
@@ -1036,12 +1019,6 @@ export interface components {
         ApiResult_NoneType_: {
             /** Data */
             data: null;
-            /** Message */
-            message: string | null;
-        };
-        /** ApiResult[OneVsRestLogisticRegressionResult] */
-        ApiResult_OneVsRestLogisticRegressionResult_: {
-            data: components["schemas"]["OneVsRestLogisticRegressionResult"];
             /** Message */
             message: string | null;
         };
@@ -1914,6 +1891,41 @@ export interface components {
             /** Rmse */
             rmse: number;
         };
+        /** LogisticRegressionCoefficient */
+        LogisticRegressionCoefficient: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** P Value */
+            p_value: number;
+            /** Std Err */
+            std_err: number;
+            /** Sample Size */
+            sample_size: number;
+            /** Confidence Interval */
+            confidence_interval: [
+                number,
+                number
+            ];
+            /** Variance Inflation Factor */
+            variance_inflation_factor: number;
+            /** Statistic */
+            statistic: number;
+            /** Odds */
+            readonly odds: number;
+        };
+        /** LogisticRegressionInput */
+        LogisticRegressionInput: {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            target: components["schemas"]["NamedTableFilter"];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Constrain By Groups */
+            constrain_by_groups: boolean;
+        };
         /** LogisticRegressionResult */
         LogisticRegressionResult: {
             /** Reference */
@@ -1926,8 +1938,8 @@ export interface components {
             /** Warnings */
             warnings: string[];
             /** Coefficients */
-            coefficients: components["schemas"]["RegressionCoefficient"][];
-            intercept: components["schemas"]["RegressionCoefficient"];
+            coefficients: components["schemas"]["LogisticRegressionCoefficient"][];
+            intercept: components["schemas"]["LogisticRegressionCoefficient"];
             /** P Value */
             p_value: number;
             /** Pseudo R Squared */
@@ -1938,8 +1950,8 @@ export interface components {
         /** MultinomialLogisticRegressionFacetResult */
         MultinomialLogisticRegressionFacetResult: {
             /** Coefficients */
-            coefficients: components["schemas"]["RegressionCoefficient"][];
-            intercept: components["schemas"]["RegressionCoefficient"];
+            coefficients: components["schemas"]["LogisticRegressionCoefficient"][];
+            intercept: components["schemas"]["LogisticRegressionCoefficient"];
         };
         /** MultinomialLogisticRegressionInput */
         MultinomialLogisticRegressionInput: {
@@ -2027,11 +2039,6 @@ export interface components {
             /** Exclude Overlapping Rows */
             exclude_overlapping_rows: boolean;
         };
-        /** OneVsRestLogisticRegressionResult */
-        OneVsRestLogisticRegressionResult: {
-            /** Results */
-            results: components["schemas"]["LogisticRegressionResult"][];
-        };
         /** OrTableFilter */
         "OrTableFilter-Input": {
             /**
@@ -2078,6 +2085,30 @@ export interface components {
              */
             min_frequency: number;
         };
+        /** OrdinalRegressionCoefficient */
+        OrdinalRegressionCoefficient: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** P Value */
+            p_value: number;
+            /** Std Err */
+            std_err: number;
+            /** Sample Size */
+            sample_size: number;
+            /** Confidence Interval */
+            confidence_interval: [
+                number,
+                number
+            ];
+            /** Variance Inflation Factor */
+            variance_inflation_factor: number;
+            /** Statistic */
+            statistic: number;
+            /** Odds */
+            readonly odds: number;
+        };
         /** OrdinalRegressionCutpoint */
         OrdinalRegressionCutpoint: {
             /** Name */
@@ -2099,7 +2130,7 @@ export interface components {
             /** Warnings */
             warnings: string[];
             /** Coefficients */
-            coefficients: components["schemas"]["RegressionCoefficient"][];
+            coefficients: components["schemas"]["OrdinalRegressionCoefficient"][];
             /** Cutpoints */
             cutpoints: components["schemas"]["OrdinalRegressionCutpoint"][];
             /** Log Likelihood Ratio */
@@ -7177,7 +7208,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BaseRegressionInput"];
+                "application/json": components["schemas"]["LogisticRegressionInput"];
             };
         };
         responses: {
@@ -7188,77 +7219,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_LogisticRegressionResult_"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResult"];
-                };
-            };
-        };
-    };
-    post__one_vs_rest_logistic_regression_statistic_test__project_id__regression_logistic_one_vs_rest_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                project_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BaseRegressionInput"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiResult_OneVsRestLogisticRegressionResult_"];
                 };
             };
             /** @description Bad Request */

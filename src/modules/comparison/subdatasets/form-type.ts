@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 
 export const comparisonFilterFormSchema = Yup.object({
   name: Yup.string().required(),
-  filter: tableFilterFormSchema,
+  filter: tableFilterFormSchema.required(),
 });
 
 export type ComparisonFilterFormType = ReplaceKeys<

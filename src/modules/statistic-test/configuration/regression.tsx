@@ -40,14 +40,6 @@ export function LinearRegressionConfigForm() {
   );
 }
 
-export function LogisticRegressionConfigForm() {
-  return (
-    <CommonRegressionConfigForm
-      supportedTypes={[SchemaColumnTypeEnum.Boolean]}
-    />
-  );
-}
-
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_COLUMN_TYPES = without(
   CATEGORICAL_SCHEMA_COLUMN_TYPES,
   SchemaColumnTypeEnum.Boolean,
