@@ -184,12 +184,12 @@ function SignificanceResultRenderer(props: SignificanceResultModel) {
         label={
           dictionaryEntry ? `Statistic (${dictionaryEntry.label})` : 'Statistic'
         }
-        value={props.statistic.toFixed(4)}
+        value={props.statistic.toFixed(3)}
         info="The value calculated by the statistic test, which is later used to calculate the p value and confidence. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead."
       />
       <ResultCard
         label="P-Value"
-        value={props.p_value.toFixed(4)}
+        value={props.p_value.toFixed(3)}
         info="The p value calculated from the statistic test. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead"
       />
       <ResultCard
@@ -213,7 +213,7 @@ function EffectSizeResultRenderer(props: EffectSizeResultModel) {
           ? `Effect Size (${dictionaryEntry.label})`
           : 'Effect Size'
       }
-      value={props.value.toFixed(4)}
+      value={props.value.toFixed(3)}
       info={dictionaryEntry.description}
     />
   );

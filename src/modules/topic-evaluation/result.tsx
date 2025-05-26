@@ -85,12 +85,12 @@ export function TopicEvaluationMetricsRenderer(
     <Group justify="space-around" pt={16}>
       <ResultCard
         label="Topic Coherence"
-        value={coherence_v.toFixed(4)}
+        value={coherence_v.toFixed(3)}
         info="A score that represents how coherent the topics are. A higher score is better. A topic is considered coherent if its topic words represent the contents of the documents assigned to that topic well."
       />
       <ResultCard
         label="Topic Diversity"
-        value={topic_diversity.toFixed(4)}
+        value={topic_diversity.toFixed(3)}
         info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
       />
       <ResultCard

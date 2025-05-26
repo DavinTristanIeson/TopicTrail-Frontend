@@ -29,3 +29,10 @@ export type OrdinalRegressionResultModel =
   components['schemas']['OrdinalRegressionResult'];
 export type OrdinalRegressionCutpointModel =
   components['schemas']['OrdinalRegressionCutpoint'];
+
+export type RegressionCoefficientModel =
+  components['schemas']['RegressionCoefficient'];
+export type LogisticRegressionCoefficientModel =
+  components['schemas']['LogisticRegressionCoefficient'];
+export type OrdinalRegressionCoefficientModel =
+  components['schemas']['OrdinalRegressionCoefficient'];
