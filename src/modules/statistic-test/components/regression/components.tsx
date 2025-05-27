@@ -1,7 +1,7 @@
 import { LogisticRegressionCoefficientModel } from '@/api/statistic-test';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
-import { useMantineTheme } from '@mantine/core';
+import { Group, HoverCard, Table, Text, useMantineTheme } from '@mantine/core';
 import { zip } from 'lodash-es';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import {
@@ -10,6 +10,8 @@ import {
   REGRESSION_VISUALIZATION_TYPE_DICTIONARY,
 } from './types';
 import { RegressionVisualizationData } from './data';
+import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
+import { TaskControlsCard } from '@/modules/task/controls';
 
 interface useCommonRegressionResultPlot {
   type: RegressionVisualizationTypeEnum;
@@ -303,4 +305,112 @@ export function useEffectOnInterceptRegressionResultPlot(
       },
     } as PlotParams;
   }, [data, intercept, mantineColors.brand, targetName, type, variant]);
+}
+
+interface InterceptRendererProps {
+  intercept: UltimateRegressionCoefficientModel;
+  statisticName: string;
+  reference: string | null;
+}
+
+export function RegressionInterceptResultRenderer(
+  props: InterceptRendererProps,
+) {
+  const { intercept, statisticName, reference } = props;
+  const oddsRatio = (intercept as LogisticRegressionCoefficientModel)
+    .odds_ratio;
+  const withOdds = oddsRatio != null;
+  const interceptData = [
+    {
+      label: 'Value',
+      value: intercept.value,
+    },
+    {
+      label: 'Std. Err',
+      value: intercept.std_err,
+    },
+    {
+      label: statisticName,
+      value: intercept.statistic.toFixed(3),
+    },
+    {
+      label: 'P-Value',
+      value: intercept.p_value.toFixed(3),
+    },
+    {
+      label: 'Confidence Level',
+      value: `${(100 * (1 - intercept.p_value)).toFixed(3)}%`,
+    },
+    {
+      label: 'Confidence Interval (Alpha = 0.05)',
+      value: `${intercept.confidence_interval[0].toFixed(3)} - ${intercept.confidence_interval[1].toFixed(3)}`,
+    },
+  ];
+  return (
+    <TaskControlsCard>
+      <HoverCard>
+        <HoverCard.Target>
+          <Group>
+            <Text size="md" fw={500}>
+              {'Intercept' + (withOdds ? ' (Odds)' : '')}
+            </Text>
+            <Info />
+          </Group>
+        </HoverCard.Target>
+        <HoverCard.Dropdown>
+          <Table>
+            {interceptData.map((row) => (
+              <Table.Tr key={row.label}>
+                <Table.Th>{row.label}</Table.Th>
+                <Table.Td>{row.value}</Table.Td>
+              </Table.Tr>
+            ))}
+          </Table>
+        </HoverCard.Dropdown>
+      </HoverCard>
+      <Text size="xl" fw={500} c="brand">
+        {withOdds ? oddsRatio : intercept.value}
+      </Text>
+      {reference && (
+        <Text size="md" fw={500}>
+          Relative to &quot;{reference}&quot;
+        </Text>
+      )}
+    </TaskControlsCard>
+  );
+}
+
+interface RegressionConvergenceResultRendererProps {
+  converged: boolean;
+}
+
+export function RegressionConvergenceResultRenderer(
+  props: RegressionConvergenceResultRendererProps,
+) {
+  const { converged } = props;
+  const { colors } = useMantineTheme();
+  return (
+    <TaskControlsCard>
+      {converged ? (
+        <Group>
+          <CheckCircle color={colors.green[6]} size={48} />
+          <Text>
+            The regression model has converged successfully; this means that the
+            optimization algorithm was able to find best-fit parameters for the
+            model. The coefficients can be relied on.
+          </Text>
+        </Group>
+      ) : (
+        <Group>
+          <XCircle color={colors.red[6]} size={48} />
+          <Text>
+            The regression model wasn&apos;t able to converge successfully; this
+            means that the optimization algorithm wasn&apos;t able to find
+            best-fit parameters for the model. The coefficients shouldn&apos;t
+            be relied on.
+          </Text>
+        </Group>
+      )}
+    </TaskControlsCard>
+  );
 }

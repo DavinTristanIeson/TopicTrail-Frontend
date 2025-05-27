@@ -4,7 +4,7 @@ import {
   OrdinalRegressionCoefficientModel,
 } from '@/api/statistic-test';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { ComboboxItem, Select } from '@mantine/core';
+import { type ComboboxItem, Select } from '@mantine/core';
 import React from 'react';
 
 export type UltimateRegressionCoefficientModel =
@@ -82,7 +82,7 @@ export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
     value: RegressionVisualizationTypeEnum.EffectOnIntercept,
     description:
       'Show how each independent variable applies its effects on the intercept.',
-    select(coefficient: UltimateRegressionCoefficientModel) {
+    select() {
       throw new Error("Can't select fields for Effect on Intercept.");
     },
   },
