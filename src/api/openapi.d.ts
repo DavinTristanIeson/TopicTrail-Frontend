@@ -1914,6 +1914,8 @@ export interface components {
             statistic: number;
             /** Odds Ratio */
             readonly odds_ratio: number;
+            /** Probability */
+            readonly probability: number;
         };
         /** LogisticRegressionInput */
         LogisticRegressionInput: {
@@ -1949,6 +1951,8 @@ export interface components {
         };
         /** MultinomialLogisticRegressionFacetResult */
         MultinomialLogisticRegressionFacetResult: {
+            /** Level */
+            level: string;
             /** Coefficients */
             coefficients: components["schemas"]["LogisticRegressionCoefficient"][];
             intercept: components["schemas"]["LogisticRegressionCoefficient"];

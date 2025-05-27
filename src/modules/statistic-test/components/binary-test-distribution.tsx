@@ -37,7 +37,7 @@ export default function BinaryStatisticTestOnDistributionResultRenderer(
 
   // region Configuration
   const { Component: AlphaSlider, filter: filterAlpha } =
-    useVisualizationAlphaSlider();
+    useVisualizationAlphaSlider({});
   const { Component: VisualizationMethodSelect, type: vistype } =
     useBinaryStatisticTestVisualizationMethodSelect();
 

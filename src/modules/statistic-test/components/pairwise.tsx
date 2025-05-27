@@ -72,7 +72,7 @@ export function PairwiseStatisticTestResultRenderer(
   });
 
   const { Component: AlphaSlider, filter: filterAlpha } =
-    useVisualizationAlphaSlider();
+    useVisualizationAlphaSlider({});
 
   // region Plot
   const plot = React.useMemo<PlotParams | undefined>(() => {

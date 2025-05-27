@@ -64,7 +64,7 @@ function ConstrainByGroupsCheckbox() {
       type="switch"
       name="constrain_by_groups"
       label="Constrain by subdatasets?"
-      placeholder="If this option is checked, regression will be performed using the rows that are included in the subdatasets. This may be useful if rows not included in the subdatasets are considered as noise."
+      description="If this option is checked, regression will be performed using the rows that are included in the subdatasets. This may be useful if rows not included in the subdatasets are considered as noise."
     />
   );
 }
@@ -77,7 +77,7 @@ function ReferenceSelectInput() {
   });
   if (
     !interpretation ||
-    interpretation === RegressionInterpretation.RelativeToReference
+    interpretation !== RegressionInterpretation.RelativeToReference
   ) {
     return null;
   }
@@ -102,13 +102,12 @@ function RegressionInterpretationSelectInput() {
       type="select"
       name="interpretation"
       label="Regression Interpretation"
-      placeholder="How should the coefficients and intercept of the regression be interpreted?"
-      data={Object.values(RegressionInterpretation)}
+      description="How should the coefficients and intercept of the regression be interpreted?"
+      data={Object.values(REGRESSION_INTERPRETATION_DICTIONARY)}
       renderOption={renderOption}
       required
       onChange={() => {
         setValue('constrain_by_groups', false);
-        setValue('interpretation', null as any);
         setValue('reference', null as any);
       }}
     />

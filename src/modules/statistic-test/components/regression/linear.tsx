@@ -16,12 +16,14 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
 import { LinearRegressionConfigType } from '../../configuration/regression';
 import { BaseStatisticTestResultRendererProps } from '../../types';
-import { useRegressionVisualizationData } from './data';
+import { getRegressionCoefficientsVisualizationData } from './data';
 import {
+  RegressionModelType,
   RegressionVisualizationTypeEnum,
   useRegressionVisualizationTypeSelect,
 } from './types';
 import { StatisticTestWarningsRenderer } from '../common';
+import React from 'react';
 
 const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   ...COMMON_REGRESSION_VISUALIZATION_TYPES,
@@ -36,16 +38,19 @@ export default function LinearRegressionResultRenderer(
   >,
 ) {
   const { data: rawData, config } = props;
-  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider();
+  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({
+    enabled: config.standardized,
+  });
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
       supportedTypes: LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
     });
-  const data = useRegressionVisualizationData({
-    coefficients: rawData.coefficients,
-    supportedTypes: LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
-    statisticName: 'T-Statistic',
-  });
+  const data = React.useMemo(() => {
+    return getRegressionCoefficientsVisualizationData({
+      coefficients: rawData.coefficients,
+      modelType: RegressionModelType.Linear,
+    });
+  }, [rawData.coefficients]);
   const commonPlot = useCommonRegressionResultPlot({
     alpha,
     type,
@@ -56,7 +61,7 @@ export default function LinearRegressionResultRenderer(
     type,
     intercept: rawData.intercept!,
     targetName: config.target,
-    variant: 'linear',
+    modelType: RegressionModelType.Linear,
   });
   const vifPlot = useVarianceInflationFactorRegressionResultPlot({
     data,

@@ -15,14 +15,16 @@ import {
 import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
+  RegressionModelType,
   RegressionVisualizationTypeEnum,
   useRegressionVisualizationTypeSelect,
 } from './types';
-import { useRegressionVisualizationData } from './data';
+import { getRegressionCoefficientsVisualizationData } from './data';
 import { ResultCard } from '@/components/visual/result-card';
 import { LogisticRegressionConfigType } from '../../configuration/logistic-regression';
 import { BaseStatisticTestResultRendererProps } from '../../types';
 import { StatisticTestWarningsRenderer } from '../common';
+import React from 'react';
 
 const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   ...COMMON_REGRESSION_VISUALIZATION_TYPES,
@@ -37,16 +39,17 @@ export default function LogisticRegressionResultRenderer(
   >,
 ) {
   const { data: rawData, config } = props;
-  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider();
+  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
       supportedTypes: LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
     });
-  const data = useRegressionVisualizationData({
-    coefficients: rawData.coefficients,
-    supportedTypes: LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
-    statisticName: 'Z-Statistic',
-  });
+  const data = React.useMemo(() => {
+    return getRegressionCoefficientsVisualizationData({
+      coefficients: rawData.coefficients,
+      modelType: RegressionModelType.Logistic,
+    });
+  }, [rawData.coefficients]);
   const commonPlot = useCommonRegressionResultPlot({
     alpha,
     type,
@@ -57,7 +60,7 @@ export default function LogisticRegressionResultRenderer(
     type,
     intercept: rawData.intercept!,
     targetName: config.target.name,
-    variant: 'logistic',
+    modelType: RegressionModelType.Logistic,
   });
   const vifPlot = useVarianceInflationFactorRegressionResultPlot({
     data,

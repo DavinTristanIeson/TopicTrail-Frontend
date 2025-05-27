@@ -12,7 +12,14 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { Warning } from '@phosphor-icons/react';
 import React from 'react';
 
-export function useVisualizationAlphaSlider() {
+interface UseVisualizationAlphaSlider {
+  enabled?: boolean;
+}
+
+export function useVisualizationAlphaSlider(
+  props: UseVisualizationAlphaSlider,
+) {
+  const { enabled } = props;
   const [alpha, setAlpha] = React.useState(0.05);
   const label = `Alpha: ${alpha} | Confidence Level: ${Math.round(100 - alpha * 100)}%`;
   const Component = (
@@ -29,6 +36,7 @@ export function useVisualizationAlphaSlider() {
           min={0}
           max={1}
           step={0.01}
+          disabled={!enabled}
           onChange={setAlpha}
           label={label}
           className="flex-1"
@@ -41,12 +49,17 @@ export function useVisualizationAlphaSlider() {
 
   const filter = React.useCallback(
     (value: number) => {
+      if (!enabled) return true;
       return value <= debouncedAlpha;
     },
-    [debouncedAlpha],
+    [debouncedAlpha, enabled],
   );
 
-  return { Component, alpha: debouncedAlpha, filter };
+  if (enabled) {
+    return { Component, alpha: debouncedAlpha, filter };
+  } else {
+    return { Component: null, alpha: 1, filter };
+  }
 }
 
 interface useVisualizationMinFrequencySliderProps {

@@ -8,8 +8,12 @@ import {
   UltimateRegressionCoefficientModel,
   RegressionVisualizationTypeEnum,
   REGRESSION_VISUALIZATION_TYPE_DICTIONARY,
+  RegressionModelType,
 } from './types';
-import { RegressionVisualizationData } from './data';
+import {
+  getRegressionInterceptVisualizationData,
+  RegressionVisualizationData,
+} from './data';
 import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 
@@ -21,10 +25,10 @@ interface useCommonRegressionResultPlot {
 
 export const COMMON_REGRESSION_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
-  RegressionVisualizationTypeEnum.Confidence,
+  RegressionVisualizationTypeEnum.ConfidenceLevel,
   RegressionVisualizationTypeEnum.OddsRatio,
-  RegressionVisualizationTypeEnum.Statistic,
-  RegressionVisualizationTypeEnum.StdErr,
+  RegressionVisualizationTypeEnum.InterceptOddsRatio,
+  RegressionVisualizationTypeEnum.EffectOnIntercept,
 ];
 export function useCommonRegressionResultPlot(
   props: useCommonRegressionResultPlot,
@@ -47,12 +51,11 @@ export function useCommonRegressionResultPlot(
       pValues,
       variables: x,
       xaxisTitle,
-      statisticName,
       confidenceLevels,
     } = data;
     const y = coefficients.map((coefficient) =>
       configEntry.select!(coefficient),
-    );
+    ) as number[];
     const { colors: generatedColors } = generateColorsFromSequence(x);
     const colors = zip(generatedColors, pValues).map(([color, pValue]) => {
       if (pValue! < alpha) {
@@ -71,7 +74,7 @@ export function useCommonRegressionResultPlot(
             color: colors,
           },
           error_y:
-            type === RegressionVisualizationTypeEnum.Statistic
+            type === RegressionVisualizationTypeEnum.Coefficient
               ? {
                   type: 'data',
                   array: confidenceLevels,
@@ -88,10 +91,7 @@ export function useCommonRegressionResultPlot(
           title: xaxisTitle,
         },
         yaxis: {
-          title:
-            type === RegressionVisualizationTypeEnum.Statistic
-              ? statisticName
-              : configEntry.label,
+          title: configEntry.plotLabel,
         },
       },
     };
@@ -212,13 +212,13 @@ interface UseInterceptEffectsPlotProps {
   data: RegressionVisualizationData;
   type: RegressionVisualizationTypeEnum;
   targetName: string;
-  variant: 'linear' | 'logistic';
+  modelType: RegressionModelType;
 }
 
 export function useEffectOnInterceptRegressionResultPlot(
   props: UseInterceptEffectsPlotProps,
 ) {
-  const { intercept, data, type, variant, targetName } = props;
+  const { intercept, data, type, modelType, targetName } = props;
   const mantineColors = useMantineTheme().colors;
   return React.useMemo<PlotParams | null>(() => {
     if (type !== RegressionVisualizationTypeEnum.EffectOnIntercept) {
@@ -233,7 +233,7 @@ export function useEffectOnInterceptRegressionResultPlot(
       hovertemplate,
     } = data;
     let y: number[];
-    const useOdds = variant === 'logistic';
+    const useOdds = modelType === RegressionModelType.Logistic;
     const interceptOdds = (intercept as LogisticRegressionCoefficientModel)
       .odds_ratio;
     if (useOdds) {
@@ -247,6 +247,13 @@ export function useEffectOnInterceptRegressionResultPlot(
     } else {
       y = values.map((value) => intercept.value + value);
     }
+    const {
+      hovertemplate: interceptHovertemplate,
+      customdata: interceptCustomdata,
+    } = getRegressionInterceptVisualizationData({
+      intercept,
+      modelType,
+    });
     const interceptValue = useOdds ? interceptOdds : intercept.value;
     return {
       data: [
@@ -254,6 +261,8 @@ export function useEffectOnInterceptRegressionResultPlot(
           name: 'Intercept',
           x: ['Intercept'],
           y: [interceptValue],
+          hovertemplate: interceptHovertemplate,
+          customdata: interceptCustomdata,
           marker: {
             color: mantineColors.brand[6],
           },
@@ -280,9 +289,9 @@ export function useEffectOnInterceptRegressionResultPlot(
         },
         yaxis: {
           title:
-            variant == 'linear'
+            modelType == 'linear'
               ? `Mean of ${targetName}`
-              : variant == 'logistic'
+              : modelType == 'logistic'
                 ? `Odds of Predicting ${targetName}`
                 : undefined,
         },
@@ -304,9 +313,8 @@ export function useEffectOnInterceptRegressionResultPlot(
         ],
       },
     } as PlotParams;
-  }, [data, intercept, mantineColors.brand, targetName, type, variant]);
+  }, [data, intercept, mantineColors.brand, targetName, type, modelType]);
 }
-
 interface InterceptRendererProps {
   intercept: UltimateRegressionCoefficientModel;
   statisticName: string;

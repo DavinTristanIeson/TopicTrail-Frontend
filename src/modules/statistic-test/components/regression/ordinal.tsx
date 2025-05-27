@@ -16,10 +16,11 @@ import {
 import { Group, Stack, useMantineTheme } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
+  getRegressionCoefficientsVisualizationData,
   RegressionVisualizationData,
-  useRegressionVisualizationData,
 } from './data';
 import {
+  RegressionModelType,
   RegressionVisualizationTypeEnum,
   useRegressionVisualizationTypeSelect,
 } from './types';
@@ -122,16 +123,17 @@ export default function OrdinalRegressionResultRenderer(
   >,
 ) {
   const { data: rawData } = props;
-  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider();
+  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
       supportedTypes: ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
     });
-  const data = useRegressionVisualizationData({
-    coefficients: rawData.coefficients,
-    statisticName: 'Z-Statistic',
-    supportedTypes: ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
-  });
+  const data = React.useMemo(() => {
+    return getRegressionCoefficientsVisualizationData({
+      coefficients: rawData.coefficients,
+      modelType: RegressionModelType.Ordinal,
+    });
+  }, [rawData.coefficients]);
   const commonPlot = useCommonRegressionResultPlot({
     alpha,
     type,
