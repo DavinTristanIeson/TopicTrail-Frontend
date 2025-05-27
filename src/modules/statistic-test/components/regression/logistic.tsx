@@ -24,7 +24,7 @@ import { LogisticRegressionConfigType } from '../../configuration/logistic-regre
 import { BaseStatisticTestResultRendererProps } from '../../types';
 import { StatisticTestWarningsRenderer } from '../common';
 
-const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
+const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   ...COMMON_REGRESSION_VISUALIZATION_TYPES,
   RegressionVisualizationTypeEnum.OddsRatio,
   RegressionVisualizationTypeEnum.EffectOnIntercept,
@@ -40,11 +40,11 @@ export default function LogisticRegressionResultRenderer(
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider();
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
-      supportedTypes: LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
+      supportedTypes: LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
     });
   const data = useRegressionVisualizationData({
     coefficients: rawData.coefficients,
-    supportedTypes: LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
+    supportedTypes: LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
     statisticName: 'Z-Statistic',
   });
   const commonPlot = useCommonRegressionResultPlot({

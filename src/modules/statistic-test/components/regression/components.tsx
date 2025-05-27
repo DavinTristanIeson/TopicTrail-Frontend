@@ -51,7 +51,7 @@ export function useCommonRegressionResultPlot(
       confidenceLevels,
     } = data;
     const y = coefficients.map((coefficient) =>
-      configEntry.select(coefficient),
+      configEntry.select!(coefficient),
     );
     const { colors: generatedColors } = generateColorsFromSequence(x);
     const colors = zip(generatedColors, pValues).map(([color, pValue]) => {

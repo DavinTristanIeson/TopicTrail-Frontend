@@ -14,13 +14,17 @@ export type UltimateRegressionCoefficientModel =
 
 export enum RegressionVisualizationTypeEnum {
   Coefficient = 'coefficient',
-  Confidence = 'p_value',
+  Confidence = 'confidence',
   StdErr = 'std_err',
   Statistic = 'statistic',
   VarianceInflationFactor = 'variance_inflation_factor',
   OddsRatio = 'odds-ratio',
   SampleSize = 'sample-size',
   EffectOnIntercept = 'effect-on-intercept',
+  CompareOddsRatio = 'compare-odds-ratio',
+  CompareCoefficient = 'compare-coefficient',
+  CompareConfidence = 'compare-confidence',
+  CompareStdErr = 'compare-stderr',
 }
 export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
   [RegressionVisualizationTypeEnum.Coefficient]: {
@@ -82,9 +86,7 @@ export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
     value: RegressionVisualizationTypeEnum.EffectOnIntercept,
     description:
       'Show how each independent variable applies its effects on the intercept.',
-    select() {
-      throw new Error("Can't select fields for Effect on Intercept.");
-    },
+    select: undefined,
   },
   // Logistic
   [RegressionVisualizationTypeEnum.OddsRatio]: {
@@ -97,6 +99,45 @@ export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
         throw new Error('Odds cannot be interpreted from this coefficient.');
       }
       return coefficient.odds;
+    },
+  },
+  [RegressionVisualizationTypeEnum.CompareCoefficient]: {
+    label: 'Compare Odds Ratio',
+    value: RegressionVisualizationTypeEnum.CompareCoefficient,
+    description:
+      'Compare the actual coefficients for each levels in the independent variable.',
+    select(coefficient: UltimateRegressionCoefficientModel) {
+      return coefficient.value;
+    },
+  },
+  [RegressionVisualizationTypeEnum.CompareConfidence]: {
+    label: 'Compare Confidence Levels',
+    value: RegressionVisualizationTypeEnum.CompareConfidence,
+    description:
+      'Compare the confidence levels for each levels in the independent variable.',
+    select(coefficient: UltimateRegressionCoefficientModel) {
+      return coefficient.value;
+    },
+  },
+  [RegressionVisualizationTypeEnum.CompareOddsRatio]: {
+    label: 'Compare Odds Ratio',
+    value: RegressionVisualizationTypeEnum.CompareOddsRatio,
+    description:
+      'Compare the odds ratio for each levels in the independent variable.',
+    select(coefficient: UltimateRegressionCoefficientModel) {
+      if (!('odds' in coefficient)) {
+        throw new Error('Odds cannot be interpreted from this coefficient.');
+      }
+      return coefficient.odds;
+    },
+  },
+  [RegressionVisualizationTypeEnum.CompareStdErr]: {
+    label: 'Compare Std. Err',
+    value: RegressionVisualizationTypeEnum.CompareStdErr,
+    description:
+      'Compare the standard error for each levels in the independent variable.',
+    select(coefficient: UltimateRegressionCoefficientModel) {
+      return coefficient.std_err;
     },
   },
 };
