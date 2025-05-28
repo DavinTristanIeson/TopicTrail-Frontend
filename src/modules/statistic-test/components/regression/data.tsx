@@ -44,15 +44,16 @@ export function getRegressionCoefficientsVisualizationData(
     (coefficient) => coefficient.variance_inflation_factor,
   );
   const oddsRatios = withOdds
-    ? null
-    : coefficients.map(
+    ? coefficients.map(
         (coefficient) =>
           (coefficient as LogisticRegressionCoefficientModel).odds_ratio,
-      );
+      )
+    : null;
 
   const rawCustomdata = [
     independentVariables,
     coefficientValues,
+    confidenceIntervalStrings,
     oddsRatios ?? [],
 
     pValues,
@@ -67,18 +68,18 @@ export function getRegressionCoefficientsVisualizationData(
   const customdata = zip(...rawCustomdata);
 
   const hovertemplate = [
-    'Variable: %{customdata[0]}',
-    'Coefficient: %{customdata[1]:.3f}',
-    'Confidence Interval: %{customdata[2]} (for Alpha = 0.05)',
-    ...maybeElement(withOdds, 'Odds Ratio: %{customdata[3]:.3f'),
+    '<b>Variable</b>: %{customdata[0]}',
+    '<b>Coefficient</b>: %{customdata[1]:.3f}',
+    '<b>Confidence Interval</b>: %{customdata[2]} (for Alpha = 0.05)',
+    ...maybeElement(withOdds, '<b>Odds Ratio</b>: %{customdata[3]:.3f}'),
     '='.repeat(30),
-    'P-Value: %{customdata[4]:.3f}',
-    'Confidence: %{customdata[5]:.3f})',
-    `${statisticName}: %{customdata[6]:.3f}`,
-    'Standard Error: %{customdata[7]}',
+    '<b>P-Value</b>: %{customdata[4]:.3f}',
+    '<b>Confidence</b>: %{customdata[5]:.3f}%',
+    `<b>${statisticName}</b>: %{customdata[6]:.3f}`,
+    '<b>Standard Error</b>: %{customdata[7]}',
     '='.repeat(30),
-    'Sample Size: %{customdata[8]}',
-    'Variance Inflation Factor: %{customdata[9]:.3f}',
+    '<b>Sample Size</b>: %{customdata[8]}',
+    '<b>Variance Inflation Factor</b>: %{customdata[9]:.3f}',
   ].join('<br>');
   return {
     customdata,
@@ -91,6 +92,7 @@ export function getRegressionCoefficientsVisualizationData(
     variables: independentVariables,
     values: coefficientValues,
     coefficients,
+    confidenceIntervals,
 
     standardErrors,
     pValues,
@@ -132,17 +134,17 @@ export function getRegressionInterceptVisualizationData(
   ];
   const regressionQuirk = REGRESSION_MODEL_QUIRKS[modelType];
   const hovertemplate = [
-    'Intercept: %{customdata[0]}',
-    'Confidence Interval: %{customdata[6]} (for Alpha = 0.05)',
+    '<b>Intercept</b>: %{customdata[0]}',
+    '<b>Confidence Interval</b>: %{customdata[1]} (for Alpha = 0.05)',
     ...maybeElement(
       regressionQuirk.withOdds,
-      'Odds Ratio: %{customdata[1]:.3f}',
+      '<b>Odds Ratio</b>: %{customdata[2]:.3f}',
     ),
     '='.repeat(30),
-    'Confidence Level: %{customdata[3]:.3f}',
-    'P-Value: %{customdata[4]:.3f}',
-    `${regressionQuirk.statisticName}: %{customdata[5]:.3f}`,
-    'Std. Err: %{customdata[6]:.3f}',
+    '<b>Confidence Level</b>: %{customdata[3]:.3f}',
+    '<b>P-Value</b>: %{customdata[4]:.3f}',
+    `<b>${regressionQuirk.statisticName}</b>: %{customdata[5]:.3f}`,
+    '<b>Std. Err</b>: %{customdata[6]:.3f}',
   ].join('<br>');
   return { customdata, hovertemplate };
 }

@@ -1914,8 +1914,6 @@ export interface components {
             statistic: number;
             /** Odds Ratio */
             readonly odds_ratio: number;
-            /** Probability */
-            readonly probability: number;
         };
         /** LogisticRegressionInput */
         LogisticRegressionInput: {
@@ -2110,8 +2108,8 @@ export interface components {
             variance_inflation_factor: number;
             /** Statistic */
             statistic: number;
-            /** Odds */
-            readonly odds: number;
+            /** Odds Ratio */
+            readonly odds_ratio: number;
         };
         /** OrdinalRegressionCutpoint */
         OrdinalRegressionCutpoint: {
@@ -2121,6 +2119,13 @@ export interface components {
             value: number;
             /** Std Err */
             std_err: number;
+            /** Confidence Interval */
+            confidence_interval: [
+                number,
+                number
+            ];
+            /** Sample Size */
+            sample_size: number;
         };
         /** OrdinalRegressionResult */
         OrdinalRegressionResult: {
@@ -2139,6 +2144,10 @@ export interface components {
             cutpoints: components["schemas"]["OrdinalRegressionCutpoint"][];
             /** Log Likelihood Ratio */
             log_likelihood_ratio: number;
+            /** P Value */
+            p_value: number;
+            /** Pseudo R Squared */
+            pseudo_r_squared: number;
         };
         /** PaginationMeta */
         PaginationMeta: {

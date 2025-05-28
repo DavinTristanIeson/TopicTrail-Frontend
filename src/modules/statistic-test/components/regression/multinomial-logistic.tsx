@@ -1,5 +1,4 @@
 import {
-  LogisticRegressionCoefficientModel,
   MultinomialLogisticRegressionFacetResultModel,
   MultinomialLogisticRegressionResultModel,
 } from '@/api/statistic-test';
@@ -14,7 +13,6 @@ import {
 } from './types';
 import { useVisualizationAlphaSlider } from '../plot-config';
 import {
-  COMMON_REGRESSION_VISUALIZATION_TYPES,
   useCommonRegressionResultPlot,
   useEffectOnInterceptRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
@@ -40,7 +38,8 @@ const MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES =
     RegressionVisualizationTypeEnum.CompareEffectsOnIntercept,
   ];
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  ...COMMON_REGRESSION_VISUALIZATION_TYPES,
+  RegressionVisualizationTypeEnum.Coefficient,
+  RegressionVisualizationTypeEnum.ConfidenceLevel,
   RegressionVisualizationTypeEnum.OddsRatio,
   RegressionVisualizationTypeEnum.EffectOnIntercept,
   ...MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES,
@@ -366,7 +365,7 @@ export default function MultinomialLogisticRegressionResultRenderer(
         coefficients: rawData.facets.map((facet) => facet.intercept),
         modelType: RegressionModelType.Logistic,
       });
-    }, []),
+    }, [rawData.facets]),
     type,
   });
   const usedPlot = effectOnInterceptPlot ?? compareResultsPlot ?? interceptPlot;

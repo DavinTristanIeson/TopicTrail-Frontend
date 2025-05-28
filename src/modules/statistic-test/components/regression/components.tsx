@@ -1,8 +1,15 @@
 import { LogisticRegressionCoefficientModel } from '@/api/statistic-test';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
-import { Group, HoverCard, Table, Text, useMantineTheme } from '@mantine/core';
-import { zip } from 'lodash-es';
+import {
+  Button,
+  Group,
+  Modal,
+  Table,
+  Text,
+  useMantineTheme,
+} from '@mantine/core';
+import { unzip, zip } from 'lodash-es';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import {
   UltimateRegressionCoefficientModel,
@@ -16,6 +23,7 @@ import {
 } from './data';
 import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
+import { useDisclosure } from '@mantine/hooks';
 
 interface useCommonRegressionResultPlot {
   type: RegressionVisualizationTypeEnum;
@@ -48,10 +56,11 @@ export function useCommonRegressionResultPlot(
       customdata,
       hovertemplate,
       coefficients,
+      values: coefficientValues,
       pValues,
       variables: x,
       xaxisTitle,
-      confidenceLevels,
+      confidenceIntervals,
     } = data;
     const y = coefficients.map((coefficient) =>
       configEntry.select!(coefficient),
@@ -63,6 +72,16 @@ export function useCommonRegressionResultPlot(
       }
       return mantineColors.gray[6];
     });
+    const [confidenceIntervalMinus, confidenceIntervalPlus] = unzip(
+      zip(coefficientValues, confidenceIntervals).map(
+        ([coefficient, interval]) => [
+          // value - lower
+          coefficient! - interval![0],
+          // upper - value
+          interval![1] - coefficient!,
+        ],
+      ),
+    );
 
     return {
       data: [
@@ -77,7 +96,9 @@ export function useCommonRegressionResultPlot(
             type === RegressionVisualizationTypeEnum.Coefficient
               ? {
                   type: 'data',
-                  array: confidenceLevels,
+                  symmetric: false,
+                  array: confidenceIntervalMinus,
+                  arrayminus: confidenceIntervalPlus,
                   visible: true,
                 }
               : undefined,
@@ -94,7 +115,7 @@ export function useCommonRegressionResultPlot(
           title: configEntry.plotLabel,
         },
       },
-    };
+    } as PlotParams;
   }, [alpha, data, mantineColors.gray, type]);
   return plot;
 }
@@ -119,6 +140,9 @@ export function useSampleSizeRegressionResultPlot(
           x,
           y: sampleSizes,
           type: 'bar',
+          marker: {
+            color: generateColorsFromSequence(x).colors,
+          },
           customdata,
           hovertemplate,
         },
@@ -236,6 +260,7 @@ export function useEffectOnInterceptRegressionResultPlot(
     const useOdds = modelType === RegressionModelType.Logistic;
     const interceptOdds = (intercept as LogisticRegressionCoefficientModel)
       .odds_ratio;
+    console.log(oddsRatios, intercept);
     if (useOdds) {
       if (oddsRatios == null || interceptOdds == null) {
         throw new Error(
@@ -354,36 +379,38 @@ export function RegressionInterceptResultRenderer(
       value: `${intercept.confidence_interval[0].toFixed(3)} - ${intercept.confidence_interval[1].toFixed(3)}`,
     },
   ];
+
+  const [opened, { toggle, close: onClose }] = useDisclosure();
   return (
     <TaskControlsCard>
-      <HoverCard>
-        <HoverCard.Target>
-          <Group>
+      <Group justify="space-between" align="start">
+        <div>
+          <Text size="md" fw={500}>
+            {'Intercept' + (withOdds ? ' (Odds Ratio)' : '')}
+          </Text>
+          <Text size="xl" fw={500} c="brand" style={{ fontSize: 36 }}>
+            {withOdds ? oddsRatio.toFixed(3) : intercept.value.toFixed(3)}
+          </Text>
+          {reference && (
             <Text size="md" fw={500}>
-              {'Intercept' + (withOdds ? ' (Odds)' : '')}
+              Relative to &quot;{reference}&quot;
             </Text>
-            <Info />
-          </Group>
-        </HoverCard.Target>
-        <HoverCard.Dropdown>
-          <Table>
-            {interceptData.map((row) => (
-              <Table.Tr key={row.label}>
-                <Table.Th>{row.label}</Table.Th>
-                <Table.Td>{row.value}</Table.Td>
-              </Table.Tr>
-            ))}
-          </Table>
-        </HoverCard.Dropdown>
-      </HoverCard>
-      <Text size="xl" fw={500} c="brand">
-        {withOdds ? oddsRatio : intercept.value}
-      </Text>
-      {reference && (
-        <Text size="md" fw={500}>
-          Relative to &quot;{reference}&quot;
-        </Text>
-      )}
+          )}
+        </div>
+        <Button leftSection={<Info />} onClick={toggle} variant="subtle">
+          View Info
+        </Button>
+      </Group>
+      <Modal opened={opened} onClose={onClose} title="Intercept Information">
+        <Table>
+          {interceptData.map((row) => (
+            <Table.Tr key={row.label}>
+              <Table.Th>{row.label}</Table.Th>
+              <Table.Td>{row.value}</Table.Td>
+            </Table.Tr>
+          ))}
+        </Table>
+      </Modal>
     </TaskControlsCard>
   );
 }
@@ -399,26 +426,28 @@ export function RegressionConvergenceResultRenderer(
   const { colors } = useMantineTheme();
   return (
     <TaskControlsCard>
-      {converged ? (
-        <Group>
-          <CheckCircle color={colors.green[6]} size={48} />
-          <Text>
-            The regression model has converged successfully; this means that the
-            optimization algorithm was able to find best-fit parameters for the
-            model. The coefficients can be relied on.
-          </Text>
-        </Group>
-      ) : (
-        <Group>
-          <XCircle color={colors.red[6]} size={48} />
-          <Text>
-            The regression model wasn&apos;t able to converge successfully; this
-            means that the optimization algorithm wasn&apos;t able to find
-            best-fit parameters for the model. The coefficients shouldn&apos;t
-            be relied on.
-          </Text>
-        </Group>
-      )}
+      <Group wrap="nowrap">
+        {converged ? (
+          <>
+            <CheckCircle color={colors.green[6]} size={48} weight="fill" />
+            <Text className="flex-1">
+              The regression model has converged successfully; this means that
+              the optimization algorithm was able to find best-fit parameters
+              for the model. The coefficients can be relied on.
+            </Text>
+          </>
+        ) : (
+          <>
+            <XCircle color={colors.red[6]} size={48} weight="fill" />
+            <Text className="flex-1">
+              The regression model wasn&apos;t able to converge successfully;
+              this means that the optimization algorithm wasn&apos;t able to
+              find best-fit parameters for the model. The coefficients
+              shouldn&apos;t be relied on.
+            </Text>
+          </>
+        )}
+      </Group>
     </TaskControlsCard>
   );
 }

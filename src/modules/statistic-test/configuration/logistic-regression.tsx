@@ -74,10 +74,10 @@ function LogisticRegressionFilterDrawerContents(
         stripUnknown: true,
       }) as ComparisonStateItemModel;
       payload.filter = await checkFilter(payload.filter);
-      setGlobalValue('target', defaultLogisticRegressionFilterValues);
+      setGlobalValue('target', payload as any);
       onClose();
       showNotification({
-        message: 'Dependent variable has been updated successfully',
+        message: 'The dependent variable has been updated successfully',
         color: 'green',
       });
     },
@@ -130,7 +130,7 @@ const LogisticRegressionNamedTableFilterDrawer = React.forwardRef<
       closeOnClickOutside={false}
       closeOnEscape={false}
     >
-      <LogisticRegressionFilterDrawerContents onClose={close} />
+      {opened && <LogisticRegressionFilterDrawerContents onClose={onClose} />}
     </Drawer>
   );
 });
@@ -150,11 +150,16 @@ function LogisticRegressionDependentVariableField() {
         value={target?.name}
         required
         description="Create a filter on the dataset as the dependent variable to be predicted. The dependent variable is a series of boolean values that indicates whether a row is included in the filter or not."
-        disabled
+        readOnly
         inputContainer={(children) => (
-          <Group>
-            {children}
-            <Button leftSection={<PencilSimple />}>Edit</Button>
+          <Group align="flex-start">
+            <div className="flex-1">{children}</div>
+            <Button
+              leftSection={<PencilSimple />}
+              onClick={() => remote.current?.open()}
+            >
+              Edit
+            </Button>
           </Group>
         )}
       />

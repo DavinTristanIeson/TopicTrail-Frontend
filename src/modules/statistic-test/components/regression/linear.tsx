@@ -1,6 +1,5 @@
 import { LinearRegressionResultModel } from '@/api/statistic-test';
 import {
-  COMMON_REGRESSION_VISUALIZATION_TYPES,
   RegressionInterceptResultRenderer,
   useCommonRegressionResultPlot,
   useEffectOnInterceptRegressionResultPlot,
@@ -25,10 +24,15 @@ import {
 import { StatisticTestWarningsRenderer } from '../common';
 import React from 'react';
 
-const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  ...COMMON_REGRESSION_VISUALIZATION_TYPES,
+const LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES = [
+  RegressionVisualizationTypeEnum.Coefficient,
   RegressionVisualizationTypeEnum.SampleSize,
   RegressionVisualizationTypeEnum.EffectOnIntercept,
+  RegressionVisualizationTypeEnum.VarianceInflationFactor,
+];
+const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
+  ...LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES,
+  RegressionVisualizationTypeEnum.ConfidenceLevel,
 ];
 
 export default function LinearRegressionResultRenderer(
@@ -43,7 +47,9 @@ export default function LinearRegressionResultRenderer(
   });
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
-      supportedTypes: LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
+      supportedTypes: config.standardized
+        ? LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES
+        : LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES,
     });
   const data = React.useMemo(() => {
     return getRegressionCoefficientsVisualizationData({
@@ -75,15 +81,11 @@ export default function LinearRegressionResultRenderer(
     sampleSizePlot ?? vifPlot ?? effectOnInterceptPlot ?? commonPlot;
   return (
     <Stack>
-      <PlotInlineConfiguration>
-        {VisualizationSelect}
-        {AlphaSlider}
-      </PlotInlineConfiguration>
       <StatisticTestWarningsRenderer warnings={rawData.warnings} />
       <Group wrap="wrap" align="stretch">
         <ResultCard
           label={'F-Statistic'}
-          value={rawData.f_statistic}
+          value={rawData.f_statistic.toFixed(3)}
           info="A statistic obtained from testing whether the independent variables can explain the variance of the dependent variable. To interpret this, you should rely on p-value and R-squared instead."
         />
         <ResultCard
@@ -110,13 +112,6 @@ export default function LinearRegressionResultRenderer(
           value={rawData.sample_size}
           info="The number of rows used to fit the regression model."
         />
-        {rawData.reference && (
-          <ResultCard
-            label={'Reference'}
-            value={rawData.reference}
-            info="The independent variable used as the reference variable."
-          />
-        )}
       </Group>
       {rawData.intercept && (
         <RegressionInterceptResultRenderer
@@ -125,6 +120,10 @@ export default function LinearRegressionResultRenderer(
           statisticName="T-Statistic"
         />
       )}
+      <PlotInlineConfiguration>
+        {VisualizationSelect}
+        {AlphaSlider}
+      </PlotInlineConfiguration>
       {usedPlot && <PlotRenderer plot={usedPlot} />}
     </Stack>
   );

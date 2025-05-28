@@ -86,6 +86,10 @@ import {
   LogisticRegressionConfigType,
   logisticRegressionInputSchema,
 } from './configuration/logistic-regression';
+import LogisticRegressionResultRenderer from './components/regression/logistic';
+import MultinomialLogisticRegressionResultRenderer from './components/regression/multinomial-logistic';
+import OrdinalRegressionResultRenderer from './components/regression/ordinal';
+import LinearRegressionResultRenderer from './components/regression/linear';
 
 function getBasicStatisticTestParams(config: {
   column: string;
@@ -131,7 +135,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
 > = {
   [StatisticTestPurpose.LinearRegression]: {
     type: StatisticTestPurpose.LinearRegression,
-    component: null as any,
+    component: LinearRegressionResultRenderer,
     configForm: LinearRegressionConfigForm,
     configValidator: linearRegressionInputSchema,
     dataProvider: useLinearRegressionDataProvider,
@@ -151,7 +155,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
   >,
   [StatisticTestPurpose.LogisticRegression]: {
     type: StatisticTestPurpose.LogisticRegression,
-    component: null as any,
+    component: LogisticRegressionResultRenderer,
     configForm: LogisticRegressionConfigForm,
     configValidator: logisticRegressionInputSchema,
     dataProvider: useLogisticRegressionDataProvider,
@@ -170,7 +174,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
   >,
   [StatisticTestPurpose.MultinomialLogisticRegression]: {
     type: StatisticTestPurpose.MultinomialLogisticRegression,
-    component: null as any,
+    component: MultinomialLogisticRegressionResultRenderer,
     configForm: MultinomialLogisticRegressionConfigForm,
     configValidator: multinomialLogisticRegressionInputSchema,
     dataProvider: useMultinomialLogisticRegressionDataProvider,
@@ -190,7 +194,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
   >,
   [StatisticTestPurpose.OrdinalRegression]: {
     type: StatisticTestPurpose.OrdinalRegression,
-    component: null as any,
+    component: OrdinalRegressionResultRenderer,
     configForm: OrdinalRegressionConfigForm,
     configValidator: regressionInputSchema,
     dataProvider: useOrdinalRegressionDataProvider,

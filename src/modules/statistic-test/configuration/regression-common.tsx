@@ -40,7 +40,7 @@ const REGRESSION_INTERPRETATION_DICTIONARY = {
       'The baseline is defined as the rows where all independent variables have 0 as their value (the rows that are not included in any subdatasets). Each coefficient represents how much the presence of an independent variable causes a deviation in the data compared to the baseline, while the intercept represents the mean of the baseline.',
   },
   [RegressionInterpretation.RelativeToReference]: {
-    label: 'Relative to Baseline',
+    label: 'Relative to Reference',
     value: RegressionInterpretation.RelativeToReference,
     description:
       'One of the independent variable (subdataset) is chosen as the reference. Each coefficient represents how much the presence of an independent variable causes a deviation in the data compared to the reference, while the intercept represents the mean of the reference.',
