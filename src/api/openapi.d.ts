@@ -1508,7 +1508,7 @@ export interface components {
          * EffectSizeMethodEnum
          * @enum {string}
          */
-        EffectSizeMethodEnum: "mean-difference" | "median-difference" | "cohen-d" | "rank-biserial-correlation" | "cramer-v";
+        EffectSizeMethodEnum: "mean-difference" | "median-difference" | "cohen-d" | "rank-biserial-correlation" | "point-biserial-correlation" | "cramer-v";
         /** EffectSizeResult */
         EffectSizeResult: {
             /** Type */
@@ -1996,6 +1996,8 @@ export interface components {
             labels: string[];
             /** Cooccurrences */
             cooccurrences: number[][];
+            /** Correlations */
+            correlations: number[][];
             /** Frequencies */
             frequencies: number[];
         };
@@ -2376,11 +2378,6 @@ export interface components {
              * @default false
              */
             no_outliers: boolean;
-            /**
-             * Represent Outliers
-             * @default false
-             */
-            represent_outliers: boolean;
         };
         /** TopicModelingResult */
         TopicModelingResult: {
