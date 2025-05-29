@@ -13,12 +13,12 @@ import {
 } from './types';
 import { useVisualizationAlphaSlider } from '../plot-config';
 import {
+  RegressionConvergenceResultRenderer,
   useCommonRegressionResultPlot,
   useEffectOnInterceptRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
-import { PlotInlineConfiguration } from '@/modules/visualization/components/configuration';
 import React from 'react';
 import {
   getRegressionCoefficientsVisualizationData,
@@ -44,7 +44,7 @@ const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.EffectOnIntercept,
   ...MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES,
   RegressionVisualizationTypeEnum.InterceptOddsRatio,
-  RegressionVisualizationTypeEnum.FacetSampleSize,
+  RegressionVisualizationTypeEnum.LevelSampleSize,
 ];
 
 interface UseMultinomialLogisticRegressionViewedDependentVariableLevelProps {
@@ -56,7 +56,11 @@ export function useMultinomialLogisticRegressionViewedDependentVariableLevel(
   props: UseMultinomialLogisticRegressionViewedDependentVariableLevelProps,
 ) {
   const { type, result } = props;
-  const [level, setLevel] = React.useState<string | null>(null);
+  const levels = React.useMemo(
+    () => result.facets.map((facet) => facet.level),
+    [result.facets],
+  );
+  const [level, setLevel] = React.useState<string | null>(levels[0] ?? null);
   const Component =
     !MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES.includes(
       type,
@@ -64,7 +68,8 @@ export function useMultinomialLogisticRegressionViewedDependentVariableLevel(
       <Select
         value={level}
         onChange={setLevel}
-        label="Level of Independent Variable"
+        data={levels}
+        label="Level of Dependent Variable"
         description="Choose a specific level (also called category) of the independent variable to be visualized."
         required
       />
@@ -137,7 +142,7 @@ function useCompareLogisticRegressionResultPlot(
   const { data, type, config, alpha } = props;
   return React.useMemo<PlotParams | null>(() => {
     if (
-      !MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES.includes(
+      !MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES.includes(
         type,
       )
     ) {
@@ -199,7 +204,7 @@ function useMultinomialLogisticRegressionEffectsOnIntercept(
 ) {
   const { data, type, config, alpha } = props;
   return React.useMemo<PlotParams | null>(() => {
-    if (type === RegressionVisualizationTypeEnum.CompareEffectsOnIntercept) {
+    if (type !== RegressionVisualizationTypeEnum.CompareEffectsOnIntercept) {
       return null;
     }
     if (data.facets.length === 0) {
@@ -323,7 +328,7 @@ function MultinomialLogisticRegressionFacetResultRenderer(
   });
   const usedPlot =
     sampleSizePlot ?? vifPlot ?? effectOnInterceptPlot ?? commonPlot;
-  return usedPlot && <PlotRenderer plot={usedPlot} />;
+  return usedPlot && <PlotRenderer plot={usedPlot} height={720} />;
 }
 
 export default function MultinomialLogisticRegressionResultRenderer(
@@ -366,17 +371,22 @@ export default function MultinomialLogisticRegressionResultRenderer(
         modelType: RegressionModelType.Logistic,
       });
     }, [rawData.facets]),
-    type,
+    type:
+      type === RegressionVisualizationTypeEnum.InterceptOddsRatio
+        ? type
+        : ('' as any),
+    layout: {
+      title: 'Base Odds Ratios of Intercepts',
+    },
   });
   const usedPlot = effectOnInterceptPlot ?? compareResultsPlot ?? interceptPlot;
 
   return (
     <Stack>
-      <PlotInlineConfiguration>
-        {AlphaSlider}
-        {VisualizationSelect}
-        {DependentVariableLevelSelect}
-      </PlotInlineConfiguration>
+      {VisualizationSelect}
+      {DependentVariableLevelSelect}
+      {AlphaSlider}
+      <RegressionConvergenceResultRenderer converged />
       {facet && !usedPlot && (
         <MultinomialLogisticRegressionFacetResultRenderer
           alpha={alpha}
@@ -385,7 +395,7 @@ export default function MultinomialLogisticRegressionResultRenderer(
           facet={facet}
         />
       )}
-      {usedPlot && <PlotRenderer plot={usedPlot} />}
+      {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
   );
 }

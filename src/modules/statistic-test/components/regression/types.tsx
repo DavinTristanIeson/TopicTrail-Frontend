@@ -28,15 +28,16 @@ export enum RegressionVisualizationTypeEnum {
   CompareConfidenceLevel = 'compare-confidence',
   CompareEffectsOnIntercept = 'compare-effects-on-intercept',
 
-  InterceptOddsRatio = 'intercept-odds-ratio',
-  FacetSampleSize = 'intercept-sample-sizes',
+  // Multinomial logistic regression and ordinal regression
+  LevelSampleSize = 'level-sample-sizes',
 }
 
 function getCoefficientOddsRatio(coefficient: RegressionCoefficientModel) {
   if (!('odds_ratio' in coefficient)) {
     throw new Error('Odds cannot be interpreted from this coefficient.');
   }
-  return coefficient.odds_ratio as number;
+  // for base = 1
+  return (coefficient.odds_ratio as number) - 1;
 }
 export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
   [RegressionVisualizationTypeEnum.Coefficient]: {
@@ -151,9 +152,9 @@ export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
       'Compare the odds ratio (compared to the reference level) of the intercepts for each level of the dependent variable.',
     select: getCoefficientOddsRatio,
   },
-  [RegressionVisualizationTypeEnum.FacetSampleSize]: {
+  [RegressionVisualizationTypeEnum.LevelSampleSize]: {
     label: 'Sample Size of Dependent Variable Levels',
-    value: RegressionVisualizationTypeEnum.FacetSampleSize,
+    value: RegressionVisualizationTypeEnum.LevelSampleSize,
     plotLabel: 'Sample Size',
     description:
       'Compare the number of samples that corresponds to each level of the dependent variable.',

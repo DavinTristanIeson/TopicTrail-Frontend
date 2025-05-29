@@ -19,7 +19,7 @@ interface UseVisualizationAlphaSlider {
 export function useVisualizationAlphaSlider(
   props: UseVisualizationAlphaSlider,
 ) {
-  const { enabled } = props;
+  const { enabled = true } = props;
   const [alpha, setAlpha] = React.useState(0.05);
   const label = `Alpha: ${alpha} | Confidence Level: ${Math.round(100 - alpha * 100)}%`;
   const Component = (

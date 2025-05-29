@@ -1,6 +1,7 @@
 import {
-  OrdinalRegressionCutpointModel,
+  OrdinalRegressionThresholdModel,
   OrdinalRegressionResultModel,
+  OrdinalRegressionSampleSizeModel,
 } from '@/api/statistic-test';
 import {
   RegressionConvergenceResultRenderer,
@@ -12,12 +13,9 @@ import {
   PlotInlineConfiguration,
   useVisualizationAlphaSlider,
 } from '@/modules/visualization/components/configuration';
-import { Group, Stack, useMantineTheme } from '@mantine/core';
+import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
-import {
-  getRegressionCoefficientsVisualizationData,
-  RegressionVisualizationData,
-} from './data';
+import { getRegressionCoefficientsVisualizationData } from './data';
 import {
   RegressionModelType,
   RegressionVisualizationTypeEnum,
@@ -30,174 +28,106 @@ import { RegressionConfigType } from '../../configuration/regression-common';
 import { BaseStatisticTestResultRendererProps } from '../../types';
 import { ResultCard } from '@/components/visual/result-card';
 import { StatisticTestWarningsRenderer } from '../common';
-import { formatConfidenceInterval } from './utils';
-import { unzip, zip } from 'lodash-es';
+import { zip } from 'lodash-es';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
   RegressionVisualizationTypeEnum.ConfidenceLevel,
   RegressionVisualizationTypeEnum.SampleSize,
   RegressionVisualizationTypeEnum.OddsRatio,
-  RegressionVisualizationTypeEnum.EffectOnIntercept,
 ];
 
-interface UseOrdinalEffectsOnCutpointsPlotProps {
-  cutpoints: OrdinalRegressionCutpointModel[];
-  data: RegressionVisualizationData;
-  type: RegressionVisualizationTypeEnum;
-}
-
-export function useOrdinalEffectsOnCutpointsPlot(
-  props: UseOrdinalEffectsOnCutpointsPlotProps,
-) {
-  const { cutpoints, data, type } = props;
-  const mantineColors = useMantineTheme().colors;
-  return React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.EffectOnIntercept) {
-      return null;
-    }
-    const { variables, oddsRatios, xaxisTitle, customdata, hovertemplate } =
-      data;
-    const y = oddsRatios;
-    return {
-      data: [
-        {
-          name: 'Cutpoints',
-          x: Array.from({ length: cutpoints.length }, () => 'Cutpoints'),
-          y: cutpoints.map((cutpoint) => cutpoint.value),
-          customdata: cutpoints.map((cutpoint) => cutpoint.std_err),
-          hovertemplate: [
-            '<b>Cutpoint</b>: %{x}',
-            '<b>Cumulative Odds</b>: %{y}',
-            '<b>Standard Error</b>: %{customdata}',
-          ],
-          marker: {
-            color: mantineColors.brand[6],
-          },
-          showlegend: false,
-        },
-        {
-          name: 'Coefficients',
-          showlegend: false,
-          x: variables,
-          y,
-          type: 'bar',
-          marker: {
-            color: generateColorsFromSequence(variables).colors,
-          },
-          customdata,
-          hovertemplate,
-        },
-      ],
-      layout: {
-        title: 'Effect Compared to Cutpoints',
-        xaxis: {
-          title: xaxisTitle,
-        },
-        yaxis: {
-          title: `Odds of Having a Higher Rank`,
-        },
-        shapes: cutpoints.map((cutpoint) => {
-          return {
-            type: 'line',
-            xref: 'paper',
-            yref: 'y',
-            x0: 0,
-            x1: 1,
-            y0: cutpoint.value,
-            y1: cutpoint.value,
-            line: {
-              color: mantineColors.brand[6],
-              width: 3,
-              dash: 'dash',
-            },
-          };
-        }) as PlotParams['layout']['shapes'],
-      },
-    } as PlotParams;
-  }, [cutpoints, data, mantineColors.brand, type]);
-}
-
 interface OrdinalRegressionCutpointsRendererProps {
-  cutpoints: OrdinalRegressionCutpointModel[];
+  thresholds: OrdinalRegressionThresholdModel[];
 }
 
-function OrdinalRegressionCutpointsRenderer(
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function OrdinalRegressionThresholdsRenderer(
   props: OrdinalRegressionCutpointsRendererProps,
 ) {
-  const { cutpoints } = props;
-  const plot = React.useMemo(() => {
-    const baseCutpoint = cutpoints[0]!;
-    const base = baseCutpoint.confidence_interval[0] - 1;
-    const cutpointNames = cutpoints.map((cutpoint) => cutpoint.name);
-    const cutpointValues = cutpoints.map((cutpoint) => cutpoint.value);
-    const confidenceIntervals = cutpoints.map(
-      (cutpoint) => cutpoint.confidence_interval,
+  const { thresholds } = props;
+  const plot = React.useMemo<PlotParams>(() => {
+    const thresholdNames = thresholds.map(
+      (threshold) => `${threshold.from_level} - ${threshold.to_level}`,
     );
-    const confidenceIntervalStrings = confidenceIntervals.map(
-      formatConfidenceInterval,
-    );
-    const sampleSizes = cutpoints.map((cutpoint) => cutpoint.sample_size);
+    const thresholdValues = thresholds.map((cutpoint) => cutpoint.value);
+    const { colors } = generateColorsFromSequence(thresholdNames);
 
-    const customdata = zip(
-      cutpointNames,
-      cutpointValues,
-      confidenceIntervalStrings,
-      sampleSizes,
-    );
-    const hovertemplate = [
-      'Level: %{customdata[0]}',
-      'Cutpoint: %{customdata[1]}',
-      'Confidence Interval: %{customdata[2]} (Alpha = 0.05)',
-      'Sample Size: %{customdata[3]}',
-    ].join('<br>');
-    const { colors } = generateColorsFromSequence(cutpointNames);
-    const [confidenceIntervalMinus, confidenceIntervalPlus] = unzip(
-      zip(cutpointValues, confidenceIntervals).map(([cutpoint, interval]) => [
-        // value - lower
-        cutpoint! - interval![0],
-        // upper - value
-        interval![1] - cutpoint!,
-      ]),
-    );
-    const x = cutpointValues.map((value) => value - base);
     return {
       data: [
         {
-          x: x,
-          y: cutpointNames,
           type: 'bar',
-          orientation: 'h',
-          base: base,
+          x: thresholdNames,
+          y: thresholdValues,
           marker: {
             color: colors,
           },
-          error_x: {
-            type: 'data',
-            symmetric: false,
-            array: confidenceIntervalMinus,
-            arrayminus: confidenceIntervalPlus,
-            visible: true,
-          },
-          customdata,
-          hovertemplate,
-        } as PlotParams['data'][number],
+          customdata: zip(
+            thresholds.map((threshold) => threshold.from_level),
+            thresholds.map((threshold) => threshold.to_level),
+          ),
+          hovertemplate: [
+            '<b>Level</b>: %{x}',
+            '<b>Threshold</b>: %{y:.3f}',
+            `<b>From</b>: %{customdata[0]}`,
+            `<b>To</b>: %{customdata[1]}`,
+          ].join('<br>'),
+        },
       ],
       layout: {
-        title: 'Cutpoints of the Dependent Variable Levels',
+        height: 300,
+        title: 'Thresholds of the Dependent Variable Levels',
         xaxis: {
-          minallowed: base,
-          title: 'Cutpoints',
+          title: 'Thresholds',
         },
         yaxis: {
           title: 'Levels',
-          autorange: 'reversed',
         },
         barmode: 'stack',
       },
     } as PlotParams;
-  }, [cutpoints]);
+  }, [thresholds]);
   return <PlotRenderer plot={plot} />;
+}
+
+interface UseOrdinalRegressionSampleSizePlotProps {
+  sampleSizes: OrdinalRegressionSampleSizeModel[];
+  type: RegressionVisualizationTypeEnum;
+}
+
+function useOrdinalRegressionDependentVariableLevelSampleSizePlot(
+  props: UseOrdinalRegressionSampleSizePlotProps,
+) {
+  const { sampleSizes, type } = props;
+  const plot = React.useMemo<PlotParams | null>(() => {
+    if (type !== RegressionVisualizationTypeEnum.LevelSampleSize) {
+      return null;
+    }
+    const x = sampleSizes.map((size) => size.name);
+    return {
+      data: [
+        {
+          x: x,
+          y: sampleSizes.map((size) => size.sample_size),
+          type: 'bar',
+          marker: {
+            color: generateColorsFromSequence(x).colors,
+          },
+          hovertemplate: ['Level: %{x}', 'Sample Size: %{y}'].join('<br>'),
+        },
+      ],
+      layout: {
+        xaxis: {
+          title: 'Independent Variables (Subdatasets)',
+        },
+        yaxis: {
+          title: 'Sample Size',
+          minallowed: 0,
+        },
+      },
+    } as PlotParams;
+  }, [sampleSizes, type]);
+  return plot;
 }
 
 export default function OrdinalRegressionResultRenderer(
@@ -218,15 +148,73 @@ export default function OrdinalRegressionResultRenderer(
       modelType: RegressionModelType.Ordinal,
     });
   }, [rawData.coefficients]);
+
   const commonPlot = useCommonRegressionResultPlot({
     alpha,
     type,
     data,
-  });
-  const effectOnInterceptPlot = useOrdinalEffectsOnCutpointsPlot({
-    data,
-    type,
-    cutpoints: rawData.cutpoints,
+    layout: React.useMemo(() => {
+      if (type === RegressionVisualizationTypeEnum.OddsRatio) {
+        return {
+          yaxis: {
+            title: 'Odds Ratio (in Lower/Equal Rank)',
+          },
+        };
+      }
+      return undefined;
+      // if (
+      //   type !== RegressionVisualizationTypeEnum.Coefficient &&
+      //   type !== RegressionVisualizationTypeEnum.OddsRatio
+      // ) {
+      //   return undefined;
+      // }
+      // const { colors } = generateColorsFromSequence(
+      //   rawData.thresholds.map((threshold) => threshold.from_level),
+      // );
+      // const shapes = rawData.thresholds.map((threshold, idx) => {
+      //   const value =
+      //     type === RegressionVisualizationTypeEnum.OddsRatio
+      //       ? threshold.odds_ratio
+      //       : threshold.value;
+      //   return {
+      //     type: 'line',
+      //     xref: 'paper',
+      //     yref: 'y',
+      //     x0: 0,
+      //     x1: 1,
+      //     y0: value,
+      //     y1: value,
+      //     line: {
+      //       color: colors[idx],
+      //       width: 3,
+      //       dash: 'dash',
+      //     },
+      //   };
+      // }) as PlotParams['layout']['shapes'];
+      // const annotations = rawData.thresholds.map((threshold) => {
+      //   const value =
+      //     type === RegressionVisualizationTypeEnum.OddsRatio
+      //       ? threshold.odds_ratio
+      //       : threshold.value;
+      //   return {
+      //     x: 0.1,
+      //     xref: 'paper',
+      //     y: value,
+      //     yref: 'y',
+      //     text: `${threshold.from_level} - ${threshold.to_level}`,
+      //   };
+      // }) as PlotParams['layout']['annotations'];
+      // return {
+      //   shapes,
+      //   annotations,
+      //   yaxis:
+      //     type === RegressionVisualizationTypeEnum.OddsRatio
+      //       ? {
+      //           title: 'Odds Ratio (in Lower/Equal Rank)',
+      //         }
+      //       : undefined,
+      // };
+    }, [type]),
   });
   const vifPlot = useVarianceInflationFactorRegressionResultPlot({
     data,
@@ -236,8 +224,13 @@ export default function OrdinalRegressionResultRenderer(
     data,
     type,
   });
+  const dependentVariableSampleSizePlot =
+    useOrdinalRegressionDependentVariableLevelSampleSizePlot({
+      sampleSizes: rawData.sample_sizes,
+      type,
+    });
   const usedPlot =
-    sampleSizePlot ?? vifPlot ?? effectOnInterceptPlot ?? commonPlot;
+    sampleSizePlot ?? vifPlot ?? commonPlot ?? dependentVariableSampleSizePlot;
 
   return (
     <Stack>
@@ -277,12 +270,12 @@ export default function OrdinalRegressionResultRenderer(
         />
       )}
       <RegressionConvergenceResultRenderer converged={rawData.converged} />
-      <OrdinalRegressionCutpointsRenderer cutpoints={rawData.cutpoints} />
+      <OrdinalRegressionThresholdsRenderer thresholds={rawData.thresholds} />
       <PlotInlineConfiguration>
         {VisualizationSelect}
         {AlphaSlider}
       </PlotInlineConfiguration>
-      {usedPlot && <PlotRenderer plot={usedPlot} />}
+      {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
   );
 }

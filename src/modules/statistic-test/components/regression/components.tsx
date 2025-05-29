@@ -25,10 +25,11 @@ import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
 
-interface useCommonRegressionResultPlot {
+interface UseCommonRegressionResultPlotProps {
   type: RegressionVisualizationTypeEnum;
   alpha: number;
   data: RegressionVisualizationData;
+  layout?: PlotParams['layout'];
 }
 
 export const COMMON_REGRESSION_VISUALIZATION_TYPES = [
@@ -39,17 +40,17 @@ export const COMMON_REGRESSION_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.EffectOnIntercept,
 ];
 export function useCommonRegressionResultPlot(
-  props: useCommonRegressionResultPlot,
+  props: UseCommonRegressionResultPlotProps,
 ) {
-  const { data, type, alpha } = props;
+  const { data, type, alpha, layout: extraLayout } = props;
   const mantineColors = useMantineTheme().colors;
   const plot = React.useMemo<PlotParams | null>(() => {
     const configEntry = REGRESSION_VISUALIZATION_TYPE_DICTIONARY[type];
-    if (configEntry == null) {
-      throw new Error(`${type} is not a valid regression visualization type.`);
-    }
     if (!COMMON_REGRESSION_VISUALIZATION_TYPES.includes(type)) {
       return null;
+    }
+    if (configEntry == null) {
+      throw new Error(`${type} is not a valid regression visualization type.`);
     }
 
     const {
@@ -74,12 +75,17 @@ export function useCommonRegressionResultPlot(
     });
     const [confidenceIntervalMinus, confidenceIntervalPlus] = unzip(
       zip(coefficientValues, confidenceIntervals).map(
-        ([coefficient, interval]) => [
-          // value - lower
-          coefficient! - interval![0],
-          // upper - value
-          interval![1] - coefficient!,
-        ],
+        ([coefficient, interval]) => {
+          if (interval![0] == null || interval![1] == null) {
+            return [undefined, undefined];
+          }
+          return [
+            // value - lower
+            coefficient! - interval![0],
+            // upper - value
+            interval![1] - coefficient!,
+          ];
+        },
       ),
     );
 
@@ -92,6 +98,11 @@ export function useCommonRegressionResultPlot(
           marker: {
             color: colors,
           },
+          base:
+            type === RegressionVisualizationTypeEnum.OddsRatio ||
+            type === RegressionVisualizationTypeEnum.InterceptOddsRatio
+              ? 1
+              : undefined,
           error_y:
             type === RegressionVisualizationTypeEnum.Coefficient
               ? {
@@ -104,7 +115,7 @@ export function useCommonRegressionResultPlot(
               : undefined,
           customdata: customdata as any,
           hovertemplate,
-        },
+        } as PlotParams['data'][number],
       ],
       layout: {
         title: configEntry.label,
@@ -114,9 +125,10 @@ export function useCommonRegressionResultPlot(
         yaxis: {
           title: configEntry.plotLabel,
         },
+        ...extraLayout,
       },
     } as PlotParams;
-  }, [alpha, data, mantineColors.gray, type]);
+  }, [alpha, data, extraLayout, mantineColors.gray, type]);
   return plot;
 }
 
@@ -179,8 +191,8 @@ export function useVarianceInflationFactorRegressionResultPlot(
       data;
     const VIFlineAnnotations: PlotParams['layout']['annotations'] = [
       {
-        x: 0,
-        xref: 'x',
+        x: 0.1,
+        xref: 'paper',
         y: 5,
         yref: 'y',
         text: 'Strong Multicollinearity',

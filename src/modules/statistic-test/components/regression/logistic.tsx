@@ -114,7 +114,7 @@ export default function LogisticRegressionResultRenderer(
         {VisualizationSelect}
         {AlphaSlider}
       </PlotInlineConfiguration>
-      {usedPlot && <PlotRenderer plot={usedPlot} />}
+      {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
   );
 }

@@ -27,8 +27,10 @@ export type MultinomialLogisticRegressionFacetResultModel =
   components['schemas']['MultinomialLogisticRegressionFacetResult'];
 export type OrdinalRegressionResultModel =
   components['schemas']['OrdinalRegressionResult'];
-export type OrdinalRegressionCutpointModel =
-  components['schemas']['OrdinalRegressionCutpoint'];
+export type OrdinalRegressionThresholdModel =
+  components['schemas']['OrdinalRegressionThreshold'];
+export type OrdinalRegressionSampleSizeModel =
+  components['schemas']['OrdinalRegressionLevelSampleSize'];
 
 export type RegressionCoefficientModel =
   components['schemas']['RegressionCoefficient'];

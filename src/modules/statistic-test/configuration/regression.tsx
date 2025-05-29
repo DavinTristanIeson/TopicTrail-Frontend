@@ -71,6 +71,9 @@ function MultinomialLogisticRegressionFormReferenceDependentField() {
   return (
     <TableUniqueValueSelectField
       name="reference_dependent"
+      label="Reference Dependent Variable Level"
+      description="The level of the dependent variable that is used as the reference."
+      required
       column={column}
       projectId={project.id}
     />

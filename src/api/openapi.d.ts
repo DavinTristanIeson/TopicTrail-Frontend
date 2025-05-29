@@ -1241,18 +1241,6 @@ export interface components {
                 number
             ] | null;
         };
-        /** BaseRegressionInput */
-        BaseRegressionInput: {
-            /** Target */
-            target: string;
-            /** Groups */
-            groups: components["schemas"]["NamedTableFilter"][];
-            /** Reference */
-            reference: string | null;
-            interpretation: components["schemas"]["RegressionInterpretation"];
-            /** Constrain By Groups */
-            constrain_by_groups: boolean;
-        };
         /** BinaryStatisticTestOnContingencyTableResultMainResource */
         BinaryStatisticTestOnContingencyTableResultMainResource: {
             /** Column */
@@ -2111,19 +2099,22 @@ export interface components {
             /** Odds Ratio */
             readonly odds_ratio: number;
         };
-        /** OrdinalRegressionCutpoint */
-        OrdinalRegressionCutpoint: {
+        /** OrdinalRegressionInput */
+        OrdinalRegressionInput: {
+            /** Target */
+            target: string;
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Constrain By Groups */
+            constrain_by_groups: boolean;
+        };
+        /** OrdinalRegressionLevelSampleSize */
+        OrdinalRegressionLevelSampleSize: {
             /** Name */
             name: string;
-            /** Value */
-            value: number;
-            /** Std Err */
-            std_err: number;
-            /** Confidence Interval */
-            confidence_interval: [
-                number,
-                number
-            ];
             /** Sample Size */
             sample_size: number;
         };
@@ -2140,14 +2131,27 @@ export interface components {
             warnings: string[];
             /** Coefficients */
             coefficients: components["schemas"]["OrdinalRegressionCoefficient"][];
-            /** Cutpoints */
-            cutpoints: components["schemas"]["OrdinalRegressionCutpoint"][];
+            /** Thresholds */
+            thresholds: components["schemas"]["OrdinalRegressionThreshold"][];
+            /** Sample Sizes */
+            sample_sizes: components["schemas"]["OrdinalRegressionLevelSampleSize"][];
             /** Log Likelihood Ratio */
             log_likelihood_ratio: number;
             /** P Value */
             p_value: number;
             /** Pseudo R Squared */
             pseudo_r_squared: number;
+        };
+        /** OrdinalRegressionThreshold */
+        OrdinalRegressionThreshold: {
+            /** From Level */
+            from_level: string;
+            /** To Level */
+            to_level: string;
+            /** Value */
+            value: number;
+            /** Odds Ratio */
+            readonly odds_ratio: number;
         };
         /** PaginationMeta */
         PaginationMeta: {
@@ -7363,7 +7367,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BaseRegressionInput"];
+                "application/json": components["schemas"]["OrdinalRegressionInput"];
             };
         };
         responses: {
