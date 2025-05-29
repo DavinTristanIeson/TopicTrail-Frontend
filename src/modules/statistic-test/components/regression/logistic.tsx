@@ -2,8 +2,10 @@ import { LogisticRegressionResultModel } from '@/api/statistic-test';
 import {
   RegressionConvergenceResultRenderer,
   RegressionInterceptResultRenderer,
-  useCommonRegressionResultPlot,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
   useEffectOnInterceptRegressionResultPlot,
+  useOddsRatioRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
@@ -50,11 +52,7 @@ export default function LogisticRegressionResultRenderer(
       modelType: RegressionModelType.Logistic,
     });
   }, [rawData.coefficients]);
-  const commonPlot = useCommonRegressionResultPlot({
-    alpha,
-    type,
-    data,
-  });
+
   const effectOnInterceptPlot = useEffectOnInterceptRegressionResultPlot({
     data,
     type,
@@ -70,8 +68,22 @@ export default function LogisticRegressionResultRenderer(
     data,
     type,
   });
+  const commonProps = {
+    alpha,
+    type,
+    data,
+  };
+  const coefficientPlot = useCoefficientRegressionResultPlot(commonProps);
+  const confidenceLevelPlot =
+    useConfidenceLevelRegressionResultPlot(commonProps);
+  const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
   const usedPlot =
-    sampleSizePlot ?? vifPlot ?? effectOnInterceptPlot ?? commonPlot;
+    sampleSizePlot ??
+    vifPlot ??
+    effectOnInterceptPlot ??
+    coefficientPlot ??
+    confidenceLevelPlot ??
+    oddsRatioPlot;
   return (
     <Stack>
       <StatisticTestWarningsRenderer warnings={rawData.warnings} />

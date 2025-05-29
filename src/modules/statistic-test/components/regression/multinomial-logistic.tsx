@@ -14,7 +14,6 @@ import {
 import { useVisualizationAlphaSlider } from '../plot-config';
 import {
   RegressionConvergenceResultRenderer,
-  useCommonRegressionResultPlot,
   useEffectOnInterceptRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
@@ -32,48 +31,43 @@ import { mask2D } from '@/common/utils/iterable';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES =
   [
-    RegressionVisualizationTypeEnum.CompareCoefficient,
-    RegressionVisualizationTypeEnum.CompareConfidenceLevel,
-    RegressionVisualizationTypeEnum.CompareOddsRatio,
-    RegressionVisualizationTypeEnum.CompareEffectsOnIntercept,
+    RegressionVisualizationTypeEnum.Coefficient,
+    RegressionVisualizationTypeEnum.ConfidenceLevel,
+    RegressionVisualizationTypeEnum.OddsRatio,
+    RegressionVisualizationTypeEnum.EffectOnIntercept,
   ];
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
   RegressionVisualizationTypeEnum.ConfidenceLevel,
   RegressionVisualizationTypeEnum.OddsRatio,
   RegressionVisualizationTypeEnum.EffectOnIntercept,
-  ...MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES,
-  RegressionVisualizationTypeEnum.InterceptOddsRatio,
+  RegressionVisualizationTypeEnum.VarianceInflationFactor,
   RegressionVisualizationTypeEnum.LevelSampleSize,
 ];
 
 interface UseMultinomialLogisticRegressionViewedDependentVariableLevelProps {
-  type: RegressionVisualizationTypeEnum;
   result: MultinomialLogisticRegressionResultModel;
 }
 
 export function useMultinomialLogisticRegressionViewedDependentVariableLevel(
   props: UseMultinomialLogisticRegressionViewedDependentVariableLevelProps,
 ) {
-  const { type, result } = props;
+  const { result } = props;
   const levels = React.useMemo(
     () => result.facets.map((facet) => facet.level),
     [result.facets],
   );
   const [level, setLevel] = React.useState<string | null>(levels[0] ?? null);
-  const Component =
-    !MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES.includes(
-      type,
-    ) ? (
-      <Select
-        value={level}
-        onChange={setLevel}
-        data={levels}
-        label="Level of Dependent Variable"
-        description="Choose a specific level (also called category) of the independent variable to be visualized."
-        required
-      />
-    ) : undefined;
+  const Component = (
+    <Select
+      value={level}
+      onChange={setLevel}
+      data={levels}
+      label="Level of Dependent Variable"
+      description="Choose a specific level (also called category) of the independent variable to be visualized."
+      clearable
+    />
+  );
   const facet = result.facets.find((facet) => {
     return facet.level === level;
   });
@@ -204,7 +198,7 @@ function useMultinomialLogisticRegressionEffectsOnIntercept(
 ) {
   const { data, type, config, alpha } = props;
   return React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.CompareEffectsOnIntercept) {
+    if (type !== RegressionVisualizationTypeEnum.EffectOnIntercept) {
       return null;
     }
     if (data.facets.length === 0) {
@@ -289,6 +283,38 @@ function useMultinomialLogisticRegressionEffectsOnIntercept(
   }, [alpha, config.target, data.facets, type]);
 }
 
+interface MultinomialLogisticRegressionInterceptsRendererProps {
+  type: RegressionVisualizationTypeEnum;
+  data: MultinomialLogisticRegressionResultModel;
+}
+
+function MultinomialLogisticRegressionInterceptsRenderer(
+  props: MultinomialLogisticRegressionInterceptsRendererProps,
+) {
+  const { data, type } = props;
+  const interceptPlot = useCommonRegressionResultPlot({
+    alpha: 0,
+    data: React.useMemo(() => {
+      return getRegressionCoefficientsVisualizationData({
+        coefficients: data.facets.map((facet) => facet.intercept),
+        modelType: RegressionModelType.Logistic,
+      });
+    }, [data.facets]),
+    type:
+      type === RegressionVisualizationTypeEnum.Coefficient
+        ? type
+        : RegressionVisualizationTypeEnum.OddsRatio,
+    layout: {
+      title:
+        type === RegressionVisualizationTypeEnum.Coefficient
+          ? 'Intercepts'
+          : 'Base Odds Ratios of Intercepts',
+    },
+  });
+  if (!interceptPlot) return;
+  return <PlotRenderer plot={interceptPlot} />;
+}
+
 interface MultinomialLogisticRegressionFacetResultRendererProps {
   facet: MultinomialLogisticRegressionFacetResultModel;
   config: MultinomialLogisticRegressionConfigType;
@@ -338,17 +364,22 @@ export default function MultinomialLogisticRegressionResultRenderer(
   >,
 ) {
   const { data: rawData, config } = props;
+
+  // Constraints
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
+  const { Component: DependentVariableLevelSelect, facet } =
+    useMultinomialLogisticRegressionViewedDependentVariableLevel({
+      result: rawData,
+    });
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
       supportedTypes:
-        MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
+        facet == null
+          ? MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES
+          : MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
     });
-  const { Component: DependentVariableLevelSelect, facet } =
-    useMultinomialLogisticRegressionViewedDependentVariableLevel({
-      type,
-      result: rawData,
-    });
+
+  // Plots
   const effectOnInterceptPlot =
     useMultinomialLogisticRegressionEffectsOnIntercept({
       data: rawData,
@@ -363,30 +394,18 @@ export default function MultinomialLogisticRegressionResultRenderer(
     config,
   });
 
-  const interceptPlot = useCommonRegressionResultPlot({
-    alpha,
-    data: React.useMemo(() => {
-      return getRegressionCoefficientsVisualizationData({
-        coefficients: rawData.facets.map((facet) => facet.intercept),
-        modelType: RegressionModelType.Logistic,
-      });
-    }, [rawData.facets]),
-    type:
-      type === RegressionVisualizationTypeEnum.InterceptOddsRatio
-        ? type
-        : ('' as any),
-    layout: {
-      title: 'Base Odds Ratios of Intercepts',
-    },
-  });
-  const usedPlot = effectOnInterceptPlot ?? compareResultsPlot ?? interceptPlot;
+  const usedPlot = effectOnInterceptPlot ?? compareResultsPlot;
 
   return (
     <Stack>
       {VisualizationSelect}
       {DependentVariableLevelSelect}
       {AlphaSlider}
-      <RegressionConvergenceResultRenderer converged />
+      <RegressionConvergenceResultRenderer converged={rawData.converged} />
+      <MultinomialLogisticRegressionInterceptsRenderer
+        type={type}
+        data={rawData}
+      />
       {facet && !usedPlot && (
         <MultinomialLogisticRegressionFacetResultRenderer
           alpha={alpha}

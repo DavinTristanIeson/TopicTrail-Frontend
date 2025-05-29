@@ -14,7 +14,6 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import {
   UltimateRegressionCoefficientModel,
   RegressionVisualizationTypeEnum,
-  REGRESSION_VISUALIZATION_TYPE_DICTIONARY,
   RegressionModelType,
 } from './types';
 import {
@@ -25,69 +24,82 @@ import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
 
-interface UseCommonRegressionResultPlotProps {
+interface UseAlphaConstrainedColorsProps {
+  coefficients: UltimateRegressionCoefficientModel[];
+  alpha: number;
+}
+
+function useAlphaConstrainedColors(props: UseAlphaConstrainedColorsProps) {
+  const { coefficients, alpha } = props;
+  const { colors: mantineColors } = useMantineTheme();
+  return React.useMemo(() => {
+    const { colors: generatedColors } = generateColorsFromSequence(
+      coefficients.map((coefficient) => coefficient.name),
+    );
+    const colors = zip(generatedColors, coefficients).map(
+      ([color, coefficient]) => {
+        if (coefficient!.p_value < alpha) {
+          return color!;
+        }
+        return mantineColors.gray[6];
+      },
+    );
+    return colors;
+  }, [alpha, coefficients, mantineColors.gray]);
+}
+
+function getConfidenceIntervalOffsets(
+  coefficients: number[],
+  coefficientIntervals: [number, number][],
+) {
+  const [confidenceIntervalMinus, confidenceIntervalPlus] = unzip(
+    zip(coefficients, coefficientIntervals).map(([coefficient, interval]) => {
+      if (interval![0] == null || interval![1] == null) {
+        return [undefined, undefined];
+      }
+      return [
+        // value - lower
+        coefficient! - interval![0],
+        // upper - value
+        interval![1] - coefficient!,
+      ];
+    }),
+  );
+  return {
+    type: 'data',
+    symmetric: false,
+    array: confidenceIntervalMinus,
+    arrayminus: confidenceIntervalPlus,
+    visible: true,
+  };
+}
+
+interface CommonRegressionResultPlotProps {
   type: RegressionVisualizationTypeEnum;
   alpha: number;
   data: RegressionVisualizationData;
   layout?: PlotParams['layout'];
 }
 
-export const COMMON_REGRESSION_VISUALIZATION_TYPES = [
-  RegressionVisualizationTypeEnum.Coefficient,
-  RegressionVisualizationTypeEnum.ConfidenceLevel,
-  RegressionVisualizationTypeEnum.OddsRatio,
-  RegressionVisualizationTypeEnum.InterceptOddsRatio,
-  RegressionVisualizationTypeEnum.EffectOnIntercept,
-];
-export function useCommonRegressionResultPlot(
-  props: UseCommonRegressionResultPlotProps,
+export function useConfidenceLevelRegressionResultPlot(
+  props: CommonRegressionResultPlotProps,
 ) {
-  const { data, type, alpha, layout: extraLayout } = props;
-  const mantineColors = useMantineTheme().colors;
+  const { type, alpha, data, layout } = props;
+  const colors = useAlphaConstrainedColors({
+    coefficients: data.coefficients,
+    alpha,
+  });
   const plot = React.useMemo<PlotParams | null>(() => {
-    const configEntry = REGRESSION_VISUALIZATION_TYPE_DICTIONARY[type];
-    if (!COMMON_REGRESSION_VISUALIZATION_TYPES.includes(type)) {
+    if (type !== RegressionVisualizationTypeEnum.ConfidenceLevel) {
       return null;
     }
-    if (configEntry == null) {
-      throw new Error(`${type} is not a valid regression visualization type.`);
-    }
-
     const {
+      variables: x,
+      confidenceLevels: y,
       customdata,
       hovertemplate,
-      coefficients,
-      values: coefficientValues,
-      pValues,
-      variables: x,
       xaxisTitle,
-      confidenceIntervals,
     } = data;
-    const y = coefficients.map((coefficient) =>
-      configEntry.select!(coefficient),
-    ) as number[];
-    const { colors: generatedColors } = generateColorsFromSequence(x);
-    const colors = zip(generatedColors, pValues).map(([color, pValue]) => {
-      if (pValue! < alpha) {
-        return color!;
-      }
-      return mantineColors.gray[6];
-    });
-    const [confidenceIntervalMinus, confidenceIntervalPlus] = unzip(
-      zip(coefficientValues, confidenceIntervals).map(
-        ([coefficient, interval]) => {
-          if (interval![0] == null || interval![1] == null) {
-            return [undefined, undefined];
-          }
-          return [
-            // value - lower
-            coefficient! - interval![0],
-            // upper - value
-            interval![1] - coefficient!,
-          ];
-        },
-      ),
-    );
 
     return {
       data: [
@@ -98,37 +110,135 @@ export function useCommonRegressionResultPlot(
           marker: {
             color: colors,
           },
-          base:
-            type === RegressionVisualizationTypeEnum.OddsRatio ||
-            type === RegressionVisualizationTypeEnum.InterceptOddsRatio
-              ? 1
-              : undefined,
-          error_y:
-            type === RegressionVisualizationTypeEnum.Coefficient
-              ? {
-                  type: 'data',
-                  symmetric: false,
-                  array: confidenceIntervalMinus,
-                  arrayminus: confidenceIntervalPlus,
-                  visible: true,
-                }
-              : undefined,
-          customdata: customdata as any,
+          customdata,
           hovertemplate,
-        } as PlotParams['data'][number],
+        },
       ],
       layout: {
-        title: configEntry.label,
+        title: 'Confidence Level of Each Coefficient',
         xaxis: {
           title: xaxisTitle,
         },
         yaxis: {
-          title: configEntry.plotLabel,
+          title: 'Confidence Level (%)',
+          minallowed: 0,
+          maxallowed: 100,
         },
-        ...extraLayout,
+        ...layout,
       },
     } as PlotParams;
-  }, [alpha, data, extraLayout, mantineColors.gray, type]);
+  }, [colors, data, layout, type]);
+  return plot;
+}
+
+export function useOddsRatioRegressionResultPlot(
+  props: CommonRegressionResultPlotProps,
+) {
+  const { type, alpha, data, layout } = props;
+  const colors = useAlphaConstrainedColors({
+    coefficients: data.coefficients,
+    alpha,
+  });
+  const plot = React.useMemo<PlotParams | null>(() => {
+    if (type !== RegressionVisualizationTypeEnum.OddsRatio) {
+      return null;
+    }
+    const {
+      variables: x,
+      oddsRatioConfidenceIntervals,
+      oddsRatios,
+      customdata,
+      hovertemplate,
+      xaxisTitle,
+    } = data;
+
+    const y = oddsRatios!.map((ratio) => ratio - 1);
+    const error_y = getConfidenceIntervalOffsets(
+      oddsRatios!,
+      oddsRatioConfidenceIntervals!,
+    );
+
+    return {
+      data: [
+        {
+          x,
+          y,
+          type: 'bar',
+          base: 1,
+          customdata,
+          hovertemplate,
+          error_y,
+          marker: {
+            color: colors,
+          },
+        } as PlotParams['data'][number],
+      ],
+      layout: {
+        title: 'Odds Ratio of Each Coefficient',
+        xaxis: {
+          title: xaxisTitle,
+        },
+        yaxis: {
+          title: 'Odds Ratio',
+          minallowed: 0,
+        },
+        ...layout,
+      },
+    } as PlotParams;
+  }, [colors, data, layout, type]);
+  return plot;
+}
+
+export function useCoefficientRegressionResultPlot(
+  props: CommonRegressionResultPlotProps,
+) {
+  const { type, alpha, data, layout } = props;
+  const colors = useAlphaConstrainedColors({
+    coefficients: data.coefficients,
+    alpha,
+  });
+  const plot = React.useMemo<PlotParams | null>(() => {
+    if (type !== RegressionVisualizationTypeEnum.Coefficient) {
+      return null;
+    }
+    const {
+      variables: x,
+      values: y,
+      confidenceIntervals,
+      customdata,
+      hovertemplate,
+      xaxisTitle,
+    } = data;
+
+    const error_y = getConfidenceIntervalOffsets(y, confidenceIntervals!);
+
+    return {
+      data: [
+        {
+          x,
+          y,
+          type: 'bar',
+          customdata,
+          hovertemplate,
+          error_y,
+          marker: {
+            color: colors,
+          },
+        },
+      ],
+      layout: {
+        title: 'Coefficients',
+        xaxis: {
+          title: xaxisTitle,
+        },
+        yaxis: {
+          title: 'Coefficient Value',
+          minallowed: 0,
+        },
+        ...layout,
+      },
+    } as PlotParams;
+  }, [colors, data, layout, type]);
   return plot;
 }
 

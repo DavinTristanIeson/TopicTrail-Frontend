@@ -5,7 +5,9 @@ import {
 } from '@/api/statistic-test';
 import {
   RegressionConvergenceResultRenderer,
-  useCommonRegressionResultPlot,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
+  useOddsRatioRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
@@ -149,72 +151,21 @@ export default function OrdinalRegressionResultRenderer(
     });
   }, [rawData.coefficients]);
 
-  const commonPlot = useCommonRegressionResultPlot({
+  const commonProps = {
     alpha,
     type,
     data,
-    layout: React.useMemo(() => {
-      if (type === RegressionVisualizationTypeEnum.OddsRatio) {
-        return {
-          yaxis: {
-            title: 'Odds Ratio (in Lower/Equal Rank)',
-          },
-        };
-      }
-      return undefined;
-      // if (
-      //   type !== RegressionVisualizationTypeEnum.Coefficient &&
-      //   type !== RegressionVisualizationTypeEnum.OddsRatio
-      // ) {
-      //   return undefined;
-      // }
-      // const { colors } = generateColorsFromSequence(
-      //   rawData.thresholds.map((threshold) => threshold.from_level),
-      // );
-      // const shapes = rawData.thresholds.map((threshold, idx) => {
-      //   const value =
-      //     type === RegressionVisualizationTypeEnum.OddsRatio
-      //       ? threshold.odds_ratio
-      //       : threshold.value;
-      //   return {
-      //     type: 'line',
-      //     xref: 'paper',
-      //     yref: 'y',
-      //     x0: 0,
-      //     x1: 1,
-      //     y0: value,
-      //     y1: value,
-      //     line: {
-      //       color: colors[idx],
-      //       width: 3,
-      //       dash: 'dash',
-      //     },
-      //   };
-      // }) as PlotParams['layout']['shapes'];
-      // const annotations = rawData.thresholds.map((threshold) => {
-      //   const value =
-      //     type === RegressionVisualizationTypeEnum.OddsRatio
-      //       ? threshold.odds_ratio
-      //       : threshold.value;
-      //   return {
-      //     x: 0.1,
-      //     xref: 'paper',
-      //     y: value,
-      //     yref: 'y',
-      //     text: `${threshold.from_level} - ${threshold.to_level}`,
-      //   };
-      // }) as PlotParams['layout']['annotations'];
-      // return {
-      //   shapes,
-      //   annotations,
-      //   yaxis:
-      //     type === RegressionVisualizationTypeEnum.OddsRatio
-      //       ? {
-      //           title: 'Odds Ratio (in Lower/Equal Rank)',
-      //         }
-      //       : undefined,
-      // };
-    }, [type]),
+  };
+  const coefficientPlot = useCoefficientRegressionResultPlot(commonProps);
+  const confidenceLevelPlot =
+    useConfidenceLevelRegressionResultPlot(commonProps);
+  const oddsRatioPlot = useOddsRatioRegressionResultPlot({
+    ...commonProps,
+    layout: {
+      yaxis: {
+        title: 'Odds Ratio (in Lower/Equal Rank)',
+      },
+    },
   });
   const vifPlot = useVarianceInflationFactorRegressionResultPlot({
     data,
@@ -230,7 +181,12 @@ export default function OrdinalRegressionResultRenderer(
       type,
     });
   const usedPlot =
-    sampleSizePlot ?? vifPlot ?? commonPlot ?? dependentVariableSampleSizePlot;
+    sampleSizePlot ??
+    vifPlot ??
+    dependentVariableSampleSizePlot ??
+    coefficientPlot ??
+    confidenceLevelPlot ??
+    oddsRatioPlot;
 
   return (
     <Stack>

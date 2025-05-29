@@ -21,13 +21,6 @@ export enum RegressionVisualizationTypeEnum {
   SampleSize = 'sample-size',
   EffectOnIntercept = 'effect-on-intercept',
 
-  // Multinomial logistic regression
-  // It's so annoying
-  CompareOddsRatio = 'compare-odds-ratio',
-  CompareCoefficient = 'compare-coefficient',
-  CompareConfidenceLevel = 'compare-confidence',
-  CompareEffectsOnIntercept = 'compare-effects-on-intercept',
-
   // Multinomial logistic regression and ordinal regression
   LevelSampleSize = 'level-sample-sizes',
 }
@@ -100,56 +93,6 @@ export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
     plotLabel: 'Odds Ratio',
     description:
       'Show how each independent variable contributes to the odds of seeing an outcome in the independent variable. Interpretation may vary depending on your selected interpretation method and the type of the independent variable itself.',
-    select: getCoefficientOddsRatio,
-  },
-  // Multinomial Logistic
-  [RegressionVisualizationTypeEnum.CompareCoefficient]: {
-    label: 'Compare Odds Ratio Across Dependent Variable Levels',
-    value: RegressionVisualizationTypeEnum.CompareCoefficient,
-    plotLabel: 'Odds Ratio',
-    description:
-      'Compare the actual coefficients for each level in the dependent variable.',
-    select: getCoefficientOddsRatio,
-  },
-  [RegressionVisualizationTypeEnum.CompareConfidenceLevel]: {
-    label: 'Compare Confidence Levels Across Dependent Variable Levels',
-    value: RegressionVisualizationTypeEnum.CompareConfidenceLevel,
-    plotLabel: 'Confidence Level',
-    description:
-      'Compare the confidence levels for each level in the dependent variable.',
-    select(coefficient: UltimateRegressionCoefficientModel) {
-      return pValueToConfidenceLevel(coefficient.p_value);
-    },
-  },
-  [RegressionVisualizationTypeEnum.CompareOddsRatio]: {
-    label: 'Compare Odds Ratio Across Dependent Variable Levels',
-    value: RegressionVisualizationTypeEnum.CompareOddsRatio,
-    plotLabel: 'Odds Ratio',
-    description:
-      'Compare the odds ratio for each level in the dependent variable.',
-    select(coefficient: UltimateRegressionCoefficientModel) {
-      if (!('odds_ratio' in coefficient)) {
-        throw new Error('Odds cannot be interpreted from this coefficient.');
-      }
-      return coefficient.odds_ratio;
-    },
-  },
-  [RegressionVisualizationTypeEnum.CompareEffectsOnIntercept]: {
-    label: 'Compare Effects on Intercept Across Dependent Variable Levels',
-    value: RegressionVisualizationTypeEnum.CompareEffectsOnIntercept,
-    plotLabel: 'Intercept + Effect',
-    description:
-      'Compare the contribution of each independent variable to the odds of predicting the levels of the dependent variable.',
-    select(coefficient: UltimateRegressionCoefficientModel) {
-      return coefficient.std_err;
-    },
-  },
-  [RegressionVisualizationTypeEnum.InterceptOddsRatio]: {
-    label: 'Intercept Odds Ratio of Dependent Variable Levels',
-    value: RegressionVisualizationTypeEnum.InterceptOddsRatio,
-    plotLabel: 'Odds Ratio',
-    description:
-      'Compare the odds ratio (compared to the reference level) of the intercepts for each level of the dependent variable.',
     select: getCoefficientOddsRatio,
   },
   [RegressionVisualizationTypeEnum.LevelSampleSize]: {

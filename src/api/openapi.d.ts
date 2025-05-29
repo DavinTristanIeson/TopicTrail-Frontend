@@ -1902,6 +1902,11 @@ export interface components {
             statistic: number;
             /** Odds Ratio */
             readonly odds_ratio: number;
+            /** Odds Ratio Confidence Interval */
+            readonly odds_ratio_confidence_interval: [
+                number,
+                number
+            ];
         };
         /** LogisticRegressionInput */
         LogisticRegressionInput: {
@@ -2098,6 +2103,11 @@ export interface components {
             statistic: number;
             /** Odds Ratio */
             readonly odds_ratio: number;
+            /** Odds Ratio Confidence Interval */
+            readonly odds_ratio_confidence_interval: [
+                number,
+                number
+            ];
         };
         /** OrdinalRegressionInput */
         OrdinalRegressionInput: {

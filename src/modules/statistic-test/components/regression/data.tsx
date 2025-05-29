@@ -49,12 +49,20 @@ export function getRegressionCoefficientsVisualizationData(
           (coefficient as LogisticRegressionCoefficientModel).odds_ratio,
       )
     : null;
+  const oddsRatioConfidenceIntervals = withOdds
+    ? coefficients.map(
+        (coefficient) =>
+          (coefficient as LogisticRegressionCoefficientModel)
+            .odds_ratio_confidence_interval,
+      )
+    : null;
 
   const rawCustomdata = [
     independentVariables,
     coefficientValues,
     confidenceIntervalStrings,
     oddsRatios ?? [],
+    oddsRatioConfidenceIntervals ?? [],
 
     pValues,
     confidenceLevels,
@@ -101,7 +109,9 @@ export function getRegressionCoefficientsVisualizationData(
     confidenceIntervalStrings,
     sampleSizes,
     varianceInflationFactors,
+
     oddsRatios: oddsRatios,
+    oddsRatioConfidenceIntervals,
   };
 }
 
@@ -120,11 +130,15 @@ export function getRegressionInterceptVisualizationData(
 
   const interceptOddsRatio = (intercept as LogisticRegressionCoefficientModel)
     .odds_ratio;
+  const interceptOddsRatioConfidenceInterval = (
+    intercept as LogisticRegressionCoefficientModel
+  ).odds_ratio_confidence_interval;
   const customdata = [
     [
       intercept.value,
       formatConfidenceInterval(intercept.confidence_interval),
       interceptOddsRatio,
+      formatConfidenceInterval(interceptOddsRatioConfidenceInterval),
 
       pValueToConfidenceLevel(intercept.p_value),
       intercept.p_value,
@@ -136,15 +150,16 @@ export function getRegressionInterceptVisualizationData(
   const hovertemplate = [
     '<b>Intercept</b>: %{customdata[0]}',
     '<b>Confidence Interval</b>: %{customdata[1]} (for Alpha = 0.05)',
-    ...maybeElement(
-      regressionQuirk.withOdds,
+    ...maybeElement(regressionQuirk.withOdds, [
+      '='.repeat(30),
       '<b>Odds Ratio</b>: %{customdata[2]:.3f}',
-    ),
+      '<b>Confidence Interval</b>: %{customdata[3]:.3f}',
+    ]),
     '='.repeat(30),
-    '<b>Confidence Level</b>: %{customdata[3]:.3f}',
-    '<b>P-Value</b>: %{customdata[4]:.3f}',
-    `<b>${regressionQuirk.statisticName}</b>: %{customdata[5]:.3f}`,
-    '<b>Std. Err</b>: %{customdata[6]:.3f}',
+    '<b>Confidence Level</b>: %{customdata[4]:.3f}',
+    '<b>P-Value</b>: %{customdata[5]:.3f}',
+    `<b>${regressionQuirk.statisticName}</b>: %{customdata[6]:.3f}`,
+    '<b>Std. Err</b>: %{customdata[7]:.3f}',
   ].join('<br>');
   return { customdata, hovertemplate };
 }

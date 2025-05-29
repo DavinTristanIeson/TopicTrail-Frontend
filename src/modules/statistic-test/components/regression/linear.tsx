@@ -1,7 +1,8 @@
 import { LinearRegressionResultModel } from '@/api/statistic-test';
 import {
   RegressionInterceptResultRenderer,
-  useCommonRegressionResultPlot,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
   useEffectOnInterceptRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
@@ -57,11 +58,15 @@ export default function LinearRegressionResultRenderer(
       modelType: RegressionModelType.Linear,
     });
   }, [rawData.coefficients]);
-  const commonPlot = useCommonRegressionResultPlot({
+
+  const commonProps = {
     alpha,
     type,
     data,
-  });
+  };
+  const coefficientPlot = useCoefficientRegressionResultPlot(commonProps);
+  const confidenceLevelPlot =
+    useConfidenceLevelRegressionResultPlot(commonProps);
   const effectOnInterceptPlot = useEffectOnInterceptRegressionResultPlot({
     data,
     type,
@@ -78,7 +83,11 @@ export default function LinearRegressionResultRenderer(
     type,
   });
   const usedPlot =
-    sampleSizePlot ?? vifPlot ?? effectOnInterceptPlot ?? commonPlot;
+    sampleSizePlot ??
+    vifPlot ??
+    effectOnInterceptPlot ??
+    coefficientPlot ??
+    confidenceLevelPlot;
   return (
     <Stack>
       <StatisticTestWarningsRenderer warnings={rawData.warnings} />
