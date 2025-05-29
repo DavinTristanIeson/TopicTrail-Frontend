@@ -59,18 +59,20 @@ export function getRegressionCoefficientsVisualizationData(
 
   const rawCustomdata = [
     independentVariables,
-    coefficientValues,
+    coefficientValues.map((value) => value ?? '-'),
     confidenceIntervalStrings,
-    oddsRatios ?? [],
+    oddsRatios?.map((value) => value ?? '-') ?? [],
     oddsRatioConfidenceIntervals ?? [],
 
-    pValues,
-    confidenceLevels,
-    statistics,
-    standardErrors,
+    pValues.map((value) => value ?? '-'),
+    confidenceLevels.map((value) =>
+      value == null || isNaN(value) ? '-' : value,
+    ),
+    statistics.map((value) => value ?? '-'),
+    standardErrors.map((value) => value ?? '-'),
 
-    sampleSizes,
-    varianceInflationFactors,
+    sampleSizes.map((value) => value ?? '-'),
+    varianceInflationFactors.map((value) => value ?? '-'),
   ] as any[];
 
   const customdata = zip(...rawCustomdata);
@@ -79,15 +81,19 @@ export function getRegressionCoefficientsVisualizationData(
     '<b>Variable</b>: %{customdata[0]}',
     '<b>Coefficient</b>: %{customdata[1]:.3f}',
     '<b>Confidence Interval</b>: %{customdata[2]} (for Alpha = 0.05)',
-    ...maybeElement(withOdds, '<b>Odds Ratio</b>: %{customdata[3]:.3f}'),
+    ...maybeElement(withOdds, [
+      '='.repeat(30),
+      '<b>Odds Ratio</b>: %{customdata[3]:.3f}',
+      '<b>Confidence Interval</b>: %{customdata[3]:.3f}',
+    ]),
     '='.repeat(30),
-    '<b>P-Value</b>: %{customdata[4]:.3f}',
-    '<b>Confidence</b>: %{customdata[5]:.3f}%',
-    `<b>${statisticName}</b>: %{customdata[6]:.3f}`,
-    '<b>Standard Error</b>: %{customdata[7]}',
+    '<b>P-Value</b>: %{customdata[5]:.3f}',
+    '<b>Confidence</b>: %{customdata[6]:.3f}%',
+    `<b>${statisticName}</b>: %{customdata[7]:.3f}`,
+    '<b>Standard Error</b>: %{customdata[8]}',
     '='.repeat(30),
-    '<b>Sample Size</b>: %{customdata[8]}',
-    '<b>Variance Inflation Factor</b>: %{customdata[9]:.3f}',
+    '<b>Sample Size</b>: %{customdata[9]}',
+    '<b>Variance Inflation Factor</b>: %{customdata[10]:.3f}',
   ].join('<br>');
   return {
     customdata,
@@ -135,25 +141,25 @@ export function getRegressionInterceptVisualizationData(
   ).odds_ratio_confidence_interval;
   const customdata = [
     [
-      intercept.value,
+      intercept.value ?? '-',
       formatConfidenceInterval(intercept.confidence_interval),
-      interceptOddsRatio,
+      interceptOddsRatio ?? '-',
       formatConfidenceInterval(interceptOddsRatioConfidenceInterval),
 
-      pValueToConfidenceLevel(intercept.p_value),
-      intercept.p_value,
-      intercept.statistic,
-      intercept.std_err,
+      intercept.p_value ? pValueToConfidenceLevel(intercept.p_value) : '-',
+      intercept.p_value ?? '-',
+      intercept.statistic ?? '-',
+      intercept.std_err ?? '-',
     ],
   ];
   const regressionQuirk = REGRESSION_MODEL_QUIRKS[modelType];
   const hovertemplate = [
-    '<b>Intercept</b>: %{customdata[0]}',
+    '<b>Intercept</b>: %{customdata[0]:.3f}',
     '<b>Confidence Interval</b>: %{customdata[1]} (for Alpha = 0.05)',
     ...maybeElement(regressionQuirk.withOdds, [
       '='.repeat(30),
       '<b>Odds Ratio</b>: %{customdata[2]:.3f}',
-      '<b>Confidence Interval</b>: %{customdata[3]:.3f}',
+      '<b>Confidence Interval</b>: %{customdata[3]}',
     ]),
     '='.repeat(30),
     '<b>Confidence Level</b>: %{customdata[4]:.3f}',

@@ -4,7 +4,7 @@ import {
 } from '@/api/statistic-test';
 import { BaseStatisticTestResultRendererProps } from '../../types';
 import { MultinomialLogisticRegressionConfigType } from '../../configuration/regression';
-import { Select, Stack } from '@mantine/core';
+import { Group, Select, Stack } from '@mantine/core';
 import {
   REGRESSION_VISUALIZATION_TYPE_DICTIONARY,
   RegressionModelType,
@@ -14,7 +14,10 @@ import {
 import { useVisualizationAlphaSlider } from '../plot-config';
 import {
   RegressionConvergenceResultRenderer,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
   useEffectOnInterceptRegressionResultPlot,
+  useOddsRatioRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
@@ -26,8 +29,15 @@ import {
 import PlotRenderer from '@/components/widgets/plotly';
 import { PlotParams } from 'react-plotly.js';
 import { zip } from 'lodash-es';
-import { getBalancedHeatmapZRange } from '@/modules/visualization/components/configuration/heatmap';
-import { mask2D } from '@/common/utils/iterable';
+import {
+  getBalancedHeatmapZRange,
+  getRawHeatmapZRange,
+} from '@/modules/visualization/components/configuration/heatmap';
+import { mask2D, transposeMatrix } from '@/common/utils/iterable';
+import { ResultCard } from '@/components/visual/result-card';
+import { formatConfidenceLevel } from './utils';
+import { useSelectLeftRightButtons } from '@/components/visual/select';
+import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES =
   [
@@ -57,7 +67,12 @@ export function useMultinomialLogisticRegressionViewedDependentVariableLevel(
     () => result.facets.map((facet) => facet.level),
     [result.facets],
   );
-  const [level, setLevel] = React.useState<string | null>(levels[0] ?? null);
+  const [level, setLevel] = React.useState<string | null>(null);
+  const inputContainer = useSelectLeftRightButtons({
+    onChange: setLevel,
+    options: levels,
+    value: level,
+  });
   const Component = (
     <Select
       value={level}
@@ -65,6 +80,7 @@ export function useMultinomialLogisticRegressionViewedDependentVariableLevel(
       data={levels}
       label="Level of Dependent Variable"
       description="Choose a specific level (also called category) of the independent variable to be visualized."
+      inputContainer={inputContainer}
       clearable
     />
   );
@@ -91,35 +107,62 @@ function prepareCompareFacetsCoefficientsData(
       modelType: RegressionModelType.Logistic,
     }),
   );
-  const invalidMask = facetData.map((row) =>
-    row.pValues.map((pValue) => pValue > alpha),
+  const configEntry = REGRESSION_VISUALIZATION_TYPE_DICTIONARY[type];
+
+  // 2D. Make sure all 2D is properly transposed.
+  const invalidMask = transposeMatrix(
+    facetData.map((row) => row.pValues.map((pValue) => pValue > alpha)),
+  );
+  let grandZ = transposeMatrix(
+    facets.map((facet) =>
+      facet.coefficients.map((coefficient) => configEntry.select!(coefficient)),
+    ),
+  );
+  if (type !== RegressionVisualizationTypeEnum.ConfidenceLevel) {
+    grandZ = mask2D(grandZ, invalidMask, undefined) as number[][];
+  }
+  const customdata = transposeMatrix(
+    facetData.map((facet) => facet.customdata),
   );
 
-  const configEntry = REGRESSION_VISUALIZATION_TYPE_DICTIONARY[type];
-  const grandZ = facets.map((facet) =>
-    facet.coefficients.map((coefficient) => configEntry.select!(coefficient)),
-  );
+  // Axis
   const facetLevels = facets.map((facet) => facet.level);
   const variables = facets[0]!.coefficients.map(
     (coefficient) => coefficient.name,
   );
-  const customdata = facetData.map((facet) => facet.customdata);
   const hovertemplate = facetData[0]?.hovertemplate;
 
-  const [minZ, maxZ] = getBalancedHeatmapZRange(grandZ as number[][]);
+  let zmin: number;
+  let zmax: number;
+  let colorscale = 'Viridis';
+
+  if (type === RegressionVisualizationTypeEnum.ConfidenceLevel) {
+    zmin = 0;
+    zmax = 100;
+  } else if (type === RegressionVisualizationTypeEnum.OddsRatio) {
+    zmin = 0;
+    zmax = getRawHeatmapZRange(grandZ)[1];
+    colorscale = 'Viridis';
+  } else {
+    [zmin, zmax] = getBalancedHeatmapZRange(grandZ);
+    colorscale = 'RdBu';
+  }
 
   return {
     configEntry,
     facetData,
     invalidMask,
     z: grandZ,
-    y: facetLevels,
-    x: variables,
+    // Facets to the right
+    x: facetLevels,
+    // Subdatasets to the side
+    y: variables,
     customdata,
     hovertemplate,
-    zmin: minZ,
-    zmax: maxZ,
-    xaxisTitle: facetData[0]?.xaxisTitle,
+    zmin,
+    zmax,
+    yaxisTitle: facetData[0]?.xaxisTitle,
+    colorscale,
   };
 }
 
@@ -155,7 +198,8 @@ function useCompareLogisticRegressionResultPlot(
       customdata,
       hovertemplate,
       configEntry,
-      xaxisTitle,
+      yaxisTitle,
+      colorscale,
     } = prepareCompareFacetsCoefficientsData({
       alpha,
       type,
@@ -175,18 +219,21 @@ function useCompareLogisticRegressionResultPlot(
           showlegend: false,
           hovertemplate,
           type: 'heatmap',
-          colorbar: {
-            title: configEntry.plotLabel,
-          },
-          colorscale: 'RdBu',
         },
       ] as PlotParams['data'],
       layout: {
+        title: configEntry.label,
         xaxis: {
-          title: xaxisTitle,
+          title: `Levels of ${config.target}`,
         },
         yaxis: {
-          title: `Levels of ${config.target}`,
+          title: yaxisTitle,
+        },
+        coloraxis: {
+          colorbar: {
+            title: configEntry.plotLabel,
+          },
+          colorscale,
         },
       },
     };
@@ -214,7 +261,7 @@ function useMultinomialLogisticRegressionEffectsOnIntercept(
       customdata,
       hovertemplate: coefficientsHovertemplate,
       configEntry,
-      xaxisTitle,
+      yaxisTitle,
     } = prepareCompareFacetsCoefficientsData({
       alpha,
       type,
@@ -271,12 +318,14 @@ function useMultinomialLogisticRegressionEffectsOnIntercept(
             title: configEntry.plotLabel,
           },
           colorscale: 'Viridis',
+          showscale: true,
+          type: 'log',
         },
         xaxis: {
-          title: xaxisTitle,
+          title: `Levels of ${config.target}`,
         },
         yaxis: {
-          title: `Levels of ${config.target}`,
+          title: yaxisTitle,
         },
       },
     };
@@ -288,32 +337,72 @@ interface MultinomialLogisticRegressionInterceptsRendererProps {
   data: MultinomialLogisticRegressionResultModel;
 }
 
-function MultinomialLogisticRegressionInterceptsRenderer(
-  props: MultinomialLogisticRegressionInterceptsRendererProps,
-) {
-  const { data, type } = props;
-  const interceptPlot = useCommonRegressionResultPlot({
-    alpha: 0,
-    data: React.useMemo(() => {
-      return getRegressionCoefficientsVisualizationData({
-        coefficients: data.facets.map((facet) => facet.intercept),
+// React.memo prevents this component from rerendering constantly, which causes relayouting issue
+const MultinomialLogisticRegressionInterceptsRenderer = React.memo(
+  function MultinomialLogisticRegressionInterceptsRenderer(
+    props: MultinomialLogisticRegressionInterceptsRendererProps,
+  ) {
+    const { data, type } = props;
+    const visdata = React.useMemo(() => {
+      const coefficients = data.facets.map((facet) => facet.intercept);
+      const visdata = getRegressionCoefficientsVisualizationData({
+        coefficients,
         modelType: RegressionModelType.Logistic,
       });
-    }, [data.facets]),
-    type:
-      type === RegressionVisualizationTypeEnum.Coefficient
-        ? type
-        : RegressionVisualizationTypeEnum.OddsRatio,
-    layout: {
-      title:
+      let hovertemplate: string | undefined = undefined;
+      const customdata: any[] = [];
+      for (const facet of data.facets) {
+        const {
+          customdata: interceptCustomdata,
+          hovertemplate: interceptHovertemplate,
+        } = getRegressionInterceptVisualizationData({
+          intercept: facet.intercept,
+          modelType: RegressionModelType.Logistic,
+        });
+        customdata.push(interceptCustomdata[0]);
+        hovertemplate = interceptHovertemplate;
+      }
+      return {
+        ...visdata,
+        customdata: customdata,
+        hovertemplate: hovertemplate!,
+      };
+    }, [data.facets]);
+
+    const coefficientPlot = useCoefficientRegressionResultPlot({
+      alpha: 1,
+      data: visdata,
+      type:
         type === RegressionVisualizationTypeEnum.Coefficient
-          ? 'Intercepts'
-          : 'Base Odds Ratios of Intercepts',
-    },
-  });
-  if (!interceptPlot) return;
-  return <PlotRenderer plot={interceptPlot} />;
-}
+          ? type
+          : ('' as any),
+      layout: {
+        title: 'Intercepts',
+        yaxis: {
+          title: 'Intercepts',
+        },
+      },
+    });
+    const oddsPlot = useOddsRatioRegressionResultPlot({
+      alpha: 1,
+      data: visdata,
+      type: RegressionVisualizationTypeEnum.OddsRatio,
+      layout: {
+        title: 'Base Odds Ratio of Intercepts',
+      },
+    });
+    const usedPlot = coefficientPlot ?? oddsPlot;
+
+    if (!usedPlot) return;
+    return (
+      <ToggleVisibility label="Intercepts" defaultVisible>
+        <div className="w-full">
+          <PlotRenderer plot={usedPlot} key={type} />
+        </div>
+      </ToggleVisibility>
+    );
+  },
+);
 
 interface MultinomialLogisticRegressionFacetResultRendererProps {
   facet: MultinomialLogisticRegressionFacetResultModel;
@@ -332,11 +421,15 @@ function MultinomialLogisticRegressionFacetResultRenderer(
       modelType: RegressionModelType.Logistic,
     });
   }, [facet.coefficients]);
-  const commonPlot = useCommonRegressionResultPlot({
+  const commonProps = {
     alpha,
     type,
     data,
-  });
+  };
+  const coefficientPlot = useCoefficientRegressionResultPlot(commonProps);
+  const confidenceLevelPlot =
+    useConfidenceLevelRegressionResultPlot(commonProps);
+  const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
   const effectOnInterceptPlot = useEffectOnInterceptRegressionResultPlot({
     data,
     type,
@@ -353,7 +446,12 @@ function MultinomialLogisticRegressionFacetResultRenderer(
     type,
   });
   const usedPlot =
-    sampleSizePlot ?? vifPlot ?? effectOnInterceptPlot ?? commonPlot;
+    sampleSizePlot ??
+    vifPlot ??
+    effectOnInterceptPlot ??
+    coefficientPlot ??
+    confidenceLevelPlot ??
+    oddsRatioPlot;
   return usedPlot && <PlotRenderer plot={usedPlot} height={720} />;
 }
 
@@ -398,23 +496,81 @@ export default function MultinomialLogisticRegressionResultRenderer(
 
   return (
     <Stack>
+      <Group wrap="wrap" align="stretch">
+        <ResultCard
+          label={'Log-Likelihood Ratio'}
+          value={rawData.log_likelihood_ratio?.toFixed(3)}
+          info="Measures how much better the fitted model explains the data compared to the null model. Higher is better. Consider using the p-value or McFadden's Pseudo R-Squared to interpret the model fit rather than the Log-Likelihood Ratio as they are more interpretable/comparable."
+        />
+        <ResultCard
+          label={'P-Value'}
+          value={rawData.p_value?.toFixed(3)}
+          info="Under the assumption that the null model is sufficient to explain the dependent variable, what is the likelihood that the fitted model explains the dependent variable better than the null model?"
+        />
+        <ResultCard
+          label={'Confidence Level'}
+          value={formatConfidenceLevel(rawData.p_value)}
+          info="How confident are we that the fitted model explains the dependent variable better than the null model?"
+        />
+        <ResultCard
+          label={"McFadden's Pseudo R-Squared"}
+          value={rawData.pseudo_r_squared?.toFixed(3)}
+          info="Measures how much the independent variables help with predicting the dependent variables. McFadden's pseudo R-squared has a scale of 0 to 1, with higher numbers representing a better explanatory power. To be exact, it measures the % improvement in log-likelihood for the fitted model over the null model."
+        />
+        <ResultCard
+          label={'Sample Size'}
+          value={rawData.sample_size}
+          info="The number of rows used to fit the regression model."
+        />
+      </Group>
+      <Group>
+        {rawData.reference && (
+          <ResultCard
+            label={'Independent Variable Reference'}
+            value={rawData.reference}
+            info="The independent variable used as the reference variable."
+            miw={512}
+          />
+        )}
+        {rawData.reference_dependent && (
+          <ResultCard
+            label={'Dependent Variable Level Reference'}
+            value={rawData.reference_dependent}
+            info="The level of dependent variable used as the reference level."
+            miw={512}
+          />
+        )}
+      </Group>
+      <RegressionConvergenceResultRenderer converged={rawData.converged} />
       {VisualizationSelect}
       {DependentVariableLevelSelect}
       {AlphaSlider}
-      <RegressionConvergenceResultRenderer converged={rawData.converged} />
       <MultinomialLogisticRegressionInterceptsRenderer
         type={type}
         data={rawData}
       />
-      {facet && !usedPlot && (
-        <MultinomialLogisticRegressionFacetResultRenderer
-          alpha={alpha}
-          config={config}
-          type={type}
-          facet={facet}
-        />
-      )}
-      {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
+      <div>
+        {facet && (
+          <MultinomialLogisticRegressionFacetResultRenderer
+            alpha={alpha}
+            config={config}
+            type={type}
+            facet={facet}
+          />
+        )}
+        {!facet && usedPlot && (
+          <PlotRenderer
+            plot={usedPlot}
+            height={720}
+            scrollZoom={
+              !(
+                usedPlot === effectOnInterceptPlot ||
+                usedPlot === compareResultsPlot
+              )
+            }
+          />
+        )}
+      </div>
     </Stack>
   );
 }

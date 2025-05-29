@@ -13,6 +13,6 @@ export function getRawHeatmapZRange(Z: number[][]) {
 
 export function getBalancedHeatmapZRange(Z: number[][], base: number = 0) {
   const [minZ, maxZ] = getRawHeatmapZRange(Z);
-  const threshold = Math.max(minZ, maxZ);
+  const threshold = Math.max(Math.abs(minZ), maxZ);
   return [base - threshold, base + threshold] as [number, number];
 }

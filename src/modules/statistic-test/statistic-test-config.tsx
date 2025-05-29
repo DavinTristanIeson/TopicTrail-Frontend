@@ -78,6 +78,7 @@ import {
   useOrdinalRegressionDataProvider,
 } from './data-provider/regression';
 import {
+  REGRESSION_INTERPRETATION_DICTIONARY,
   RegressionConfigType,
   regressionInputSchema,
 } from './configuration/regression-common';
@@ -118,7 +119,9 @@ function getExcludeOverlappingRowsParams(config: {
 function getRegressionParams(config: RegressionConfigType) {
   const base: Record<string, string> = {
     'Dependent Variable': config.target,
-    Interpretation: config.interpretation,
+    Interpretation:
+      REGRESSION_INTERPRETATION_DICTIONARY[config.interpretation]?.label ??
+      config.interpretation,
   };
   if (config.constrain_by_groups) {
     base['Constrain by Groups'] = 'Yes';

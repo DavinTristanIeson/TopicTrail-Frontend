@@ -26,7 +26,7 @@ export const regressionInputSchema = Yup.object({
 
 export type RegressionConfigType = Yup.InferType<typeof regressionInputSchema>;
 
-const REGRESSION_INTERPRETATION_DICTIONARY = {
+export const REGRESSION_INTERPRETATION_DICTIONARY = {
   [RegressionInterpretation.GrandMeanDeviation]: {
     label: 'Deviation from Grand Mean',
     value: RegressionInterpretation.GrandMeanDeviation,

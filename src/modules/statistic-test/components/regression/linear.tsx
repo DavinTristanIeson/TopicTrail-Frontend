@@ -7,10 +7,7 @@ import {
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
-import {
-  PlotInlineConfiguration,
-  useVisualizationAlphaSlider,
-} from '@/modules/visualization/components/configuration';
+import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
 import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
@@ -24,6 +21,7 @@ import {
 } from './types';
 import { StatisticTestWarningsRenderer } from '../common';
 import React from 'react';
+import { formatConfidenceLevel } from './utils';
 
 const LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
@@ -94,26 +92,26 @@ export default function LinearRegressionResultRenderer(
       <Group wrap="wrap" align="stretch">
         <ResultCard
           label={'F-Statistic'}
-          value={rawData.f_statistic.toFixed(3)}
+          value={rawData.f_statistic?.toFixed(3)}
           info="A statistic obtained from testing whether the independent variables can explain the variance of the dependent variable. To interpret this, you should rely on p-value and R-squared instead."
         />
         <ResultCard
           label={'P-Value'}
-          value={rawData.p_value.toFixed(3)}
+          value={rawData.p_value?.toFixed(3)}
           info={`The probability that the F-statistic would be as extreme as it is under the assumption that the independent variables do not affect the dependent variables. You should use the Confidence Level to interpret how confident we are that the independent variables DO affect the dependent variables.`}
         />
         <ResultCard
           label={'Confidence Level'}
-          value={`${(100 * (1 - rawData.p_value)).toFixed(3)}%`}
+          value={formatConfidenceLevel(rawData.p_value)}
         />
         <ResultCard
           label={'Adjusted R-Squared'}
-          value={rawData.r_squared.toFixed(3)}
+          value={rawData.r_squared?.toFixed(3)}
           info="The proportion of the variance in the dependent variable that is predictable from the independent variables. It ranges from 0 (0%) to 1 (100%)."
         />
         <ResultCard
           label={'RMSE'}
-          value={rawData.rmse.toFixed(3)}
+          value={rawData.rmse?.toFixed(3)}
           info="The average magnitude of the errors between predicted and actual values."
         />
         <ResultCard
@@ -129,10 +127,8 @@ export default function LinearRegressionResultRenderer(
           statisticName="T-Statistic"
         />
       )}
-      <PlotInlineConfiguration>
-        {VisualizationSelect}
-        {AlphaSlider}
-      </PlotInlineConfiguration>
+      {VisualizationSelect}
+      {AlphaSlider}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
   );

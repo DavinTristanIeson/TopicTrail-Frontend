@@ -114,9 +114,14 @@ export function useRegressionVisualizationTypeSelect(
   props: UseRegressionVisualizationTypeProps,
 ) {
   const { supportedTypes } = props;
-  const [type, setType] = React.useState(
-    RegressionVisualizationTypeEnum.Coefficient,
-  );
+  const [type, setType] = React.useState(supportedTypes[0]!);
+  const isSupported = supportedTypes.includes(type);
+  React.useEffect(() => {
+    if (!isSupported) {
+      setType(supportedTypes[0]!);
+    }
+  }, [isSupported, supportedTypes]);
+
   const options: ComboboxItem[] = Object.values(
     REGRESSION_VISUALIZATION_TYPE_DICTIONARY,
   ).filter((option) => supportedTypes.includes(option.value));

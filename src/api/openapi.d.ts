@@ -1973,6 +1973,8 @@ export interface components {
             sample_size: number;
             /** Warnings */
             warnings: string[];
+            /** Reference Dependent */
+            reference_dependent: string;
             /** Facets */
             facets: components["schemas"]["MultinomialLogisticRegressionFacetResult"][];
             /** P Value */

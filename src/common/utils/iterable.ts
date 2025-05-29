@@ -140,3 +140,8 @@ export function maskBoolean<T>(arr: T[], mask: boolean[]): T[] {
 export function joinIndices(indices: number[][]) {
   return uniq(indices.flat());
 }
+
+export function transposeMatrix<T>(matrix: T[][]): T[][] {
+  if (matrix.length === 0) return [];
+  return matrix[0]!.map((_, colIndex) => matrix.map((row) => row[colIndex]!));
+}

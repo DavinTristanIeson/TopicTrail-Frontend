@@ -8,11 +8,12 @@ interface StatisticTestResultCardProps {
   value: React.ReactNode;
   children?: React.ReactNode;
   info?: React.ReactNode;
+  miw?: number;
 }
 
 export function ResultCard(props: StatisticTestResultCardProps) {
   return (
-    <Card className="flex-1" miw={250}>
+    <Card className="flex-1" miw={props.miw ?? 250}>
       <Stack align="center" gap={4}>
         <Group justify="center">
           <Text fw={500}>{props.label}</Text>

@@ -9,7 +9,7 @@ import {
   Text,
   useMantineTheme,
 } from '@mantine/core';
-import { unzip, zip } from 'lodash-es';
+import { merge, unzip, zip } from 'lodash-es';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import {
   UltimateRegressionCoefficientModel,
@@ -23,6 +23,7 @@ import {
 import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
+import { pValueToConfidenceLevel } from './utils';
 
 interface UseAlphaConstrainedColorsProps {
   coefficients: UltimateRegressionCoefficientModel[];
@@ -85,10 +86,7 @@ export function useConfidenceLevelRegressionResultPlot(
   props: CommonRegressionResultPlotProps,
 ) {
   const { type, alpha, data, layout } = props;
-  const colors = useAlphaConstrainedColors({
-    coefficients: data.coefficients,
-    alpha,
-  });
+  const { colors: mantineColors } = useMantineTheme();
   const plot = React.useMemo<PlotParams | null>(() => {
     if (type !== RegressionVisualizationTypeEnum.ConfidenceLevel) {
       return null;
@@ -101,6 +99,8 @@ export function useConfidenceLevelRegressionResultPlot(
       xaxisTitle,
     } = data;
 
+    const confidence = pValueToConfidenceLevel(alpha);
+
     return {
       data: [
         {
@@ -108,26 +108,53 @@ export function useConfidenceLevelRegressionResultPlot(
           y,
           type: 'bar',
           marker: {
-            color: colors,
+            color: generateColorsFromSequence(x).colors,
           },
           customdata,
           hovertemplate,
         },
       ],
-      layout: {
-        title: 'Confidence Level of Each Coefficient',
-        xaxis: {
-          title: xaxisTitle,
+      layout: merge(
+        {
+          title: 'Confidence Level of Each Coefficient',
+          xaxis: {
+            title: xaxisTitle,
+          },
+          yaxis: {
+            title: 'Confidence Level (%)',
+            minallowed: 0,
+            maxallowed: 100,
+          },
+          annotations: [
+            {
+              x: 0.1,
+              xref: 'paper',
+              y: confidence,
+              yref: 'y',
+              text: `Alpha: ${alpha.toFixed(2)}<br>Confidence Level: ${confidence.toFixed()}%`,
+            },
+          ],
+          shapes: [
+            {
+              type: 'line',
+              xref: 'paper',
+              yref: 'y',
+              x0: 0,
+              x1: 1,
+              y0: confidence,
+              y1: confidence,
+              line: {
+                color: mantineColors.brand[6],
+                width: 3,
+                dash: 'dash',
+              },
+            },
+          ],
         },
-        yaxis: {
-          title: 'Confidence Level (%)',
-          minallowed: 0,
-          maxallowed: 100,
-        },
-        ...layout,
-      },
+        layout,
+      ),
     } as PlotParams;
-  }, [colors, data, layout, type]);
+  }, [alpha, data, layout, mantineColors.brand, type]);
   return plot;
 }
 
@@ -173,17 +200,35 @@ export function useOddsRatioRegressionResultPlot(
           },
         } as PlotParams['data'][number],
       ],
-      layout: {
-        title: 'Odds Ratio of Each Coefficient',
-        xaxis: {
-          title: xaxisTitle,
+      layout: merge(
+        {
+          title: 'Odds Ratio of Each Coefficient',
+          xaxis: {
+            title: xaxisTitle,
+          },
+          yaxis: {
+            title: 'Odds Ratio (Log-Scaled)',
+            type: 'log',
+            minallowed: -1,
+          },
+          shapes: [
+            {
+              type: 'line',
+              xref: 'paper',
+              yref: 'y',
+              x0: 0,
+              x1: 1,
+              y0: 1,
+              y1: 1,
+              line: {
+                color: 'black',
+                width: 2,
+              },
+            },
+          ],
         },
-        yaxis: {
-          title: 'Odds Ratio',
-          minallowed: 0,
-        },
-        ...layout,
-      },
+        layout,
+      ),
     } as PlotParams;
   }, [colors, data, layout, type]);
   return plot;
@@ -226,17 +271,18 @@ export function useCoefficientRegressionResultPlot(
           },
         },
       ],
-      layout: {
-        title: 'Coefficients',
-        xaxis: {
-          title: xaxisTitle,
+      layout: merge(
+        {
+          title: 'Coefficients',
+          xaxis: {
+            title: xaxisTitle,
+          },
+          yaxis: {
+            title: 'Coefficient Value',
+          },
         },
-        yaxis: {
-          title: 'Coefficient Value',
-          minallowed: 0,
-        },
-        ...layout,
-      },
+        layout,
+      ),
     } as PlotParams;
   }, [colors, data, layout, type]);
   return plot;
