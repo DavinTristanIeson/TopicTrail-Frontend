@@ -157,7 +157,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         },
         Cell({ cell: { getValue } }) {
           const coherence = getValue() as number | undefined;
-          return coherence?.toFixed(4);
+          return coherence?.toFixed(3);
         },
       },
       {
@@ -174,7 +174,7 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         },
         Cell({ cell: { getValue } }) {
           const diversity = getValue() as number | undefined;
-          return diversity?.toFixed(4);
+          return diversity?.toFixed(3);
         },
       },
       {

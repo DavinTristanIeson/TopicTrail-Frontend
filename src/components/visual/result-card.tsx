@@ -1,15 +1,19 @@
 import { Card, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
+import React from 'react';
+import { MaybeText } from '../utility/maybe';
 
 interface StatisticTestResultCardProps {
   label: string;
   value: React.ReactNode;
-  info?: string;
+  children?: React.ReactNode;
+  info?: React.ReactNode;
+  miw?: number;
 }
 
 export function ResultCard(props: StatisticTestResultCardProps) {
   return (
-    <Card className="flex-1" miw={250}>
+    <Card className="flex-1" miw={props.miw ?? 250}>
       <Stack align="center" gap={4}>
         <Group justify="center">
           <Text fw={500}>{props.label}</Text>
@@ -19,7 +23,7 @@ export function ResultCard(props: StatisticTestResultCardProps) {
                 <Info />
               </HoverCard.Target>
               <HoverCard.Dropdown>
-                <Text className={'max-w-sm'}>{props.info}</Text>
+                <MaybeText className={'max-w-sm'}>{props.info}</MaybeText>
               </HoverCard.Dropdown>
             </HoverCard>
           )}
@@ -34,6 +38,7 @@ export function ResultCard(props: StatisticTestResultCardProps) {
         >
           {props.value}
         </Text>
+        {props.children}
       </Stack>
     </Card>
   );

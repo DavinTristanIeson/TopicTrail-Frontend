@@ -108,6 +108,12 @@ export enum OmnibusEffectSizeMethodEnum {
   CramerV = 'cramer-v',
 }
 
+export enum RegressionInterpretation {
+  GrandMeanDeviation = 'grand_mean_deviation',
+  RelativeToReference = 'relative_to_reference',
+  RelativeToBaseline = 'relative_to_baseline',
+}
+
 export enum EnumList {
   SchemaColumnTypeEnum = 'SchemaColumnTypeEnum',
   GeospatialRoleEnum = 'GeospatialRoleEnum',
@@ -123,4 +129,5 @@ export enum EnumList {
   OmnibusStatisticTestMethodEnum = 'OmnibusStatisticTestMethodEnum',
   EffectSizeMethodEnum = 'EffectSizeMethodEnum',
   OmnibusEffectSizeMethodEnum = 'OmnibusEffectSizeMethodEnum',
+  RegressionInterpretation = 'RegressionInterpretation',
 }

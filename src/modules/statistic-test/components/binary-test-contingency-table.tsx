@@ -47,7 +47,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
   });
 
   const { Component: AlphaSlider, filter: filterAlpha } =
-    useVisualizationAlphaSlider();
+    useVisualizationAlphaSlider({});
   const { Component: VisualizationMethodSelect, type: vistype } =
     useBinaryStatisticTestVisualizationMethodSelect();
 

@@ -94,7 +94,7 @@ function ComparisonFilterDrawerContents(
 
       onClose();
       showNotification({
-        message: 'Filter has been updated successfully',
+        message: 'Subdataset has been updated successfully',
         color: 'green',
       });
     },

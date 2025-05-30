@@ -19,6 +19,12 @@ export interface BaseStatisticTestResultRendererProps<TData, TConfig> {
 }
 
 export enum StatisticTestPurpose {
+  // Regression
+  LinearRegression = 'linear-regression',
+  LogisticRegression = 'logistic-regression',
+  MultinomialLogisticRegression = 'multinomial-logistic-regression',
+  OrdinalRegression = 'ordinal-regression',
+  // Statistic Test
   TwoSample = 'two-sample',
   Pairwise = 'pairwise',
   Omnibus = 'omnibus',

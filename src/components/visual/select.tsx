@@ -108,7 +108,7 @@ export function useSelectLeftRightButtons<T>(
           >
             Previous
           </Button>
-          {children}
+          <div className="flex-1">{children}</div>
           <Button
             rightSection={<ArrowRight />}
             disabled={!canGoRight}
