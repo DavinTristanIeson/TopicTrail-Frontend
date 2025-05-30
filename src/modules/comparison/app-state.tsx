@@ -3,7 +3,7 @@ import { DashboardItemModel } from '@/api/userdata';
 import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
-import { StatisticTestStateItem } from '../statistic-test/types';
+import { StatisticTestStateItem } from '../statistical-analysis/types';
 import { isEqual } from 'lodash-es';
 
 export enum ComparisonPageTab {

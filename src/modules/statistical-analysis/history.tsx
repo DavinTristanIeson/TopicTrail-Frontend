@@ -102,7 +102,7 @@ const StatisticTestHistory = React.forwardRef<
   );
   return (
     <Drawer
-      title="Statistic Test History"
+      title="History of Statistical Analysis"
       onClose={onClose}
       opened={opened}
       size="xl"

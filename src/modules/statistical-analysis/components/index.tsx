@@ -18,7 +18,7 @@ export default function StatisticTestResultRenderer(
   const ResultRenderer = configItem.component;
 
   if (!configItem) {
-    throw new Error(`Statistic test for ${purpose} is not implemented.`);
+    throw new Error(`Statistical analysis for ${purpose} is not implemented.`);
   }
   const { data, error, loading, refetch } = useDataProvider(input);
 

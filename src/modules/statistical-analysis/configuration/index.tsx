@@ -20,7 +20,7 @@ export default function StatisticTestForm(props: StatisticTestFormProps) {
   const configItem = STATISTIC_TEST_CONFIGURATION[purpose];
 
   if (!configItem) {
-    throw new Error(`Statistic test for ${purpose} is not implemented.`);
+    throw new Error(`Statistical analysis for ${purpose} is not implemented.`);
   }
 
   const form = useForm({
@@ -35,7 +35,7 @@ export default function StatisticTestForm(props: StatisticTestFormProps) {
       });
       onSubmit(statisticTestInput);
       showNotification({
-        message: `Performing statistic test... this may take a while depending on the number of your subdatasets and dataset size.`,
+        message: `Your request has been acknowledged. This may take a while depending on the number of your subdatasets and dataset size.`,
         color: 'green',
       });
     },
@@ -49,7 +49,7 @@ export default function StatisticTestForm(props: StatisticTestFormProps) {
       <Space h="lg" />
       <Group justify="center">
         <SubmitButton leftSection={<TestTube />} fullWidth className="max-w-md">
-          Perform Statistic Test
+          Execute
         </SubmitButton>
       </Group>
     </FormWrapper>

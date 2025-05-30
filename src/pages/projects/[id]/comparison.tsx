@@ -5,7 +5,7 @@ import {
 } from '@/modules/comparison/app-state';
 import ComparisonDashboard from '@/modules/comparison/dashboard';
 import NamedFiltersManager from '@/modules/comparison/subdatasets';
-import StatisticTestPage from '@/modules/statistic-test';
+import StatisticTestPage from '@/modules/statistical-analysis';
 import { ProjectCommonDependencyProvider } from '@/modules/project/app-state';
 import { Alert, Tabs } from '@mantine/core';
 import { ListNumbers, Shapes, TestTube, Warning } from '@phosphor-icons/react';
@@ -48,7 +48,7 @@ const ComparisonPage: NextPageWithLayout = function () {
             leftSection={<TestTube />}
             disabled={comparisonGroups.length === 0}
           >
-            Statistic Test
+            Statistical Analysis
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>

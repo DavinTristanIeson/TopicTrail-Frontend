@@ -6,7 +6,7 @@ import { max, zip } from 'lodash-es';
 import {
   EFFECT_SIZE_DICTIONARY,
   STATISTIC_TEST_METHOD_DICTIONARY,
-} from '@/modules/statistic-test/dictionary';
+} from '@/modules/statistical-analysis/dictionary';
 import PlotRenderer from '@/components/widgets/plotly';
 import { ProjectContext } from '@/modules/project/context';
 
