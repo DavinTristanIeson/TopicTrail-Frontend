@@ -16,7 +16,6 @@ import {
   RegressionConvergenceResultRenderer,
   useCoefficientRegressionResultPlot,
   useConfidenceLevelRegressionResultPlot,
-  useEffectOnInterceptRegressionResultPlot,
   useOddsRatioRegressionResultPlot,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
@@ -33,9 +32,13 @@ import {
   getBalancedHeatmapZRange,
   getRawHeatmapZRange,
 } from '@/modules/visualization/components/configuration/heatmap';
-import { mask2D, transposeMatrix } from '@/common/utils/iterable';
+import { map2D, mask2D } from '@/common/utils/iterable';
 import { ResultCard } from '@/components/visual/result-card';
-import { formatConfidenceLevel } from './utils';
+import {
+  formatConfidenceInterval,
+  formatConfidenceLevel,
+  pValueToConfidenceLevel,
+} from './utils';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 
@@ -44,13 +47,12 @@ const MULTINOMIAL_LOGISTIC_REGRESSION_COMPARISON_SUPPORTED_VISUALIZATION_TYPES =
     RegressionVisualizationTypeEnum.Coefficient,
     RegressionVisualizationTypeEnum.ConfidenceLevel,
     RegressionVisualizationTypeEnum.OddsRatio,
-    RegressionVisualizationTypeEnum.EffectOnIntercept,
   ];
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
   RegressionVisualizationTypeEnum.ConfidenceLevel,
   RegressionVisualizationTypeEnum.OddsRatio,
-  RegressionVisualizationTypeEnum.EffectOnIntercept,
+  RegressionVisualizationTypeEnum.PredictionPerIndependentVariable,
   RegressionVisualizationTypeEnum.VarianceInflationFactor,
   RegressionVisualizationTypeEnum.LevelSampleSize,
 ];
@@ -110,20 +112,16 @@ function prepareCompareFacetsCoefficientsData(
   const configEntry = REGRESSION_VISUALIZATION_TYPE_DICTIONARY[type];
 
   // 2D. Make sure all 2D is properly transposed.
-  const invalidMask = transposeMatrix(
-    facetData.map((row) => row.pValues.map((pValue) => pValue > alpha)),
+  const invalidMask = facetData.map((row) =>
+    row.pValues.map((pValue) => pValue > alpha),
   );
-  let grandZ = transposeMatrix(
-    facets.map((facet) =>
-      facet.coefficients.map((coefficient) => configEntry.select!(coefficient)),
-    ),
+  let grandZ = facets.map((facet) =>
+    facet.coefficients.map((coefficient) => configEntry.select!(coefficient)),
   );
   if (type !== RegressionVisualizationTypeEnum.ConfidenceLevel) {
     grandZ = mask2D(grandZ, invalidMask, undefined) as number[][];
   }
-  const customdata = transposeMatrix(
-    facetData.map((facet) => facet.customdata),
-  );
+  const customdata = facetData.map((facet) => facet.customdata);
 
   // Axis
   const facetLevels = facets.map((facet) => facet.level);
@@ -240,96 +238,94 @@ function useCompareLogisticRegressionResultPlot(
   }, [alpha, config.target, data.facets, type]);
 }
 
-function useMultinomialLogisticRegressionEffectsOnIntercept(
-  props: UseCompareLogisticRegressionResultPlotProps,
-) {
-  const { data, type, config, alpha } = props;
-  return React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.EffectOnIntercept) {
-      return null;
-    }
-    if (data.facets.length === 0) {
-      return null;
-    }
-    const {
-      x: coefficientsX,
-      y,
-      z: coefficientsZ,
-      invalidMask,
-      zmin,
-      zmax,
-      customdata,
-      hovertemplate: coefficientsHovertemplate,
-      configEntry,
-      yaxisTitle,
-    } = prepareCompareFacetsCoefficientsData({
-      alpha,
-      type,
-      facets: data.facets,
-    });
-    const interceptData = data.facets.map((facet) =>
-      getRegressionInterceptVisualizationData({
-        intercept: facet.intercept,
-        modelType: RegressionModelType.Logistic,
-      }),
-    );
-    const interceptCustomdata = interceptData.map((intercept) => [
-      intercept.customdata,
-    ]);
-    const interceptOddsRatio = data.facets.map((facet) => [
-      facet.intercept.odds_ratio,
-    ]);
-    const interceptHovertemplate = interceptData[0]?.hovertemplate;
+interface UseMultinomialLogisticRegressionPredictionResultPlotProps {
+  data: MultinomialLogisticRegressionResultModel;
+  config: MultinomialLogisticRegressionConfigType;
+  type: RegressionVisualizationTypeEnum;
+  alpha: number;
+}
 
-    const x = ['Intercept', ...coefficientsX];
-    const z = zip(data.facets, coefficientsZ).map(([facet, zRow]) => {
-      const intercept = facet!.intercept.odds_ratio;
-      return zRow!.map((z) => z * intercept);
-    });
-    const hovertemplate =
-      'Intercept + Effect: %{z} (Odds Ratio)<br>' + coefficientsHovertemplate;
+function useMultinomialLogisticRegressionPredictionResultPlot(
+  props: UseMultinomialLogisticRegressionPredictionResultPlotProps,
+) {
+  const { data, config, type, alpha } = props;
+  const plot = React.useMemo<PlotParams | null>(() => {
+    if (
+      type !== RegressionVisualizationTypeEnum.PredictionPerIndependentVariable
+    ) {
+      return null;
+    }
+
+    const x = ['Baseline', ...data.independent_variables];
+    const y = data.levels;
+    const z = zip(data.baseline_prediction.probabilities, data.predictions).map(
+      ([baseline, prediction]) => [
+        baseline! * 100,
+        ...prediction!.probabilities.map((probability) => probability * 100),
+      ],
+    );
+    const pValues = data.facets.map((facet) =>
+      facet.coefficients.map((coefficient) => coefficient.p_value),
+    );
+    const invalidMask = map2D(pValues, (pvalue) => pvalue > alpha).map(
+      (row) => [true, ...row],
+    );
+    const customdata = zip(
+      data.facets.map((facet) => [
+        'None',
+        ...facet.coefficients.map((coefficient) => coefficient.odds_ratio),
+      ]),
+      data.facets.map((facet) => [
+        'None',
+        ...facet.coefficients.map((coefficient) =>
+          formatConfidenceInterval(coefficient.odds_ratio_confidence_interval),
+        ),
+      ]),
+      pValues.map((facet) => ['None', ...facet.map(pValueToConfidenceLevel)]),
+    );
 
     return {
       data: [
         {
-          x: ['Intercept'],
-          y,
-          z: interceptOddsRatio,
-          customdata: interceptCustomdata,
-          hovertemplate: interceptHovertemplate,
-          showlegend: false,
-        },
-        {
           x,
           y,
-          z: mask2D(z, invalidMask, undefined) as number[][],
-          hoverongaps: false,
-          zmin,
-          zmax,
-          customdata: customdata as any,
-          showlegend: false,
-          hovertemplate: hovertemplate,
+          z: mask2D(z, invalidMask, undefined),
+          zmin: 0,
+          zmax: 100,
           type: 'heatmap',
+          texttemplate: '%{z:.3f}%',
+          customdata: customdata as any,
+          hovertemplate: [
+            '<b>Independent Variable</b>: %{x}',
+            '<b>Dependent Variable Level</b>: %{y}',
+            '<b>Predicted Probability</b>: %{z}%',
+            '<b>Odds Ratio</b>: %{customdata[0]}',
+            '<b>Confidence Interval</b>: %{customdata[1]}',
+            '<b>Confidence Level</b>: %{customdata[2]}',
+          ].join('<br>'),
         },
       ],
       layout: {
-        coloraxis: {
-          colorbar: {
-            title: configEntry.plotLabel,
-          },
-          colorscale: 'Viridis',
-          showscale: true,
-          type: 'log',
-        },
+        title: `Predicted Probabilities for Levels of ${config.target}`,
         xaxis: {
-          title: `Levels of ${config.target}`,
+          title: 'Independent Variables (Subdatasets)',
         },
         yaxis: {
-          title: yaxisTitle,
+          title: `Dependent Variable Levels`,
         },
       },
-    };
-  }, [alpha, config.target, data.facets, type]);
+    } as PlotParams;
+  }, [
+    type,
+    data.independent_variables,
+    data.levels,
+    data.baseline_prediction.probabilities,
+    data.predictions,
+    data.facets,
+    config.target,
+    alpha,
+  ]);
+  return plot;
 }
 
 interface MultinomialLogisticRegressionInterceptsRendererProps {
@@ -430,25 +426,17 @@ function MultinomialLogisticRegressionFacetResultRenderer(
   const confidenceLevelPlot =
     useConfidenceLevelRegressionResultPlot(commonProps);
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
-  const effectOnInterceptPlot = useEffectOnInterceptRegressionResultPlot({
-    data,
-    type,
-    intercept: facet.intercept!,
-    targetName: facet.level,
-    modelType: RegressionModelType.Logistic,
-  });
   const vifPlot = useVarianceInflationFactorRegressionResultPlot({
-    data,
+    coefficients: data.coefficients,
     type,
   });
   const sampleSizePlot = useSampleSizeRegressionResultPlot({
-    data,
+    coefficients: data.coefficients,
     type,
   });
   const usedPlot =
     sampleSizePlot ??
     vifPlot ??
-    effectOnInterceptPlot ??
     coefficientPlot ??
     confidenceLevelPlot ??
     oddsRatioPlot;
@@ -478,13 +466,12 @@ export default function MultinomialLogisticRegressionResultRenderer(
     });
 
   // Plots
-  const effectOnInterceptPlot =
-    useMultinomialLogisticRegressionEffectsOnIntercept({
-      data: rawData,
-      type,
-      alpha,
-      config,
-    });
+  const predictionPlot = useMultinomialLogisticRegressionPredictionResultPlot({
+    data: rawData,
+    type,
+    alpha,
+    config,
+  });
   const compareResultsPlot = useCompareLogisticRegressionResultPlot({
     data: rawData,
     type,
@@ -492,7 +479,7 @@ export default function MultinomialLogisticRegressionResultRenderer(
     config,
   });
 
-  const usedPlot = effectOnInterceptPlot ?? compareResultsPlot;
+  const usedPlot = predictionPlot ?? compareResultsPlot;
 
   return (
     <Stack>
@@ -565,10 +552,7 @@ export default function MultinomialLogisticRegressionResultRenderer(
             plot={usedPlot}
             height={720}
             scrollZoom={
-              !(
-                usedPlot === effectOnInterceptPlot ||
-                usedPlot === compareResultsPlot
-              )
+              !(usedPlot === predictionPlot || usedPlot === compareResultsPlot)
             }
           />
         )}

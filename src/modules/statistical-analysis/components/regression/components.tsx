@@ -1,4 +1,7 @@
-import { LogisticRegressionCoefficientModel } from '@/api/statistic-test';
+import {
+  LogisticRegressionCoefficientModel,
+  RegressionCoefficientModel,
+} from '@/api/statistic-test';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import {
@@ -14,12 +17,8 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import {
   UltimateRegressionCoefficientModel,
   RegressionVisualizationTypeEnum,
-  RegressionModelType,
 } from './types';
-import {
-  getRegressionInterceptVisualizationData,
-  RegressionVisualizationData,
-} from './data';
+import { RegressionVisualizationData } from './data';
 import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
@@ -30,7 +29,9 @@ interface UseAlphaConstrainedColorsProps {
   alpha: number;
 }
 
-function useAlphaConstrainedColors(props: UseAlphaConstrainedColorsProps) {
+export function useRegressionAlphaConstrainedColors(
+  props: UseAlphaConstrainedColorsProps,
+) {
   const { coefficients, alpha } = props;
   const { colors: mantineColors } = useMantineTheme();
   return React.useMemo(() => {
@@ -162,7 +163,7 @@ export function useOddsRatioRegressionResultPlot(
   props: CommonRegressionResultPlotProps,
 ) {
   const { type, alpha, data, layout } = props;
-  const colors = useAlphaConstrainedColors({
+  const colors = useRegressionAlphaConstrainedColors({
     coefficients: data.coefficients,
     alpha,
   });
@@ -238,7 +239,7 @@ export function useCoefficientRegressionResultPlot(
   props: CommonRegressionResultPlotProps,
 ) {
   const { type, alpha, data, layout } = props;
-  const colors = useAlphaConstrainedColors({
+  const colors = useRegressionAlphaConstrainedColors({
     coefficients: data.coefficients,
     alpha,
   });
@@ -289,30 +290,30 @@ export function useCoefficientRegressionResultPlot(
 }
 
 interface UseRegressionStatisticPlotProps {
-  data: RegressionVisualizationData;
+  coefficients: RegressionCoefficientModel[];
   type: RegressionVisualizationTypeEnum;
 }
 
 export function useSampleSizeRegressionResultPlot(
   props: UseRegressionStatisticPlotProps,
 ) {
-  const { data, type } = props;
+  const { coefficients, type } = props;
   const plot = React.useMemo<PlotParams | null>(() => {
     if (type !== RegressionVisualizationTypeEnum.SampleSize) {
       return null;
     }
-    const { hovertemplate, customdata, sampleSizes, variables: x } = data;
+    const x = coefficients.map((coefficient) => coefficient.name);
+    const y = coefficients.map((coefficient) => coefficient.sample_size);
+    const { colors } = generateColorsFromSequence(x);
     return {
       data: [
         {
           x,
-          y: sampleSizes,
+          y,
           type: 'bar',
           marker: {
-            color: generateColorsFromSequence(x).colors,
+            color: colors,
           },
-          customdata,
-          hovertemplate,
         },
       ],
       layout: {
@@ -325,26 +326,25 @@ export function useSampleSizeRegressionResultPlot(
         },
       },
     } as PlotParams;
-  }, [data, type]);
+  }, [coefficients, type]);
   return plot;
 }
 
 interface UseVarianceInflationFactorRegressionResultPlotProps {
   type: RegressionVisualizationTypeEnum;
-  data: RegressionVisualizationData;
+  coefficients: RegressionCoefficientModel[];
 }
 
 export function useVarianceInflationFactorRegressionResultPlot(
   props: UseVarianceInflationFactorRegressionResultPlotProps,
 ) {
-  const { type, data } = props;
+  const { type, coefficients } = props;
   const mantineColors = useMantineTheme().colors;
   return React.useMemo<PlotParams | null>(() => {
     if (type !== RegressionVisualizationTypeEnum.VarianceInflationFactor) {
       return null;
     }
-    const { varianceInflationFactors, variables, hovertemplate, customdata } =
-      data;
+
     const VIFlineAnnotations: PlotParams['layout']['annotations'] = [
       {
         x: 0.1,
@@ -370,16 +370,23 @@ export function useVarianceInflationFactorRegressionResultPlot(
         },
       },
     ];
+    const x = coefficients.map((coefficient) => coefficient.name);
+    const y = coefficients.map(
+      (coefficient) => coefficient.variance_inflation_factor,
+    );
+    const { colors } = generateColorsFromSequence(x);
     return {
       data: [
         {
-          x: variables,
-          y: varianceInflationFactors,
+          x,
+          y,
           type: 'bar',
-          hovertemplate,
-          customdata,
+          hovertemplate: [
+            'Independent Variable: %{x}',
+            'Variance Inflation Factor: %{y}',
+          ].join('<br>'),
           marker: {
-            color: generateColorsFromSequence(variables).colors,
+            color: colors,
           },
         },
       ],
@@ -396,118 +403,50 @@ export function useVarianceInflationFactorRegressionResultPlot(
         shapes: VIFlineShapes,
       },
     } as PlotParams;
-  }, [data, mantineColors.yellow, type]);
+  }, [coefficients, mantineColors.yellow, type]);
 }
 
-interface UseInterceptEffectsPlotProps {
-  intercept: UltimateRegressionCoefficientModel;
-  data: RegressionVisualizationData;
-  type: RegressionVisualizationTypeEnum;
-  targetName: string;
-  modelType: RegressionModelType;
+interface UsePredictedResultsBaselineLineProps {
+  baseline: number;
+  percentage?: boolean;
 }
 
-export function useEffectOnInterceptRegressionResultPlot(
-  props: UseInterceptEffectsPlotProps,
+export function usePredictedResultsBaselineLine(
+  props: UsePredictedResultsBaselineLineProps,
 ) {
-  const { intercept, data, type, modelType, targetName } = props;
-  const mantineColors = useMantineTheme().colors;
-  return React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.EffectOnIntercept) {
-      return null;
-    }
-    const {
-      variables,
-      oddsRatios: oddsRatios,
-      values,
-      xaxisTitle,
-      customdata,
-      hovertemplate,
-    } = data;
-    let y: number[];
-    const useOdds = modelType === RegressionModelType.Logistic;
-    const interceptOdds = (intercept as LogisticRegressionCoefficientModel)
-      .odds_ratio;
-    console.log(oddsRatios, intercept);
-    if (useOdds) {
-      if (oddsRatios == null || interceptOdds == null) {
-        throw new Error(
-          'Odds ratios are not provided. This may be a developer oversight',
-        );
-      }
-      // odds ratio relationship is multiplicative. Technically, the coefficient still has an additive relationship to the intercept, but the coefficient uses log-odds (where multiplication = addition) so it's multiplicative when we transform them into odds ratio.
-      y = oddsRatios.map((odds_ratio) => interceptOdds * odds_ratio);
-    } else {
-      y = values.map((value) => intercept.value + value);
-    }
-    const {
-      hovertemplate: interceptHovertemplate,
-      customdata: interceptCustomdata,
-    } = getRegressionInterceptVisualizationData({
-      intercept,
-      modelType,
-    });
-    const interceptValue = useOdds ? interceptOdds : intercept.value;
+  const { baseline, percentage } = props;
+  const { colors: mantineColors } = useMantineTheme();
+  return React.useMemo<PlotParams['layout']>(() => {
     return {
-      data: [
+      annotations: [
         {
-          name: 'Intercept',
-          x: ['Intercept'],
-          y: [interceptValue],
-          hovertemplate: interceptHovertemplate,
-          customdata: interceptCustomdata,
-          marker: {
-            color: mantineColors.brand[6],
-          },
-          showlegend: false,
-        },
-        {
-          name: 'Coefficients',
-          showlegend: false,
-          x: variables,
-          y,
-          base: interceptValue,
-          type: 'bar',
-          marker: {
-            color: generateColorsFromSequence(variables).colors,
-          },
-          customdata,
-          hovertemplate,
+          x: 0.1,
+          xref: 'paper',
+          y: baseline,
+          yref: 'y',
+          text: `Baseline: ${baseline.toFixed(3)}` + (percentage ? '%' : ''),
         },
       ],
-      layout: {
-        title: 'Effect on Intercept',
-        xaxis: {
-          title: xaxisTitle,
-        },
-        yaxis: {
-          title:
-            modelType == 'linear'
-              ? `Mean of ${targetName}`
-              : modelType == 'logistic'
-                ? `Odds of Predicting ${targetName}`
-                : undefined,
-        },
-        shapes: [
-          {
-            type: 'line',
-            xref: 'paper',
-            yref: 'y',
-            x0: 0,
-            x1: 1,
-            y0: interceptValue,
-            y1: interceptValue,
-            line: {
-              color: mantineColors.brand[6],
-              width: 3,
-              dash: 'dash',
-            },
+      shapes: [
+        {
+          type: 'line',
+          xref: 'paper',
+          yref: 'y',
+          x0: 0,
+          x1: 1,
+          y0: 5,
+          y1: 5,
+          line: {
+            color: mantineColors.brand[6],
+            width: 3,
+            dash: 'dash',
           },
-        ],
-      },
-    } as PlotParams;
-  }, [data, intercept, mantineColors.brand, targetName, type, modelType]);
+        },
+      ],
+    };
+  }, [baseline, mantineColors.brand, percentage]);
 }
+
 interface InterceptRendererProps {
   intercept: UltimateRegressionCoefficientModel;
   statisticName: string;

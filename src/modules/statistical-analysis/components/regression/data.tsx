@@ -79,21 +79,21 @@ export function getRegressionCoefficientsVisualizationData(
 
   const hovertemplate = [
     '<b>Variable</b>: %{customdata[0]}',
-    '<b>Coefficient</b>: %{customdata[1]:.3f}',
+    '<b>Coefficient</b>: %{customdata[1]}',
     '<b>Confidence Interval</b>: %{customdata[2]} (for Alpha = 0.05)',
     ...maybeElement(withOdds, [
       '='.repeat(30),
-      '<b>Odds Ratio</b>: %{customdata[3]:.3f}',
-      '<b>Confidence Interval</b>: %{customdata[3]:.3f}',
+      '<b>Odds Ratio</b>: %{customdata[3]}',
+      '<b>Confidence Interval</b>: %{customdata[3]}',
     ]),
     '='.repeat(30),
-    '<b>P-Value</b>: %{customdata[5]:.3f}',
+    '<b>P-Value</b>: %{customdata[5]}',
     '<b>Confidence</b>: %{customdata[6]:.3f}%',
-    `<b>${statisticName}</b>: %{customdata[7]:.3f}`,
+    `<b>${statisticName}</b>: %{customdata[7]}`,
     '<b>Standard Error</b>: %{customdata[8]}',
     '='.repeat(30),
     '<b>Sample Size</b>: %{customdata[9]}',
-    '<b>Variance Inflation Factor</b>: %{customdata[10]:.3f}',
+    '<b>Variance Inflation Factor</b>: %{customdata[10]}',
   ].join('<br>');
   return {
     customdata,
@@ -154,18 +154,18 @@ export function getRegressionInterceptVisualizationData(
   ];
   const regressionQuirk = REGRESSION_MODEL_QUIRKS[modelType];
   const hovertemplate = [
-    '<b>Intercept</b>: %{customdata[0]:.3f}',
+    '<b>Intercept</b>: %{customdata[0]}',
     '<b>Confidence Interval</b>: %{customdata[1]} (for Alpha = 0.05)',
     ...maybeElement(regressionQuirk.withOdds, [
       '='.repeat(30),
-      '<b>Odds Ratio</b>: %{customdata[2]:.3f}',
+      '<b>Odds Ratio</b>: %{customdata[2]}',
       '<b>Confidence Interval</b>: %{customdata[3]}',
     ]),
     '='.repeat(30),
     '<b>Confidence Level</b>: %{customdata[4]:.3f}',
-    '<b>P-Value</b>: %{customdata[5]:.3f}',
-    `<b>${regressionQuirk.statisticName}</b>: %{customdata[6]:.3f}`,
-    '<b>Std. Err</b>: %{customdata[7]:.3f}',
+    '<b>P-Value</b>: %{customdata[5]}',
+    `<b>${regressionQuirk.statisticName}</b>: %{customdata[6]}`,
+    '<b>Std. Err</b>: %{customdata[7]}',
   ].join('<br>');
   return { customdata, hovertemplate };
 }

@@ -1986,10 +1986,11 @@ export interface components {
             warnings: string[];
             /** Coefficients */
             coefficients: components["schemas"]["RegressionCoefficient"][];
-            intercept: components["schemas"]["RegressionCoefficient"] | null;
+            intercept: components["schemas"]["RegressionCoefficient"];
             fit_evaluation: components["schemas"]["LinearRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult"][];
+            predictions: components["schemas"]["LinearRegressionPredictionResult"][];
+            baseline_prediction: components["schemas"]["LinearRegressionPredictionResult"];
             /** Standardized */
             standardized: boolean;
         };
@@ -2067,7 +2068,8 @@ export interface components {
             intercept: components["schemas"]["LogisticRegressionCoefficient"];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult"][];
+            predictions: components["schemas"]["LogisticRegressionPredictionResult"][];
+            baseline_prediction: components["schemas"]["LogisticRegressionPredictionResult"];
         };
         /** MultinomialLogisticRegressionFacetResult */
         MultinomialLogisticRegressionFacetResult: {
@@ -2119,7 +2121,8 @@ export interface components {
             facets: components["schemas"]["MultinomialLogisticRegressionFacetResult"][];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult"][];
+            predictions: components["schemas"]["MultinomialLogisticRegressionPredictionResult"][];
+            baseline_prediction: components["schemas"]["MultinomialLogisticRegressionPredictionResult"];
         };
         /** NamedTableFilter */
         NamedTableFilter: {
@@ -2308,7 +2311,8 @@ export interface components {
             sample_sizes: components["schemas"]["OrdinalRegressionLevelSampleSize"][];
             fit_evaluation: components["schemas"]["OrdinalRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult"][];
+            predictions: components["schemas"]["OrdinalRegressionPredictionResult"][];
+            baseline_prediction: components["schemas"]["OrdinalRegressionPredictionResult"];
             /** Levels */
             levels: string[];
         };
@@ -2434,13 +2438,6 @@ export interface components {
          * @enum {string}
          */
         RegressionInterpretation: "grand_mean_deviation" | "relative_to_reference" | "relative_to_baseline";
-        /** RegressionPredictionPerIndependentVariableResult */
-        RegressionPredictionPerIndependentVariableResult: {
-            /** Variable */
-            variable: string;
-            /** Prediction */
-            prediction: unknown;
-        };
         /**
          * SchemaColumnTypeEnum
          * @enum {string}

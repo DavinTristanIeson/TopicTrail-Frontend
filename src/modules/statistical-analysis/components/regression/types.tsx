@@ -19,7 +19,7 @@ export enum RegressionVisualizationTypeEnum {
   VarianceInflationFactor = 'variance_inflation_factor',
   OddsRatio = 'odds-ratio',
   SampleSize = 'sample-size',
-  EffectOnIntercept = 'effect-on-intercept',
+  PredictionPerIndependentVariable = 'prediction-per-independent-variable',
 
   // Multinomial logistic regression and ordinal regression
   LevelSampleSize = 'level-sample-sizes',
@@ -73,16 +73,13 @@ export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
       return coefficient.variance_inflation_factor;
     },
   },
-  [RegressionVisualizationTypeEnum.EffectOnIntercept]: {
-    label: 'Effect of Independent Variables on Intercept',
-    value: RegressionVisualizationTypeEnum.EffectOnIntercept,
-    plotLabel: 'Intercept + Effect',
+  [RegressionVisualizationTypeEnum.PredictionPerIndependentVariable]: {
+    label: 'Prediction per Independent Variable',
+    value: RegressionVisualizationTypeEnum.PredictionPerIndependentVariable,
+    plotLabel: 'Prediction',
     description:
-      'Show how each independent variable applies its effects on the intercept.',
+      'Show the predictions of the fitted model for each of the independent variables when only that independent variable is present.',
     select(coefficient: UltimateRegressionCoefficientModel) {
-      if ('odds_ratio' in coefficient) {
-        return coefficient.odds_ratio;
-      }
       return coefficient.value;
     },
   },
