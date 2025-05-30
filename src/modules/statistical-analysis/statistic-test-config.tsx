@@ -132,6 +132,9 @@ function getRegressionParams(config: RegressionConfigType) {
   return base;
 }
 
+const REGRESSION_ACTION_LABEL = 'Fit Regression Model';
+const STATISTIC_TEST_ACTION_LABEL = 'Perform Statistic Test';
+
 export const STATISTIC_TEST_CONFIGURATION: Record<
   StatisticTestPurpose,
   StatisticTestConfigurationEntry<any, any>
@@ -152,6 +155,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       }
       return base;
     },
+    actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     LinearRegressionResultModel,
     LinearRegressionConfigType
@@ -171,6 +175,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
         target: config.target.name,
       });
     },
+    actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     LogisticRegressionResultModel,
     LogisticRegressionConfigType
@@ -191,6 +196,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       }
       return base;
     },
+    actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     MultinomialLogisticRegressionResultModel,
     MultinomialLogisticRegressionConfigType
@@ -205,6 +211,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       'Use each subdataset as the independent variable of an ordinal regression to figure out how the criteria of each subdataset contributes to the odds of a value being higher-ranked or lower-ranked.',
     label: 'Ordinal Regression',
     getParams: getRegressionParams,
+    actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     OrdinalRegressionResultModel,
     RegressionConfigType
@@ -226,6 +233,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
         ...getExcludeOverlappingRowsParams(config),
       };
     },
+    actionLabel: STATISTIC_TEST_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     StatisticTestResultModel,
     TwoSampleStatisticTestConfig
@@ -249,6 +257,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
         ...getExcludeOverlappingRowsParams(config),
       };
     },
+    actionLabel: STATISTIC_TEST_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     StatisticTestResultModel,
     OmnibusStatisticTestConfig
@@ -268,6 +277,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
         ...getExcludeOverlappingRowsParams(config),
       };
     },
+    actionLabel: STATISTIC_TEST_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     PairwiseStatisticTestResultModel,
     TwoSampleStatisticTestConfig
@@ -284,6 +294,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     getParams() {
       return {};
     },
+    actionLabel: 'Calculate Co-occurrence',
   } as StatisticTestConfigurationEntry<SubdatasetCooccurrenceModel, object>,
   [StatisticTestPurpose.ContingencyTable]: {
     type: StatisticTestPurpose.ContingencyTable,
@@ -300,6 +311,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
         ...getExcludeOverlappingRowsParams(config),
       };
     },
+    actionLabel: 'Calculate Contingency Table',
   } as StatisticTestConfigurationEntry<
     ContingencyTableModel,
     ContingencyTableConfig
@@ -318,6 +330,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
         Column: config.column,
       };
     },
+    actionLabel: STATISTIC_TEST_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     BinaryStatisticTestOnContingencyTableMainResultModel,
     ContingencyTableConfig
@@ -332,6 +345,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       'Each subdataset will be treated as a binary variable that splits the dataset into two groups. Both groups will be compared with each other using a statistic test.',
     label: 'Binary Statistic Test on Distribution',
     getParams: getBasicStatisticTestParams,
+    actionLabel: STATISTIC_TEST_ACTION_LABEL,
   } as StatisticTestConfigurationEntry<
     BinaryStatisticTestOnDistributionResultModel,
     BinaryStatisticTestConfig

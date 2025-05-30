@@ -49,7 +49,7 @@ export default function StatisticTestForm(props: StatisticTestFormProps) {
       <Space h="lg" />
       <Group justify="center">
         <SubmitButton leftSection={<TestTube />} fullWidth className="max-w-md">
-          Execute
+          {configItem.actionLabel ?? 'Execute'}
         </SubmitButton>
       </Group>
     </FormWrapper>

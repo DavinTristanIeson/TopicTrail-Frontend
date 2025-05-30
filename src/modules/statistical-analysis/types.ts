@@ -44,4 +44,5 @@ export interface StatisticTestConfigurationEntry<TData, TConfig> {
   configValidator: Yup.AnyObjectSchema;
   component: React.FC<BaseStatisticTestResultRendererProps<TData, TConfig>>;
   getParams(config: TConfig): Record<string, string>;
+  actionLabel: string;
 }
