@@ -92,26 +92,26 @@ export default function LinearRegressionResultRenderer(
       <Group wrap="wrap" align="stretch">
         <ResultCard
           label={'F-Statistic'}
-          value={rawData.f_statistic?.toFixed(3)}
+          value={rawData.fit_evaluation.f_statistic?.toFixed(3)}
           info="A statistic obtained from testing whether the independent variables can explain the variance of the dependent variable. To interpret this, you should rely on p-value and R-squared instead."
         />
         <ResultCard
           label={'P-Value'}
-          value={rawData.p_value?.toFixed(3)}
+          value={rawData.fit_evaluation.p_value?.toFixed(3)}
           info={`The probability that the F-statistic would be as extreme as it is under the assumption that the independent variables do not affect the dependent variables. You should use the Confidence Level to interpret how confident we are that the independent variables DO affect the dependent variables.`}
         />
         <ResultCard
           label={'Confidence Level'}
-          value={formatConfidenceLevel(rawData.p_value)}
+          value={formatConfidenceLevel(rawData.fit_evaluation.p_value)}
         />
         <ResultCard
           label={'Adjusted R-Squared'}
-          value={rawData.r_squared?.toFixed(3)}
+          value={rawData.fit_evaluation.r_squared?.toFixed(3)}
           info="The proportion of the variance in the dependent variable that is predictable from the independent variables. It ranges from 0 (0%) to 1 (100%)."
         />
         <ResultCard
           label={'RMSE'}
-          value={rawData.rmse?.toFixed(3)}
+          value={rawData.fit_evaluation.rmse?.toFixed(3)}
           info="The average magnitude of the errors between predicted and actual values."
         />
         <ResultCard

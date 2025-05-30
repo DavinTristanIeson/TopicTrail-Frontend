@@ -27,7 +27,7 @@ export const useLinearRegressionDataProvider: BaseStatisticTestDataProviderHook<
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/regression/linear',
+    '/statistical-analysis/{project_id}/regression/linear',
     {
       body: {
         constrain_by_groups: config.constrain_by_groups,
@@ -52,7 +52,7 @@ export const useLogisticRegressionDataProvider: BaseStatisticTestDataProviderHoo
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/regression/logistic',
+    '/statistical-analysis/{project_id}/regression/logistic',
     {
       body: {
         constrain_by_groups: config.constrain_by_groups,
@@ -76,7 +76,7 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticTestData
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/regression/logistic/multinomial',
+    '/statistical-analysis/{project_id}/regression/logistic/multinomial',
     {
       body: {
         constrain_by_groups: config.constrain_by_groups,
@@ -101,7 +101,7 @@ export const useOrdinalRegressionDataProvider: BaseStatisticTestDataProviderHook
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/regression/ordinal',
+    '/statistical-analysis/{project_id}/regression/ordinal',
     {
       body: {
         constrain_by_groups: config.constrain_by_groups,

@@ -24,7 +24,7 @@ export const useTwoSampleStatisticTestDataProvider: BaseStatisticTestDataProvide
       [config.group1, config.group2],
     ),
   });
-  const query = client.useQuery('post', '/statistic-test/{project_id}', {
+  const query = client.useQuery('post', '/statistical-analysis/{project_id}', {
     body: {
       column: config.column,
       effect_size_preference: config.effect_size_preference,
@@ -47,7 +47,7 @@ export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticTestDat
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/pairwise',
+    '/statistical-analysis/{project_id}/pairwise',
     {
       body: {
         column: config.column,
@@ -71,7 +71,7 @@ export const useOmnibusStatisticTestDataProvider: BaseStatisticTestDataProviderH
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/omnibus',
+    '/statistical-analysis/{project_id}/omnibus',
     {
       body: {
         column: config.column,

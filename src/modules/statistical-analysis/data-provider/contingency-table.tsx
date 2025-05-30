@@ -17,7 +17,7 @@ export const useContingencyTableStatisticTestDataProvider: BaseStatisticTestData
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/contingency-table',
+    '/statistical-analysis/{project_id}/contingency-table',
     {
       body: {
         column: config.column,
@@ -41,7 +41,7 @@ export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatisticTe
   const groups = subdatasets.filter((group) => !!group.filter);
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/co-occurrence',
+    '/statistical-analysis/{project_id}/co-occurrence',
     {
       body: {
         groups: groups,

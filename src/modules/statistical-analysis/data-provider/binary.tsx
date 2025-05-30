@@ -22,7 +22,7 @@ export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticTest
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/binary-test-distribution',
+    '/statistical-analysis/{project_id}/binary-test-distribution',
     {
       body: {
         column: config.column,
@@ -45,7 +45,7 @@ export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatistic
   });
   const query = client.useQuery(
     'post',
-    '/statistic-test/{project_id}/binary-test-contingency-table',
+    '/statistical-analysis/{project_id}/binary-test-contingency-table',
     {
       body: {
         column: config.column,

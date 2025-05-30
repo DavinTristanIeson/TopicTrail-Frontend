@@ -202,22 +202,22 @@ export default function OrdinalRegressionResultRenderer(
       <Group wrap="wrap" align="stretch">
         <ResultCard
           label={'Log-Likelihood Ratio'}
-          value={rawData.log_likelihood_ratio?.toFixed(3)}
+          value={rawData.fit_evaluation.log_likelihood_ratio?.toFixed(3)}
           info="Measures how much better the fitted model explains the data compared to the null model. Higher is better. Consider using the p-value or McFadden's Pseudo R-Squared to interpret the model fit rather than the Log-Likelihood Ratio as they are more interpretable/comparable."
         />
         <ResultCard
           label={'P-Value'}
-          value={rawData.p_value?.toFixed(3)}
+          value={rawData.fit_evaluation.p_value?.toFixed(3)}
           info="Under the assumption that the null model is sufficient to explain the dependent variable, what is the likelihood that the fitted model explains the dependent variable better than the null model?"
         />
         <ResultCard
           label={'Confidence Level'}
-          value={formatConfidenceLevel(rawData.p_value)}
+          value={formatConfidenceLevel(rawData.fit_evaluation.p_value)}
           info="How confident are we that the fitted model explains the dependent variable better than the null model?"
         />
         <ResultCard
           label={"McFadden's Pseudo R-Squared"}
-          value={rawData.pseudo_r_squared?.toFixed(3)}
+          value={rawData.fit_evaluation.pseudo_r_squared?.toFixed(3)}
           info="Measures how much the independent variables help with predicting the dependent variables. McFadden's pseudo R-squared has a scale of 0 to 1, with higher numbers representing a better explanatory power. To be exact, it measures the % improvement in log-likelihood for the fitted model over the null model."
         />
         <ResultCard
@@ -233,7 +233,9 @@ export default function OrdinalRegressionResultRenderer(
           info="The independent variable used as the reference variable."
         />
       )}
-      <RegressionConvergenceResultRenderer converged={rawData.converged} />
+      <RegressionConvergenceResultRenderer
+        converged={rawData.fit_evaluation.converged}
+      />
       {VisualizationSelect}
       {AlphaSlider}
       <OrdinalRegressionThresholdsRenderer thresholds={rawData.thresholds} />
