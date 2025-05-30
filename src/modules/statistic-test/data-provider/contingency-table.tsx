@@ -6,8 +6,9 @@ import {
   useStatisticTestDataProviderParams,
 } from './utils';
 import { ContingencyTableConfig } from '../configuration/contingency-table';
+import { SubdatasetCooccurrenceModel } from '@/api/comparison';
 
-const useContingencyTableStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
+export const useContingencyTableStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
   ContingencyTableModel,
   ContingencyTableConfig
 > = function (config) {
@@ -28,4 +29,28 @@ const useContingencyTableStatisticTestDataProvider: BaseStatisticTestDataProvide
   );
   return usePrepareStatisticTestDataProvider({ query });
 };
-export default useContingencyTableStatisticTestDataProvider;
+
+export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatisticTestDataProviderHook<
+  SubdatasetCooccurrenceModel,
+  object
+> = function () {
+  const { params, subdatasets } = useStatisticTestDataProviderParams({
+    groups: null,
+  });
+  // Exclude default subdataset
+  const groups = subdatasets.filter((group) => !!group.filter);
+  const query = client.useQuery(
+    'post',
+    '/statistic-test/{project_id}/co-occurrence',
+    {
+      body: {
+        groups: groups,
+      },
+      params,
+    },
+  );
+
+  return usePrepareStatisticTestDataProvider({
+    query,
+  });
+};

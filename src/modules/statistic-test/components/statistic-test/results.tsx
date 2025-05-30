@@ -1,6 +1,6 @@
 import { Stack } from '@mantine/core';
 import React from 'react';
-import { BaseStatisticTestResultRendererProps } from '../types';
+import { BaseStatisticTestResultRendererProps } from '../../types';
 import { StatisticTestResultModel } from '@/api/statistic-test';
 import {
   GroupCountsRenderer,

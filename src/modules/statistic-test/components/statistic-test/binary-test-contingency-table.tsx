@@ -6,19 +6,21 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
 
 import { max } from 'lodash-es';
-import { BaseStatisticTestResultRendererProps } from '../types';
+import { BaseStatisticTestResultRendererProps } from '../../types';
 import { BinaryStatisticTestOnContingencyTableMainResultModel } from '@/api/statistic-test';
-import { ContingencyTableConfig } from '../configuration/contingency-table';
+import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import {
-  BinaryStatisticTestVisualizationType,
   PlotInlineConfiguration,
   StatisticTestEmptyPlotWarning,
-  useBinaryStatisticTestVisualizationMethodSelect,
   useCategoriesAxisMultiSelect,
   useVisualizationAlphaSlider,
   useVisualizationMinFrequencySlider,
 } from '@/modules/visualization/components/configuration';
 import { plotlyWrapText } from '@/modules/visualization/components/utils';
+import {
+  useBinaryStatisticTestVisualizationMethodSelect,
+  BinaryStatisticTestVisualizationType,
+} from './common';
 
 export default function BinaryStatisticTestOnContingencyTableResultRenderer(
   props: BaseStatisticTestResultRendererProps<

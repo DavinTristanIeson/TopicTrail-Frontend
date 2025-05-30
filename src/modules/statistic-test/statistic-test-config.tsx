@@ -10,45 +10,29 @@ import {
   StatisticTestResultModel,
 } from '@/api/statistic-test';
 import {
-  BinaryStatisticTestConfigForm,
-  binaryStatisticTestFormSchema,
-  BinaryStatisticTestConfig,
   pairwiseStatisticTestFormSchema,
   PairwiseStatisticTestConfigForm,
-} from './configuration/binary';
+  OmnibusStatisticTestConfig,
+  OmnibusStatisticTestConfigForm,
+  omnibusStatisticTestFormSchema,
+  TwoSampleStatisticTestConfig,
+  TwoSampleStatisticTestConfigForm,
+  twoSampleStatisticTestFormSchema,
+} from './configuration/statistic-test';
 import {
   ContingencyTableConfigForm,
   ContingencyTableConfig,
   contingencyTableFormSchema,
-  BinaryContingencyTableConfigForm,
-  binaryContingencyTableFormSchema,
 } from './configuration/contingency-table';
-import {
-  OmnibusStatisticTestConfig,
-  OmnibusStatisticTestConfigForm,
-  omnibusStatisticTestFormSchema,
-} from './configuration/omnibus';
-import {
-  TwoSampleStatisticTestConfig,
-  TwoSampleStatisticTestConfigForm,
-  twoSampleStatisticTestFormSchema,
-} from './configuration/two-sample';
-import useContingencyTableStatisticTestDataProvider from './data-provider/contingency-table';
 import { StatisticTestConfigurationEntry, StatisticTestPurpose } from './types';
 import {
   useBinaryStatisticTestOnContingencyTableDataProvider,
   useBinaryStatisticTestOnDistributionDataProvider,
 } from './data-provider/binary';
-import useOmnibusStatisticTestDataProvider from './data-provider/omnibus';
-import {
-  usePairwiseTwoSampleStatisticTestDataProvider,
-  useTwoSampleStatisticTestDataProvider,
-} from './data-provider/two-sample';
-import BinaryStatisticTestOnContingencyTableResultRenderer from './components/binary-test-contingency-table';
-import BinaryStatisticTestOnDistributionResultRenderer from './components/binary-test-distribution';
-import ContingencyTableResultRenderer from './components/contingency-table';
-import StatisticTestResultRenderer from './components/results';
-import { PairwiseStatisticTestResultRenderer } from './components/pairwise';
+import BinaryStatisticTestOnContingencyTableResultRenderer from './components/statistic-test/binary-test-contingency-table';
+import BinaryStatisticTestOnDistributionResultRenderer from './components/statistic-test/binary-test-distribution';
+import ContingencyTableResultRenderer from './components/others/contingency-table';
+import StatisticTestResultRenderer from './components/statistic-test/results';
 import {
   EFFECT_SIZE_DICTIONARY,
   OMNIBUS_STATISTIC_TEST_METHOD_DICTIONARY,
@@ -58,8 +42,7 @@ import {
   EffectSizeMethodEnum,
   StatisticTestMethodEnum,
 } from '@/common/constants/enum';
-import SubdatasetCooccurrenceResultRenderer from './components/subdataset-cooccurrence';
-import { useStatisticTestSubdatasetCooccurrenceDataProvider } from './data-provider/subdataset-cooccurrence';
+import SubdatasetCooccurrenceResultRenderer from './components/others/subdataset-cooccurrence';
 import { SubdatasetCooccurrenceModel } from '@/api/comparison';
 import * as Yup from 'yup';
 import {
@@ -91,6 +74,23 @@ import LogisticRegressionResultRenderer from './components/regression/logistic';
 import MultinomialLogisticRegressionResultRenderer from './components/regression/multinomial-logistic';
 import OrdinalRegressionResultRenderer from './components/regression/ordinal';
 import LinearRegressionResultRenderer from './components/regression/linear';
+import {
+  BinaryContingencyTableConfigForm,
+  binaryContingencyTableFormSchema,
+  BinaryStatisticTestConfigForm,
+  binaryStatisticTestFormSchema,
+  BinaryStatisticTestConfig,
+} from './configuration/binary-statistic-test';
+import { PairwiseStatisticTestResultRenderer } from './components/statistic-test/pairwise';
+import {
+  useStatisticTestSubdatasetCooccurrenceDataProvider,
+  useContingencyTableStatisticTestDataProvider,
+} from './data-provider/contingency-table';
+import {
+  useTwoSampleStatisticTestDataProvider,
+  useOmnibusStatisticTestDataProvider,
+  usePairwiseTwoSampleStatisticTestDataProvider,
+} from './data-provider/statistic-test';
 
 function getBasicStatisticTestParams(config: {
   column: string;

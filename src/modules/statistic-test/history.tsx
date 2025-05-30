@@ -13,16 +13,12 @@ import React from 'react';
 import { useComparisonAppState } from '../comparison/app-state';
 import { STATISTIC_TEST_CONFIGURATION } from './statistic-test-config';
 import { ClockClockwise } from '@phosphor-icons/react/dist/ssr';
-import {
-  StatisticTestConfig,
-  StatisticTestPurpose,
-  StatisticTestStateItem,
-} from './types';
+import { StatisticTestPurpose, StatisticTestStateItem } from './types';
 import { TestTube, Warning } from '@phosphor-icons/react';
 
 interface StatisticTestHistoryProps {
   setPurpose: React.Dispatch<React.SetStateAction<StatisticTestPurpose | null>>;
-  setInput: React.Dispatch<React.SetStateAction<StatisticTestConfig | null>>;
+  setInput: React.Dispatch<React.SetStateAction<any | null>>;
 }
 interface StatisticTestHistoryContextType {
   onApply(entry: StatisticTestStateItem): void;

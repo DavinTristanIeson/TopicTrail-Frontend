@@ -2,7 +2,6 @@ import {
   PairwiseStatisticTestResultModel,
   StatisticTestResultModel,
 } from '@/api/statistic-test';
-import { TwoSampleStatisticTestConfig } from '../configuration/two-sample';
 import { BaseStatisticTestDataProviderHook } from '../types';
 import { client } from '@/common/api/client';
 import {
@@ -10,6 +9,10 @@ import {
   useStatisticTestDataProviderParams,
 } from './utils';
 import React from 'react';
+import {
+  TwoSampleStatisticTestConfig,
+  OmnibusStatisticTestConfig,
+} from '../configuration/statistic-test';
 
 export const useTwoSampleStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
   StatisticTestResultModel,
@@ -50,6 +53,29 @@ export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticTestDat
         column: config.column,
         groups: subdatasets,
         effect_size_preference: config.effect_size_preference,
+        statistic_test_preference: config.statistic_test_preference,
+        exclude_overlapping_rows: config.exclude_overlapping_rows,
+      },
+      params,
+    },
+  );
+  return usePrepareStatisticTestDataProvider({ query });
+};
+
+export const useOmnibusStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
+  StatisticTestResultModel,
+  OmnibusStatisticTestConfig
+> = function (config) {
+  const { subdatasets, params } = useStatisticTestDataProviderParams({
+    groups: null,
+  });
+  const query = client.useQuery(
+    'post',
+    '/statistic-test/{project_id}/omnibus',
+    {
+      body: {
+        column: config.column,
+        groups: subdatasets,
         statistic_test_preference: config.statistic_test_preference,
         exclude_overlapping_rows: config.exclude_overlapping_rows,
       },

@@ -1,12 +1,12 @@
 import React from 'react';
 import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
-import { StatisticTestPurpose, StatisticTestConfig } from '../types';
+import { StatisticTestPurpose } from '../types';
 import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
 import { Skeleton } from '@mantine/core';
 
 interface StatisticTestResultRendererProps {
   purpose: StatisticTestPurpose;
-  input: StatisticTestConfig;
+  input: any;
 }
 
 export default function StatisticTestResultRenderer(

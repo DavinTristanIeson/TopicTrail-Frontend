@@ -8,8 +8,10 @@ import {
   usePrepareStatisticTestDataProvider,
   useStatisticTestDataProviderParams,
 } from './utils';
-import { BinaryStatisticTestConfig } from '../configuration/binary';
-import { ContingencyTableConfig } from '../configuration/contingency-table';
+import {
+  BinaryContingencyTableConfig,
+  BinaryStatisticTestConfig,
+} from '../configuration/binary-statistic-test';
 
 export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticTestDataProviderHook<
   BinaryStatisticTestOnDistributionResultModel,
@@ -36,7 +38,7 @@ export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticTest
 
 export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatisticTestDataProviderHook<
   BinaryStatisticTestOnContingencyTableMainResultModel,
-  ContingencyTableConfig
+  BinaryContingencyTableConfig
 > = function (config) {
   const { subdatasets, params } = useStatisticTestDataProviderParams({
     groups: null,

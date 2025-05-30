@@ -5,14 +5,14 @@ import { Group, Space } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
 import { useForm } from 'react-hook-form';
 import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
-import { StatisticTestConfig, StatisticTestPurpose } from '../types';
+import { StatisticTestPurpose } from '../types';
 import React from 'react';
 import { showNotification } from '@mantine/notifications';
 
 interface StatisticTestFormProps {
   purpose: StatisticTestPurpose;
-  defaultValues: StatisticTestConfig | null | undefined;
-  onSubmit(config: StatisticTestConfig): void;
+  defaultValues: any | null | undefined;
+  onSubmit(config: any): void;
 }
 
 export default function StatisticTestForm(props: StatisticTestFormProps) {

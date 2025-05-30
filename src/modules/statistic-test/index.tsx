@@ -1,7 +1,7 @@
 import { Divider, Group, Select, Stack } from '@mantine/core';
 import React from 'react';
 import { useComparisonAppState } from '../comparison/app-state';
-import { StatisticTestConfig, StatisticTestPurpose } from './types';
+import { StatisticTestPurpose } from './types';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { STATISTIC_TEST_CONFIGURATION } from './statistic-test-config';
 import StatisticTestForm from './configuration';
@@ -11,8 +11,8 @@ import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 interface StatisticTestSwitcherProps {
   purpose: StatisticTestPurpose;
-  input: StatisticTestConfig | null | undefined;
-  setInput: (config: StatisticTestConfig) => void;
+  input: any | null | undefined;
+  setInput: (config: any) => void;
 }
 
 function StatisticTestSwitcher(props: StatisticTestSwitcherProps) {
@@ -22,7 +22,7 @@ function StatisticTestSwitcher(props: StatisticTestSwitcherProps) {
     (store) => store.statisticTest.setInput,
   );
   const onSubmit = React.useCallback(
-    (config: StatisticTestConfig) => {
+    (config: any) => {
       setStatisticTestHistoryEntry({
         type: purpose,
         config,
@@ -94,7 +94,7 @@ export default function StatisticTestPage() {
   const [purpose, setPurpose] = React.useState<StatisticTestPurpose | null>(
     recentInput?.type ?? StatisticTestPurpose.TwoSample,
   );
-  const [input, setInput] = React.useState<StatisticTestConfig | null>(
+  const [input, setInput] = React.useState<any | null>(
     recentInput?.config ?? null,
   );
 

@@ -13,18 +13,20 @@ import { ProjectContext } from '@/modules/project/context';
 import { pickArrayByIndex } from '@/common/utils/iterable';
 
 import { findProjectColumn } from '@/api/project';
-import { BaseStatisticTestResultRendererProps } from '../types';
+import { BaseStatisticTestResultRendererProps } from '../../types';
 import { BinaryStatisticTestOnDistributionResultModel } from '@/api/statistic-test';
-import { BinaryStatisticTestConfig } from '../configuration/binary';
 import {
-  BinaryStatisticTestVisualizationType,
   PlotInlineConfiguration,
-  useBinaryStatisticTestVisualizationMethodSelect,
   useCategoriesAxisMultiSelect,
   useVisualizationAlphaSlider,
   useVisualizationMinFrequencySlider,
 } from '@/modules/visualization/components/configuration';
 import { plotlyWrapText } from '@/modules/visualization/components/utils';
+import {
+  BinaryStatisticTestVisualizationType,
+  useBinaryStatisticTestVisualizationMethodSelect,
+} from './common';
+import { BinaryStatisticTestConfig } from '../../configuration/binary-statistic-test';
 
 export default function BinaryStatisticTestOnDistributionResultRenderer(
   props: BaseStatisticTestResultRendererProps<

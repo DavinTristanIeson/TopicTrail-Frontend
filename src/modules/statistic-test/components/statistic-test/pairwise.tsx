@@ -4,8 +4,6 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { Alert, MultiSelect, Select, Stack } from '@mantine/core';
 import type { PlotParams } from 'react-plotly.js';
 import { map2D, mask2D, zip2D } from '@/common/utils/iterable';
-import { BaseStatisticTestResultRendererProps } from '../types';
-import { ContingencyTableConfig } from '../configuration/contingency-table';
 import {
   PlotInlineConfiguration,
   StatisticTestEmptyPlotWarning,
@@ -15,6 +13,8 @@ import {
 import { getBalancedHeatmapZRange } from '@/modules/visualization/components/configuration/heatmap';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { Info } from '@phosphor-icons/react';
+import { ContingencyTableConfig } from '../../configuration/contingency-table';
+import { BaseStatisticTestResultRendererProps } from '../../types';
 
 enum PairwiseStatisticTestVisualizationMethod {
   Confidence = 'confidence',

@@ -19,7 +19,7 @@ import {
   RegressionVisualizationTypeEnum,
   useRegressionVisualizationTypeSelect,
 } from './types';
-import { StatisticTestWarningsRenderer } from '../common';
+import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
 import { formatConfidenceLevel } from './utils';
 

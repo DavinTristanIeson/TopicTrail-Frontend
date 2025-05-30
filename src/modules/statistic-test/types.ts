@@ -1,8 +1,4 @@
 import * as Yup from 'yup';
-import { BinaryStatisticTestConfig } from './configuration/binary';
-import { OmnibusStatisticTestConfig } from './configuration/omnibus';
-import { TwoSampleStatisticTestConfig } from './configuration/two-sample';
-import { ContingencyTableConfig } from './configuration/contingency-table';
 
 export type BaseStatisticTestDataProviderHook<TData, TConfig> = (
   config: TConfig,
@@ -34,14 +30,9 @@ export enum StatisticTestPurpose {
   BinaryTestDistribution = 'binary-test-distribution',
 }
 
-export type StatisticTestConfig =
-  | BinaryStatisticTestConfig
-  | OmnibusStatisticTestConfig
-  | TwoSampleStatisticTestConfig
-  | ContingencyTableConfig;
 export interface StatisticTestStateItem {
   type: StatisticTestPurpose;
-  config: StatisticTestConfig;
+  config: any;
 }
 
 export interface StatisticTestConfigurationEntry<TData, TConfig> {

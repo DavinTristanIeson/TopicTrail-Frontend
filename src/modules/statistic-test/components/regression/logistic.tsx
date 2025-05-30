@@ -21,7 +21,7 @@ import { getRegressionCoefficientsVisualizationData } from './data';
 import { ResultCard } from '@/components/visual/result-card';
 import { LogisticRegressionConfigType } from '../../configuration/logistic-regression';
 import { BaseStatisticTestResultRendererProps } from '../../types';
-import { StatisticTestWarningsRenderer } from '../common';
+import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
 import { formatConfidenceLevel } from './utils';
 
