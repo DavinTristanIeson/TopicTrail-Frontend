@@ -8,7 +8,7 @@ import {
   OrdinalRegressionResultModel,
   PairwiseStatisticTestResultModel,
   StatisticTestResultModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import {
   pairwiseStatisticTestFormSchema,
   PairwiseStatisticTestConfigForm,

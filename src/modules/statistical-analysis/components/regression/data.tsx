@@ -1,4 +1,4 @@
-import { LogisticRegressionCoefficientModel } from '@/api/statistic-test';
+import { LogisticRegressionCoefficientModel } from '@/api/statistical-analysis';
 import { maybeElement } from '@/common/utils/iterable';
 import { zip } from 'lodash-es';
 import {

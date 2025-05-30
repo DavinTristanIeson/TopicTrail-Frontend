@@ -2,7 +2,7 @@ import {
   OrdinalRegressionThresholdModel,
   OrdinalRegressionResultModel,
   OrdinalRegressionSampleSizeModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import {
   RegressionConvergenceResultRenderer,
   useCoefficientRegressionResultPlot,

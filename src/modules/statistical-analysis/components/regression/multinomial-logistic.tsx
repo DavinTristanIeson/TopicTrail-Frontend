@@ -1,7 +1,7 @@
 import {
   MultinomialLogisticRegressionFacetResultModel,
   MultinomialLogisticRegressionResultModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import { BaseStatisticTestResultRendererProps } from '../../types';
 import { MultinomialLogisticRegressionConfigType } from '../../configuration/regression';
 import { Group, Select, Stack } from '@mantine/core';

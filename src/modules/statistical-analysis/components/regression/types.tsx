@@ -2,7 +2,7 @@ import {
   RegressionCoefficientModel,
   LogisticRegressionCoefficientModel,
   OrdinalRegressionCoefficientModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { type ComboboxItem, Select } from '@mantine/core';
 import React from 'react';

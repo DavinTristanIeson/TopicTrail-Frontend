@@ -2,7 +2,7 @@ import {
   ComparisonGroupInfoModel,
   EffectSizeResultModel,
   SignificanceResultModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import {
   StatisticTestMethodEnum,
   OmnibusStatisticTestMethodEnum,

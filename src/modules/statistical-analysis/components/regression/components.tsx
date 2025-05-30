@@ -1,7 +1,7 @@
 import {
   LogisticRegressionCoefficientModel,
   RegressionCoefficientModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import {

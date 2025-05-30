@@ -1,4 +1,4 @@
-import { ContingencyTableModel } from '@/api/statistic-test';
+import { ContingencyTableModel } from '@/api/statistical-analysis';
 import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
 import { MultiSelect, Select, Stack } from '@mantine/core';

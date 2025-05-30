@@ -8,7 +8,7 @@ import {
   LogisticRegressionResultModel,
   MultinomialLogisticRegressionResultModel,
   OrdinalRegressionResultModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import { BaseStatisticTestDataProviderHook } from '../types';
 import {
   LinearRegressionConfigType,

@@ -1,4 +1,4 @@
-import { PairwiseStatisticTestResultModel } from '@/api/statistic-test';
+import { PairwiseStatisticTestResultModel } from '@/api/statistical-analysis';
 import React from 'react';
 import PlotRenderer from '@/components/widgets/plotly';
 import { Alert, MultiSelect, Select, Stack } from '@mantine/core';

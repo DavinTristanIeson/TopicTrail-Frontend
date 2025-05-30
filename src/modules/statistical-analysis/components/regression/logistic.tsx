@@ -1,4 +1,4 @@
-import { LogisticRegressionResultModel } from '@/api/statistic-test';
+import { LogisticRegressionResultModel } from '@/api/statistical-analysis';
 import {
   RegressionConvergenceResultRenderer,
   RegressionInterceptResultRenderer,

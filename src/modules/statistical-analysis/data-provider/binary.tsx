@@ -1,7 +1,7 @@
 import {
   BinaryStatisticTestOnContingencyTableMainResultModel,
   BinaryStatisticTestOnDistributionResultModel,
-} from '@/api/statistic-test';
+} from '@/api/statistical-analysis';
 import { BaseStatisticTestDataProviderHook } from '../types';
 import { client } from '@/common/api/client';
 import {

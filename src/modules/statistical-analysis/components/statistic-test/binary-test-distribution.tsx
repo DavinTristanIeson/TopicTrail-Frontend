@@ -14,7 +14,7 @@ import { pickArrayByIndex } from '@/common/utils/iterable';
 
 import { findProjectColumn } from '@/api/project';
 import { BaseStatisticTestResultRendererProps } from '../../types';
-import { BinaryStatisticTestOnDistributionResultModel } from '@/api/statistic-test';
+import { BinaryStatisticTestOnDistributionResultModel } from '@/api/statistical-analysis';
 import {
   PlotInlineConfiguration,
   useCategoriesAxisMultiSelect,

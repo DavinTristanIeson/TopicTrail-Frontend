@@ -7,7 +7,7 @@ import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
 
 import { max } from 'lodash-es';
 import { BaseStatisticTestResultRendererProps } from '../../types';
-import { BinaryStatisticTestOnContingencyTableMainResultModel } from '@/api/statistic-test';
+import { BinaryStatisticTestOnContingencyTableMainResultModel } from '@/api/statistical-analysis';
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import {
   PlotInlineConfiguration,

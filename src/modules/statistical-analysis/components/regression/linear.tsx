@@ -1,4 +1,4 @@
-import { LinearRegressionResultModel } from '@/api/statistic-test';
+import { LinearRegressionResultModel } from '@/api/statistical-analysis';
 import {
   RegressionInterceptResultRenderer,
   useRegressionAlphaConstrainedColors,

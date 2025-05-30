@@ -1,4 +1,4 @@
-import { ContingencyTableModel } from '@/api/statistic-test';
+import { ContingencyTableModel } from '@/api/statistical-analysis';
 import { BaseStatisticTestDataProviderHook } from '../types';
 import { client } from '@/common/api/client';
 import {
