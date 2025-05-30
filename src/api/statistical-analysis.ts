@@ -38,3 +38,12 @@ export type LogisticRegressionCoefficientModel =
   components['schemas']['LogisticRegressionCoefficient'];
 export type OrdinalRegressionCoefficientModel =
   components['schemas']['OrdinalRegressionCoefficient'];
+
+export type LinearRegressionPredictionResultModel =
+  components['schemas']['LinearRegressionPredictionResult'];
+export type LogisticRegressionPredictionResultModel =
+  components['schemas']['LogisticRegressionPredictionResult'];
+export type MultinomialLogisticRegressionPredictionResultModel =
+  components['schemas']['MultinomialLogisticRegressionPredictionResult'];
+export type OrdinalRegressionPredictionResultModel =
+  components['schemas']['OrdinalRegressionPredictionResult'];

@@ -1,12 +1,26 @@
+import {
+  LinearRegressionPredictionResultModel,
+  LogisticRegressionPredictionResultModel,
+  MultinomialLogisticRegressionPredictionResultModel,
+  OrdinalRegressionPredictionResultModel,
+} from '@/api/statistical-analysis';
 import { ResultCard } from '@/components/visual/result-card';
 import PlotRenderer from '@/components/widgets/plotly';
 import { Stack } from '@mantine/core';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 
-export function LinearRegressionPredictionResult() {}
+export function LinearRegressionPredictionResult(
+  props: LinearRegressionPredictionResultModel,
+) {
+  return <ResultCard label="Predicted Mean" value={props.mean} />;
+}
 
-export function LogisticRegressionPredictionResult() {}
+export function LogisticRegressionPredictionResult(
+  props: LogisticRegressionPredictionResultModel,
+) {
+  return <ResultCard label="Predicted Probability" value={props.probability} />;
+}
 
 interface PredictedProbabilityDistributionPlotProps {
   dependentVariableLevels: string[];
@@ -28,7 +42,7 @@ function PredictedProbabilityDistributionPlot(
       layout: {
         title: 'Predicted Probability Distribution',
         xaxis: {
-          title: 'Levels of Dependent Variable',
+          title: 'Levels',
         },
         yaxis: {
           title: 'Probability',
@@ -42,34 +56,32 @@ function PredictedProbabilityDistributionPlot(
   return <PlotRenderer plot={plot} />;
 }
 
-interface MultinomialLogisticRegressionPredictionResultProps {
-  dependentVariableLevels: string[];
-  probabilities: number[];
-}
-
 export function MultinomialLogisticRegressionPredictionResult(
-  props: MultinomialLogisticRegressionPredictionResultProps,
+  props: MultinomialLogisticRegressionPredictionResultModel,
 ) {
-  return <PredictedProbabilityDistributionPlot {...props} />;
-}
-
-interface OrdinalRegressionPredictionResultProps {
-  dependentVariableLevels: string[];
-  probabilities: number[];
-  latentValue: number;
+  return (
+    <PredictedProbabilityDistributionPlot
+      dependentVariableLevels={props.levels}
+      probabilities={props.probabilities}
+    />
+  );
 }
 
 export function OrdinalRegressionPredictionResult(
-  props: OrdinalRegressionPredictionResultProps,
+  props: OrdinalRegressionPredictionResultModel,
 ) {
   return (
     <Stack>
       <ResultCard
         label="Latent Variable Value"
-        value={props.latentValue}
+        value={props.latent_score}
         info="Ordinal regression works under the assumption that there is a latent score that defines the thresholds of the levels. This score represents the log-odds that a variable has a rank equal to or lower than the rank the latent variable value is associated with."
       />
-      <PredictedProbabilityDistributionPlot {...props} />;
+      <PredictedProbabilityDistributionPlot
+        dependentVariableLevels={props.levels}
+        probabilities={props.probabilities}
+      />
+      ;
     </Stack>
   );
 }
