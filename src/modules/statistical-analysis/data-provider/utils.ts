@@ -40,6 +40,7 @@ export function useStatisticalAnalysisDataProviderParams(
         project_id: project.id,
       },
     },
+    queryConfig: {},
   };
 }
 

@@ -17,7 +17,7 @@ import { yupNullableString } from '@/common/utils/form';
 import RHFField from '@/components/standard/fields';
 
 export const linearRegressionInputSchema = regressionInputSchema.shape({
-  standardized: Yup.boolean().required(),
+  standardized: Yup.boolean().required().default(true),
 });
 
 export type LinearRegressionConfigType = Yup.InferType<

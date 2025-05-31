@@ -8,6 +8,7 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { type ComboboxItem, Select } from '@mantine/core';
 import React from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
+import { showNotification } from '@mantine/notifications';
 
 export type UltimateRegressionCoefficientModel =
   | RegressionCoefficientModel
@@ -102,9 +103,7 @@ export function useRegressionVisualizationTypeSelect<T extends string>(
     Object.values(dictionary) as ComboboxItem[]
   ).filter((option) => supportedTypes.includes(option.value as T));
 
-  const renderOption = useDescriptionBasedRenderOption(
-    REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
-  );
+  const renderOption = useDescriptionBasedRenderOption(dictionary);
   const Component = (
     <Select
       label="Visualization Type"
@@ -180,9 +179,17 @@ export function useAdaptMutationToRegressionPredictionAPIResult<T>(
     data: data?.data,
     loading: isPending,
     execute: async () => {
-      await mutateAsync({
-        body: input,
-      });
+      try {
+        await mutateAsync({
+          body: input,
+        });
+      } catch (e: any) {
+        if (e.message) {
+          showNotification({
+            message: e.message,
+          });
+        }
+      }
     },
   };
 }

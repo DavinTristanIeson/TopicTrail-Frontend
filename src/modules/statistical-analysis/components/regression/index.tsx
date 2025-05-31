@@ -3,7 +3,7 @@ import React from 'react';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { ArrowsDownUp, List, Question } from '@phosphor-icons/react';
 import { RegressionModelType } from './types';
-import REGRESSION_MODEL_CONFIG from './regression-model-config';
+import { REGRESSION_MODEL_CONFIG } from './regression-model-config';
 import RegressionModelPredictionTab from './prediction';
 import {
   LinearRegressionResultModel,
@@ -47,7 +47,10 @@ export function RegressionResultRenderer<
         allowTabDeactivation={false}
       >
         <Tabs.List>
-          <Tooltip label="Analyze the coefficients of the regression model to figure out which independent variable has a significant impact on the dependent variable.">
+          <Tooltip
+            label="Analyze the coefficients of the regression model to figure out which independent variable has a significant impact on the dependent variable."
+            maw={320}
+          >
             <Tabs.Tab
               value={RegressionTabType.Coefficients}
               leftSection={<ArrowsDownUp />}
@@ -55,7 +58,10 @@ export function RegressionResultRenderer<
               Model Parameters
             </Tabs.Tab>
           </Tooltip>
-          <Tooltip label="Use the fitted regression model to make predictions on combinations of the independent variables.">
+          <Tooltip
+            label="Use the fitted regression model to make predictions on combinations of the independent variables."
+            maw={320}
+          >
             <Tabs.Tab
               value={RegressionTabType.Predictions}
               leftSection={<Question />}
@@ -63,7 +69,10 @@ export function RegressionResultRenderer<
               Model Predictions
             </Tabs.Tab>
           </Tooltip>
-          <Tooltip label="View the information of the variables, such as their sample sizes and variance inflation factor. If your dependent variable consists of levels, you can also view their frequency distribution here.">
+          <Tooltip
+            label="View the information of the variables, such as their sample sizes and variance inflation factor. If your dependent variable consists of levels, you can also view their frequency distribution here."
+            maw={320}
+          >
             <Tabs.Tab
               value={RegressionTabType.VariableInfo}
               leftSection={<List />}

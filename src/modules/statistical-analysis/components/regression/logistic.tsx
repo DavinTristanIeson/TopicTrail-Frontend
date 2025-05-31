@@ -21,6 +21,7 @@ import {
   useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
+  RegressionVariableInfoVisualizationType,
 } from './types';
 import { getRegressionCoefficientsVisualizationData } from './data';
 import { ResultCard } from '@/components/visual/result-card';
@@ -34,7 +35,7 @@ import {
   pValueToConfidenceLevel,
 } from './utils';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { zip } from 'lodash-es';
+import { without, zip } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
@@ -130,7 +131,10 @@ export function LogisticRegressionPredictionResultRenderer(
 ) {
   const { result } = props;
   return (
-    <ResultCard label="Predicted Probability" value={result.probability} />
+    <ResultCard
+      label="Predicted Probability"
+      value={`${(result.probability * 100).toFixed(3)}%`}
+    />
   );
 }
 
@@ -152,7 +156,7 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
       data: [
         {
           x: data.independent_variables.map((variable) => variable.name),
-          y: data.predictions.map((prediction) => prediction.probability),
+          y: data.predictions.map((prediction) => prediction.probability * 100),
           type: 'bar',
           customdata: zip(
             data.coefficients.map((coefficient) => coefficient.odds_ratio),
@@ -168,6 +172,7 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Predicted Probability</b>: %{y}',
+            '='.repeat(30),
             '<b>Odds Ratio</b>: %{customdata[0]}',
             '<b>Confidence Interval</b>: %{customdata[1]}',
             '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
@@ -178,12 +183,15 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
         },
       ],
       layout: {
-        title: `Predicted Probabilities of ${config.target} per Independent Variable`,
+        title: `Predicted Probabilities of ${config.target.name} per Independent Variable`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
         },
         yaxis: {
           title: `Predicted Probability`,
+          ticksuffix: '%',
+          minallowed: 0,
+          maxallowed: 100,
         },
         ...baselineLayout,
       },
@@ -224,6 +232,10 @@ export function LogisticRegressionVariablesInfoSection(
     <BaseRegressionVariablesInfoSection
       independentVariables={data.independent_variables}
       dependentVariableLevels={undefined}
+      supportedTypes={without(
+        Object.values(RegressionVariableInfoVisualizationType),
+        RegressionVariableInfoVisualizationType.LevelSampleSize,
+      )}
     />
   );
 }

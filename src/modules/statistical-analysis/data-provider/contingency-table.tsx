@@ -12,9 +12,10 @@ export const useContingencyTableStatisticTestDataProvider: BaseStatisticalAnalys
   ContingencyTableModel,
   ContingencyTableConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { subdatasets, params, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   const query = client.useQuery(
     'post',
     '/statistical-analysis/{project_id}/contingency-table',
@@ -26,6 +27,7 @@ export const useContingencyTableStatisticTestDataProvider: BaseStatisticalAnalys
       },
       params,
     },
+    queryConfig,
   );
   return usePrepareStatisticalAnalysisDataProvider({ query });
 };
@@ -34,9 +36,10 @@ export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatistical
   SubdatasetCooccurrenceModel,
   object
 > = function () {
-  const { params, subdatasets } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { params, subdatasets, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   // Exclude default subdataset
   const groups = subdatasets.filter((group) => !!group.filter);
   const query = client.useQuery(
@@ -48,6 +51,7 @@ export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatistical
       },
       params,
     },
+    queryConfig,
   );
 
   return usePrepareStatisticalAnalysisDataProvider({

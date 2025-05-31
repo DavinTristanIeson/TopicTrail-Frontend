@@ -1,5 +1,4 @@
 import {
-  RegressionCoefficientModel,
   RegressionDependentVariableLevelInfo,
   RegressionIndependentVariableInfo,
 } from '@/api/statistical-analysis';
@@ -44,6 +43,7 @@ export function useSampleSizeRegressionResultPlot(
           marker: {
             color: colors,
           },
+          hovertemplate: ['Variable: %{x}', 'Sample Size: %{y}'].join('<br>'),
         },
       ],
       layout: {
@@ -103,7 +103,9 @@ export function useVarianceInflationFactorRegressionResultPlot(
       },
     ];
     const x = independentVariables.map((variable) => variable.name);
-    const y = independentVariables.map((variable) => variable.VIF);
+    const y = independentVariables.map(
+      (variable) => variable.variance_inflation_factor,
+    );
     const { colors } = generateColorsFromSequence(x);
     return {
       data: [
@@ -133,7 +135,7 @@ export function useVarianceInflationFactorRegressionResultPlot(
         shapes: VIFlineShapes,
       },
     } as PlotParams;
-  }, [mantineColors.yellow, type]);
+  }, [independentVariables, mantineColors.yellow, type]);
 }
 
 interface UseOrdinalRegressionSampleSizePlotProps {
@@ -198,15 +200,17 @@ function RegressionIndependentVariablesCooccurrenceRenderer() {
 interface BaseRegressionVariablesInfoSection {
   independentVariables: RegressionIndependentVariableInfo[];
   dependentVariableLevels?: RegressionDependentVariableLevelInfo[];
+  supportedTypes: RegressionVariableInfoVisualizationType[];
 }
 
 export default function BaseRegressionVariablesInfoSection(
   props: BaseRegressionVariablesInfoSection,
 ) {
-  const { independentVariables, dependentVariableLevels } = props;
+  const { independentVariables, dependentVariableLevels, supportedTypes } =
+    props;
   const { type, Component: SelectType } = useRegressionVisualizationTypeSelect({
     dictionary: REGRESSION_VARIABLE_INFO_VISUALIZATION_TYPE_DICTIONARY,
-    supportedTypes: Object.values(RegressionVariableInfoVisualizationType),
+    supportedTypes,
   });
   const vifPlot = useVarianceInflationFactorRegressionResultPlot({
     independentVariables,
@@ -227,7 +231,12 @@ export default function BaseRegressionVariablesInfoSection(
     type ===
     RegressionVariableInfoVisualizationType.IndependentVariableCooccurrence
   ) {
-    return <RegressionIndependentVariablesCooccurrenceRenderer />;
+    return (
+      <Stack>
+        {SelectType}
+        <RegressionIndependentVariablesCooccurrenceRenderer />
+      </Stack>
+    );
   }
 
   return (

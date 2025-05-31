@@ -23,6 +23,7 @@ import {
   useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
+  RegressionVariableInfoVisualizationType,
 } from './types';
 import { PlotParams } from 'react-plotly.js';
 import React from 'react';
@@ -275,7 +276,8 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
           ),
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
-            '<b>Predicted Mean</b>: %{y}',
+            '<b>Predicted Latent Score</b>: %{y}',
+            '='.repeat(30),
             '<b>Odds Ratio</b>: %{customdata[0]}',
             '<b>Confidence Interval</b>: %{customdata[1]}',
             '<b>Confidence Level</b>: %{customdata[2]}%',
@@ -343,6 +345,7 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Dependent Variable Level</b>: %{y}',
+            '='.repeat(30),
             '<b>Predicted Probability</b>: %{z}%',
             '<b>Odds Ratio</b>: %{customdata[0]}',
             '<b>Confidence Level</b>: %{customdata[1]}',
@@ -417,6 +420,7 @@ export function OrdinalRegressionVariablesInfoSection(
     <BaseRegressionVariablesInfoSection
       independentVariables={data.independent_variables}
       dependentVariableLevels={data.levels}
+      supportedTypes={Object.values(RegressionVariableInfoVisualizationType)}
     />
   );
 }

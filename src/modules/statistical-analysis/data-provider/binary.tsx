@@ -17,9 +17,10 @@ export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticalAn
   BinaryStatisticTestOnDistributionResultModel,
   BinaryStatisticTestConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { subdatasets, params, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   const query = client.useQuery(
     'post',
     '/statistical-analysis/{project_id}/binary-test-distribution',
@@ -32,6 +33,7 @@ export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticalAn
       },
       params,
     },
+    queryConfig,
   );
   return usePrepareStatisticalAnalysisDataProvider({ query });
 };
@@ -40,9 +42,10 @@ export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatistic
   BinaryStatisticTestOnContingencyTableMainResultModel,
   BinaryContingencyTableConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { subdatasets, params, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   const query = client.useQuery(
     'post',
     '/statistical-analysis/{project_id}/binary-test-contingency-table',
@@ -53,6 +56,7 @@ export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatistic
       },
       params,
     },
+    queryConfig,
   );
   return usePrepareStatisticalAnalysisDataProvider({ query });
 };

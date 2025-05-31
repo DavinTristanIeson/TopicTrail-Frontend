@@ -29,8 +29,15 @@ interface LogisticRegressionFilterDrawerContents {
   onClose(): void;
 }
 
+const defaultLogisticRegressionFilterValues: ComparisonFilterFormType = {
+  name: `Dependent Variable`,
+  filter: defaultTableFilterFormValues,
+};
+
 export const logisticRegressionInputSchema = Yup.object({
-  target: comparisonFilterFormSchema.required(),
+  target: comparisonFilterFormSchema
+    .required()
+    .default(defaultLogisticRegressionFilterValues),
   interpretation: Yup.string()
     .oneOf(Object.values(RegressionInterpretation))
     .required(),
@@ -41,10 +48,6 @@ export type LogisticRegressionConfigType = Yup.InferType<
   typeof logisticRegressionInputSchema
 >;
 
-const defaultLogisticRegressionFilterValues: ComparisonFilterFormType = {
-  name: `Dependent Variable`,
-  filter: defaultTableFilterFormValues,
-};
 function LogisticRegressionFilterDrawerContents(
   props: LogisticRegressionFilterDrawerContents,
 ) {

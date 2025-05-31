@@ -25,9 +25,10 @@ function StatisticalAnalysisSwitcher(props: StatisticalAnalysisSwitcherProps) {
     (config: any) => {
       setStatisticTestHistoryEntry({
         type: purpose,
-        config,
+        config: config,
       });
-      setInput(config);
+      // Even if we're reusing old configs, make sure to always return new ones.
+      setInput({ ...config });
     },
     [purpose, setInput, setStatisticTestHistoryEntry],
   );

@@ -14,6 +14,7 @@ import {
   LinearRegressionPredictionResultRenderer,
   DefaultLinearRegressionPredictionResultRenderer,
   LinearRegressionVariablesInfoSection,
+  useLinearRegressionPredictionAPIHook,
 } from './linear';
 import {
   RegressionModelType,
@@ -30,18 +31,21 @@ import {
   LogisticRegressionCoefficientsPlot,
   LogisticRegressionPredictionResultRenderer,
   LogisticRegressionVariablesInfoSection,
+  useLogisticRegressionPredictionAPIHook,
 } from './logistic';
 import {
   DefaultMultinomialLogisticRegressionPredictionResultRenderer,
   MultinomialLogisticRegressionCoefficientsPlot,
   MultinomialLogisticRegressionPredictionResultRenderer,
   MultinomialLogisticRegressionVariablesInfoSection,
+  useMultinomialLogisticRegressionPredictionAPIHook,
 } from './multinomial-logistic';
 import {
   OrdinalRegressionCoefficientsPlot,
   OrdinalRegressionPredictionResultRenderer,
   DefaultOrdinalRegressionPredictionResultRenderer,
   OrdinalRegressionVariablesInfoSection,
+  useOrdinalRegressionPredictionAPIHook,
 } from './ordinal';
 import { RegressionConfigType } from '../../configuration/regression-common';
 
@@ -70,6 +74,7 @@ interface RegressionModelConfigType<TData, TConfig, TResult> {
 
 export const REGRESSION_MODEL_CONFIG = {
   [RegressionModelType.Linear]: {
+    usePredictionAPI: useLinearRegressionPredictionAPIHook,
     CoefficientsRenderer: LinearRegressionCoefficientsPlot,
     PredictionsRenderer: LinearRegressionPredictionResultRenderer,
     DefaultPredictionsRenderer: DefaultLinearRegressionPredictionResultRenderer,
@@ -81,6 +86,7 @@ export const REGRESSION_MODEL_CONFIG = {
     LinearRegressionPredictionResultModel
   >,
   [RegressionModelType.Logistic]: {
+    usePredictionAPI: useLogisticRegressionPredictionAPIHook,
     CoefficientsRenderer: LogisticRegressionCoefficientsPlot,
     PredictionsRenderer: LogisticRegressionPredictionResultRenderer,
     DefaultPredictionsRenderer:
@@ -92,6 +98,7 @@ export const REGRESSION_MODEL_CONFIG = {
     LogisticRegressionPredictionResultModel
   >,
   [RegressionModelType.MultinomialLogistic]: {
+    usePredictionAPI: useMultinomialLogisticRegressionPredictionAPIHook,
     CoefficientsRenderer: MultinomialLogisticRegressionCoefficientsPlot,
     PredictionsRenderer: MultinomialLogisticRegressionPredictionResultRenderer,
     DefaultPredictionsRenderer:
@@ -103,6 +110,7 @@ export const REGRESSION_MODEL_CONFIG = {
     MultinomialLogisticRegressionPredictionResultModel
   >,
   [RegressionModelType.Ordinal]: {
+    usePredictionAPI: useOrdinalRegressionPredictionAPIHook,
     CoefficientsRenderer: OrdinalRegressionCoefficientsPlot,
     PredictionsRenderer: OrdinalRegressionPredictionResultRenderer,
     DefaultPredictionsRenderer:
@@ -114,5 +122,3 @@ export const REGRESSION_MODEL_CONFIG = {
     OrdinalRegressionPredictionResultModel
   >,
 };
-
-export default REGRESSION_MODEL_CONFIG;

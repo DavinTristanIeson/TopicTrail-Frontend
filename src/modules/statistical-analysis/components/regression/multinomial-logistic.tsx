@@ -14,6 +14,7 @@ import {
   StatisticalAnalysisPredictionResultRendererProps,
   useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
+  RegressionVariableInfoVisualizationType,
 } from './types';
 import { useVisualizationAlphaSlider } from '../plot-config';
 import {
@@ -483,10 +484,13 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
     ];
     const y = data.levels.map((level) => level.name);
     const z = zip(data.baseline_prediction.probabilities, data.predictions).map(
-      ([baseline, prediction]) => [
-        baseline! * 100,
-        ...prediction!.probabilities.map((probability) => probability * 100),
-      ],
+      ([baseline, prediction]) => {
+        console.log(prediction);
+        return [
+          baseline! * 100,
+          ...prediction!.probabilities.map((probability) => probability * 100),
+        ];
+      },
     );
     const pValues = data.facets.map((facet) =>
       facet.coefficients.map((coefficient) => coefficient.p_value),
@@ -520,6 +524,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
             '<b>Independent Variable</b>: %{x}',
             '<b>Dependent Variable Level</b>: %{y}',
             '<b>Predicted Probability</b>: %{z}%',
+            '='.repeat(30),
             '<b>Odds Ratio</b>: %{customdata[0]}',
             '<b>Confidence Interval</b>: %{customdata[1]}',
             '<b>Confidence Level</b>: %{customdata[2]}',
@@ -573,6 +578,7 @@ export function MultinomialLogisticRegressionVariablesInfoSection(
     <BaseRegressionVariablesInfoSection
       independentVariables={data.independent_variables}
       dependentVariableLevels={data.levels}
+      supportedTypes={Object.values(RegressionVariableInfoVisualizationType)}
     />
   );
 }

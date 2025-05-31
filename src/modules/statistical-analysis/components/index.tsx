@@ -22,6 +22,15 @@ export default function StatisticalAnalysisResultRenderer(
   }
   const { data, error, loading, refetch } = useDataProvider(input);
 
+  const firstTime = React.useRef(true);
+  React.useEffect(() => {
+    if (firstTime.current) {
+      firstTime.current = false;
+      return;
+    }
+    refetch();
+  }, [input, refetch]);
+
   return (
     <FetchWrapperComponent
       loadingComponent={<Skeleton w="100%" h={720} />}

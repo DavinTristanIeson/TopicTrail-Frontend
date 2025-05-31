@@ -10,12 +10,14 @@ import {
   Group,
   Button,
   Divider,
+  Skeleton,
+  Space,
 } from '@mantine/core';
-import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
+import { CheckCircle, Info, TestTube, XCircle } from '@phosphor-icons/react';
 import React from 'react';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { RegressionModelType } from './types';
-import REGRESSION_MODEL_CONFIG from './regression-model-config';
+import { REGRESSION_MODEL_CONFIG } from './regression-model-config';
 
 interface RegressionModelPredictionInputCardProps {
   setInputState: React.Dispatch<React.SetStateAction<boolean[]>>;
@@ -29,7 +31,7 @@ function RegressionModelPredictionInputCard(
 ) {
   const { inputState, setInputState, variable, index } = props;
   return (
-    <Card>
+    <Card bg={inputState[index] ? 'brand.0' : 'white'}>
       <Group>
         <ActionIcon
           onClick={() =>
@@ -39,8 +41,13 @@ function RegressionModelPredictionInputCard(
               return newState;
             })
           }
+          size={32}
         >
-          {inputState[index] ? <CheckCircle /> : <XCircle />}
+          {inputState[index] ? (
+            <CheckCircle size={32} color="green" />
+          ) : (
+            <XCircle size={32} color="red" />
+          )}
         </ActionIcon>
         <Text>{variable.name}</Text>
       </Group>
@@ -79,7 +86,7 @@ function RegressionModelPredictionSection(
 
   return (
     <Stack>
-      <Text c="gray">
+      <Text c="gray" size="sm">
         Choose the subdatasets to be used as input of the prediction task.
       </Text>
       {independentVariables.map((variable, idx) => {
@@ -93,14 +100,22 @@ function RegressionModelPredictionSection(
           />
         );
       })}
-      <Button loading={loading} onClick={execute}>
+      <Button
+        loading={loading}
+        onClick={execute}
+        leftSection={<TestTube />}
+        className="max-w-lg"
+      >
         Predict
       </Button>
-      {data && (
+      {loading && <Skeleton h={100} />}
+      {data ? (
         <>
           <Divider />
           <PredictionsRenderer config={config} result={data as any} />
         </>
+      ) : (
+        <Space h={100} />
       )}
     </Stack>
   );
@@ -115,18 +130,19 @@ export default function RegressionModelPredictionTab(
 
   return (
     <div>
-      <Title order={3}>Model Predictions</Title>
       <Stack>
-        <Title order={4}>Model Predictions Per Independent Variable</Title>
+        <Title order={3}>Model Predictions Per Independent Variable</Title>
         <Alert icon={<Info />} color="blue">
           The plot below shows the predictions of the model when the only input
           is a single independent variable. Use this to gauge the individual
           effects of each independent variable.
         </Alert>
-        <DefaultPredictionsRenderer config={config} data={data} />
+        <div>
+          <DefaultPredictionsRenderer config={config} data={data} />
+        </div>
 
         <Divider />
-        <Title order={4}>Model Predictions</Title>
+        <Title order={3}>Model Predictions</Title>
         <Alert icon={<Info />} color="blue">
           If your independent variables (subdatasets) are not mutually
           exclusive, you can test out how combinations of the independent
@@ -135,7 +151,9 @@ export default function RegressionModelPredictionTab(
           that produces probability distributions for you to consider in your
           analysis.
         </Alert>
-        <RegressionModelPredictionSection {...props} />
+        <div>
+          <RegressionModelPredictionSection {...props} />
+        </div>
       </Stack>
     </div>
   );

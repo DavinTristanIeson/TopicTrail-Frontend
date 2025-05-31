@@ -23,6 +23,7 @@ import {
   useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
+  RegressionVariableInfoVisualizationType,
 } from './types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
@@ -32,7 +33,7 @@ import {
   pValueToConfidenceLevel,
 } from './utils';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { zip } from 'lodash-es';
+import { without, zip } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
@@ -170,6 +171,7 @@ export function DefaultLinearRegressionPredictionResultRenderer(
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Predicted Mean</b>: %{y}',
+            '='.repeat(30),
             '<b>Coefficient</b>: %{customdata[0]}',
             '<b>Confidence Interval</b>: %{customdata[1]}',
             '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
@@ -226,6 +228,10 @@ export function LinearRegressionVariablesInfoSection(
     <BaseRegressionVariablesInfoSection
       independentVariables={data.independent_variables}
       dependentVariableLevels={undefined}
+      supportedTypes={without(
+        Object.values(RegressionVariableInfoVisualizationType),
+        RegressionVariableInfoVisualizationType.LevelSampleSize,
+      )}
     />
   );
 }

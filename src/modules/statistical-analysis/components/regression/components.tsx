@@ -315,8 +315,8 @@ export function usePredictedResultsBaselineLine(
           yref: 'y',
           x0: 0,
           x1: 1,
-          y0: 5,
-          y1: 5,
+          y0: baseline,
+          y1: baseline,
           line: {
             color: mantineColors.brand[6],
             width: 3,

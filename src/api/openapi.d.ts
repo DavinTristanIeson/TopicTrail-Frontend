@@ -2425,8 +2425,8 @@ export interface components {
             name: string;
             /** Sample Size */
             sample_size: number;
-            /** Vif */
-            VIF: number;
+            /** Variance Inflation Factor */
+            variance_inflation_factor: number;
         };
         /**
          * RegressionInterpretation

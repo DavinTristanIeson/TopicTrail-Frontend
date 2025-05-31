@@ -22,9 +22,10 @@ export const useLinearRegressionDataProvider: BaseStatisticalAnalysisDataProvide
   LinearRegressionResultModel,
   LinearRegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { subdatasets, params, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   const query = client.useQuery(
     'post',
     '/statistical-analysis/{project_id}/regression/linear',
@@ -39,6 +40,7 @@ export const useLinearRegressionDataProvider: BaseStatisticalAnalysisDataProvide
       },
       params,
     },
+    queryConfig,
   );
   return usePrepareStatisticalAnalysisDataProvider({ query });
 };
@@ -47,9 +49,10 @@ export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProvi
   LogisticRegressionResultModel,
   LogisticRegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { subdatasets, params, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   const query = client.useQuery(
     'post',
     '/statistical-analysis/{project_id}/regression/logistic',
@@ -63,6 +66,7 @@ export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProvi
       },
       params,
     },
+    queryConfig,
   );
   return usePrepareStatisticalAnalysisDataProvider({ query });
 };
@@ -71,9 +75,10 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalys
   MultinomialLogisticRegressionResultModel,
   MultinomialLogisticRegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { subdatasets, params, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   const query = client.useQuery(
     'post',
     '/statistical-analysis/{project_id}/regression/logistic/multinomial',
@@ -88,6 +93,7 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalys
       },
       params,
     },
+    queryConfig,
   );
   return usePrepareStatisticalAnalysisDataProvider({ query });
 };
@@ -96,9 +102,10 @@ export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProvid
   OrdinalRegressionResultModel,
   RegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
-    groups: null,
-  });
+  const { subdatasets, params, queryConfig } =
+    useStatisticalAnalysisDataProviderParams({
+      groups: null,
+    });
   const query = client.useQuery(
     'post',
     '/statistical-analysis/{project_id}/regression/ordinal',
@@ -112,6 +119,7 @@ export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProvid
       },
       params,
     },
+    queryConfig,
   );
   return usePrepareStatisticalAnalysisDataProvider({ query });
 };
