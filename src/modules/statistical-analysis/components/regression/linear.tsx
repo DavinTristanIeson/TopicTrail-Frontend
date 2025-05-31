@@ -1,10 +1,8 @@
 import { LinearRegressionResultModel } from '@/api/statistical-analysis';
 import {
   RegressionInterceptResultRenderer,
-  useRegressionAlphaConstrainedColors,
   useCoefficientRegressionResultPlot,
   useConfidenceLevelRegressionResultPlot,
-  usePredictedResultsBaselineLine,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
@@ -22,100 +20,17 @@ import {
 } from './types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import {
-  formatConfidenceInterval,
-  formatConfidenceLevel,
-  pValueToConfidenceLevel,
-} from './utils';
-import { PlotParams } from 'react-plotly.js';
-import { zip } from 'lodash-es';
+import { formatConfidenceLevel } from './utils';
 
 const LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
   RegressionVisualizationTypeEnum.SampleSize,
-  RegressionVisualizationTypeEnum.PredictionPerIndependentVariable,
   RegressionVisualizationTypeEnum.VarianceInflationFactor,
 ];
 const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   ...LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES,
   RegressionVisualizationTypeEnum.ConfidenceLevel,
 ];
-
-interface UseLinearRegressionEveryPredictionResultPlotProps {
-  data: LinearRegressionResultModel;
-  config: LinearRegressionConfigType;
-  type: RegressionVisualizationTypeEnum;
-  alpha: number;
-  baseline: number;
-}
-
-function useLinearRegressionPredictionResultPlot(
-  props: UseLinearRegressionEveryPredictionResultPlotProps,
-) {
-  const { data, config, type, alpha, baseline } = props;
-  const colors = useRegressionAlphaConstrainedColors({
-    coefficients: data.coefficients,
-    alpha,
-  });
-  const baselineLayout = usePredictedResultsBaselineLine({
-    baseline,
-  });
-  const plot = React.useMemo<PlotParams | null>(() => {
-    if (
-      type !== RegressionVisualizationTypeEnum.PredictionPerIndependentVariable
-    ) {
-      return null;
-    }
-
-    return {
-      data: [
-        {
-          x: data.independent_variables,
-          y: data.predictions.map((prediction) => prediction.mean),
-          type: 'bar',
-          customdata: zip(
-            data.coefficients.map((coefficient) => coefficient.statistic),
-            data.coefficients.map((coefficient) =>
-              formatConfidenceInterval(coefficient.confidence_interval),
-            ),
-            data.coefficients.map((coefficient) =>
-              pValueToConfidenceLevel(coefficient.p_value),
-            ),
-          ),
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Predicted Mean</b>: %{y}',
-            '<b>Coefficient</b>: %{customdata[0]}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
-          ].join('<br>'),
-          marker: {
-            color: colors,
-          },
-        },
-      ],
-      layout: {
-        title: `Predicted Means of ${config.target} per Independent Variable`,
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-        },
-        yaxis: {
-          title: `Predicted Mean`,
-        },
-        ...baselineLayout,
-      },
-    } as PlotParams;
-  }, [
-    type,
-    data.independent_variables,
-    data.predictions,
-    data.coefficients,
-    colors,
-    config.target,
-    baselineLayout,
-  ]);
-  return plot;
-}
 
 export default function LinearRegressionResultRenderer(
   props: BaseStatisticTestResultRendererProps<
@@ -157,19 +72,8 @@ export default function LinearRegressionResultRenderer(
     coefficients: data.coefficients,
     type,
   });
-  const predictionPlot = useLinearRegressionPredictionResultPlot({
-    data,
-    type,
-    alpha,
-    config,
-    baseline: data.baseline_prediction.mean,
-  });
   const usedPlot =
-    sampleSizePlot ??
-    vifPlot ??
-    coefficientPlot ??
-    confidenceLevelPlot ??
-    predictionPlot;
+    sampleSizePlot ?? vifPlot ?? coefficientPlot ?? confidenceLevelPlot;
   return (
     <Stack>
       <StatisticTestWarningsRenderer warnings={data.warnings} />

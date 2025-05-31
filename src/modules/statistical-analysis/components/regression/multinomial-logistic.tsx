@@ -27,18 +27,13 @@ import {
 } from './data';
 import PlotRenderer from '@/components/widgets/plotly';
 import { PlotParams } from 'react-plotly.js';
-import { zip } from 'lodash-es';
 import {
   getBalancedHeatmapZRange,
   getRawHeatmapZRange,
 } from '@/modules/visualization/components/configuration/heatmap';
-import { map2D, mask2D } from '@/common/utils/iterable';
+import { mask2D } from '@/common/utils/iterable';
 import { ResultCard } from '@/components/visual/result-card';
-import {
-  formatConfidenceInterval,
-  formatConfidenceLevel,
-  pValueToConfidenceLevel,
-} from './utils';
+import { formatConfidenceLevel } from './utils';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 
@@ -52,7 +47,6 @@ const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
   RegressionVisualizationTypeEnum.ConfidenceLevel,
   RegressionVisualizationTypeEnum.OddsRatio,
-  RegressionVisualizationTypeEnum.PredictionPerIndependentVariable,
   RegressionVisualizationTypeEnum.VarianceInflationFactor,
   RegressionVisualizationTypeEnum.LevelSampleSize,
 ];
@@ -238,96 +232,6 @@ function useCompareLogisticRegressionResultPlot(
   }, [alpha, config.target, data.facets, type]);
 }
 
-interface UseMultinomialLogisticRegressionPredictionResultPlotProps {
-  data: MultinomialLogisticRegressionResultModel;
-  config: MultinomialLogisticRegressionConfigType;
-  type: RegressionVisualizationTypeEnum;
-  alpha: number;
-}
-
-function useMultinomialLogisticRegressionPredictionResultPlot(
-  props: UseMultinomialLogisticRegressionPredictionResultPlotProps,
-) {
-  const { data, config, type, alpha } = props;
-  const plot = React.useMemo<PlotParams | null>(() => {
-    if (
-      type !== RegressionVisualizationTypeEnum.PredictionPerIndependentVariable
-    ) {
-      return null;
-    }
-
-    const x = ['Baseline', ...data.independent_variables];
-    const y = data.levels;
-    const z = zip(data.baseline_prediction.probabilities, data.predictions).map(
-      ([baseline, prediction]) => [
-        baseline! * 100,
-        ...prediction!.probabilities.map((probability) => probability * 100),
-      ],
-    );
-    const pValues = data.facets.map((facet) =>
-      facet.coefficients.map((coefficient) => coefficient.p_value),
-    );
-    const invalidMask = map2D(pValues, (pvalue) => pvalue > alpha).map(
-      (row) => [true, ...row],
-    );
-    const customdata = zip(
-      data.facets.map((facet) => [
-        'None',
-        ...facet.coefficients.map((coefficient) => coefficient.odds_ratio),
-      ]),
-      data.facets.map((facet) => [
-        'None',
-        ...facet.coefficients.map((coefficient) =>
-          formatConfidenceInterval(coefficient.odds_ratio_confidence_interval),
-        ),
-      ]),
-      pValues.map((facet) => ['None', ...facet.map(pValueToConfidenceLevel)]),
-    );
-
-    return {
-      data: [
-        {
-          x,
-          y,
-          z: mask2D(z, invalidMask, undefined),
-          zmin: 0,
-          zmax: 100,
-          type: 'heatmap',
-          texttemplate: '%{z:.3f}%',
-          customdata: customdata as any,
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Dependent Variable Level</b>: %{y}',
-            '<b>Predicted Probability</b>: %{z}%',
-            '<b>Odds Ratio</b>: %{customdata[0]}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]}',
-          ].join('<br>'),
-        },
-      ],
-      layout: {
-        title: `Predicted Probabilities for Levels of ${config.target}`,
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-        },
-        yaxis: {
-          title: `Dependent Variable Levels`,
-        },
-      },
-    } as PlotParams;
-  }, [
-    type,
-    data.independent_variables,
-    data.levels,
-    data.baseline_prediction.probabilities,
-    data.predictions,
-    data.facets,
-    config.target,
-    alpha,
-  ]);
-  return plot;
-}
-
 interface MultinomialLogisticRegressionInterceptsRendererProps {
   type: RegressionVisualizationTypeEnum;
   data: MultinomialLogisticRegressionResultModel;
@@ -466,12 +370,6 @@ export default function MultinomialLogisticRegressionResultRenderer(
     });
 
   // Plots
-  const predictionPlot = useMultinomialLogisticRegressionPredictionResultPlot({
-    data: rawData,
-    type,
-    alpha,
-    config,
-  });
   const compareResultsPlot = useCompareLogisticRegressionResultPlot({
     data: rawData,
     type,
@@ -479,7 +377,7 @@ export default function MultinomialLogisticRegressionResultRenderer(
     config,
   });
 
-  const usedPlot = predictionPlot ?? compareResultsPlot;
+  const usedPlot = compareResultsPlot;
 
   return (
     <Stack>
@@ -551,9 +449,7 @@ export default function MultinomialLogisticRegressionResultRenderer(
           <PlotRenderer
             plot={usedPlot}
             height={720}
-            scrollZoom={
-              !(usedPlot === predictionPlot || usedPlot === compareResultsPlot)
-            }
+            scrollZoom={usedPlot === compareResultsPlot}
           />
         )}
       </div>

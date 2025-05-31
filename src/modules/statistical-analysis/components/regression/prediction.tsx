@@ -1,4 +1,5 @@
 import { ComparisonStateItemModel } from '@/api/comparison';
+import { LinearRegressionPredictionResultModel } from '@/api/statistical-analysis';
 import { useVisibleComparisonGroups } from '@/modules/comparison/app-state';
 import {
   Alert,
@@ -9,6 +10,7 @@ import {
   ActionIcon,
   Group,
   Button,
+  Divider,
 } from '@mantine/core';
 import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import React from 'react';
@@ -46,6 +48,7 @@ function RegressionModelPredictionInputCard(
 
 interface RegressionModelPredictionSectionProps {
   modelId: string;
+  predictionsPerIndependentVariable: LinearRegressionPredictionResultModel[];
 }
 
 export default function RegressionModelPredictionSection(
@@ -58,31 +61,43 @@ export default function RegressionModelPredictionSection(
   );
 
   return (
-    <Stack>
+    <div>
       <Title order={3}>Model Predictions</Title>
-      <Alert icon={<Info />} color="blue">
-        If your independent variables (subdatasets) are not mutually exclusive,
-        you can test out how combinations of the independent variables can
-        affect the model&apos;s prediction. This may be more useful with
-        multinomial logistic regression and ordinal regression that produces
-        probability distributions for you to consider in your analysis.
-      </Alert>
+      <Stack>
+        <Title order={4}>Model Predictions Per Independent Variable</Title>
+        <Alert icon={<Info />} color="blue">
+          The plot below shows the predictions of the model when the only input
+          is a single independent variable. Use this to gauge the individual
+          effects of each independent variable.
+        </Alert>
 
-      <Text c="gray">
-        Choose the subdatasets to be used as input of the prediction task.
-      </Text>
-      {independentVariables.map((variable, idx) => {
-        return (
-          <RegressionModelPredictionInputCard
-            key={variable.name}
-            setInputState={setInputState}
-            index={idx}
-            inputState={inputState}
-            variable={variable}
-          />
-        );
-      })}
-      <Button>Predict</Button>
-    </Stack>
+        <Divider />
+        <Title order={4}>Model Predictions</Title>
+        <Alert icon={<Info />} color="blue">
+          If your independent variables (subdatasets) are not mutually
+          exclusive, you can test out how combinations of the independent
+          variables can affect the model&apos;s prediction. This may be more
+          useful with multinomial logistic regression and ordinal regression
+          that produces probability distributions for you to consider in your
+          analysis.
+        </Alert>
+
+        <Text c="gray">
+          Choose the subdatasets to be used as input of the prediction task.
+        </Text>
+        {independentVariables.map((variable, idx) => {
+          return (
+            <RegressionModelPredictionInputCard
+              key={variable.name}
+              setInputState={setInputState}
+              index={idx}
+              inputState={inputState}
+              variable={variable}
+            />
+          );
+        })}
+        <Button>Predict</Button>
+      </Stack>
+    </div>
   );
 }

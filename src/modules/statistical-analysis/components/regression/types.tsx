@@ -19,7 +19,6 @@ export enum RegressionVisualizationTypeEnum {
   VarianceInflationFactor = 'variance_inflation_factor',
   OddsRatio = 'odds-ratio',
   SampleSize = 'sample-size',
-  PredictionPerIndependentVariable = 'prediction-per-independent-variable',
 
   // Multinomial logistic regression and ordinal regression
   LevelSampleSize = 'level-sample-sizes',
@@ -71,16 +70,6 @@ export const REGRESSION_VISUALIZATION_TYPE_DICTIONARY = {
       'Show the number of samples that is included in each subdataset (where the independent variable has 1 as its value).',
     select(coefficient: UltimateRegressionCoefficientModel) {
       return coefficient.variance_inflation_factor;
-    },
-  },
-  [RegressionVisualizationTypeEnum.PredictionPerIndependentVariable]: {
-    label: 'Prediction per Independent Variable',
-    value: RegressionVisualizationTypeEnum.PredictionPerIndependentVariable,
-    plotLabel: 'Prediction',
-    description:
-      'Show the predictions of the fitted model for each of the independent variables when only that independent variable is present.',
-    select(coefficient: UltimateRegressionCoefficientModel) {
-      return coefficient.value;
     },
   },
   // Logistic

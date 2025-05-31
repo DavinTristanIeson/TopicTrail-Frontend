@@ -8,13 +8,11 @@ import {
   useCoefficientRegressionResultPlot,
   useConfidenceLevelRegressionResultPlot,
   useOddsRatioRegressionResultPlot,
-  usePredictedResultsBaselineLine,
-  useRegressionAlphaConstrainedColors,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
 import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
-import { Group, Select, Stack } from '@mantine/core';
+import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import { getRegressionCoefficientsVisualizationData } from './data';
 import {
@@ -30,14 +28,8 @@ import { BaseStatisticTestResultRendererProps } from '../../types';
 import { ResultCard } from '@/components/visual/result-card';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import { zip } from 'lodash-es';
-import {
-  formatConfidenceInterval,
-  formatConfidenceLevel,
-  pValueToConfidenceLevel,
-} from './utils';
+import { formatConfidenceLevel } from './utils';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
-import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { mask2D, transposeMatrix } from '@/common/utils/iterable';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
@@ -45,208 +37,8 @@ const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.SampleSize,
   RegressionVisualizationTypeEnum.OddsRatio,
   RegressionVisualizationTypeEnum.VarianceInflationFactor,
-  RegressionVisualizationTypeEnum.PredictionPerIndependentVariable,
   RegressionVisualizationTypeEnum.LevelSampleSize,
 ];
-
-interface useOrdinalRegressionPredictionResultPlotProps {
-  data: OrdinalRegressionResultModel;
-  config: RegressionConfigType;
-  type: RegressionVisualizationTypeEnum;
-  alpha: number;
-}
-
-enum OrdinalRegressionPredictionDisplay {
-  LatentScore = 'latent-score',
-  ProbabilityDistribution = 'probability-distribution',
-}
-const ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY = {
-  [OrdinalRegressionPredictionDisplay.ProbabilityDistribution]: {
-    label: 'Probability Distribution',
-    value: OrdinalRegressionPredictionDisplay.ProbabilityDistribution,
-    description: 'Show the probabilities of each level.',
-  },
-  [OrdinalRegressionPredictionDisplay.LatentScore]: {
-    label: 'Latent Score',
-    value: OrdinalRegressionPredictionDisplay.LatentScore,
-    description:
-      'Show the latent variable predictions. You can then compare the predicted values to the thresholds to see how much the subdataset is associated with lower/higher ranks.',
-  },
-};
-
-function useOrdinalRegressionPredictionResultPlot(
-  props: useOrdinalRegressionPredictionResultPlotProps,
-) {
-  const { data, config, type, alpha } = props;
-  const [display, setDisplay] = React.useState(
-    OrdinalRegressionPredictionDisplay.ProbabilityDistribution,
-  );
-  const renderOption = useDescriptionBasedRenderOption(
-    ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY,
-  );
-  const SelectComponent = (
-    <Select
-      label="Display which data?"
-      required
-      value={display}
-      onChange={
-        setDisplay as React.Dispatch<React.SetStateAction<string | null>>
-      }
-      renderOption={renderOption}
-      allowDeselect={false}
-    />
-  );
-
-  const colors = useRegressionAlphaConstrainedColors({
-    coefficients: data.coefficients,
-    alpha,
-  });
-  const baselineLayout = usePredictedResultsBaselineLine({
-    baseline: data.baseline_prediction.latent_score,
-  });
-  const latentScorePlot = React.useMemo<PlotParams | null>(() => {
-    if (
-      type !==
-        RegressionVisualizationTypeEnum.PredictionPerIndependentVariable ||
-      display !== OrdinalRegressionPredictionDisplay.LatentScore
-    ) {
-      return null;
-    }
-
-    return {
-      data: [
-        {
-          x: data.independent_variables,
-          y: data.predictions.map((prediction) => prediction.latent_score),
-          type: 'bar',
-          customdata: zip(
-            data.coefficients.map((coefficient) => coefficient.odds_ratio),
-            data.coefficients.map((coefficient) =>
-              formatConfidenceInterval(
-                coefficient.odds_ratio_confidence_interval,
-              ),
-            ),
-            data.coefficients.map((coefficient) =>
-              pValueToConfidenceLevel(coefficient.p_value),
-            ),
-          ),
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Predicted Mean</b>: %{y}',
-            '<b>Odds Ratio</b>: %{customdata[0]}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]}%',
-          ].join('<br>'),
-          marker: {
-            color: colors,
-          },
-        },
-      ],
-      layout: {
-        title: `Predicted Means of ${config.target} per Independent Variable`,
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-        },
-        yaxis: {
-          title: `Predicted Mean`,
-        },
-        ...baselineLayout,
-      },
-    } as PlotParams;
-  }, [
-    type,
-    display,
-    data.independent_variables,
-    data.predictions,
-    data.coefficients,
-    colors,
-    config.target,
-    baselineLayout,
-  ]);
-
-  const probabilityDistributionPlot = React.useMemo<PlotParams | null>(() => {
-    if (
-      type !==
-        RegressionVisualizationTypeEnum.PredictionPerIndependentVariable ||
-      display !== OrdinalRegressionPredictionDisplay.ProbabilityDistribution
-    ) {
-      return null;
-    }
-
-    const x = ['Baseline', ...data.independent_variables];
-    const y = data.levels;
-    const z = transposeMatrix([
-      data.baseline_prediction.probabilities,
-      ...data.predictions.map((prediction) => prediction.probabilities),
-    ]);
-    const pValues = data.coefficients.map((coefficient) => coefficient.p_value);
-    const invalidMask = data.levels.map(() => [
-      true,
-      ...pValues.map((pvalue) => pvalue > alpha),
-    ]);
-    const customdataRow = zip(
-      [
-        'None',
-        ...data.coefficients.map((coefficient) => coefficient.odds_ratio),
-      ],
-      [
-        'None',
-        ...data.coefficients.map(
-          (coefficient) => coefficient.odds_ratio_confidence_interval,
-        ),
-      ],
-      ['None', ...pValues.map(pValueToConfidenceLevel)],
-    );
-    const customdata = data.levels.map(
-      () => customdataRow,
-    ) as unknown as number[][];
-
-    return {
-      data: [
-        {
-          x,
-          y,
-          z: mask2D(z, invalidMask, undefined),
-          zmin: 0,
-          zmax: 100,
-          type: 'heatmap',
-          texttemplate: '%{z:.3f}%',
-          customdata: customdata as any,
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Dependent Variable Level</b>: %{y}',
-            '<b>Predicted Probability</b>: %{z}%',
-            '<b>Odds Ratio</b>: %{customdata[0]}',
-            '<b>Confidence Level</b>: %{customdata[1]}',
-          ].join('<br>'),
-        },
-      ],
-      layout: {
-        title: `Predicted Probabilities for Levels of ${config.target}`,
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-        },
-        yaxis: {
-          title: `Dependent Variable Levels`,
-        },
-      },
-    } as PlotParams;
-  }, [
-    type,
-    display,
-    data.independent_variables,
-    data.levels,
-    data.baseline_prediction.probabilities,
-    data.predictions,
-    data.coefficients,
-    config.target,
-    alpha,
-  ]);
-  return {
-    plot: latentScorePlot ?? probabilityDistributionPlot,
-    Component: SelectComponent,
-  };
-}
 
 interface OrdinalRegressionCutpointsRendererProps {
   thresholds: OrdinalRegressionThresholdModel[];
@@ -354,7 +146,7 @@ export default function OrdinalRegressionResultRenderer(
     RegressionConfigType
   >,
 ) {
-  const { data, config } = props;
+  const { data } = props;
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
@@ -396,21 +188,13 @@ export default function OrdinalRegressionResultRenderer(
       sampleSizes: data.sample_sizes,
       type,
     });
-  const { plot: predictionPlot, Component: PredictionDisplaySelect } =
-    useOrdinalRegressionPredictionResultPlot({
-      alpha,
-      config,
-      data,
-      type,
-    });
   const usedPlot =
     sampleSizePlot ??
     vifPlot ??
     dependentVariableSampleSizePlot ??
     coefficientPlot ??
     confidenceLevelPlot ??
-    oddsRatioPlot ??
-    predictionPlot;
+    oddsRatioPlot;
 
   return (
     <Stack>
@@ -455,7 +239,6 @@ export default function OrdinalRegressionResultRenderer(
       {VisualizationSelect}
       {AlphaSlider}
       <OrdinalRegressionThresholdsRenderer thresholds={data.thresholds} />
-      {PredictionDisplaySelect}
       <div>{usedPlot && <PlotRenderer plot={usedPlot} height={720} />}</div>
     </Stack>
   );

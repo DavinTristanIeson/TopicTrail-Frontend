@@ -5,8 +5,6 @@ import {
   useCoefficientRegressionResultPlot,
   useConfidenceLevelRegressionResultPlot,
   useOddsRatioRegressionResultPlot,
-  usePredictedResultsBaselineLine,
-  useRegressionAlphaConstrainedColors,
   useSampleSizeRegressionResultPlot,
   useVarianceInflationFactorRegressionResultPlot,
 } from './components';
@@ -24,98 +22,13 @@ import { LogisticRegressionConfigType } from '../../configuration/logistic-regre
 import { BaseStatisticTestResultRendererProps } from '../../types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import {
-  formatConfidenceInterval,
-  formatConfidenceLevel,
-  pValueToConfidenceLevel,
-} from './utils';
-import { PlotParams } from 'react-plotly.js';
-import { zip } from 'lodash-es';
+import { formatConfidenceLevel } from './utils';
 
 const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionVisualizationTypeEnum.Coefficient,
   RegressionVisualizationTypeEnum.ConfidenceLevel,
   RegressionVisualizationTypeEnum.OddsRatio,
-  RegressionVisualizationTypeEnum.PredictionPerIndependentVariable,
 ];
-
-interface UseLinearRegressionEveryPredictionResultPlotProps {
-  data: LogisticRegressionResultModel;
-  config: LogisticRegressionConfigType;
-  alpha: number;
-  type: RegressionVisualizationTypeEnum;
-  baseline: number;
-}
-function useLogisticRegressionPredictionResultPlot(
-  props: UseLinearRegressionEveryPredictionResultPlotProps,
-) {
-  const { data, config, alpha, type, baseline } = props;
-  const baselineLayout = usePredictedResultsBaselineLine({
-    baseline: baseline,
-    percentage: true,
-  });
-  const colors = useRegressionAlphaConstrainedColors({
-    coefficients: data.coefficients,
-    alpha,
-  });
-
-  const plot = React.useMemo<PlotParams | null>(() => {
-    if (
-      type !== RegressionVisualizationTypeEnum.PredictionPerIndependentVariable
-    ) {
-      return null;
-    }
-    return {
-      data: [
-        {
-          x: data.independent_variables,
-          y: data.predictions.map((prediction) => prediction.probability),
-          type: 'bar',
-          customdata: zip(
-            data.coefficients.map((coefficient) => coefficient.odds_ratio),
-            data.coefficients.map((coefficient) =>
-              formatConfidenceInterval(
-                coefficient.odds_ratio_confidence_interval,
-              ),
-            ),
-            data.coefficients.map((coefficient) =>
-              pValueToConfidenceLevel(coefficient.p_value),
-            ),
-          ),
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Predicted Probability</b>: %{y}',
-            '<b>Odds Ratio</b>: %{customdata[0]}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
-          ].join('<br>'),
-          marker: {
-            color: colors,
-          },
-        },
-      ],
-      layout: {
-        title: `Predicted Probabilities of ${config.target} per Independent Variable`,
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-        },
-        yaxis: {
-          title: `Predicted Probability`,
-        },
-        ...baselineLayout,
-      },
-    } as PlotParams;
-  }, [
-    baselineLayout,
-    colors,
-    config.target,
-    data.coefficients,
-    data.independent_variables,
-    data.predictions,
-    type,
-  ]);
-  return plot;
-}
 
 export default function LogisticRegressionResultRenderer(
   props: BaseStatisticTestResultRendererProps<
@@ -123,7 +36,7 @@ export default function LogisticRegressionResultRenderer(
     LogisticRegressionConfigType
   >,
 ) {
-  const { data, config } = props;
+  const { data } = props;
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
@@ -153,20 +66,12 @@ export default function LogisticRegressionResultRenderer(
   const confidenceLevelPlot =
     useConfidenceLevelRegressionResultPlot(commonProps);
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
-  const predictionPlot = useLogisticRegressionPredictionResultPlot({
-    baseline: data.baseline_prediction.probability,
-    config,
-    data,
-    alpha,
-    type,
-  });
   const usedPlot =
     sampleSizePlot ??
     vifPlot ??
     coefficientPlot ??
     confidenceLevelPlot ??
-    oddsRatioPlot ??
-    predictionPlot;
+    oddsRatioPlot;
   return (
     <Stack>
       <StatisticTestWarningsRenderer warnings={data.warnings} />
