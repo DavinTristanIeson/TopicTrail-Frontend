@@ -11,7 +11,7 @@ import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
 import { LinearRegressionConfigType } from '../../configuration/regression';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { getRegressionCoefficientsVisualizationData } from './data';
 import {
   RegressionModelType,
@@ -33,7 +33,7 @@ const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
 ];
 
 export default function LinearRegressionResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     LinearRegressionResultModel,
     LinearRegressionConfigType
   >,

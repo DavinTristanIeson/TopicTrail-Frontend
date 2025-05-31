@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-export type BaseStatisticTestDataProviderHook<TData, TConfig> = (
+export type BaseStatisticalAnalysisDataProviderHook<TData, TConfig> = (
   config: TConfig,
 ) => {
   data: TData | undefined;
@@ -9,12 +9,12 @@ export type BaseStatisticTestDataProviderHook<TData, TConfig> = (
   refetch(): void;
 };
 
-export interface BaseStatisticTestResultRendererProps<TData, TConfig> {
+export interface BaseStatisticalAnalysisResultRendererProps<TData, TConfig> {
   data: TData;
   config: TConfig;
 }
 
-export enum StatisticTestPurpose {
+export enum StatisticalAnalysisPurpose {
   // Regression
   LinearRegression = 'linear-regression',
   LogisticRegression = 'logistic-regression',
@@ -30,19 +30,21 @@ export enum StatisticTestPurpose {
   BinaryTestDistribution = 'binary-test-distribution',
 }
 
-export interface StatisticTestStateItem {
-  type: StatisticTestPurpose;
+export interface StatisticalAnalysisStateItem {
+  type: StatisticalAnalysisPurpose;
   config: any;
 }
 
-export interface StatisticTestConfigurationEntry<TData, TConfig> {
-  type: StatisticTestPurpose;
+export interface StatisticalAnalysisConfigurationEntry<TData, TConfig> {
+  type: StatisticalAnalysisPurpose;
   label: string;
   description: string;
-  dataProvider: BaseStatisticTestDataProviderHook<TData, TConfig>;
+  dataProvider: BaseStatisticalAnalysisDataProviderHook<TData, TConfig>;
   configForm: React.FC<object>;
   configValidator: Yup.AnyObjectSchema;
-  component: React.FC<BaseStatisticTestResultRendererProps<TData, TConfig>>;
+  component: React.FC<
+    BaseStatisticalAnalysisResultRendererProps<TData, TConfig>
+  >;
   getParams(config: TConfig): Record<string, string>;
   actionLabel: string;
 }

@@ -1,25 +1,25 @@
 import { Divider, Group, Select, Stack } from '@mantine/core';
 import React from 'react';
 import { useComparisonAppState } from '../comparison/app-state';
-import { StatisticTestPurpose } from './types';
+import { StatisticalAnalysisPurpose } from './types';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
-import { STATISTIC_TEST_CONFIGURATION } from './statistic-test-config';
-import StatisticTestForm from './configuration';
-import StatisticTestResultRenderer from './components';
-import { StatisticTestHistoryButton } from './history';
+import { STATISTICAL_ANALYSIS_CONFIGURATION } from './statistic-test-config';
+import StatisticalAnalysisInputForm from './configuration';
+import StatisticalAnalysisResultRenderer from './components';
+import { StatisticalAnalysisHistoryButton } from './history';
 import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
-interface StatisticTestSwitcherProps {
-  purpose: StatisticTestPurpose;
+interface StatisticalAnalysisSwitcherProps {
+  purpose: StatisticalAnalysisPurpose;
   input: any | null | undefined;
   setInput: (config: any) => void;
 }
 
-function StatisticTestSwitcher(props: StatisticTestSwitcherProps) {
+function StatisticalAnalysisSwitcher(props: StatisticalAnalysisSwitcherProps) {
   const { purpose, input, setInput } = props;
-  const statisticTestConfig = STATISTIC_TEST_CONFIGURATION[purpose];
+  const statisticTestConfig = STATISTICAL_ANALYSIS_CONFIGURATION[purpose];
   const setStatisticTestHistoryEntry = useComparisonAppState(
-    (store) => store.statisticTest.setInput,
+    (store) => store.statisticalAnalysis.setInput,
   );
   const onSubmit = React.useCallback(
     (config: any) => {
@@ -36,7 +36,7 @@ function StatisticTestSwitcher(props: StatisticTestSwitcherProps) {
   return (
     <>
       <DefaultErrorViewBoundary>
-        <StatisticTestForm
+        <StatisticalAnalysisInputForm
           purpose={purpose}
           onSubmit={onSubmit}
           defaultValues={input}
@@ -47,7 +47,10 @@ function StatisticTestSwitcher(props: StatisticTestSwitcherProps) {
         <>
           <Divider />
           <DefaultErrorViewBoundary>
-            <StatisticTestResultRenderer purpose={purpose} input={input} />
+            <StatisticalAnalysisResultRenderer
+              purpose={purpose}
+              input={input}
+            />
           </DefaultErrorViewBoundary>
         </>
       )}
@@ -55,15 +58,19 @@ function StatisticTestSwitcher(props: StatisticTestSwitcherProps) {
   );
 }
 
-interface StatisticTestSelectPurposeProps {
-  purpose: StatisticTestPurpose | null;
-  setPurpose: React.Dispatch<React.SetStateAction<StatisticTestPurpose | null>>;
+interface StatisticalAnalysisSelectPurposeProps {
+  purpose: StatisticalAnalysisPurpose | null;
+  setPurpose: React.Dispatch<
+    React.SetStateAction<StatisticalAnalysisPurpose | null>
+  >;
 }
 
-function StatisticTestSelectPurpose(props: StatisticTestSelectPurposeProps) {
+function StatisticalAnalysisSelectPurpose(
+  props: StatisticalAnalysisSelectPurposeProps,
+) {
   const { purpose, setPurpose } = props;
   const renderOption = useDescriptionBasedRenderOption(
-    STATISTIC_TEST_CONFIGURATION,
+    STATISTICAL_ANALYSIS_CONFIGURATION,
   );
   return (
     <Select
@@ -71,7 +78,7 @@ function StatisticTestSelectPurpose(props: StatisticTestSelectPurposeProps) {
       onChange={
         setPurpose as React.Dispatch<React.SetStateAction<string | null>>
       }
-      data={Object.values(STATISTIC_TEST_CONFIGURATION).map((config) => {
+      data={Object.values(STATISTICAL_ANALYSIS_CONFIGURATION).map((config) => {
         return {
           label: config.label,
           value: config.type,
@@ -87,13 +94,14 @@ function StatisticTestSelectPurpose(props: StatisticTestSelectPurposeProps) {
   );
 }
 
-export default function StatisticTestPage() {
+export default function StatisticalAnalysisPage() {
   const recentInput = useComparisonAppState(
-    (store) => store.statisticTest.input,
+    (store) => store.statisticalAnalysis.input,
   );
-  const [purpose, setPurpose] = React.useState<StatisticTestPurpose | null>(
-    recentInput?.type ?? StatisticTestPurpose.TwoSample,
-  );
+  const [purpose, setPurpose] =
+    React.useState<StatisticalAnalysisPurpose | null>(
+      recentInput?.type ?? StatisticalAnalysisPurpose.TwoSample,
+    );
   const [input, setInput] = React.useState<any | null>(
     recentInput?.config ?? null,
   );
@@ -101,7 +109,7 @@ export default function StatisticTestPage() {
   return (
     <Stack>
       <Group justify="space-between" align="start">
-        <StatisticTestSelectPurpose
+        <StatisticalAnalysisSelectPurpose
           purpose={purpose}
           setPurpose={(value) => {
             setPurpose(value);
@@ -109,14 +117,14 @@ export default function StatisticTestPage() {
           }}
         />
         <div className="pt-6">
-          <StatisticTestHistoryButton
+          <StatisticalAnalysisHistoryButton
             setPurpose={setPurpose}
             setInput={setInput}
           />
         </div>
       </Group>
       {purpose && (
-        <StatisticTestSwitcher
+        <StatisticalAnalysisSwitcher
           purpose={purpose}
           input={input}
           setInput={setInput}

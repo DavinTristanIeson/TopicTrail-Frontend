@@ -1,6 +1,6 @@
 import { Stack } from '@mantine/core';
 import React from 'react';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { StatisticTestResultModel } from '@/api/statistical-analysis';
 import {
   GroupCountsRenderer,
@@ -9,7 +9,10 @@ import {
 } from './common';
 
 export default function StatisticTestResultRenderer(
-  props: BaseStatisticTestResultRendererProps<StatisticTestResultModel, any>,
+  props: BaseStatisticalAnalysisResultRendererProps<
+    StatisticTestResultModel,
+    any
+  >,
 ) {
   const { data, config } = props;
   const warnings = data.warnings;

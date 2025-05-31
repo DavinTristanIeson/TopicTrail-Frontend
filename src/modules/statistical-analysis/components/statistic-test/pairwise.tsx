@@ -14,7 +14,7 @@ import { getBalancedHeatmapZRange } from '@/modules/visualization/components/con
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { Info } from '@phosphor-icons/react';
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 
 enum PairwiseStatisticTestVisualizationMethod {
   Confidence = 'confidence',
@@ -51,7 +51,7 @@ const PAIRWISE_STATISTIC_TEST_VISUALIZATION_METHOD_OPTIONS = Object.values(
 );
 
 export function PairwiseStatisticTestResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     PairwiseStatisticTestResultModel,
     ContingencyTableConfig
   >,

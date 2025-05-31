@@ -1,18 +1,18 @@
 import { ContingencyTableModel } from '@/api/statistical-analysis';
-import { BaseStatisticTestDataProviderHook } from '../types';
+import { BaseStatisticalAnalysisDataProviderHook } from '../types';
 import { client } from '@/common/api/client';
 import {
-  usePrepareStatisticTestDataProvider,
-  useStatisticTestDataProviderParams,
+  usePrepareStatisticalAnalysisDataProvider,
+  useStatisticalAnalysisDataProviderParams,
 } from './utils';
 import { ContingencyTableConfig } from '../configuration/contingency-table';
 import { SubdatasetCooccurrenceModel } from '@/api/comparison';
 
-export const useContingencyTableStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
+export const useContingencyTableStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   ContingencyTableModel,
   ContingencyTableConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -27,14 +27,14 @@ export const useContingencyTableStatisticTestDataProvider: BaseStatisticTestData
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
 
-export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatisticTestDataProviderHook<
+export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatisticalAnalysisDataProviderHook<
   SubdatasetCooccurrenceModel,
   object
 > = function () {
-  const { params, subdatasets } = useStatisticTestDataProviderParams({
+  const { params, subdatasets } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   // Exclude default subdataset
@@ -50,7 +50,7 @@ export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatisticTe
     },
   );
 
-  return usePrepareStatisticTestDataProvider({
+  return usePrepareStatisticalAnalysisDataProvider({
     query,
   });
 };

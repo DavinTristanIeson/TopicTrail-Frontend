@@ -24,7 +24,10 @@ import {
   ContingencyTableConfig,
   contingencyTableFormSchema,
 } from './configuration/contingency-table';
-import { StatisticTestConfigurationEntry, StatisticTestPurpose } from './types';
+import {
+  StatisticalAnalysisConfigurationEntry,
+  StatisticalAnalysisPurpose,
+} from './types';
 import {
   useBinaryStatisticTestOnContingencyTableDataProvider,
   useBinaryStatisticTestOnDistributionDataProvider,
@@ -135,12 +138,12 @@ function getRegressionParams(config: RegressionConfigType) {
 const REGRESSION_ACTION_LABEL = 'Fit Regression Model';
 const STATISTIC_TEST_ACTION_LABEL = 'Perform Statistic Test';
 
-export const STATISTIC_TEST_CONFIGURATION: Record<
-  StatisticTestPurpose,
-  StatisticTestConfigurationEntry<any, any>
+export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
+  StatisticalAnalysisPurpose,
+  StatisticalAnalysisConfigurationEntry<any, any>
 > = {
-  [StatisticTestPurpose.LinearRegression]: {
-    type: StatisticTestPurpose.LinearRegression,
+  [StatisticalAnalysisPurpose.LinearRegression]: {
+    type: StatisticalAnalysisPurpose.LinearRegression,
     component: LinearRegressionResultRenderer,
     configForm: LinearRegressionConfigForm,
     configValidator: linearRegressionInputSchema,
@@ -156,12 +159,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       return base;
     },
     actionLabel: REGRESSION_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     LinearRegressionResultModel,
     LinearRegressionConfigType
   >,
-  [StatisticTestPurpose.LogisticRegression]: {
-    type: StatisticTestPurpose.LogisticRegression,
+  [StatisticalAnalysisPurpose.LogisticRegression]: {
+    type: StatisticalAnalysisPurpose.LogisticRegression,
     component: LogisticRegressionResultRenderer,
     configForm: LogisticRegressionConfigForm,
     configValidator: logisticRegressionInputSchema,
@@ -176,12 +179,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       });
     },
     actionLabel: REGRESSION_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     LogisticRegressionResultModel,
     LogisticRegressionConfigType
   >,
-  [StatisticTestPurpose.MultinomialLogisticRegression]: {
-    type: StatisticTestPurpose.MultinomialLogisticRegression,
+  [StatisticalAnalysisPurpose.MultinomialLogisticRegression]: {
+    type: StatisticalAnalysisPurpose.MultinomialLogisticRegression,
     component: MultinomialLogisticRegressionResultRenderer,
     configForm: MultinomialLogisticRegressionConfigForm,
     configValidator: multinomialLogisticRegressionInputSchema,
@@ -197,12 +200,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       return base;
     },
     actionLabel: REGRESSION_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     MultinomialLogisticRegressionResultModel,
     MultinomialLogisticRegressionConfigType
   >,
-  [StatisticTestPurpose.OrdinalRegression]: {
-    type: StatisticTestPurpose.OrdinalRegression,
+  [StatisticalAnalysisPurpose.OrdinalRegression]: {
+    type: StatisticalAnalysisPurpose.OrdinalRegression,
     component: OrdinalRegressionResultRenderer,
     configForm: OrdinalRegressionConfigForm,
     configValidator: regressionInputSchema,
@@ -212,12 +215,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     label: 'Ordinal Regression',
     getParams: getRegressionParams,
     actionLabel: REGRESSION_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     OrdinalRegressionResultModel,
     RegressionConfigType
   >,
-  [StatisticTestPurpose.TwoSample]: {
-    type: StatisticTestPurpose.TwoSample,
+  [StatisticalAnalysisPurpose.TwoSample]: {
+    type: StatisticalAnalysisPurpose.TwoSample,
     component: StatisticTestResultRenderer,
     configForm: TwoSampleStatisticTestConfigForm,
     configValidator: twoSampleStatisticTestFormSchema,
@@ -234,12 +237,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       };
     },
     actionLabel: STATISTIC_TEST_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     StatisticTestResultModel,
     TwoSampleStatisticTestConfig
   >,
-  [StatisticTestPurpose.Omnibus]: {
-    type: StatisticTestPurpose.Omnibus,
+  [StatisticalAnalysisPurpose.Omnibus]: {
+    type: StatisticalAnalysisPurpose.Omnibus,
     component: StatisticTestResultRenderer,
     configForm: OmnibusStatisticTestConfigForm,
     configValidator: omnibusStatisticTestFormSchema,
@@ -258,12 +261,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       };
     },
     actionLabel: STATISTIC_TEST_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     StatisticTestResultModel,
     OmnibusStatisticTestConfig
   >,
-  [StatisticTestPurpose.Pairwise]: {
-    type: StatisticTestPurpose.Pairwise,
+  [StatisticalAnalysisPurpose.Pairwise]: {
+    type: StatisticalAnalysisPurpose.Pairwise,
     component: PairwiseStatisticTestResultRenderer,
     configForm: PairwiseStatisticTestConfigForm,
     configValidator: pairwiseStatisticTestFormSchema,
@@ -278,12 +281,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       };
     },
     actionLabel: STATISTIC_TEST_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     PairwiseStatisticTestResultModel,
     TwoSampleStatisticTestConfig
   >,
-  [StatisticTestPurpose.SubdatasetCooccurrence]: {
-    type: StatisticTestPurpose.SubdatasetCooccurrence,
+  [StatisticalAnalysisPurpose.SubdatasetCooccurrence]: {
+    type: StatisticalAnalysisPurpose.SubdatasetCooccurrence,
     component: SubdatasetCooccurrenceResultRenderer,
     configForm: () => <></>,
     configValidator: Yup.object().default({}),
@@ -295,9 +298,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       return {};
     },
     actionLabel: 'Calculate Co-occurrence',
-  } as StatisticTestConfigurationEntry<SubdatasetCooccurrenceModel, object>,
-  [StatisticTestPurpose.ContingencyTable]: {
-    type: StatisticTestPurpose.ContingencyTable,
+  } as StatisticalAnalysisConfigurationEntry<
+    SubdatasetCooccurrenceModel,
+    object
+  >,
+  [StatisticalAnalysisPurpose.ContingencyTable]: {
+    type: StatisticalAnalysisPurpose.ContingencyTable,
     component: ContingencyTableResultRenderer,
     configForm: ContingencyTableConfigForm,
     configValidator: contingencyTableFormSchema,
@@ -312,12 +318,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       };
     },
     actionLabel: 'Calculate Contingency Table',
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     ContingencyTableModel,
     ContingencyTableConfig
   >,
-  [StatisticTestPurpose.BinaryTestContingencyTable]: {
-    type: StatisticTestPurpose.BinaryTestContingencyTable,
+  [StatisticalAnalysisPurpose.BinaryTestContingencyTable]: {
+    type: StatisticalAnalysisPurpose.BinaryTestContingencyTable,
     component: BinaryStatisticTestOnContingencyTableResultRenderer,
     configForm: BinaryContingencyTableConfigForm,
     configValidator: binaryContingencyTableFormSchema,
@@ -331,12 +337,12 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
       };
     },
     actionLabel: STATISTIC_TEST_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     BinaryStatisticTestOnContingencyTableMainResultModel,
     ContingencyTableConfig
   >,
-  [StatisticTestPurpose.BinaryTestDistribution]: {
-    type: StatisticTestPurpose.BinaryTestDistribution,
+  [StatisticalAnalysisPurpose.BinaryTestDistribution]: {
+    type: StatisticalAnalysisPurpose.BinaryTestDistribution,
     component: BinaryStatisticTestOnDistributionResultRenderer,
     configForm: BinaryStatisticTestConfigForm,
     configValidator: binaryStatisticTestFormSchema,
@@ -346,7 +352,7 @@ export const STATISTIC_TEST_CONFIGURATION: Record<
     label: 'Binary Statistic Test on Distribution',
     getParams: getBasicStatisticTestParams,
     actionLabel: STATISTIC_TEST_ACTION_LABEL,
-  } as StatisticTestConfigurationEntry<
+  } as StatisticalAnalysisConfigurationEntry<
     BinaryStatisticTestOnDistributionResultModel,
     BinaryStatisticTestConfig
   >,

@@ -13,7 +13,7 @@ import { ProjectContext } from '@/modules/project/context';
 import { pickArrayByIndex } from '@/common/utils/iterable';
 
 import { findProjectColumn } from '@/api/project';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { BinaryStatisticTestOnDistributionResultModel } from '@/api/statistical-analysis';
 import {
   PlotInlineConfiguration,
@@ -29,7 +29,7 @@ import {
 import { BinaryStatisticTestConfig } from '../../configuration/binary-statistic-test';
 
 export default function BinaryStatisticTestOnDistributionResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     BinaryStatisticTestOnDistributionResultModel,
     BinaryStatisticTestConfig
   >,

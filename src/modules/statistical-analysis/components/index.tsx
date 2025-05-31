@@ -1,19 +1,19 @@
 import React from 'react';
-import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
-import { StatisticTestPurpose } from '../types';
+import { STATISTICAL_ANALYSIS_CONFIGURATION } from '../statistic-test-config';
+import { StatisticalAnalysisPurpose } from '../types';
 import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
 import { Skeleton } from '@mantine/core';
 
-interface StatisticTestResultRendererProps {
-  purpose: StatisticTestPurpose;
+interface StatisticalAnalysisResultRendererProps {
+  purpose: StatisticalAnalysisPurpose;
   input: any;
 }
 
-export default function StatisticTestResultRenderer(
-  props: StatisticTestResultRendererProps,
+export default function StatisticalAnalysisResultRenderer(
+  props: StatisticalAnalysisResultRendererProps,
 ) {
   const { purpose, input } = props;
-  const configItem = STATISTIC_TEST_CONFIGURATION[purpose];
+  const configItem = STATISTICAL_ANALYSIS_CONFIGURATION[purpose];
   const useDataProvider = configItem.dataProvider;
   const ResultRenderer = configItem.component;
 

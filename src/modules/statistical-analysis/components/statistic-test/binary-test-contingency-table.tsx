@@ -6,7 +6,7 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
 
 import { max } from 'lodash-es';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { BinaryStatisticTestOnContingencyTableMainResultModel } from '@/api/statistical-analysis';
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import {
@@ -23,7 +23,7 @@ import {
 } from './common';
 
 export default function BinaryStatisticTestOnContingencyTableResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     BinaryStatisticTestOnContingencyTableMainResultModel,
     ContingencyTableConfig
   >,

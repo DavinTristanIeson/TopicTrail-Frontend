@@ -2,7 +2,7 @@ import {
   MultinomialLogisticRegressionFacetResultModel,
   MultinomialLogisticRegressionResultModel,
 } from '@/api/statistical-analysis';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { MultinomialLogisticRegressionConfigType } from '../../configuration/regression';
 import { Group, Select, Stack } from '@mantine/core';
 import {
@@ -348,7 +348,7 @@ function MultinomialLogisticRegressionFacetResultRenderer(
 }
 
 export default function MultinomialLogisticRegressionResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     MultinomialLogisticRegressionResultModel,
     MultinomialLogisticRegressionConfigType
   >,

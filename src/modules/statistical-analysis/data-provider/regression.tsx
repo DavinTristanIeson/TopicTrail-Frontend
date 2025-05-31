@@ -1,7 +1,7 @@
 import { client } from '@/common/api/client';
 import {
-  usePrepareStatisticTestDataProvider,
-  useStatisticTestDataProviderParams,
+  usePrepareStatisticalAnalysisDataProvider,
+  useStatisticalAnalysisDataProviderParams,
 } from './utils';
 import {
   LinearRegressionResultModel,
@@ -9,7 +9,7 @@ import {
   MultinomialLogisticRegressionResultModel,
   OrdinalRegressionResultModel,
 } from '@/api/statistical-analysis';
-import { BaseStatisticTestDataProviderHook } from '../types';
+import { BaseStatisticalAnalysisDataProviderHook } from '../types';
 import {
   LinearRegressionConfigType,
   MultinomialLogisticRegressionConfigType,
@@ -18,11 +18,11 @@ import { RegressionConfigType } from '../configuration/regression-common';
 import { LogisticRegressionConfigType } from '../configuration/logistic-regression';
 import { NamedTableFilterModel } from '@/api/comparison';
 
-export const useLinearRegressionDataProvider: BaseStatisticTestDataProviderHook<
+export const useLinearRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   LinearRegressionResultModel,
   LinearRegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -40,14 +40,14 @@ export const useLinearRegressionDataProvider: BaseStatisticTestDataProviderHook<
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
 
-export const useLogisticRegressionDataProvider: BaseStatisticTestDataProviderHook<
+export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   LogisticRegressionResultModel,
   LogisticRegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -64,14 +64,14 @@ export const useLogisticRegressionDataProvider: BaseStatisticTestDataProviderHoo
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
 
-export const useMultinomialLogisticRegressionDataProvider: BaseStatisticTestDataProviderHook<
+export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   MultinomialLogisticRegressionResultModel,
   MultinomialLogisticRegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -89,14 +89,14 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticTestData
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
 
-export const useOrdinalRegressionDataProvider: BaseStatisticTestDataProviderHook<
+export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   OrdinalRegressionResultModel,
   RegressionConfigType
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -113,5 +113,5 @@ export const useOrdinalRegressionDataProvider: BaseStatisticTestDataProviderHook
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };

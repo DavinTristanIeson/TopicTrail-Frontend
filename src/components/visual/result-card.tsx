@@ -3,7 +3,7 @@ import { Info } from '@phosphor-icons/react';
 import React from 'react';
 import { MaybeText } from '../utility/maybe';
 
-interface StatisticTestResultCardProps {
+interface ResultCardProps {
   label: string;
   value: React.ReactNode;
   children?: React.ReactNode;
@@ -11,7 +11,7 @@ interface StatisticTestResultCardProps {
   miw?: number;
 }
 
-export function ResultCard(props: StatisticTestResultCardProps) {
+export function ResultCard(props: ResultCardProps) {
   return (
     <Card className="flex-1" miw={props.miw ?? 250}>
       <Stack align="center" gap={4}>

@@ -2,11 +2,11 @@ import {
   PairwiseStatisticTestResultModel,
   StatisticTestResultModel,
 } from '@/api/statistical-analysis';
-import { BaseStatisticTestDataProviderHook } from '../types';
+import { BaseStatisticalAnalysisDataProviderHook } from '../types';
 import { client } from '@/common/api/client';
 import {
-  usePrepareStatisticTestDataProvider,
-  useStatisticTestDataProviderParams,
+  usePrepareStatisticalAnalysisDataProvider,
+  useStatisticalAnalysisDataProviderParams,
 } from './utils';
 import React from 'react';
 import {
@@ -14,11 +14,11 @@ import {
   OmnibusStatisticTestConfig,
 } from '../configuration/statistic-test';
 
-export const useTwoSampleStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
+export const useTwoSampleStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   StatisticTestResultModel,
   TwoSampleStatisticTestConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: React.useMemo(
       () => [config.group1, config.group2],
       [config.group1, config.group2],
@@ -35,14 +35,14 @@ export const useTwoSampleStatisticTestDataProvider: BaseStatisticTestDataProvide
     },
     params,
   });
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
 
-export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
+export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   PairwiseStatisticTestResultModel,
   TwoSampleStatisticTestConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -59,14 +59,14 @@ export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticTestDat
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
 
-export const useOmnibusStatisticTestDataProvider: BaseStatisticTestDataProviderHook<
+export const useOmnibusStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   StatisticTestResultModel,
   OmnibusStatisticTestConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -82,5 +82,5 @@ export const useOmnibusStatisticTestDataProvider: BaseStatisticTestDataProviderH
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };

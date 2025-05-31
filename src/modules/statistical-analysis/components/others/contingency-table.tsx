@@ -6,7 +6,7 @@ import { useSelectLeftRightButtons } from '@/components/visual/select';
 import type { PlotParams } from 'react-plotly.js';
 import { fromPairs, max } from 'lodash-es';
 import { map2D, mask2D, sort2D, zip2D } from '@/common/utils/iterable';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import {
   PlotInlineConfiguration,
@@ -64,7 +64,7 @@ const CONTINGENCY_TABLE_METHOD_OPTIONS = Object.values(
 );
 
 export default function ContingencyTableResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     ContingencyTableModel,
     ContingencyTableConfig
   >,

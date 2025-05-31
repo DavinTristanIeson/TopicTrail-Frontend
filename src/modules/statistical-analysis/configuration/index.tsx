@@ -4,20 +4,22 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Group, Space } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
 import { useForm } from 'react-hook-form';
-import { STATISTIC_TEST_CONFIGURATION } from '../statistic-test-config';
-import { StatisticTestPurpose } from '../types';
+import { STATISTICAL_ANALYSIS_CONFIGURATION } from '../statistic-test-config';
+import { StatisticalAnalysisPurpose } from '../types';
 import React from 'react';
 import { showNotification } from '@mantine/notifications';
 
-interface StatisticTestFormProps {
-  purpose: StatisticTestPurpose;
+interface StatisticalAnalysisInputFormProps {
+  purpose: StatisticalAnalysisPurpose;
   defaultValues: any | null | undefined;
   onSubmit(config: any): void;
 }
 
-export default function StatisticTestForm(props: StatisticTestFormProps) {
+export default function StatisticalAnalysisInputForm(
+  props: StatisticalAnalysisInputFormProps,
+) {
   const { purpose, defaultValues, onSubmit } = props;
-  const configItem = STATISTIC_TEST_CONFIGURATION[purpose];
+  const configItem = STATISTICAL_ANALYSIS_CONFIGURATION[purpose];
 
   if (!configItem) {
     throw new Error(`Statistical analysis for ${purpose} is not implemented.`);

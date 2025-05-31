@@ -19,7 +19,7 @@ import {
 import { getRegressionCoefficientsVisualizationData } from './data';
 import { ResultCard } from '@/components/visual/result-card';
 import { LogisticRegressionConfigType } from '../../configuration/logistic-regression';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
 import { formatConfidenceLevel } from './utils';
@@ -31,7 +31,7 @@ const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
 ];
 
 export default function LogisticRegressionResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     LogisticRegressionResultModel,
     LogisticRegressionConfigType
   >,

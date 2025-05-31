@@ -7,7 +7,7 @@ import { Select, Stack } from '@mantine/core';
 import { PlotInlineConfiguration } from '@/modules/visualization/components/configuration';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { map2D, mask2D, zip2D } from '@/common/utils/iterable';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { sum } from 'lodash-es';
 
 enum SubdatasetCoocccurrenceDisplayMode {
@@ -44,7 +44,7 @@ const SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY = {
 };
 
 export default function SubdatasetCooccurrenceResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     SubdatasetCooccurrenceModel,
     object
   >,

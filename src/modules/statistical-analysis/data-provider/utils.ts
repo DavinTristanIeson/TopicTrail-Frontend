@@ -6,12 +6,12 @@ import { ProjectContext } from '@/modules/project/context';
 import { UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
 
-interface UseStatisticTestDataProviderPropsProps {
+interface UseStatisticalAnalysisDataProviderPropsProps {
   groups: string[] | null;
 }
 
-export function useStatisticTestDataProviderParams(
-  props: UseStatisticTestDataProviderPropsProps,
+export function useStatisticalAnalysisDataProviderParams(
+  props: UseStatisticalAnalysisDataProviderPropsProps,
 ) {
   const { groups } = props;
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
@@ -43,12 +43,12 @@ export function useStatisticTestDataProviderParams(
   };
 }
 
-interface UsePrepareStatisticTestDataProviderProps<T> {
+interface UsePrepareStatisticalAnalysisDataProviderProps<T> {
   query: UseQueryResult<{ data: T }, { message: string }>;
 }
 
-export function usePrepareStatisticTestDataProvider<T>(
-  props: UsePrepareStatisticTestDataProviderProps<T>,
+export function usePrepareStatisticalAnalysisDataProvider<T>(
+  props: UsePrepareStatisticalAnalysisDataProviderProps<T>,
 ) {
   const { query } = props;
 

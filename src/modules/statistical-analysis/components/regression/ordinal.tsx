@@ -24,7 +24,7 @@ import { PlotParams } from 'react-plotly.js';
 import React from 'react';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { RegressionConfigType } from '../../configuration/regression-common';
-import { BaseStatisticTestResultRendererProps } from '../../types';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { ResultCard } from '@/components/visual/result-card';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import { zip } from 'lodash-es';
@@ -141,7 +141,7 @@ function useOrdinalRegressionDependentVariableLevelSampleSizePlot(
 }
 
 export default function OrdinalRegressionResultRenderer(
-  props: BaseStatisticTestResultRendererProps<
+  props: BaseStatisticalAnalysisResultRendererProps<
     OrdinalRegressionResultModel,
     RegressionConfigType
   >,

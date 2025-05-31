@@ -2,22 +2,22 @@ import {
   BinaryStatisticTestOnContingencyTableMainResultModel,
   BinaryStatisticTestOnDistributionResultModel,
 } from '@/api/statistical-analysis';
-import { BaseStatisticTestDataProviderHook } from '../types';
+import { BaseStatisticalAnalysisDataProviderHook } from '../types';
 import { client } from '@/common/api/client';
 import {
-  usePrepareStatisticTestDataProvider,
-  useStatisticTestDataProviderParams,
+  usePrepareStatisticalAnalysisDataProvider,
+  useStatisticalAnalysisDataProviderParams,
 } from './utils';
 import {
   BinaryContingencyTableConfig,
   BinaryStatisticTestConfig,
 } from '../configuration/binary-statistic-test';
 
-export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticTestDataProviderHook<
+export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   BinaryStatisticTestOnDistributionResultModel,
   BinaryStatisticTestConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -33,14 +33,14 @@ export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticTest
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
 
-export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatisticTestDataProviderHook<
+export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatisticalAnalysisDataProviderHook<
   BinaryStatisticTestOnContingencyTableMainResultModel,
   BinaryContingencyTableConfig
 > = function (config) {
-  const { subdatasets, params } = useStatisticTestDataProviderParams({
+  const { subdatasets, params } = useStatisticalAnalysisDataProviderParams({
     groups: null,
   });
   const query = client.useQuery(
@@ -54,5 +54,5 @@ export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatistic
       params,
     },
   );
-  return usePrepareStatisticTestDataProvider({ query });
+  return usePrepareStatisticalAnalysisDataProvider({ query });
 };
