@@ -29,8 +29,6 @@ export type OrdinalRegressionResultModel =
   components['schemas']['OrdinalRegressionResult'];
 export type OrdinalRegressionThresholdModel =
   components['schemas']['OrdinalRegressionThreshold'];
-export type OrdinalRegressionSampleSizeModel =
-  components['schemas']['OrdinalRegressionLevelSampleSize'];
 
 export type RegressionCoefficientModel =
   components['schemas']['RegressionCoefficient'];
@@ -47,3 +45,12 @@ export type MultinomialLogisticRegressionPredictionResultModel =
   components['schemas']['MultinomialLogisticRegressionPredictionResult'];
 export type OrdinalRegressionPredictionResultModel =
   components['schemas']['OrdinalRegressionPredictionResult'];
+
+export type RegressionPredictionInput =
+  components['schemas']['BaseRegressionPredictionInput'];
+
+export type RegressionIndependentVariableInfo =
+  components['schemas']['RegressionIndependentVariableInfo'];
+
+export type RegressionDependentVariableLevelInfo =
+  components['schemas']['RegressionDependentVariableLevelInfo'];

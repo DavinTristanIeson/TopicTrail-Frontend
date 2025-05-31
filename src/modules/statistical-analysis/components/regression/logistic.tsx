@@ -1,20 +1,26 @@
-import { LogisticRegressionResultModel } from '@/api/statistical-analysis';
+import {
+  LogisticRegressionPredictionResultModel,
+  LogisticRegressionResultModel,
+} from '@/api/statistical-analysis';
 import {
   RegressionConvergenceResultRenderer,
   RegressionInterceptResultRenderer,
   useCoefficientRegressionResultPlot,
   useConfidenceLevelRegressionResultPlot,
   useOddsRatioRegressionResultPlot,
-  useSampleSizeRegressionResultPlot,
-  useVarianceInflationFactorRegressionResultPlot,
+  usePredictedResultsBaselineLine,
 } from './components';
 import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
 import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
   RegressionModelType,
-  RegressionVisualizationTypeEnum,
+  RegressionPredictionAPIHookType,
+  RegressionCoefficientsVisualizationTypeEnum,
+  StatisticalAnalysisPredictionResultRendererProps,
+  useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
+  REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
 } from './types';
 import { getRegressionCoefficientsVisualizationData } from './data';
 import { ResultCard } from '@/components/visual/result-card';
@@ -22,15 +28,24 @@ import { LogisticRegressionConfigType } from '../../configuration/logistic-regre
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import { formatConfidenceLevel } from './utils';
+import {
+  formatConfidenceInterval,
+  formatConfidenceLevel,
+  pValueToConfidenceLevel,
+} from './utils';
+import { generateColorsFromSequence } from '@/common/utils/colors';
+import { zip } from 'lodash-es';
+import { PlotParams } from 'react-plotly.js';
+import { client } from '@/common/api/client';
+import BaseRegressionVariablesInfoSection from './variables-info';
 
 const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  RegressionVisualizationTypeEnum.Coefficient,
-  RegressionVisualizationTypeEnum.ConfidenceLevel,
-  RegressionVisualizationTypeEnum.OddsRatio,
+  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
+  RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
+  RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
 ];
 
-export default function LogisticRegressionResultRenderer(
+export function LogisticRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
     LogisticRegressionResultModel,
     LogisticRegressionConfigType
@@ -41,6 +56,7 @@ export default function LogisticRegressionResultRenderer(
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
       supportedTypes: LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
+      dictionary: REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
     });
   const visdata = React.useMemo(() => {
     return getRegressionCoefficientsVisualizationData({
@@ -49,14 +65,6 @@ export default function LogisticRegressionResultRenderer(
     });
   }, [data.coefficients]);
 
-  const vifPlot = useVarianceInflationFactorRegressionResultPlot({
-    coefficients: visdata.coefficients,
-    type,
-  });
-  const sampleSizePlot = useSampleSizeRegressionResultPlot({
-    coefficients: visdata.coefficients,
-    type,
-  });
   const commonProps = {
     alpha,
     type,
@@ -66,12 +74,7 @@ export default function LogisticRegressionResultRenderer(
   const confidenceLevelPlot =
     useConfidenceLevelRegressionResultPlot(commonProps);
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
-  const usedPlot =
-    sampleSizePlot ??
-    vifPlot ??
-    coefficientPlot ??
-    confidenceLevelPlot ??
-    oddsRatioPlot;
+  const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
   return (
     <Stack>
       <StatisticTestWarningsRenderer warnings={data.warnings} />
@@ -116,5 +119,111 @@ export default function LogisticRegressionResultRenderer(
       {AlphaSlider}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
+  );
+}
+
+export function LogisticRegressionPredictionResultRenderer(
+  props: StatisticalAnalysisPredictionResultRendererProps<
+    LogisticRegressionPredictionResultModel,
+    LogisticRegressionConfigType
+  >,
+) {
+  const { result } = props;
+  return (
+    <ResultCard label="Predicted Probability" value={result.probability} />
+  );
+}
+
+export function DefaultLogisticRegressionPredictionResultRenderer(
+  props: BaseStatisticalAnalysisResultRendererProps<
+    LogisticRegressionResultModel,
+    LogisticRegressionConfigType
+  >,
+) {
+  const { data, config } = props;
+  const baselineLayout = usePredictedResultsBaselineLine({
+    baseline: data.baseline_prediction.probability,
+    percentage: true,
+  });
+
+  const plot = React.useMemo<PlotParams>(() => {
+    const { colors } = generateColorsFromSequence(data.independent_variables);
+    return {
+      data: [
+        {
+          x: data.independent_variables.map((variable) => variable.name),
+          y: data.predictions.map((prediction) => prediction.probability),
+          type: 'bar',
+          customdata: zip(
+            data.coefficients.map((coefficient) => coefficient.odds_ratio),
+            data.coefficients.map((coefficient) =>
+              formatConfidenceInterval(
+                coefficient.odds_ratio_confidence_interval,
+              ),
+            ),
+            data.coefficients.map((coefficient) =>
+              pValueToConfidenceLevel(coefficient.p_value),
+            ),
+          ),
+          hovertemplate: [
+            '<b>Independent Variable</b>: %{x}',
+            '<b>Predicted Probability</b>: %{y}',
+            '<b>Odds Ratio</b>: %{customdata[0]}',
+            '<b>Confidence Interval</b>: %{customdata[1]}',
+            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
+          ].join('<br>'),
+          marker: {
+            color: colors,
+          },
+        },
+      ],
+      layout: {
+        title: `Predicted Probabilities of ${config.target} per Independent Variable`,
+        xaxis: {
+          title: 'Independent Variables (Subdatasets)',
+        },
+        yaxis: {
+          title: `Predicted Probability`,
+        },
+        ...baselineLayout,
+      },
+    } as PlotParams;
+  }, [
+    baselineLayout,
+    config.target,
+    data.coefficients,
+    data.independent_variables,
+    data.predictions,
+  ]);
+  return <PlotRenderer plot={plot} />;
+}
+
+export const useLogisticRegressionPredictionAPIHook: RegressionPredictionAPIHookType<
+  LogisticRegressionPredictionResultModel,
+  LogisticRegressionConfigType
+> = function (params) {
+  const { input } = params;
+  const mutationResult = client.useMutation(
+    'post',
+    '/statistical-analysis/{project_id}/regression/prediction/logistic',
+  );
+  return useAdaptMutationToRegressionPredictionAPIResult<LogisticRegressionPredictionResultModel>(
+    input,
+    mutationResult,
+  );
+};
+
+export function LogisticRegressionVariablesInfoSection(
+  props: BaseStatisticalAnalysisResultRendererProps<
+    LogisticRegressionResultModel,
+    LogisticRegressionConfigType
+  >,
+) {
+  const { data } = props;
+  return (
+    <BaseRegressionVariablesInfoSection
+      independentVariables={data.independent_variables}
+      dependentVariableLevels={undefined}
+    />
   );
 }

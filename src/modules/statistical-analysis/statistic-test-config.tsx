@@ -73,10 +73,6 @@ import {
   LogisticRegressionConfigType,
   logisticRegressionInputSchema,
 } from './configuration/logistic-regression';
-import LogisticRegressionResultRenderer from './components/regression/logistic';
-import MultinomialLogisticRegressionResultRenderer from './components/regression/multinomial-logistic';
-import OrdinalRegressionResultRenderer from './components/regression/ordinal';
-import LinearRegressionResultRenderer from './components/regression/linear';
 import {
   BinaryContingencyTableConfigForm,
   binaryContingencyTableFormSchema,
@@ -94,6 +90,8 @@ import {
   useOmnibusStatisticTestDataProvider,
   usePairwiseTwoSampleStatisticTestDataProvider,
 } from './data-provider/statistic-test';
+import { RegressionResultRenderer } from './components/regression';
+import { RegressionModelType } from './components/regression/types';
 
 function getBasicStatisticTestParams(config: {
   column: string;
@@ -144,7 +142,14 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
 > = {
   [StatisticalAnalysisPurpose.LinearRegression]: {
     type: StatisticalAnalysisPurpose.LinearRegression,
-    component: LinearRegressionResultRenderer,
+    component(props) {
+      return (
+        <RegressionResultRenderer
+          {...props}
+          modelType={RegressionModelType.Linear}
+        />
+      );
+    },
     configForm: LinearRegressionConfigForm,
     configValidator: linearRegressionInputSchema,
     dataProvider: useLinearRegressionDataProvider,
@@ -165,7 +170,14 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
   >,
   [StatisticalAnalysisPurpose.LogisticRegression]: {
     type: StatisticalAnalysisPurpose.LogisticRegression,
-    component: LogisticRegressionResultRenderer,
+    component(props) {
+      return (
+        <RegressionResultRenderer
+          {...props}
+          modelType={RegressionModelType.Logistic}
+        />
+      );
+    },
     configForm: LogisticRegressionConfigForm,
     configValidator: logisticRegressionInputSchema,
     dataProvider: useLogisticRegressionDataProvider,
@@ -185,7 +197,14 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
   >,
   [StatisticalAnalysisPurpose.MultinomialLogisticRegression]: {
     type: StatisticalAnalysisPurpose.MultinomialLogisticRegression,
-    component: MultinomialLogisticRegressionResultRenderer,
+    component(props) {
+      return (
+        <RegressionResultRenderer
+          {...props}
+          modelType={RegressionModelType.MultinomialLogistic}
+        />
+      );
+    },
     configForm: MultinomialLogisticRegressionConfigForm,
     configValidator: multinomialLogisticRegressionInputSchema,
     dataProvider: useMultinomialLogisticRegressionDataProvider,
@@ -206,7 +225,14 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
   >,
   [StatisticalAnalysisPurpose.OrdinalRegression]: {
     type: StatisticalAnalysisPurpose.OrdinalRegression,
-    component: OrdinalRegressionResultRenderer,
+    component(props) {
+      return (
+        <RegressionResultRenderer
+          {...props}
+          modelType={RegressionModelType.Ordinal}
+        />
+      );
+    },
     configForm: OrdinalRegressionConfigForm,
     configValidator: regressionInputSchema,
     dataProvider: useOrdinalRegressionDataProvider,

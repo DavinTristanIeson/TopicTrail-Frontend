@@ -1,7 +1,4 @@
-import {
-  LogisticRegressionCoefficientModel,
-  RegressionCoefficientModel,
-} from '@/api/statistical-analysis';
+import { LogisticRegressionCoefficientModel } from '@/api/statistical-analysis';
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import {
@@ -16,13 +13,14 @@ import { merge, unzip, zip } from 'lodash-es';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import {
   UltimateRegressionCoefficientModel,
-  RegressionVisualizationTypeEnum,
+  RegressionCoefficientsVisualizationTypeEnum,
 } from './types';
 import { RegressionVisualizationData } from './data';
 import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
 import { pValueToConfidenceLevel } from './utils';
+import PlotRenderer from '@/components/widgets/plotly';
 
 interface UseAlphaConstrainedColorsProps {
   coefficients: UltimateRegressionCoefficientModel[];
@@ -77,7 +75,7 @@ function getConfidenceIntervalOffsets(
 }
 
 interface CommonRegressionResultPlotProps {
-  type: RegressionVisualizationTypeEnum;
+  type: RegressionCoefficientsVisualizationTypeEnum;
   alpha: number;
   data: RegressionVisualizationData;
   layout?: PlotParams['layout'];
@@ -89,7 +87,7 @@ export function useConfidenceLevelRegressionResultPlot(
   const { type, alpha, data, layout } = props;
   const { colors: mantineColors } = useMantineTheme();
   const plot = React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.ConfidenceLevel) {
+    if (type !== RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel) {
       return null;
     }
     const {
@@ -168,7 +166,7 @@ export function useOddsRatioRegressionResultPlot(
     alpha,
   });
   const plot = React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.OddsRatio) {
+    if (type !== RegressionCoefficientsVisualizationTypeEnum.OddsRatio) {
       return null;
     }
     const {
@@ -244,7 +242,7 @@ export function useCoefficientRegressionResultPlot(
     alpha,
   });
   const plot = React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.Coefficient) {
+    if (type !== RegressionCoefficientsVisualizationTypeEnum.Coefficient) {
       return null;
     }
     const {
@@ -287,123 +285,6 @@ export function useCoefficientRegressionResultPlot(
     } as PlotParams;
   }, [colors, data, layout, type]);
   return plot;
-}
-
-interface UseRegressionStatisticPlotProps {
-  coefficients: RegressionCoefficientModel[];
-  type: RegressionVisualizationTypeEnum;
-}
-
-export function useSampleSizeRegressionResultPlot(
-  props: UseRegressionStatisticPlotProps,
-) {
-  const { coefficients, type } = props;
-  const plot = React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.SampleSize) {
-      return null;
-    }
-    const x = coefficients.map((coefficient) => coefficient.name);
-    const y = coefficients.map((coefficient) => coefficient.sample_size);
-    const { colors } = generateColorsFromSequence(x);
-    return {
-      data: [
-        {
-          x,
-          y,
-          type: 'bar',
-          marker: {
-            color: colors,
-          },
-        },
-      ],
-      layout: {
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-        },
-        yaxis: {
-          title: 'Sample Size',
-          minallowed: 0,
-        },
-      },
-    } as PlotParams;
-  }, [coefficients, type]);
-  return plot;
-}
-
-interface UseVarianceInflationFactorRegressionResultPlotProps {
-  type: RegressionVisualizationTypeEnum;
-  coefficients: RegressionCoefficientModel[];
-}
-
-export function useVarianceInflationFactorRegressionResultPlot(
-  props: UseVarianceInflationFactorRegressionResultPlotProps,
-) {
-  const { type, coefficients } = props;
-  const mantineColors = useMantineTheme().colors;
-  return React.useMemo<PlotParams | null>(() => {
-    if (type !== RegressionVisualizationTypeEnum.VarianceInflationFactor) {
-      return null;
-    }
-
-    const VIFlineAnnotations: PlotParams['layout']['annotations'] = [
-      {
-        x: 0.1,
-        xref: 'paper',
-        y: 5,
-        yref: 'y',
-        text: 'Strong Multicollinearity',
-      },
-    ];
-    const VIFlineShapes: PlotParams['layout']['shapes'] = [
-      {
-        type: 'line',
-        xref: 'paper',
-        yref: 'y',
-        x0: 0,
-        x1: 1,
-        y0: 5,
-        y1: 5,
-        line: {
-          color: mantineColors.yellow[6],
-          width: 3,
-          dash: 'dash',
-        },
-      },
-    ];
-    const x = coefficients.map((coefficient) => coefficient.name);
-    const y = coefficients.map(
-      (coefficient) => coefficient.variance_inflation_factor,
-    );
-    const { colors } = generateColorsFromSequence(x);
-    return {
-      data: [
-        {
-          x,
-          y,
-          type: 'bar',
-          hovertemplate: [
-            'Independent Variable: %{x}',
-            'Variance Inflation Factor: %{y}',
-          ].join('<br>'),
-          marker: {
-            color: colors,
-          },
-        },
-      ],
-      layout: {
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-        },
-        yaxis: {
-          title: 'Variance Inflation Factory',
-          minallowed: 0,
-          range: [0, 6],
-        },
-        annotations: VIFlineAnnotations,
-        shapes: VIFlineShapes,
-      },
-    } as PlotParams;
-  }, [coefficients, mantineColors.yellow, type]);
 }
 
 interface UsePredictedResultsBaselineLineProps {
@@ -557,4 +438,38 @@ export function RegressionConvergenceResultRenderer(
       </Group>
     </TaskControlsCard>
   );
+}
+
+interface PredictedProbabilityDistributionPlotProps {
+  dependentVariableLevels: string[];
+  probabilities: number[];
+}
+
+export function PredictedProbabilityDistributionPlot(
+  props: PredictedProbabilityDistributionPlotProps,
+) {
+  const { dependentVariableLevels, probabilities } = props;
+  const plot = React.useMemo<PlotParams>(() => {
+    return {
+      data: [
+        {
+          x: dependentVariableLevels,
+          y: probabilities.map((probability) => probability * 100),
+        },
+      ],
+      layout: {
+        title: 'Predicted Probability Distribution',
+        xaxis: {
+          title: 'Levels',
+        },
+        yaxis: {
+          title: 'Probability',
+          minallowed: 0,
+          maxallowed: 100,
+          ticksuffix: '%',
+        },
+      },
+    };
+  }, [dependentVariableLevels, probabilities]);
+  return <PlotRenderer plot={plot} />;
 }

@@ -1,5 +1,4 @@
 import { ComparisonStateItemModel } from '@/api/comparison';
-import { LinearRegressionPredictionResultModel } from '@/api/statistical-analysis';
 import { useVisibleComparisonGroups } from '@/modules/comparison/app-state';
 import {
   Alert,
@@ -14,6 +13,9 @@ import {
 } from '@mantine/core';
 import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import React from 'react';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
+import { RegressionModelType } from './types';
+import REGRESSION_MODEL_CONFIG from './regression-model-config';
 
 interface RegressionModelPredictionInputCardProps {
   setInputState: React.Dispatch<React.SetStateAction<boolean[]>>;
@@ -46,19 +48,70 @@ function RegressionModelPredictionInputCard(
   );
 }
 
-interface RegressionModelPredictionSectionProps {
+interface RegressionModelPredictionSectionProps
+  extends BaseStatisticalAnalysisResultRendererProps<any, any> {
   modelId: string;
-  predictionsPerIndependentVariable: LinearRegressionPredictionResultModel[];
+  modelType: RegressionModelType;
+  reference: string | null;
 }
 
-export default function RegressionModelPredictionSection(
+function RegressionModelPredictionSection(
   props: RegressionModelPredictionSectionProps,
 ) {
-  const { modelId } = props;
-  const independentVariables = useVisibleComparisonGroups();
+  const { modelType, config, modelId, reference } = props;
+  const configEntry = REGRESSION_MODEL_CONFIG[modelType];
+  const { usePredictionAPI, PredictionsRenderer } = configEntry;
+
+  const independentVariables = useVisibleComparisonGroups().filter(
+    (group) => group.name !== reference,
+  );
   const [inputState, setInputState] = React.useState(
     Array(independentVariables.length).fill(false),
   );
+
+  const { data, execute, loading } = usePredictionAPI({
+    config,
+    input: {
+      model_id: modelId,
+      input: inputState.map((input) => Number(input)),
+    },
+  });
+
+  return (
+    <Stack>
+      <Text c="gray">
+        Choose the subdatasets to be used as input of the prediction task.
+      </Text>
+      {independentVariables.map((variable, idx) => {
+        return (
+          <RegressionModelPredictionInputCard
+            key={variable.name}
+            setInputState={setInputState}
+            index={idx}
+            inputState={inputState}
+            variable={variable}
+          />
+        );
+      })}
+      <Button loading={loading} onClick={execute}>
+        Predict
+      </Button>
+      {data && (
+        <>
+          <Divider />
+          <PredictionsRenderer config={config} result={data as any} />
+        </>
+      )}
+    </Stack>
+  );
+}
+
+export default function RegressionModelPredictionTab(
+  props: RegressionModelPredictionSectionProps,
+) {
+  const { data, modelType, config } = props;
+  const configEntry = REGRESSION_MODEL_CONFIG[modelType];
+  const { DefaultPredictionsRenderer } = configEntry;
 
   return (
     <div>
@@ -70,6 +123,7 @@ export default function RegressionModelPredictionSection(
           is a single independent variable. Use this to gauge the individual
           effects of each independent variable.
         </Alert>
+        <DefaultPredictionsRenderer config={config} data={data} />
 
         <Divider />
         <Title order={4}>Model Predictions</Title>
@@ -81,22 +135,7 @@ export default function RegressionModelPredictionSection(
           that produces probability distributions for you to consider in your
           analysis.
         </Alert>
-
-        <Text c="gray">
-          Choose the subdatasets to be used as input of the prediction task.
-        </Text>
-        {independentVariables.map((variable, idx) => {
-          return (
-            <RegressionModelPredictionInputCard
-              key={variable.name}
-              setInputState={setInputState}
-              index={idx}
-              inputState={inputState}
-              variable={variable}
-            />
-          );
-        })}
-        <Button>Predict</Button>
+        <RegressionModelPredictionSection {...props} />
       </Stack>
     </div>
   );

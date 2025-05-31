@@ -1337,8 +1337,8 @@ export interface components {
         BaseRegressionPredictionInput: {
             /** Model Id */
             model_id: string;
-            /** Active */
-            active: boolean[];
+            /** Input */
+            input: number[];
         };
         /** BinaryStatisticTestOnContingencyTableResultMainResource */
         BinaryStatisticTestOnContingencyTableResultMainResource: {
@@ -1976,7 +1976,7 @@ export interface components {
             /** Model Id */
             model_id: string;
             /** Independent Variables */
-            independent_variables: string[];
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
             /** Reference */
             reference: string | null;
             interpretation: components["schemas"]["RegressionInterpretation"];
@@ -2004,15 +2004,11 @@ export interface components {
             p_value: number;
             /** Std Err */
             std_err: number;
-            /** Sample Size */
-            sample_size: number;
             /** Confidence Interval */
             confidence_interval: [
                 number,
                 number
             ];
-            /** Variance Inflation Factor */
-            variance_inflation_factor: number;
             /** Statistic */
             statistic: number;
             /** Odds Ratio */
@@ -2055,7 +2051,7 @@ export interface components {
             /** Model Id */
             model_id: string;
             /** Independent Variables */
-            independent_variables: string[];
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
             /** Reference */
             reference: string | null;
             interpretation: components["schemas"]["RegressionInterpretation"];
@@ -2105,7 +2101,7 @@ export interface components {
             /** Model Id */
             model_id: string;
             /** Independent Variables */
-            independent_variables: string[];
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
             /** Reference */
             reference: string | null;
             interpretation: components["schemas"]["RegressionInterpretation"];
@@ -2113,10 +2109,10 @@ export interface components {
             sample_size: number;
             /** Warnings */
             warnings: string[];
-            /** Levels */
-            levels: string[];
             /** Reference Dependent */
             reference_dependent: string;
+            /** Levels */
+            levels: components["schemas"]["RegressionDependentVariableLevelInfo"][];
             /** Facets */
             facets: components["schemas"]["MultinomialLogisticRegressionFacetResult"][];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
@@ -2232,15 +2228,11 @@ export interface components {
             p_value: number;
             /** Std Err */
             std_err: number;
-            /** Sample Size */
-            sample_size: number;
             /** Confidence Interval */
             confidence_interval: [
                 number,
                 number
             ];
-            /** Variance Inflation Factor */
-            variance_inflation_factor: number;
             /** Statistic */
             statistic: number;
             /** Odds Ratio */
@@ -2274,13 +2266,6 @@ export interface components {
             /** Constrain By Groups */
             constrain_by_groups: boolean;
         };
-        /** OrdinalRegressionLevelSampleSize */
-        OrdinalRegressionLevelSampleSize: {
-            /** Name */
-            name: string;
-            /** Sample Size */
-            sample_size: number;
-        };
         /** OrdinalRegressionPredictionResult */
         OrdinalRegressionPredictionResult: {
             /** Latent Score */
@@ -2295,7 +2280,7 @@ export interface components {
             /** Model Id */
             model_id: string;
             /** Independent Variables */
-            independent_variables: string[];
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
             /** Reference */
             reference: string | null;
             interpretation: components["schemas"]["RegressionInterpretation"];
@@ -2307,14 +2292,12 @@ export interface components {
             coefficients: components["schemas"]["OrdinalRegressionCoefficient"][];
             /** Thresholds */
             thresholds: components["schemas"]["OrdinalRegressionThreshold"][];
-            /** Sample Sizes */
-            sample_sizes: components["schemas"]["OrdinalRegressionLevelSampleSize"][];
+            /** Levels */
+            levels: components["schemas"]["RegressionDependentVariableLevelInfo"][];
             fit_evaluation: components["schemas"]["OrdinalRegressionFitEvaluation"];
             /** Predictions */
             predictions: components["schemas"]["OrdinalRegressionPredictionResult"][];
             baseline_prediction: components["schemas"]["OrdinalRegressionPredictionResult"];
-            /** Levels */
-            levels: string[];
         };
         /** OrdinalRegressionThreshold */
         OrdinalRegressionThreshold: {
@@ -2421,17 +2404,29 @@ export interface components {
             p_value: number;
             /** Std Err */
             std_err: number;
-            /** Sample Size */
-            sample_size: number;
             /** Confidence Interval */
             confidence_interval: [
                 number,
                 number
             ];
-            /** Variance Inflation Factor */
-            variance_inflation_factor: number;
             /** Statistic */
             statistic: number;
+        };
+        /** RegressionDependentVariableLevelInfo */
+        RegressionDependentVariableLevelInfo: {
+            /** Name */
+            name: string;
+            /** Sample Size */
+            sample_size: number;
+        };
+        /** RegressionIndependentVariableInfo */
+        RegressionIndependentVariableInfo: {
+            /** Name */
+            name: string;
+            /** Sample Size */
+            sample_size: number;
+            /** Vif */
+            VIF: number;
         };
         /**
          * RegressionInterpretation

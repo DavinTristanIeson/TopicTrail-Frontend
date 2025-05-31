@@ -1,10 +1,12 @@
-import { LinearRegressionResultModel } from '@/api/statistical-analysis';
+import {
+  LinearRegressionPredictionResultModel,
+  LinearRegressionResultModel,
+} from '@/api/statistical-analysis';
 import {
   RegressionInterceptResultRenderer,
   useCoefficientRegressionResultPlot,
   useConfidenceLevelRegressionResultPlot,
-  useSampleSizeRegressionResultPlot,
-  useVarianceInflationFactorRegressionResultPlot,
+  usePredictedResultsBaselineLine,
 } from './components';
 import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
 import { Group, Stack } from '@mantine/core';
@@ -15,24 +17,35 @@ import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { getRegressionCoefficientsVisualizationData } from './data';
 import {
   RegressionModelType,
-  RegressionVisualizationTypeEnum,
+  RegressionPredictionAPIHookType,
+  RegressionCoefficientsVisualizationTypeEnum,
+  StatisticalAnalysisPredictionResultRendererProps,
+  useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
+  REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
 } from './types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import { formatConfidenceLevel } from './utils';
+import {
+  formatConfidenceInterval,
+  formatConfidenceLevel,
+  pValueToConfidenceLevel,
+} from './utils';
+import { generateColorsFromSequence } from '@/common/utils/colors';
+import { zip } from 'lodash-es';
+import { PlotParams } from 'react-plotly.js';
+import { client } from '@/common/api/client';
+import BaseRegressionVariablesInfoSection from './variables-info';
 
 const LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES = [
-  RegressionVisualizationTypeEnum.Coefficient,
-  RegressionVisualizationTypeEnum.SampleSize,
-  RegressionVisualizationTypeEnum.VarianceInflationFactor,
+  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
 ];
 const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   ...LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES,
-  RegressionVisualizationTypeEnum.ConfidenceLevel,
+  RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
 ];
 
-export default function LinearRegressionResultRenderer(
+export function LinearRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
     LinearRegressionResultModel,
     LinearRegressionConfigType
@@ -47,6 +60,7 @@ export default function LinearRegressionResultRenderer(
       supportedTypes: config.standardized
         ? LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES
         : LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES,
+      dictionary: REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
     });
   const visdata = React.useMemo(() => {
     return getRegressionCoefficientsVisualizationData({
@@ -64,16 +78,7 @@ export default function LinearRegressionResultRenderer(
   const confidenceLevelPlot =
     useConfidenceLevelRegressionResultPlot(commonProps);
 
-  const vifPlot = useVarianceInflationFactorRegressionResultPlot({
-    coefficients: data.coefficients,
-    type,
-  });
-  const sampleSizePlot = useSampleSizeRegressionResultPlot({
-    coefficients: data.coefficients,
-    type,
-  });
-  const usedPlot =
-    sampleSizePlot ?? vifPlot ?? coefficientPlot ?? confidenceLevelPlot;
+  const usedPlot = coefficientPlot ?? confidenceLevelPlot;
   return (
     <Stack>
       <StatisticTestWarningsRenderer warnings={data.warnings} />
@@ -119,5 +124,108 @@ export default function LinearRegressionResultRenderer(
       {AlphaSlider}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
+  );
+}
+
+export function LinearRegressionPredictionResultRenderer(
+  props: StatisticalAnalysisPredictionResultRendererProps<
+    LinearRegressionPredictionResultModel,
+    LinearRegressionConfigType
+  >,
+) {
+  const { result } = props;
+  return <ResultCard label="Predicted Mean" value={result.mean} />;
+}
+
+export function DefaultLinearRegressionPredictionResultRenderer(
+  props: BaseStatisticalAnalysisResultRendererProps<
+    LinearRegressionResultModel,
+    LinearRegressionConfigType
+  >,
+) {
+  const { data, config } = props;
+  const baselineLayout = usePredictedResultsBaselineLine({
+    baseline: data.baseline_prediction.mean,
+  });
+  const plot = React.useMemo<PlotParams>(() => {
+    const { colors } = generateColorsFromSequence(
+      data.coefficients.map((coefficient) => coefficient.name),
+    );
+
+    return {
+      data: [
+        {
+          x: data.independent_variables.map((variable) => variable.name),
+          y: data.predictions.map((prediction) => prediction.mean),
+          type: 'bar',
+          customdata: zip(
+            data.coefficients.map((coefficient) => coefficient.statistic),
+            data.coefficients.map((coefficient) =>
+              formatConfidenceInterval(coefficient.confidence_interval),
+            ),
+            data.coefficients.map((coefficient) =>
+              pValueToConfidenceLevel(coefficient.p_value),
+            ),
+          ),
+          hovertemplate: [
+            '<b>Independent Variable</b>: %{x}',
+            '<b>Predicted Mean</b>: %{y}',
+            '<b>Coefficient</b>: %{customdata[0]}',
+            '<b>Confidence Interval</b>: %{customdata[1]}',
+            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
+          ].join('<br>'),
+          marker: {
+            color: colors,
+          },
+        },
+      ],
+      layout: {
+        title: `Predicted Means of ${config.target} per Independent Variable`,
+        xaxis: {
+          title: 'Independent Variables (Subdatasets)',
+        },
+        yaxis: {
+          title: `Predicted Mean`,
+        },
+        ...baselineLayout,
+      },
+    } as PlotParams;
+  }, [
+    data.independent_variables,
+    data.predictions,
+    data.coefficients,
+    config.target,
+    baselineLayout,
+  ]);
+  return <PlotRenderer plot={plot} />;
+}
+
+export const useLinearRegressionPredictionAPIHook: RegressionPredictionAPIHookType<
+  LinearRegressionPredictionResultModel,
+  LinearRegressionConfigType
+> = function (params) {
+  const { input } = params;
+  const mutationResult = client.useMutation(
+    'post',
+    '/statistical-analysis/{project_id}/regression/prediction/linear',
+  );
+  return useAdaptMutationToRegressionPredictionAPIResult<LinearRegressionPredictionResultModel>(
+    input,
+    mutationResult,
+  );
+};
+
+export function LinearRegressionVariablesInfoSection(
+  props: BaseStatisticalAnalysisResultRendererProps<
+    LinearRegressionResultModel,
+    LinearRegressionConfigType
+  >,
+) {
+  const { data } = props;
+  return (
+    <BaseRegressionVariablesInfoSection
+      independentVariables={data.independent_variables}
+      dependentVariableLevels={undefined}
+    />
   );
 }

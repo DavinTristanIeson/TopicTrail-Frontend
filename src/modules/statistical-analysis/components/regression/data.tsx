@@ -29,9 +29,6 @@ export function getRegressionCoefficientsVisualizationData(
   );
   const pValues = coefficients.map((coefficient) => coefficient.p_value);
   const confidenceLevels = pValues.map(pValueToConfidenceLevel);
-  const sampleSizes = coefficients.map(
-    (coefficient) => coefficient.sample_size,
-  );
   const confidenceIntervals = coefficients.map(
     (coefficient) => coefficient.confidence_interval,
   );
@@ -40,9 +37,6 @@ export function getRegressionCoefficientsVisualizationData(
   );
   const statistics = coefficients.map((coefficient) => coefficient.statistic);
   const standardErrors = coefficients.map((coefficient) => coefficient.std_err);
-  const varianceInflationFactors = coefficients.map(
-    (coefficient) => coefficient.variance_inflation_factor,
-  );
   const oddsRatios = withOdds
     ? coefficients.map(
         (coefficient) =>
@@ -70,9 +64,6 @@ export function getRegressionCoefficientsVisualizationData(
     ),
     statistics.map((value) => value ?? '-'),
     standardErrors.map((value) => value ?? '-'),
-
-    sampleSizes.map((value) => value ?? '-'),
-    varianceInflationFactors.map((value) => value ?? '-'),
   ] as any[];
 
   const customdata = zip(...rawCustomdata);
@@ -91,9 +82,6 @@ export function getRegressionCoefficientsVisualizationData(
     '<b>Confidence</b>: %{customdata[6]:.3f}%',
     `<b>${statisticName}</b>: %{customdata[7]}`,
     '<b>Standard Error</b>: %{customdata[8]}',
-    '='.repeat(30),
-    '<b>Sample Size</b>: %{customdata[9]}',
-    '<b>Variance Inflation Factor</b>: %{customdata[10]}',
   ].join('<br>');
   return {
     customdata,
@@ -113,8 +101,6 @@ export function getRegressionCoefficientsVisualizationData(
     confidenceLevels,
     statistics,
     confidenceIntervalStrings,
-    sampleSizes,
-    varianceInflationFactors,
 
     oddsRatios: oddsRatios,
     oddsRatioConfidenceIntervals,
