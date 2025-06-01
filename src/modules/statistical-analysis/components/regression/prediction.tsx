@@ -66,7 +66,7 @@ interface RegressionModelPredictionSectionProps
 function RegressionModelPredictionSection(
   props: RegressionModelPredictionSectionProps,
 ) {
-  const { modelType, config, modelId, reference, data } = props;
+  const { modelType, config, modelId, reference } = props;
   const configEntry = REGRESSION_MODEL_CONFIG[modelType];
   const { usePredictionAPI, PredictionsRenderer } = configEntry;
 
@@ -117,11 +117,7 @@ function RegressionModelPredictionSection(
       {prediction ? (
         <>
           <Divider />
-          <PredictionsRenderer
-            config={config}
-            result={prediction as any}
-            data={data}
-          />
+          <PredictionsRenderer config={config} result={prediction as any} />
         </>
       ) : (
         <Space h={100} />

@@ -119,6 +119,7 @@ export function useConfidenceLevelRegressionResultPlot(
           title: 'Confidence Level of Each Coefficient',
           xaxis: {
             title: xaxisTitle,
+            type: 'category',
           },
           yaxis: {
             title: 'Confidence Level (%)',
@@ -205,6 +206,7 @@ export function useOddsRatioRegressionResultPlot(
           title: 'Odds Ratio of Each Coefficient',
           xaxis: {
             title: xaxisTitle,
+            type: 'category',
           },
           yaxis: {
             title: 'Odds Ratio (Log-Scaled)',
@@ -276,6 +278,7 @@ export function useCoefficientRegressionResultPlot(
           title: 'Coefficients',
           xaxis: {
             title: xaxisTitle,
+            type: 'category',
           },
           yaxis: {
             title: 'Coefficient Value',
@@ -468,6 +471,7 @@ export function PredictedProbabilityDistributionPlot(
         title: title ?? 'Predicted Probability Distribution',
         xaxis: {
           title: 'Levels',
+          type: 'category',
         },
         yaxis: {
           title: 'Probability',

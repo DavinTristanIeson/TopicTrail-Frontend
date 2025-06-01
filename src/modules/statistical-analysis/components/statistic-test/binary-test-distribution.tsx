@@ -221,6 +221,7 @@ export default function BinaryStatisticTestOnDistributionResultRenderer(
         },
         xaxis: {
           title: 'Subdatasets',
+          type: 'category',
         },
       },
     };
@@ -257,6 +258,7 @@ export default function BinaryStatisticTestOnDistributionResultRenderer(
         },
         xaxis: {
           title: 'Subdatasets',
+          type: 'category',
         },
       },
     };
@@ -294,6 +296,7 @@ export default function BinaryStatisticTestOnDistributionResultRenderer(
         },
         xaxis: {
           title: 'Subdatasets',
+          type: 'category',
         },
       },
     };

@@ -122,6 +122,7 @@ export default function VisualizationFrequencyDistributionComponent(
           yaxis: {
             title: 'Subdatasets',
             autorange: 'reversed',
+            type: 'category',
           },
         },
       };

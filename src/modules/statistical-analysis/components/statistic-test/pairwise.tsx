@@ -182,9 +182,11 @@ export function PairwiseStatisticTestResultRenderer(
           title: 'Subdatasets',
           automargin: true,
           autorange: 'reversed',
+          type: 'category',
         },
         xaxis: {
           title: 'Subdatasets',
+          type: 'category',
           automargin: true,
         },
       },

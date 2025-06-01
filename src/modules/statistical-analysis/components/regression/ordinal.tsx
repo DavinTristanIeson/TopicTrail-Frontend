@@ -90,10 +90,11 @@ function OrdinalRegressionThresholdsRenderer(
         height: 300,
         title: 'Thresholds of the Dependent Variable Levels',
         xaxis: {
-          title: 'Thresholds',
+          title: 'Levels',
+          type: 'category',
         },
         yaxis: {
-          title: 'Levels',
+          title: 'Thresholds',
         },
         barmode: 'stack',
       },
@@ -311,6 +312,7 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
         title: `Predicted Latent Score of ${config.target} per Independent Variable`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
+          type: 'category',
         },
         yaxis: {
           title: `Predicted Latent Score`,
@@ -395,10 +397,12 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
         title: `Predicted ${probabilityLabel} of ${config.target}`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
+          type: 'category',
         },
         yaxis: {
           title: `Dependent Variable Levels`,
           autorange: 'reversed',
+          type: 'category',
         },
       },
     } as PlotParams;
@@ -415,15 +419,13 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
 
   const namedData = React.useMemo(
     () =>
-      zip(data.predictions, data.independent_variables).map(
-        ([prediction, variable]) => {
-          return {
-            name: variable!.name,
-            data: prediction!,
-          };
-        },
-      ),
-    [data.independent_variables, data.predictions],
+      zip(data.predictions, data.coefficients).map(([prediction, variable]) => {
+        return {
+          name: variable!.name,
+          data: prediction!,
+        };
+      }),
+    [data.coefficients, data.predictions],
   );
   const {
     selectProps,
@@ -449,6 +451,14 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
       OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
         ? cumulativeProbabilities
         : probabilities;
+    const baselineProbabilities =
+      display ===
+      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+        ? data.baseline_prediction.cumulative_probabilities
+        : data.baseline_prediction.probabilities;
+    const baselineY = baselineProbabilities.map(
+      (probability) => probability * 100,
+    );
 
     const confidenceLevels = data.coefficients.map((coefficient) =>
       coefficient ? pValueToConfidenceLevel(coefficient.p_value) : 'None',
@@ -472,6 +482,7 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     return {
       data: [
         {
+          name: independentVariableData.name,
           x,
           y,
           type: 'bar',
@@ -487,11 +498,22 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
             '<b>Confidence Level</b>: %{customdata[4]:.3f}%',
           ].join('<br>'),
         },
+        {
+          name: 'Baseline',
+          x,
+          y: baselineY,
+          type: 'bar',
+          hovertemplate: [
+            '<b>Dependent Variable Level</b>: %{x}',
+            '<b>Predicted Probability</b>: %{y:.3f}',
+          ],
+        },
       ],
       layout: {
         title: `Predicted ${probabilityLabel} of ${config.target} (Input: ${independentVariableData.name})`,
         xaxis: {
           title: 'Dependent Variable Levels',
+          type: 'category',
         },
         yaxis: {
           title: `Probability`,
@@ -503,6 +525,8 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     } as PlotParams;
   }, [
     config.target,
+    data.baseline_prediction.cumulative_probabilities,
+    data.baseline_prediction.probabilities,
     data.coefficients,
     display,
     independentVariableData,

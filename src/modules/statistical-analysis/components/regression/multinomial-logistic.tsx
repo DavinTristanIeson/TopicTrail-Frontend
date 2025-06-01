@@ -131,6 +131,7 @@ function prepareCompareFacetsCoefficientsData(
   if (type !== RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel) {
     grandZ = mask2D(grandZ, invalidMask, undefined) as number[][];
   }
+
   const customdata = facetData.map((facet) => facet.customdata);
 
   // Axis
@@ -149,14 +150,10 @@ function prepareCompareFacetsCoefficientsData(
     zmax = 100;
   } else if (type === RegressionCoefficientsVisualizationTypeEnum.OddsRatio) {
     zmin = 0;
-    zmax = getRawHeatmapZRange(
-      mask2D(grandZ, invalidMask, undefined) as number[][],
-    )[1];
+    zmax = getRawHeatmapZRange(grandZ as number[][])[1];
     colorscale = 'Viridis';
   } else {
-    [zmin, zmax] = getBalancedHeatmapZRange(
-      mask2D(grandZ, invalidMask, undefined) as number[][],
-    );
+    [zmin, zmax] = getBalancedHeatmapZRange(grandZ as number[][]);
     colorscale = 'RdBu';
   }
 
@@ -165,10 +162,8 @@ function prepareCompareFacetsCoefficientsData(
     facetData,
     invalidMask,
     z: grandZ,
-    // Facets to the right
-    x: facetLevels,
-    // Subdatasets to the side
-    y: variables,
+    x: variables,
+    y: facetLevels,
     customdata,
     hovertemplate,
     zmin,
@@ -240,9 +235,11 @@ function useCompareLogisticRegressionResultPlot(
         title: configEntry.label,
         xaxis: {
           title: `Levels of ${config.target}`,
+          type: 'category',
         },
         yaxis: {
           title: yaxisTitle,
+          type: 'category',
         },
       },
     };
@@ -479,9 +476,10 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
   >,
 ) {
   const { data, config } = props;
+  console.log(data.facets[0]?.coefficients, data.predictions);
   const namedData = React.useMemo(
     () =>
-      zip(data.predictions, data.independent_variables).map(
+      zip(data.predictions, data.facets[0]!.coefficients).map(
         ([prediction, variable]) => {
           return {
             name: variable!.name,
@@ -489,7 +487,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
           };
         },
       ),
-    [data.independent_variables, data.predictions],
+    [data.facets, data.predictions],
   );
   const {
     selectProps,
@@ -501,7 +499,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
   });
   const wholePlot = React.useMemo<PlotParams>(() => {
     const y = [
-      data.reference ?? 'Baseline',
+      'Baseline',
       ...data.independent_variables.map((variable) => variable.name),
     ];
     const x = data.levels.map((level) => level.name);
@@ -511,7 +509,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
       return prediction.probabilities.map((probability) => probability * 100);
     });
     const confidenceLevels = (
-      [x.map(() => 'None')] as unknown as number[][]
+      [data.independent_variables.map(() => 'None')] as unknown as number[][]
     ).concat(
       data.facets.map((facet) =>
         facet.coefficients.map((coefficient) =>
@@ -519,12 +517,16 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
         ),
       ),
     );
-    const oddsRatio = ([x.map(() => 'None')] as unknown as number[][]).concat(
+    const oddsRatio = (
+      [data.independent_variables.map(() => 'None')] as unknown as number[][]
+    ).concat(
       data.facets.map((facet) =>
         facet.coefficients.map((coefficient) => coefficient.odds_ratio),
       ),
     );
-    const oddsRatioConfidenceIntervals = [x.map(() => 'None')].concat(
+    const oddsRatioConfidenceIntervals = [
+      data.independent_variables.map(() => 'None'),
+    ].concat(
       data.facets.map((facet) =>
         facet.coefficients.map((coefficient) =>
           formatConfidenceInterval(coefficient.odds_ratio_confidence_interval),
@@ -536,6 +538,15 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
       oddsRatioConfidenceIntervals,
       confidenceLevels,
     ]);
+    console.log(
+      x,
+      y,
+      z,
+      customdata,
+      oddsRatio,
+      oddsRatioConfidenceIntervals,
+      confidenceLevels,
+    );
 
     return {
       data: [
@@ -564,15 +575,16 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
         title: `Predicted Probabilities for Levels of ${config.target}`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
+          type: 'category',
         },
         yaxis: {
           title: `Dependent Variable Levels`,
           autorange: 'reversed',
+          type: 'category',
         },
       },
     } as PlotParams;
   }, [
-    data.reference,
     data.independent_variables,
     data.levels,
     data.baseline_prediction,
@@ -584,7 +596,13 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
   const independentVariablePlot = React.useMemo<PlotParams | null>(() => {
     if (!independentVariableData) return null;
     const x = independentVariableData.data.levels;
-    const y = independentVariableData.data.probabilities;
+    const y = independentVariableData.data.probabilities.map(
+      (probability) => probability * 100,
+    );
+
+    const baseline = data.baseline_prediction.probabilities.map(
+      (probability) => probability * 100,
+    );
 
     const coefficients = data.facets.map((facet) =>
       facet.coefficients.find(
@@ -612,6 +630,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
     return {
       data: [
         {
+          name: independentVariableData.name,
           x,
           y,
           type: 'bar',
@@ -626,11 +645,22 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
             '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
           ].join('<br>'),
         },
+        {
+          name: 'Baseline',
+          x,
+          y: baseline,
+          type: 'bar',
+          hovertemplate: [
+            '<b>Dependent Variable Level</b>: %{x}',
+            '<b>Predicted Probability</b>: %{y:.3f}',
+          ],
+        },
       ],
       layout: {
         title: `Predicted Probabilities for Levels of ${config.target} (Input: ${independentVariableData.name})`,
         xaxis: {
           title: 'Dependent Variable Levels',
+          type: 'category',
         },
         yaxis: {
           title: `Probability`,
@@ -640,7 +670,12 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
         },
       },
     } as PlotParams;
-  }, [config.target, data.facets, independentVariableData]);
+  }, [
+    config.target,
+    data.baseline_prediction.probabilities,
+    data.facets,
+    independentVariableData,
+  ]);
 
   const usedPlot = independentVariablePlot ?? wholePlot;
 

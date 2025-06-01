@@ -184,6 +184,7 @@ export function DefaultLinearRegressionPredictionResultRenderer(
         title: `Predicted Means of ${config.target} per Independent Variable`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
+          type: 'category',
         },
         yaxis: {
           title: `Predicted Mean`,

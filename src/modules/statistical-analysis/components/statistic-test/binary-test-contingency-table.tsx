@@ -241,10 +241,12 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           title: 'Subdatasets',
           automargin: true,
           autorange: 'reversed',
+          type: 'category',
         },
         xaxis: {
           title: config.column,
           automargin: true,
+          type: 'category',
         },
       },
     };
@@ -278,8 +280,10 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           title: 'Subdatasets',
           automargin: true,
           autorange: 'reversed',
+          type: 'category',
         },
         xaxis: {
+          type: 'category',
           title: config.column,
           automargin: true,
         },

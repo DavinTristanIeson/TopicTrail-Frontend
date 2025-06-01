@@ -150,10 +150,12 @@ export default function SubdatasetCooccurrenceResultRenderer(
         title: title,
         xaxis: {
           title: 'Subdatasets',
+          type: 'category',
         },
         yaxis: {
           title: 'Subdatasets',
           autorange: 'reversed',
+          type: 'category',
         },
       },
     };

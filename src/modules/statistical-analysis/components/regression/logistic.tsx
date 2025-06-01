@@ -186,6 +186,7 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
         title: `Predicted Probabilities of ${config.target.name} per Independent Variable`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
+          type: 'category',
         },
         yaxis: {
           title: `Predicted Probability`,
