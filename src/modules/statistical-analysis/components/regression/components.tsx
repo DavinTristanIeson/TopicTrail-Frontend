@@ -68,8 +68,8 @@ function getConfidenceIntervalOffsets(
   return {
     type: 'data',
     symmetric: false,
-    array: confidenceIntervalMinus,
-    arrayminus: confidenceIntervalPlus,
+    array: confidenceIntervalPlus,
+    arrayminus: confidenceIntervalMinus,
     visible: true,
   };
 }

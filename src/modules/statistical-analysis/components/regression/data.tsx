@@ -50,13 +50,16 @@ export function getRegressionCoefficientsVisualizationData(
             .odds_ratio_confidence_interval,
       )
     : null;
+  const oddsRatioConfidenceIntervalStrings = oddsRatioConfidenceIntervals?.map(
+    formatConfidenceInterval,
+  );
 
   const rawCustomdata = [
     independentVariables,
     coefficientValues.map((value) => value ?? '-'),
     confidenceIntervalStrings,
     oddsRatios?.map((value) => value ?? '-') ?? [],
-    oddsRatioConfidenceIntervals ?? [],
+    oddsRatioConfidenceIntervalStrings ?? [],
 
     pValues.map((value) => value ?? '-'),
     confidenceLevels.map((value) =>
@@ -75,7 +78,7 @@ export function getRegressionCoefficientsVisualizationData(
     ...maybeElement(withOdds, [
       '='.repeat(30),
       '<b>Odds Ratio</b>: %{customdata[3]}',
-      '<b>Confidence Interval</b>: %{customdata[3]}',
+      '<b>Confidence Interval</b>: %{customdata[4]}',
     ]),
     '='.repeat(30),
     '<b>P-Value</b>: %{customdata[5]}',

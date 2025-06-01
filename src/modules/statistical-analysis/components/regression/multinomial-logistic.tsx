@@ -54,6 +54,24 @@ const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
 ];
 
+enum ConfidenceIntervalDisplay {
+  LowerBound = 'lower-bound',
+  Value = 'value',
+  UpperBound = 'upper-bound',
+}
+
+function useMultinomialLogisticConfidenceIntervalDisplay() {
+  const [display, setDisplay] = React.useState(ConfidenceIntervalDisplay.Value);
+  const Component = (
+    <Select
+      label="Display which value?"
+      description="Pick which value of the coefficient/odds ratio to be displayed, such as the lower bound, value, or the upper bound of the confidence interval."
+      data={}
+    />
+  );
+  return display;
+}
+
 interface UseMultinomialLogisticRegressionViewedDependentVariableLevelProps {
   result: MultinomialLogisticRegressionResultModel;
 }

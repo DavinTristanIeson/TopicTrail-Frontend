@@ -16,14 +16,28 @@ import {
 } from '@/modules/filter/drawer/form-type';
 import { useCheckFilterValidity } from '@/modules/filter/management/hooks';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Drawer, Group, TextInput } from '@mantine/core';
+import {
+  Button,
+  Drawer,
+  Group,
+  Indicator,
+  TextInput,
+  Tooltip,
+} from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import React from 'react';
-import { useForm, useFormContext, useWatch } from 'react-hook-form';
+import {
+  useForm,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 import * as Yup from 'yup';
 import { CommonRegressionConfigForm } from './regression-common';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { PencilSimple } from '@phosphor-icons/react';
+import { get } from 'lodash-es';
+import { getAnyError } from '@/common/utils/error';
 
 interface LogisticRegressionFilterDrawerContents {
   onClose(): void;
@@ -52,8 +66,11 @@ function LogisticRegressionFilterDrawerContents(
   props: LogisticRegressionFilterDrawerContents,
 ) {
   const { onClose } = props;
-  const { getValues: getGlobalValues, setValue: setGlobalValue } =
-    useFormContext<LogisticRegressionConfigType>();
+  const {
+    getValues: getGlobalValues,
+    setValue: setGlobalValue,
+    clearErrors: clearGlobalErrors,
+  } = useFormContext<LogisticRegressionConfigType>();
 
   const defaultValues = React.useMemo(() => {
     return (
@@ -79,12 +96,13 @@ function LogisticRegressionFilterDrawerContents(
       payload.filter = await checkFilter(payload.filter);
       setGlobalValue('target', payload as any);
       onClose();
+      clearGlobalErrors();
       showNotification({
         message: 'The dependent variable has been updated successfully',
         color: 'green',
       });
     },
-    [checkFilter, onClose, setGlobalValue],
+    [checkFilter, clearGlobalErrors, onClose, setGlobalValue],
   );
 
   const loadFilter = React.useCallback(
@@ -145,6 +163,11 @@ function LogisticRegressionDependentVariableField() {
     name: 'target',
   });
   const remote = React.useRef<DisclosureTrigger | null>(null);
+  const { errors } = useFormState({
+    name: 'target',
+  });
+  const targetErrors = get(errors, 'target');
+  const actualErrorMessage = getAnyError(targetErrors)?.message;
 
   return (
     <>
@@ -153,16 +176,25 @@ function LogisticRegressionDependentVariableField() {
         value={target?.name}
         required
         description="Create a filter on the dataset as the dependent variable to be predicted. The dependent variable is a series of boolean values that indicates whether a row is included in the filter or not."
+        error={actualErrorMessage}
         readOnly
         inputContainer={(children) => (
           <Group align="flex-start">
             <div className="flex-1">{children}</div>
-            <Button
-              leftSection={<PencilSimple />}
-              onClick={() => remote.current?.open()}
+            <Tooltip
+              label="There are errors in your filter. Please fix them first."
+              disabled={!targetErrors}
+              color="red"
             >
-              Edit
-            </Button>
+              <Indicator disabled={!targetErrors} color="red">
+                <Button
+                  leftSection={<PencilSimple />}
+                  onClick={() => remote.current?.open()}
+                >
+                  Edit
+                </Button>
+              </Indicator>
+            </Tooltip>
           </Group>
         )}
       />

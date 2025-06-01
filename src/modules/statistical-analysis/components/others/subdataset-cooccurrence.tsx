@@ -4,7 +4,6 @@ import { PlotParams } from 'react-plotly.js';
 import PlotRenderer from '@/components/widgets/plotly';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { Select, Stack } from '@mantine/core';
-import { PlotInlineConfiguration } from '@/modules/visualization/components/configuration';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { map2D, mask2D, zip2D } from '@/common/utils/iterable';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
@@ -165,19 +164,17 @@ export default function SubdatasetCooccurrenceResultRenderer(
   );
   return (
     <Stack>
-      <PlotInlineConfiguration>
-        <Select
-          data={Object.values(SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY)}
-          value={display}
-          onChange={
-            setDisplay as React.Dispatch<React.SetStateAction<string | null>>
-          }
-          allowDeselect={false}
-          renderOption={renderOption}
-          label="Display Mode"
-          required
-        />
-      </PlotInlineConfiguration>
+      <Select
+        data={Object.values(SUBDATASET_COOCCURRENCE_DISPLAY_MODE_DICTIONARY)}
+        value={display}
+        onChange={
+          setDisplay as React.Dispatch<React.SetStateAction<string | null>>
+        }
+        allowDeselect={false}
+        renderOption={renderOption}
+        label="Display Mode"
+        required
+      />
       {display && (
         <PlotRenderer
           scrollZoom={false}
