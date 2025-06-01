@@ -443,22 +443,28 @@ export function RegressionConvergenceResultRenderer(
 interface PredictedProbabilityDistributionPlotProps {
   dependentVariableLevels: string[];
   probabilities: number[];
+  title?: string;
 }
 
 export function PredictedProbabilityDistributionPlot(
   props: PredictedProbabilityDistributionPlotProps,
 ) {
-  const { dependentVariableLevels, probabilities } = props;
+  const { dependentVariableLevels, probabilities, title } = props;
   const plot = React.useMemo<PlotParams>(() => {
     return {
       data: [
         {
           x: dependentVariableLevels,
           y: probabilities.map((probability) => probability * 100),
+          type: 'bar',
+          hovertemplate: [
+            'Dependent Variable Level: %{x}',
+            'Probability: %{y:.3f}%',
+          ].join('<br>'),
         },
       ],
       layout: {
-        title: 'Predicted Probability Distribution',
+        title: title ?? 'Predicted Probability Distribution',
         xaxis: {
           title: 'Levels',
         },
@@ -466,10 +472,11 @@ export function PredictedProbabilityDistributionPlot(
           title: 'Probability',
           minallowed: 0,
           maxallowed: 100,
+          range: [0, 100],
           ticksuffix: '%',
         },
       },
     };
-  }, [dependentVariableLevels, probabilities]);
+  }, [dependentVariableLevels, probabilities, title]);
   return <PlotRenderer plot={plot} />;
 }

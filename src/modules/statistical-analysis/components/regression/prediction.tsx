@@ -18,6 +18,7 @@ import React from 'react';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { RegressionModelType } from './types';
 import { REGRESSION_MODEL_CONFIG } from './regression-model-config';
+import { RegressionInterpretation } from '@/common/constants/enum';
 
 interface RegressionModelPredictionInputCardProps {
   setInputState: React.Dispatch<React.SetStateAction<boolean[]>>;
@@ -65,7 +66,7 @@ interface RegressionModelPredictionSectionProps
 function RegressionModelPredictionSection(
   props: RegressionModelPredictionSectionProps,
 ) {
-  const { modelType, config, modelId, reference } = props;
+  const { modelType, config, modelId, reference, data } = props;
   const configEntry = REGRESSION_MODEL_CONFIG[modelType];
   const { usePredictionAPI, PredictionsRenderer } = configEntry;
 
@@ -76,7 +77,11 @@ function RegressionModelPredictionSection(
     Array(independentVariables.length).fill(false),
   );
 
-  const { data, execute, loading } = usePredictionAPI({
+  const {
+    data: prediction,
+    execute,
+    loading,
+  } = usePredictionAPI({
     config,
     input: {
       model_id: modelId,
@@ -109,10 +114,14 @@ function RegressionModelPredictionSection(
         Predict
       </Button>
       {loading && <Skeleton h={100} />}
-      {data ? (
+      {prediction ? (
         <>
           <Divider />
-          <PredictionsRenderer config={config} result={data as any} />
+          <PredictionsRenderer
+            config={config}
+            result={prediction as any}
+            data={data}
+          />
         </>
       ) : (
         <Space h={100} />
@@ -141,19 +150,24 @@ export default function RegressionModelPredictionTab(
           <DefaultPredictionsRenderer config={config} data={data} />
         </div>
 
-        <Divider />
-        <Title order={3}>Model Predictions</Title>
-        <Alert icon={<Info />} color="blue">
-          If your independent variables (subdatasets) are not mutually
-          exclusive, you can test out how combinations of the independent
-          variables can affect the model&apos;s prediction. This may be more
-          useful with multinomial logistic regression and ordinal regression
-          that produces probability distributions for you to consider in your
-          analysis.
-        </Alert>
-        <div>
-          <RegressionModelPredictionSection {...props} />
-        </div>
+        {config.interpretation ===
+          RegressionInterpretation.RelativeToBaseline && (
+          <>
+            <Divider />
+            <Title order={3}>Model Predictions</Title>
+            <Alert icon={<Info />} color="blue">
+              If your independent variables (subdatasets) are not mutually
+              exclusive, you can test out how combinations of the independent
+              variables can affect the model&apos;s prediction. This may be more
+              useful with multinomial logistic regression and ordinal regression
+              that produces probability distributions for you to consider in
+              your analysis.
+            </Alert>
+            <div>
+              <RegressionModelPredictionSection {...props} />
+            </div>
+          </>
+        )}
       </Stack>
     </div>
   );

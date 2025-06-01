@@ -18,12 +18,14 @@ import {
   RegressionPredictionAPIHookType,
   RegressionCoefficientsVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
-  useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
   RegressionVariableInfoVisualizationType,
 } from './types';
-import { getRegressionCoefficientsVisualizationData } from './data';
+import {
+  getRegressionCoefficientsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
 import { ResultCard } from '@/components/visual/result-card';
 import { LogisticRegressionConfigType } from '../../configuration/logistic-regression';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';

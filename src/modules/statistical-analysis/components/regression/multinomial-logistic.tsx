@@ -12,7 +12,6 @@ import {
   RegressionPredictionAPIHookType,
   RegressionCoefficientsVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
-  useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
   RegressionVariableInfoVisualizationType,
 } from './types';
@@ -28,6 +27,7 @@ import React from 'react';
 import {
   getRegressionCoefficientsVisualizationData,
   getRegressionInterceptVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
 } from './data';
 import PlotRenderer from '@/components/widgets/plotly';
 import { PlotParams } from 'react-plotly.js';
@@ -35,7 +35,7 @@ import {
   getBalancedHeatmapZRange,
   getRawHeatmapZRange,
 } from '@/modules/visualization/components/configuration/heatmap';
-import { mask2D } from '@/common/utils/iterable';
+import { mask2D, zip2D } from '@/common/utils/iterable';
 import { ResultCard } from '@/components/visual/result-card';
 import {
   formatConfidenceInterval,
@@ -44,33 +44,16 @@ import {
 } from './utils';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
-import { zip } from 'lodash-es';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
+import { useVisualizationSubdatasetSelect } from '@/modules/visualization/components/configuration/subdatasets';
+import { zip } from 'lodash-es';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
   RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
   RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
 ];
-
-enum ConfidenceIntervalDisplay {
-  LowerBound = 'lower-bound',
-  Value = 'value',
-  UpperBound = 'upper-bound',
-}
-
-function useMultinomialLogisticConfidenceIntervalDisplay() {
-  const [display, setDisplay] = React.useState(ConfidenceIntervalDisplay.Value);
-  const Component = (
-    <Select
-      label="Display which value?"
-      description="Pick which value of the coefficient/odds ratio to be displayed, such as the lower bound, value, or the upper bound of the confidence interval."
-      data={}
-    />
-  );
-  return display;
-}
 
 interface UseMultinomialLogisticRegressionViewedDependentVariableLevelProps {
   result: MultinomialLogisticRegressionResultModel;
@@ -170,10 +153,14 @@ function prepareCompareFacetsCoefficientsData(
     zmax = 100;
   } else if (type === RegressionCoefficientsVisualizationTypeEnum.OddsRatio) {
     zmin = 0;
-    zmax = getRawHeatmapZRange(grandZ)[1];
+    zmax = getRawHeatmapZRange(
+      mask2D(grandZ, invalidMask, undefined) as number[][],
+    )[1];
     colorscale = 'Viridis';
   } else {
-    [zmin, zmax] = getBalancedHeatmapZRange(grandZ);
+    [zmin, zmax] = getBalancedHeatmapZRange(
+      mask2D(grandZ, invalidMask, undefined) as number[][],
+    );
     colorscale = 'RdBu';
   }
 
@@ -234,6 +221,12 @@ function useCompareLogisticRegressionResultPlot(
           x,
           y,
           z: mask2D(z, invalidMask, undefined) as number[][],
+          texttemplate:
+            '%{z:.3f}' +
+            (type ===
+            RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel
+              ? '%'
+              : ''),
           hoverongaps: false,
           zmin,
           zmax,
@@ -241,6 +234,10 @@ function useCompareLogisticRegressionResultPlot(
           showlegend: false,
           hovertemplate,
           type: 'heatmap',
+          colorbar: {
+            title: configEntry.plotLabel,
+          },
+          colorscale,
         },
       ] as PlotParams['data'],
       layout: {
@@ -250,12 +247,6 @@ function useCompareLogisticRegressionResultPlot(
         },
         yaxis: {
           title: yaxisTitle,
-        },
-        coloraxis: {
-          colorbar: {
-            title: configEntry.plotLabel,
-          },
-          colorscale,
         },
       },
     };
@@ -462,11 +453,7 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
           />
         )}
         {!facet && usedPlot && (
-          <PlotRenderer
-            plot={usedPlot}
-            height={720}
-            scrollZoom={usedPlot === compareResultsPlot}
-          />
+          <PlotRenderer plot={usedPlot} height={720} scrollZoom={false} />
         )}
       </div>
     </Stack>
@@ -495,37 +482,63 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
   >,
 ) {
   const { data, config } = props;
-  const plot = React.useMemo<PlotParams>(() => {
-    const x = [
-      'Baseline',
+  const namedData = React.useMemo(
+    () =>
+      zip(data.predictions, data.independent_variables).map(
+        ([prediction, variable]) => {
+          return {
+            name: variable!.name,
+            data: prediction!,
+          };
+        },
+      ),
+    [data.independent_variables, data.predictions],
+  );
+  const {
+    selectProps,
+    viewed,
+    viewedData: independentVariableData,
+  } = useVisualizationSubdatasetSelect({
+    data: namedData,
+    defaultValue: null,
+  });
+  const wholePlot = React.useMemo<PlotParams>(() => {
+    const y = [
+      data.reference ?? 'Baseline',
       ...data.independent_variables.map((variable) => variable.name),
     ];
-    const y = data.levels.map((level) => level.name);
-    const z = zip(data.baseline_prediction.probabilities, data.predictions).map(
-      ([baseline, prediction]) => {
-        console.log(prediction);
-        return [
-          baseline! * 100,
-          ...prediction!.probabilities.map((probability) => probability * 100),
-        ];
-      },
+    const x = data.levels.map((level) => level.name);
+
+    const allPredictions = [data.baseline_prediction].concat(data.predictions);
+    const z = allPredictions.map((prediction) => {
+      return prediction.probabilities.map((probability) => probability * 100);
+    });
+    const confidenceLevels = (
+      [x.map(() => 'None')] as unknown as number[][]
+    ).concat(
+      data.facets.map((facet) =>
+        facet.coefficients.map((coefficient) =>
+          pValueToConfidenceLevel(coefficient.p_value),
+        ),
+      ),
     );
-    const pValues = data.facets.map((facet) =>
-      facet.coefficients.map((coefficient) => coefficient.p_value),
+    const oddsRatio = ([x.map(() => 'None')] as unknown as number[][]).concat(
+      data.facets.map((facet) =>
+        facet.coefficients.map((coefficient) => coefficient.odds_ratio),
+      ),
     );
-    const customdata = zip(
-      data.facets.map((facet) => [
-        'None',
-        ...facet.coefficients.map((coefficient) => coefficient.odds_ratio),
-      ]),
-      data.facets.map((facet) => [
-        'None',
-        ...facet.coefficients.map((coefficient) =>
+    const oddsRatioConfidenceIntervals = [x.map(() => 'None')].concat(
+      data.facets.map((facet) =>
+        facet.coefficients.map((coefficient) =>
           formatConfidenceInterval(coefficient.odds_ratio_confidence_interval),
         ),
-      ]),
-      pValues.map((facet) => ['None', ...facet.map(pValueToConfidenceLevel)]),
+      ),
     );
+    const customdata = zip2D<string | number>([
+      oddsRatio,
+      oddsRatioConfidenceIntervals,
+      confidenceLevels,
+    ]);
 
     return {
       data: [
@@ -543,9 +556,10 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
             '<b>Dependent Variable Level</b>: %{y}',
             '<b>Predicted Probability</b>: %{z}%',
             '='.repeat(30),
+            'Coefficient Information',
             '<b>Odds Ratio</b>: %{customdata[0]}',
             '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]}',
+            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
           ].join('<br>'),
         },
       ],
@@ -556,18 +570,100 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
         },
         yaxis: {
           title: `Dependent Variable Levels`,
+          autorange: 'reversed',
         },
       },
     } as PlotParams;
   }, [
+    data.reference,
     data.independent_variables,
     data.levels,
-    data.baseline_prediction.probabilities,
+    data.baseline_prediction,
     data.predictions,
     data.facets,
     config.target,
   ]);
-  return <PlotRenderer plot={plot} />;
+
+  const independentVariablePlot = React.useMemo<PlotParams | null>(() => {
+    if (!independentVariableData) return null;
+    const x = independentVariableData.data.levels;
+    const y = independentVariableData.data.probabilities;
+
+    const coefficients = data.facets.map((facet) =>
+      facet.coefficients.find(
+        (coefficient) => coefficient.name === independentVariableData.name,
+      ),
+    );
+
+    const confidenceLevels = coefficients.map((coefficient) =>
+      coefficient ? pValueToConfidenceLevel(coefficient.p_value) : 'None',
+    );
+    const oddsRatio = coefficients.map(
+      (coefficient) => coefficient?.odds_ratio ?? 'None',
+    );
+    const oddsRatioConfidenceIntervals = coefficients.map((coefficient) =>
+      coefficient
+        ? formatConfidenceInterval(coefficient.odds_ratio_confidence_interval)
+        : 'None',
+    );
+    const customdata = zip(
+      oddsRatio,
+      oddsRatioConfidenceIntervals,
+      confidenceLevels,
+    );
+
+    return {
+      data: [
+        {
+          x,
+          y,
+          type: 'bar',
+          customdata: customdata as any,
+          hovertemplate: [
+            '<b>Dependent Variable Level</b>: %{x}',
+            '<b>Predicted Probability</b>: %{y}',
+            '='.repeat(30),
+            'Coefficient Information',
+            '<b>Odds Ratio</b>: %{customdata[0]}',
+            '<b>Confidence Interval</b>: %{customdata[1]}',
+            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
+          ].join('<br>'),
+        },
+      ],
+      layout: {
+        title: `Predicted Probabilities for Levels of ${config.target} (Input: ${independentVariableData.name})`,
+        xaxis: {
+          title: 'Dependent Variable Levels',
+        },
+        yaxis: {
+          title: `Probability`,
+          ticksuffix: '%',
+          minallowed: 0,
+          maxallowed: 100,
+        },
+      },
+    } as PlotParams;
+  }, [config.target, data.facets, independentVariableData]);
+
+  const usedPlot = independentVariablePlot ?? wholePlot;
+
+  return (
+    <Stack>
+      <Select
+        label="Independent Variable"
+        description="Choose an independent variable to view its probability distribution."
+        clearable
+        {...selectProps}
+      />
+      <div>
+        <PlotRenderer
+          plot={usedPlot}
+          key={viewed}
+          scrollZoom={usedPlot !== wholePlot}
+        />
+      </div>
+    </Stack>
+  );
 }
 
 export const useMultinomialLogisticRegressionPredictionAPIHook: RegressionPredictionAPIHookType<

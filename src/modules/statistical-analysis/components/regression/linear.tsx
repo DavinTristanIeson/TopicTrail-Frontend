@@ -14,13 +14,15 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
 import { LinearRegressionConfigType } from '../../configuration/regression';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
-import { getRegressionCoefficientsVisualizationData } from './data';
+import {
+  getRegressionCoefficientsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
 import {
   RegressionModelType,
   RegressionPredictionAPIHookType,
   RegressionCoefficientsVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
-  useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
   RegressionVariableInfoVisualizationType,

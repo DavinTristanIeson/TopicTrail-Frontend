@@ -53,13 +53,18 @@ type StatisticalAnalysisResultRenderer<TData, TConfig> = (
   props: BaseStatisticalAnalysisResultRendererProps<TData, TConfig>,
 ) => React.ReactNode;
 
-type StatisticalAnalysisPredictionResultRenderer<TResult, TConfig> = (
-  props: StatisticalAnalysisPredictionResultRendererProps<TResult, TConfig>,
+type StatisticalAnalysisPredictionResultRenderer<TData, TResult, TConfig> = (
+  props: StatisticalAnalysisPredictionResultRendererProps<
+    TData,
+    TResult,
+    TConfig
+  >,
 ) => React.ReactNode;
 
 interface RegressionModelConfigType<TData, TConfig, TResult> {
   CoefficientsRenderer: StatisticalAnalysisResultRenderer<TData, TConfig>;
   PredictionsRenderer: StatisticalAnalysisPredictionResultRenderer<
+    TData,
     TResult,
     TConfig
   >;

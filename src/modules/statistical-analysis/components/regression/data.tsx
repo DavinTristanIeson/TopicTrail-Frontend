@@ -1,12 +1,18 @@
-import { LogisticRegressionCoefficientModel } from '@/api/statistical-analysis';
+import {
+  LogisticRegressionCoefficientModel,
+  RegressionPredictionInput,
+} from '@/api/statistical-analysis';
 import { maybeElement } from '@/common/utils/iterable';
 import { zip } from 'lodash-es';
 import {
   UltimateRegressionCoefficientModel,
   RegressionModelType,
   REGRESSION_MODEL_QUIRKS,
+  RegressionPredictionAPIHookType,
 } from './types';
 import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
+import { showNotification } from '@mantine/notifications';
+import { UseMutationResult } from '@tanstack/react-query';
 
 interface RegressionVisualizationDataProps {
   coefficients: UltimateRegressionCoefficientModel[];
@@ -151,10 +157,39 @@ export function getRegressionInterceptVisualizationData(
       '<b>Confidence Interval</b>: %{customdata[3]}',
     ]),
     '='.repeat(30),
-    '<b>Confidence Level</b>: %{customdata[4]:.3f}',
+    '<b>Confidence Level</b>: %{customdata[4]:.3f}%',
     '<b>P-Value</b>: %{customdata[5]}',
     `<b>${regressionQuirk.statisticName}</b>: %{customdata[6]}`,
     '<b>Std. Err</b>: %{customdata[7]}',
   ].join('<br>');
   return { customdata, hovertemplate };
+}
+
+export function useAdaptMutationToRegressionPredictionAPIResult<T>(
+  input: RegressionPredictionInput,
+  result: UseMutationResult<
+    { data: T },
+    any,
+    { body: RegressionPredictionInput }
+  >,
+): ReturnType<RegressionPredictionAPIHookType<T, any>> {
+  const { mutateAsync, data, isPending } = result;
+  return {
+    data: data?.data,
+    loading: isPending,
+    execute: async () => {
+      try {
+        await mutateAsync({
+          body: input,
+        });
+      } catch (e: any) {
+        if (e.message) {
+          showNotification({
+            message: e.message,
+            color: 'red',
+          });
+        }
+      }
+    },
+  };
 }

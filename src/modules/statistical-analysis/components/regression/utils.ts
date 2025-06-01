@@ -13,7 +13,7 @@ export function formatConfidenceLevel(p_value: number) {
 }
 
 export function formatConfidenceInterval(interval: [number, number]) {
-  if (interval[0] == null || interval[0] == null) {
+  if (interval[0] == null || interval[1] == null) {
     return '-';
   }
   return `${interval[0].toFixed(3)} - ${interval[1].toFixed(3)}`;

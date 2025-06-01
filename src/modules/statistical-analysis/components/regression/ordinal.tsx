@@ -12,15 +12,17 @@ import {
   usePredictedResultsBaselineLine,
 } from './components';
 import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
-import { Group, Select, Stack } from '@mantine/core';
+import { Group, Select, Stack, Switch } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
-import { getRegressionCoefficientsVisualizationData } from './data';
+import {
+  getRegressionCoefficientsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
 import {
   RegressionModelType,
   RegressionPredictionAPIHookType,
   RegressionCoefficientsVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
-  useAdaptMutationToRegressionPredictionAPIResult,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
   RegressionVariableInfoVisualizationType,
@@ -39,10 +41,11 @@ import {
   pValueToConfidenceLevel,
 } from './utils';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
-import { transposeMatrix } from '@/common/utils/iterable';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
+import { useVisualizationSubdatasetSelect } from '@/modules/visualization/components/configuration/subdatasets';
+import { useDisclosure } from '@mantine/hooks';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -203,8 +206,14 @@ export function OrdinalRegressionPredictionResultRenderer(
   >,
 ) {
   const { result } = props;
+  const [showCumulative, { toggle: toggleCumulative }] = useDisclosure(false);
   return (
     <Stack>
+      <Switch
+        checked={showCumulative}
+        onChange={toggleCumulative}
+        label="Show cumulative probability distribution?"
+      />
       <ResultCard
         label="Latent Variable Value"
         value={result.latent_score}
@@ -212,9 +221,17 @@ export function OrdinalRegressionPredictionResultRenderer(
       />
       <PredictedProbabilityDistributionPlot
         dependentVariableLevels={result.levels}
-        probabilities={result.probabilities}
+        probabilities={
+          showCumulative
+            ? result.cumulative_probabilities
+            : result.probabilities
+        }
+        title={
+          showCumulative
+            ? 'Predicted Cumulative Probability Distribution'
+            : undefined
+        }
       />
-      ;
     </Stack>
   );
 }
@@ -222,12 +239,19 @@ export function OrdinalRegressionPredictionResultRenderer(
 enum OrdinalRegressionPredictionDisplay {
   LatentScore = 'latent-score',
   ProbabilityDistribution = 'probability-distribution',
+  CumulativeProbabilityDistribution = 'cumulative-probability-distribution',
 }
 const ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY = {
   [OrdinalRegressionPredictionDisplay.ProbabilityDistribution]: {
     label: 'Probability Distribution',
     value: OrdinalRegressionPredictionDisplay.ProbabilityDistribution,
     description: 'Show the probabilities of each level.',
+  },
+  [OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution]: {
+    label: 'Cumulative Probability Distribution',
+    value: OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution,
+    description:
+      'Show the cumulative probabilities of predicting a level lower or equal in rank.',
   },
   [OrdinalRegressionPredictionDisplay.LatentScore]: {
     label: 'Latent Score',
@@ -288,12 +312,12 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
         },
       ],
       layout: {
-        title: `Predicted Means of ${config.target} per Independent Variable`,
+        title: `Predicted Latent Score of ${config.target} per Independent Variable`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
         },
         yaxis: {
-          title: `Predicted Mean`,
+          title: `Predicted Latent Score`,
         },
         ...baselineLayout,
       },
@@ -306,30 +330,46 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     baselineLayout,
   ]);
 
+  const probabilityLabel =
+    display ===
+    OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+      ? 'Cumulative Probability Distribution'
+      : 'Probability Distribution';
+
   const probabilityDistributionPlot = React.useMemo<PlotParams>(() => {
-    const x = ['Baseline', ...data.independent_variables.map((x) => x.name)];
-    const y = data.levels.map((x) => x.name);
-    const z = transposeMatrix([
-      data.baseline_prediction.probabilities,
-      ...data.predictions.map((prediction) => prediction.probabilities),
-    ]);
+    const x = data.levels.map((x) => x.name);
+    const y = ['Baseline', ...data.independent_variables.map((x) => x.name)];
+
+    const probabilities = [data.baseline_prediction]
+      .concat(data.predictions)
+      .map((prediction) => {
+        return prediction.probabilities.map((probability) => probability * 100);
+      });
+    const cumulativeProbabilities = [data.baseline_prediction]
+      .concat(data.predictions)
+      .map((prediction) => {
+        return prediction.cumulative_probabilities.map(
+          (probability) => probability * 100,
+        );
+      });
+    const z =
+      display ===
+      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+        ? cumulativeProbabilities
+        : probabilities;
     const pValues = data.coefficients.map((coefficient) => coefficient.p_value);
     const customdataRow = zip(
-      [
-        'None',
-        ...data.coefficients.map((coefficient) => coefficient.odds_ratio),
-      ],
-      [
-        'None',
-        ...data.coefficients.map(
-          (coefficient) => coefficient.odds_ratio_confidence_interval,
-        ),
-      ],
-      ['None', ...pValues.map(pValueToConfidenceLevel)],
+      probabilities,
+      cumulativeProbabilities,
+      data.coefficients.map((coefficient) => coefficient.odds_ratio),
+      data.coefficients.map((coefficient) =>
+        formatConfidenceInterval(coefficient.odds_ratio_confidence_interval),
+      ),
+      pValues.map(pValueToConfidenceLevel),
     );
-    const customdata = data.levels.map(
-      () => customdataRow,
-    ) as unknown as number[][];
+    const customdata = [
+      Array.from(customdataRow, () => 'None') as any[],
+    ].concat(data.independent_variables.map(() => customdataRow));
 
     return {
       data: [
@@ -345,51 +385,164 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Dependent Variable Level</b>: %{y}',
+            '<b>Predicted Probability</b>: %{customdata[0]:.3f}%',
+            '<b>Cumulative Probability</b>: %{customdata[1]:.3f}%',
             '='.repeat(30),
-            '<b>Predicted Probability</b>: %{z}%',
-            '<b>Odds Ratio</b>: %{customdata[0]}',
-            '<b>Confidence Level</b>: %{customdata[1]}',
+            'Coefficient Information',
+            '<b>Odds Ratio</b>: %{customdata[0]:.3f}',
+            '<b>Confidence Interval</b>: %{customdata[1]}',
+            '<b>Confidence Level</b>: %{customdata[1]:.3f}',
           ].join('<br>'),
         },
       ],
       layout: {
-        title: `Predicted Probabilities for Levels of ${config.target}`,
+        title: `Predicted ${probabilityLabel} of ${config.target}`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
         },
         yaxis: {
           title: `Dependent Variable Levels`,
+          autorange: 'reversed',
         },
       },
     } as PlotParams;
   }, [
-    data.independent_variables,
     data.levels,
-    data.baseline_prediction.probabilities,
+    data.independent_variables,
+    data.baseline_prediction,
     data.predictions,
     data.coefficients,
+    display,
+    probabilityLabel,
     config.target,
+  ]);
+
+  const namedData = React.useMemo(
+    () =>
+      zip(data.predictions, data.independent_variables).map(
+        ([prediction, variable]) => {
+          return {
+            name: variable!.name,
+            data: prediction!,
+          };
+        },
+      ),
+    [data.independent_variables, data.predictions],
+  );
+  const {
+    selectProps,
+    viewed,
+    viewedData: independentVariableData,
+  } = useVisualizationSubdatasetSelect({
+    data: namedData,
+    defaultValue: null,
+  });
+
+  const independentVariablePlot = React.useMemo<PlotParams | null>(() => {
+    if (!independentVariableData) return null;
+    const x = independentVariableData.data.levels;
+    const probabilities = independentVariableData.data.probabilities.map(
+      (probability) => probability * 100,
+    );
+    const cumulativeProbabilities =
+      independentVariableData.data.cumulative_probabilities.map(
+        (probability) => probability * 100,
+      );
+    const y =
+      display ===
+      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+        ? cumulativeProbabilities
+        : probabilities;
+
+    const confidenceLevels = data.coefficients.map((coefficient) =>
+      coefficient ? pValueToConfidenceLevel(coefficient.p_value) : 'None',
+    );
+    const oddsRatio = data.coefficients.map(
+      (coefficient) => coefficient?.odds_ratio ?? 'None',
+    );
+    const oddsRatioConfidenceIntervals = data.coefficients.map((coefficient) =>
+      coefficient
+        ? formatConfidenceInterval(coefficient.odds_ratio_confidence_interval)
+        : 'None',
+    );
+    const customdata = zip(
+      probabilities,
+      cumulativeProbabilities,
+      oddsRatio,
+      oddsRatioConfidenceIntervals,
+      confidenceLevels,
+    );
+
+    return {
+      data: [
+        {
+          x,
+          y,
+          type: 'bar',
+          customdata: customdata as any,
+          hovertemplate: [
+            '<b>Dependent Variable Level</b>: %{x}',
+            '<b>Predicted Probability</b>: %{customdata[0]}%',
+            '<b>Cumulative Probability</b>: %{customdata[1]}%',
+            '='.repeat(30),
+            'Coefficient Information',
+            '<b>Odds Ratio</b>: %{customdata[2]}',
+            '<b>Confidence Interval</b>: %{customdata[3]}',
+            '<b>Confidence Level</b>: %{customdata[4]:.3f}%',
+          ].join('<br>'),
+        },
+      ],
+      layout: {
+        title: `Predicted ${probabilityLabel} of ${config.target} (Input: ${independentVariableData.name})`,
+        xaxis: {
+          title: 'Dependent Variable Levels',
+        },
+        yaxis: {
+          title: `Probability`,
+          ticksuffix: '%',
+          minallowed: 0,
+          maxallowed: 100,
+        },
+      },
+    } as PlotParams;
+  }, [
+    config.target,
+    data.coefficients,
+    display,
+    independentVariableData,
+    probabilityLabel,
   ]);
 
   return (
     <Stack>
       <Select
-        label="Display which data?"
+        label="Prediction Type"
+        description="Choose the type of prediction data to be displayed."
         required
         value={display}
+        data={Object.values(ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY)}
         onChange={
           setDisplay as React.Dispatch<React.SetStateAction<string | null>>
         }
         renderOption={renderOption}
         allowDeselect={false}
       />
-      <PlotRenderer
-        plot={
-          display === OrdinalRegressionPredictionDisplay.LatentScore
-            ? latentScorePlot
-            : probabilityDistributionPlot
-        }
+      <Select
+        label="Independent Variable"
+        description="Choose an independent variable to view its probability distribution."
+        clearable
+        {...selectProps}
       />
+      <div>
+        <PlotRenderer
+          key={`${display}-${viewed}`}
+          plot={
+            display === OrdinalRegressionPredictionDisplay.LatentScore
+              ? latentScorePlot
+              : (independentVariablePlot ?? probabilityDistributionPlot)
+          }
+        />
+      </div>
     </Stack>
   );
 }

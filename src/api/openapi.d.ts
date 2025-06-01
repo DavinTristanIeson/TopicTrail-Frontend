@@ -2272,6 +2272,8 @@ export interface components {
             latent_score: number;
             /** Probabilities */
             probabilities: number[];
+            /** Cumulative Probabilities */
+            cumulative_probabilities: number[];
             /** Levels */
             levels: string[];
         };

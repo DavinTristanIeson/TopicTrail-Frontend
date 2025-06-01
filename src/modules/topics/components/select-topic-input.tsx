@@ -130,7 +130,6 @@ export function TopicSelectInput(props: TopicSelectInputProps) {
       filter={topicFilterFunction}
       data={topicsToComboboxes(data, withOutlier)}
       onChange={(value, item) => {
-        console.log(item);
         if (value == null) {
           onChange?.(null, item);
           return;

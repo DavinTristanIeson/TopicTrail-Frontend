@@ -22,10 +22,10 @@ export default function StatisticalAnalysisResultRenderer(
   }
   const { data, error, loading, refetch } = useDataProvider(input);
 
-  const firstTime = React.useRef(true);
+  const mountedOn = React.useRef(new Date());
   React.useEffect(() => {
-    if (firstTime.current) {
-      firstTime.current = false;
+    if (Date.now() - mountedOn.current.getTime() <= 1000) {
+      // stupid hack to make sure that refetch is only called when input changes, and not because of react lifecycle.
       return;
     }
     refetch();
