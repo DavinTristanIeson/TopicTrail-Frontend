@@ -29,11 +29,7 @@ import {
 } from './types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import {
-  formatConfidenceInterval,
-  formatConfidenceLevel,
-  pValueToConfidenceLevel,
-} from './utils';
+import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { without, zip } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
@@ -88,26 +84,27 @@ export function LinearRegressionCoefficientsPlot(
       <Group wrap="wrap" align="stretch">
         <ResultCard
           label={'F-Statistic'}
-          value={data.fit_evaluation.f_statistic?.toFixed(3)}
+          value={data.fit_evaluation.f_statistic}
           info="A statistic obtained from testing whether the independent variables can explain the variance of the dependent variable. To interpret this, you should rely on p-value and R-squared instead."
         />
         <ResultCard
           label={'P-Value'}
-          value={data.fit_evaluation.p_value?.toFixed(3)}
+          value={data.fit_evaluation.p_value}
           info={`The probability that the F-statistic would be as extreme as it is under the assumption that the independent variables do not affect the dependent variables. You should use the Confidence Level to interpret how confident we are that the independent variables DO affect the dependent variables.`}
         />
         <ResultCard
           label={'Confidence Level'}
-          value={formatConfidenceLevel(data.fit_evaluation.p_value)}
+          value={pValueToConfidenceLevel(data.fit_evaluation.p_value)}
+          percentage
         />
         <ResultCard
           label={'Adjusted R-Squared'}
-          value={data.fit_evaluation.r_squared?.toFixed(3)}
+          value={data.fit_evaluation.r_squared}
           info="The proportion of the variance in the dependent variable that is predictable from the independent variables. It ranges from 0 (0%) to 1 (100%)."
         />
         <ResultCard
           label={'RMSE'}
-          value={data.fit_evaluation.rmse?.toFixed(3)}
+          value={data.fit_evaluation.rmse}
           info="The average magnitude of the errors between predicted and actual values."
         />
         <ResultCard
@@ -172,9 +169,9 @@ export function DefaultLinearRegressionPredictionResultRenderer(
           ),
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
-            '<b>Predicted Mean</b>: %{y}',
+            '<b>Predicted Mean</b>: %{y:.3f}',
             '='.repeat(30),
-            '<b>Coefficient</b>: %{customdata[0]}',
+            '<b>Coefficient</b>: %{customdata[0]:.3f}',
             '<b>Confidence Interval</b>: %{customdata[1]}',
             '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
           ].join('<br>'),

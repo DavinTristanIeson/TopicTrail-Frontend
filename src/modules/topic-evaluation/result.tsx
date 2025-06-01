@@ -85,31 +85,31 @@ export function TopicEvaluationMetricsRenderer(
     <Group justify="space-around" pt={16}>
       <ResultCard
         label="Topic Coherence"
-        value={coherence_v.toFixed(3)}
+        value={coherence_v}
         info="A score that represents how coherent the topics are. A higher score is better. A topic is considered coherent if its topic words represent the contents of the documents assigned to that topic well."
       />
       <ResultCard
         label="Topic Diversity"
-        value={topic_diversity.toFixed(3)}
+        value={topic_diversity}
         info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
       />
       <ResultCard
         label="Topic Count"
-        value={topics.length.toString()}
+        value={topics.length}
         info="A score that represents how diverse the topics are. A higher score (max is 1.0) is better. The topics are considered diverse if there's little overlap in the topic words used to represent each topic."
       />
       <ResultCard
         label="Outlier Frequency"
-        value={
-          <Text inherit>
-            <Text span inherit c="red">
-              {outlier_count}
-            </Text>
-            /{total_count}
-          </Text>
-        }
+        value={null}
         info="The number of rows that are classified as outliers."
-      />
+      >
+        <Text inherit>
+          <Text span inherit c="red">
+            {outlier_count}
+          </Text>
+          /{total_count}
+        </Text>
+      </ResultCard>
     </Group>
   );
 }

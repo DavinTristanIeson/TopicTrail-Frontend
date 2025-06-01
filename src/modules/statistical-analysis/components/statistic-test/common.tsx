@@ -187,17 +187,18 @@ function SignificanceResultRenderer(props: SignificanceResultModel) {
         label={
           dictionaryEntry ? `Statistic (${dictionaryEntry.label})` : 'Statistic'
         }
-        value={props.statistic.toFixed(3)}
+        value={props.statistic}
         info="The value calculated by the statistic test, which is later used to calculate the p value and confidence. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead."
       />
       <ResultCard
         label="P-Value"
-        value={props.p_value.toFixed(3)}
+        value={props.p_value}
         info="The p value calculated from the statistic test. Ignore this if you are not familiar with statistic tests and refer to the confidence score instead"
       />
       <ResultCard
         label="Confidence"
-        value={`${confidence.toFixed(2)}%`}
+        value={confidence}
+        percentage
         info="A high confidence means that you can be sure that both groups are different. For example, you might have a hypothesis that guests who come as a group tend to give higher ratings than guests who come alone; if this confidence value is high (generally above 95%), then you can be sure that your hypothesis is correct."
       />
     </>
