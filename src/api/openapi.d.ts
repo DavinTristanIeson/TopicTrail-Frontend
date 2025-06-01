@@ -730,7 +730,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}": {
+    "/statistical-analysis/{project_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -740,14 +740,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Statistic Test */
-        post: operations["post__statistic_test_statistic_test__project_id__post"];
+        post: operations["post__statistic_test_statistical_analysis__project_id__post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}/pairwise": {
+    "/statistical-analysis/{project_id}/pairwise": {
         parameters: {
             query?: never;
             header?: never;
@@ -757,14 +757,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Pairwise Statistic Test */
-        post: operations["post__pairwise_statistic_test_statistic_test__project_id__pairwise_post"];
+        post: operations["post__pairwise_statistic_test_statistical_analysis__project_id__pairwise_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}/omnibus": {
+    "/statistical-analysis/{project_id}/omnibus": {
         parameters: {
             query?: never;
             header?: never;
@@ -774,14 +774,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Omnibus Statistic Test */
-        post: operations["post__omnibus_statistic_test_statistic_test__project_id__omnibus_post"];
+        post: operations["post__omnibus_statistic_test_statistical_analysis__project_id__omnibus_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}/contingency-table": {
+    "/statistical-analysis/{project_id}/contingency-table": {
         parameters: {
             query?: never;
             header?: never;
@@ -791,14 +791,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Contingency Table */
-        post: operations["post__contingency_table_statistic_test__project_id__contingency_table_post"];
+        post: operations["post__contingency_table_statistical_analysis__project_id__contingency_table_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}/binary-test-distribution": {
+    "/statistical-analysis/{project_id}/binary-test-distribution": {
         parameters: {
             query?: never;
             header?: never;
@@ -808,14 +808,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Test Distribution */
-        post: operations["post__test_distribution_statistic_test__project_id__binary_test_distribution_post"];
+        post: operations["post__test_distribution_statistical_analysis__project_id__binary_test_distribution_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}/binary-test-contingency-table": {
+    "/statistical-analysis/{project_id}/binary-test-contingency-table": {
         parameters: {
             query?: never;
             header?: never;
@@ -825,14 +825,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Test Contingency Table */
-        post: operations["post__test_contingency_table_statistic_test__project_id__binary_test_contingency_table_post"];
+        post: operations["post__test_contingency_table_statistical_analysis__project_id__binary_test_contingency_table_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/statistic-test/{project_id}/co-occurrence": {
+    "/statistical-analysis/{project_id}/co-occurrence": {
         parameters: {
             query?: never;
             header?: never;
@@ -842,7 +842,143 @@ export interface paths {
         get?: never;
         put?: never;
         /** Post  Cooccurrence */
-        post: operations["post__cooccurrence_statistic_test__project_id__co_occurrence_post"];
+        post: operations["post__cooccurrence_statistical_analysis__project_id__co_occurrence_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/linear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Linear Regression */
+        post: operations["post__linear_regression_statistical_analysis__project_id__regression_linear_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/logistic": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Logistic Regression */
+        post: operations["post__logistic_regression_statistical_analysis__project_id__regression_logistic_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/logistic/multinomial": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Multinomial Logistic Regression */
+        post: operations["post__multinomial_logistic_regression_statistical_analysis__project_id__regression_logistic_multinomial_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/ordinal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Ordinal Regression */
+        post: operations["post__ordinal_regression_statistical_analysis__project_id__regression_ordinal_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/prediction/linear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Linear Regression Prediction */
+        post: operations["post__linear_regression_prediction_statistical_analysis__project_id__regression_prediction_linear_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/prediction/logistic": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Logistic Regression Prediction */
+        post: operations["post__logistic_regression_prediction_statistical_analysis__project_id__regression_prediction_logistic_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/prediction/logistic/multinomial": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Multinomial Logistic Regression Prediction */
+        post: operations["post__multinomial_logistic_regression_prediction_statistical_analysis__project_id__regression_prediction_logistic_multinomial_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/statistical-analysis/{project_id}/regression/prediction/ordinal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post  Ordinal Regression Prediction */
+        post: operations["post__ordinal_regression_prediction_statistical_analysis__project_id__regression_prediction_ordinal_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -929,10 +1065,58 @@ export interface components {
             /** Message */
             message: string | null;
         };
+        /** ApiResult[LinearRegressionPredictionResult] */
+        ApiResult_LinearRegressionPredictionResult_: {
+            data: components["schemas"]["LinearRegressionPredictionResult"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[LinearRegressionResult] */
+        ApiResult_LinearRegressionResult_: {
+            data: components["schemas"]["LinearRegressionResult"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[LogisticRegressionPredictionResult] */
+        ApiResult_LogisticRegressionPredictionResult_: {
+            data: components["schemas"]["LogisticRegressionPredictionResult"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[LogisticRegressionResult] */
+        ApiResult_LogisticRegressionResult_: {
+            data: components["schemas"]["LogisticRegressionResult"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[MultinomialLogisticRegressionPredictionResult] */
+        ApiResult_MultinomialLogisticRegressionPredictionResult_: {
+            data: components["schemas"]["MultinomialLogisticRegressionPredictionResult"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[MultinomialLogisticRegressionResult] */
+        ApiResult_MultinomialLogisticRegressionResult_: {
+            data: components["schemas"]["MultinomialLogisticRegressionResult"];
+            /** Message */
+            message: string | null;
+        };
         /** ApiResult[NoneType] */
         ApiResult_NoneType_: {
             /** Data */
             data: null;
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[OrdinalRegressionPredictionResult] */
+        ApiResult_OrdinalRegressionPredictionResult_: {
+            data: components["schemas"]["OrdinalRegressionPredictionResult"];
+            /** Message */
+            message: string | null;
+        };
+        /** ApiResult[OrdinalRegressionResult] */
+        ApiResult_OrdinalRegressionResult_: {
+            data: components["schemas"]["OrdinalRegressionResult"];
             /** Message */
             message: string | null;
         };
@@ -1148,6 +1332,13 @@ export interface components {
                 number,
                 number
             ] | null;
+        };
+        /** BaseRegressionPredictionInput */
+        BaseRegressionPredictionInput: {
+            /** Model Id */
+            model_id: string;
+            /** Input */
+            input: number[];
         };
         /** BinaryStatisticTestOnContingencyTableResultMainResource */
         BinaryStatisticTestOnContingencyTableResultMainResource: {
@@ -1748,6 +1939,187 @@ export interface components {
             /** Value */
             value: string | number;
         };
+        /** LinearRegressionFitEvaluation */
+        LinearRegressionFitEvaluation: {
+            /** Converged */
+            converged: boolean;
+            /** P Value */
+            p_value: number;
+            /** F Statistic */
+            f_statistic: number;
+            /** R Squared */
+            r_squared: number;
+            /** Rmse */
+            rmse: number;
+        };
+        /** LinearRegressionInput */
+        LinearRegressionInput: {
+            /** Target */
+            target: string;
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Constrain By Groups */
+            constrain_by_groups: boolean;
+            /** Standardized */
+            standardized: boolean;
+        };
+        /** LinearRegressionPredictionResult */
+        LinearRegressionPredictionResult: {
+            /** Mean */
+            mean: number;
+        };
+        /** LinearRegressionResult */
+        LinearRegressionResult: {
+            /** Model Id */
+            model_id: string;
+            /** Independent Variables */
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Sample Size */
+            sample_size: number;
+            /** Warnings */
+            warnings: string[];
+            /** Coefficients */
+            coefficients: components["schemas"]["RegressionCoefficient"][];
+            intercept: components["schemas"]["RegressionCoefficient"];
+            fit_evaluation: components["schemas"]["LinearRegressionFitEvaluation"];
+            /** Predictions */
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_LinearRegressionPredictionResult_"][];
+            baseline_prediction: components["schemas"]["LinearRegressionPredictionResult"];
+            /** Standardized */
+            standardized: boolean;
+        };
+        /** LogisticRegressionCoefficient */
+        LogisticRegressionCoefficient: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** P Value */
+            p_value: number;
+            /** Std Err */
+            std_err: number;
+            /** Confidence Interval */
+            confidence_interval: [
+                number,
+                number
+            ];
+            /** Statistic */
+            statistic: number;
+            /** Odds Ratio */
+            readonly odds_ratio: number;
+            /** Odds Ratio Confidence Interval */
+            readonly odds_ratio_confidence_interval: [
+                number,
+                number
+            ];
+        };
+        /** LogisticRegressionFitEvaluation */
+        LogisticRegressionFitEvaluation: {
+            /** Converged */
+            converged: boolean;
+            /** P Value */
+            p_value: number;
+            /** Pseudo R Squared */
+            pseudo_r_squared: number;
+            /** Log Likelihood Ratio */
+            log_likelihood_ratio: number;
+        };
+        /** LogisticRegressionInput */
+        LogisticRegressionInput: {
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            target: components["schemas"]["NamedTableFilter"];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Constrain By Groups */
+            constrain_by_groups: boolean;
+        };
+        /** LogisticRegressionPredictionResult */
+        LogisticRegressionPredictionResult: {
+            /** Probability */
+            probability: number;
+        };
+        /** LogisticRegressionResult */
+        LogisticRegressionResult: {
+            /** Model Id */
+            model_id: string;
+            /** Independent Variables */
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Sample Size */
+            sample_size: number;
+            /** Warnings */
+            warnings: string[];
+            /** Coefficients */
+            coefficients: components["schemas"]["LogisticRegressionCoefficient"][];
+            intercept: components["schemas"]["LogisticRegressionCoefficient"];
+            fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
+            /** Predictions */
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_LogisticRegressionPredictionResult_"][];
+            baseline_prediction: components["schemas"]["LogisticRegressionPredictionResult"];
+        };
+        /** MultinomialLogisticRegressionFacetResult */
+        MultinomialLogisticRegressionFacetResult: {
+            /** Level */
+            level: string;
+            /** Coefficients */
+            coefficients: components["schemas"]["LogisticRegressionCoefficient"][];
+            intercept: components["schemas"]["LogisticRegressionCoefficient"];
+        };
+        /** MultinomialLogisticRegressionInput */
+        MultinomialLogisticRegressionInput: {
+            /** Target */
+            target: string;
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Constrain By Groups */
+            constrain_by_groups: boolean;
+            /** Reference Dependent */
+            reference_dependent: string | null;
+        };
+        /** MultinomialLogisticRegressionPredictionResult */
+        MultinomialLogisticRegressionPredictionResult: {
+            /** Probabilities */
+            probabilities: number[];
+            /** Levels */
+            levels: string[];
+        };
+        /** MultinomialLogisticRegressionResult */
+        MultinomialLogisticRegressionResult: {
+            /** Model Id */
+            model_id: string;
+            /** Independent Variables */
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Sample Size */
+            sample_size: number;
+            /** Warnings */
+            warnings: string[];
+            /** Reference Dependent */
+            reference_dependent: string;
+            /** Levels */
+            levels: components["schemas"]["RegressionDependentVariableLevelInfo"][];
+            /** Facets */
+            facets: components["schemas"]["MultinomialLogisticRegressionFacetResult"][];
+            fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
+            /** Predictions */
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_MultinomialLogisticRegressionPredictionResult_"][];
+            baseline_prediction: components["schemas"]["MultinomialLogisticRegressionPredictionResult"];
+        };
         /** NamedTableFilter */
         NamedTableFilter: {
             /** Name */
@@ -1846,6 +2218,100 @@ export interface components {
              */
             min_frequency: number;
         };
+        /** OrdinalRegressionCoefficient */
+        OrdinalRegressionCoefficient: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** P Value */
+            p_value: number;
+            /** Std Err */
+            std_err: number;
+            /** Confidence Interval */
+            confidence_interval: [
+                number,
+                number
+            ];
+            /** Statistic */
+            statistic: number;
+            /** Odds Ratio */
+            readonly odds_ratio: number;
+            /** Odds Ratio Confidence Interval */
+            readonly odds_ratio_confidence_interval: [
+                number,
+                number
+            ];
+        };
+        /** OrdinalRegressionFitEvaluation */
+        OrdinalRegressionFitEvaluation: {
+            /** Converged */
+            converged: boolean;
+            /** P Value */
+            p_value: number;
+            /** Log Likelihood Ratio */
+            log_likelihood_ratio: number;
+            /** Pseudo R Squared */
+            pseudo_r_squared: number;
+        };
+        /** OrdinalRegressionInput */
+        OrdinalRegressionInput: {
+            /** Target */
+            target: string;
+            /** Groups */
+            groups: components["schemas"]["NamedTableFilter"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Constrain By Groups */
+            constrain_by_groups: boolean;
+        };
+        /** OrdinalRegressionPredictionResult */
+        OrdinalRegressionPredictionResult: {
+            /** Latent Score */
+            latent_score: number;
+            /** Probabilities */
+            probabilities: number[];
+            /** Cumulative Probabilities */
+            cumulative_probabilities: number[];
+            /** Levels */
+            levels: string[];
+        };
+        /** OrdinalRegressionResult */
+        OrdinalRegressionResult: {
+            /** Model Id */
+            model_id: string;
+            /** Independent Variables */
+            independent_variables: components["schemas"]["RegressionIndependentVariableInfo"][];
+            /** Reference */
+            reference: string | null;
+            interpretation: components["schemas"]["RegressionInterpretation"];
+            /** Sample Size */
+            sample_size: number;
+            /** Warnings */
+            warnings: string[];
+            /** Coefficients */
+            coefficients: components["schemas"]["OrdinalRegressionCoefficient"][];
+            /** Thresholds */
+            thresholds: components["schemas"]["OrdinalRegressionThreshold"][];
+            /** Levels */
+            levels: components["schemas"]["RegressionDependentVariableLevelInfo"][];
+            fit_evaluation: components["schemas"]["OrdinalRegressionFitEvaluation"];
+            /** Predictions */
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_OrdinalRegressionPredictionResult_"][];
+            baseline_prediction: components["schemas"]["OrdinalRegressionPredictionResult"];
+        };
+        /** OrdinalRegressionThreshold */
+        OrdinalRegressionThreshold: {
+            /** From Level */
+            from_level: string;
+            /** To Level */
+            to_level: string;
+            /** Value */
+            value: number;
+            /** Odds Ratio */
+            readonly odds_ratio: number;
+        };
         /** PaginationMeta */
         PaginationMeta: {
             /** Pages */
@@ -1929,6 +2395,69 @@ export interface components {
             topics: components["schemas"]["TopicUpdateSchema"][];
             /** Document Topics */
             document_topics: components["schemas"]["DocumentTopicAssignmentUpdateSchema"][];
+        };
+        /** RegressionCoefficient */
+        RegressionCoefficient: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** P Value */
+            p_value: number;
+            /** Std Err */
+            std_err: number;
+            /** Confidence Interval */
+            confidence_interval: [
+                number,
+                number
+            ];
+            /** Statistic */
+            statistic: number;
+        };
+        /** RegressionDependentVariableLevelInfo */
+        RegressionDependentVariableLevelInfo: {
+            /** Name */
+            name: string;
+            /** Sample Size */
+            sample_size: number;
+        };
+        /** RegressionIndependentVariableInfo */
+        RegressionIndependentVariableInfo: {
+            /** Name */
+            name: string;
+            /** Sample Size */
+            sample_size: number;
+            /** Variance Inflation Factor */
+            variance_inflation_factor: number;
+        };
+        /**
+         * RegressionInterpretation
+         * @enum {string}
+         */
+        RegressionInterpretation: "grand_mean_deviation" | "relative_to_reference" | "relative_to_baseline";
+        /** RegressionPredictionPerIndependentVariableResult[LinearRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_LinearRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["LinearRegressionPredictionResult"];
+        };
+        /** RegressionPredictionPerIndependentVariableResult[LogisticRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_LogisticRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["LogisticRegressionPredictionResult"];
+        };
+        /** RegressionPredictionPerIndependentVariableResult[MultinomialLogisticRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_MultinomialLogisticRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["MultinomialLogisticRegressionPredictionResult"];
+        };
+        /** RegressionPredictionPerIndependentVariableResult[OrdinalRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_OrdinalRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["OrdinalRegressionPredictionResult"];
         };
         /**
          * SchemaColumnTypeEnum
@@ -6309,7 +6838,7 @@ export interface operations {
             };
         };
     };
-    post__statistic_test_statistic_test__project_id__post: {
+    post__statistic_test_statistical_analysis__project_id__post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6380,7 +6909,7 @@ export interface operations {
             };
         };
     };
-    post__pairwise_statistic_test_statistic_test__project_id__pairwise_post: {
+    post__pairwise_statistic_test_statistical_analysis__project_id__pairwise_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6451,7 +6980,7 @@ export interface operations {
             };
         };
     };
-    post__omnibus_statistic_test_statistic_test__project_id__omnibus_post: {
+    post__omnibus_statistic_test_statistical_analysis__project_id__omnibus_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6522,7 +7051,7 @@ export interface operations {
             };
         };
     };
-    post__contingency_table_statistic_test__project_id__contingency_table_post: {
+    post__contingency_table_statistical_analysis__project_id__contingency_table_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6593,7 +7122,7 @@ export interface operations {
             };
         };
     };
-    post__test_distribution_statistic_test__project_id__binary_test_distribution_post: {
+    post__test_distribution_statistical_analysis__project_id__binary_test_distribution_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6664,7 +7193,7 @@ export interface operations {
             };
         };
     };
-    post__test_contingency_table_statistic_test__project_id__binary_test_contingency_table_post: {
+    post__test_contingency_table_statistical_analysis__project_id__binary_test_contingency_table_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6735,7 +7264,7 @@ export interface operations {
             };
         };
     };
-    post__cooccurrence_statistic_test__project_id__co_occurrence_post: {
+    post__cooccurrence_statistical_analysis__project_id__co_occurrence_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -6757,6 +7286,566 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiResult_SubdatasetCooccurrenceResource_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__linear_regression_statistical_analysis__project_id__regression_linear_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinearRegressionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_LinearRegressionResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__logistic_regression_statistical_analysis__project_id__regression_logistic_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LogisticRegressionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_LogisticRegressionResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__multinomial_logistic_regression_statistical_analysis__project_id__regression_logistic_multinomial_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MultinomialLogisticRegressionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_MultinomialLogisticRegressionResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__ordinal_regression_statistical_analysis__project_id__regression_ordinal_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrdinalRegressionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_OrdinalRegressionResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__linear_regression_prediction_statistical_analysis__project_id__regression_prediction_linear_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BaseRegressionPredictionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_LinearRegressionPredictionResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__logistic_regression_prediction_statistical_analysis__project_id__regression_prediction_logistic_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BaseRegressionPredictionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_LogisticRegressionPredictionResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__multinomial_logistic_regression_prediction_statistical_analysis__project_id__regression_prediction_logistic_multinomial_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BaseRegressionPredictionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_MultinomialLogisticRegressionPredictionResult_"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResult"];
+                };
+            };
+        };
+    };
+    post__ordinal_regression_prediction_statistical_analysis__project_id__regression_prediction_ordinal_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BaseRegressionPredictionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiResult_OrdinalRegressionPredictionResult_"];
                 };
             };
             /** @description Bad Request */

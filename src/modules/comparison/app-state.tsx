@@ -3,13 +3,13 @@ import { DashboardItemModel } from '@/api/userdata';
 import { useListState, type UseListStateHandlers } from '@mantine/hooks';
 import React from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
-import { StatisticTestStateItem } from '../statistic-test/types';
+import { StatisticalAnalysisStateItem } from '../statistical-analysis/types';
 import { isEqual } from 'lodash-es';
 
 export enum ComparisonPageTab {
   GroupsManager = 'group-manager',
   Visualization = 'visualization',
-  StatisticTest = 'statistic-test',
+  StatisticalAnalysis = 'statistical-analysis',
 }
 
 interface ComparisonAppStateContextType {
@@ -27,10 +27,10 @@ interface ComparisonAppStateContextType {
     includeWholeDataset: boolean;
     setIncludeWholeDataset: React.Dispatch<React.SetStateAction<boolean>>;
   };
-  statisticTest: {
-    input: StatisticTestStateItem | null;
-    setInput: (state: StatisticTestStateItem | null) => void;
-    history: StatisticTestStateItem[];
+  statisticalAnalysis: {
+    input: StatisticalAnalysisStateItem | null;
+    setInput: (state: StatisticalAnalysisStateItem | null) => void;
+    history: StatisticalAnalysisStateItem[];
   };
   reset(): void;
 }
@@ -39,21 +39,23 @@ const ComparisonAppStateContext = createContext<ComparisonAppStateContextType>(
   null as any,
 );
 
-const STATISTIC_TEST_HISTORY_LIMIT = 10;
-function useComparisonStatisticTestAppState() {
-  const [history, setHistory] = React.useState<StatisticTestStateItem[]>([]);
-  const statisticTestInput =
+const STATISTICAL_ANALYSIS_HISTORY_LIMIT = 100;
+function useComparisonStatisticalAnalysisAppState() {
+  const [history, setHistory] = React.useState<StatisticalAnalysisStateItem[]>(
+    [],
+  );
+  const statisticalAnalysisInput =
     history.length === 0 ? null : history[history.length - 1]!;
-  const setStatisticTestInput = React.useCallback(
-    (newEntry: StatisticTestStateItem | null) => {
+  const setStatisticalAnalysisInput = React.useCallback(
+    (newEntry: StatisticalAnalysisStateItem | null) => {
       if (newEntry == null) return;
       setHistory((prev) => {
         let history = prev.filter((entry) => !isEqual(entry, newEntry));
         history.push(newEntry);
 
-        if (history.length > STATISTIC_TEST_HISTORY_LIMIT) {
+        if (history.length > STATISTICAL_ANALYSIS_HISTORY_LIMIT) {
           history = history.slice(
-            history.length - STATISTIC_TEST_HISTORY_LIMIT,
+            history.length - STATISTICAL_ANALYSIS_HISTORY_LIMIT,
           );
         }
         return history;
@@ -62,8 +64,8 @@ function useComparisonStatisticTestAppState() {
     [],
   );
   return {
-    input: statisticTestInput,
-    setInput: setStatisticTestInput,
+    input: statisticalAnalysisInput,
+    setInput: setStatisticalAnalysisInput,
     history,
     setHistory,
   };
@@ -88,7 +90,7 @@ export default function ComparisonAppStateProvider(
   const { setState: setGroups } = groupHandlers;
   const { setState: setDashboard } = dashboardHandlers;
 
-  const statisticTest = useComparisonStatisticTestAppState();
+  const statisticTest = useComparisonStatisticalAnalysisAppState();
   const { setHistory } = statisticTest;
 
   const reset = React.useCallback(() => {
@@ -115,7 +117,7 @@ export default function ComparisonAppStateProvider(
           state: dashboard,
           handlers: dashboardHandlers,
         },
-        statisticTest,
+        statisticalAnalysis: statisticTest,
         reset,
       }}
     >

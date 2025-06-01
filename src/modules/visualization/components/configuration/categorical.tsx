@@ -94,7 +94,6 @@ export function useCategoriesAxisMultiSelect(
           new Date(category),
           column.temporal_precision as TemporalPrecisionEnum | null,
         );
-        console.log(label, category, column.temporal_precision);
         if (!label) return category;
         return {
           label,

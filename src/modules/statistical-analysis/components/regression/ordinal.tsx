@@ -1,0 +1,557 @@
+import {
+  OrdinalRegressionThresholdModel,
+  OrdinalRegressionPredictionResultModel,
+  OrdinalRegressionResultModel,
+} from '@/api/statistical-analysis';
+import {
+  PredictedProbabilityDistributionPlot,
+  RegressionConvergenceResultRenderer,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
+  useOddsRatioRegressionResultPlot,
+  usePredictedResultsBaselineLine,
+} from './components';
+import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
+import { Group, Select, Stack, Switch } from '@mantine/core';
+import PlotRenderer from '@/components/widgets/plotly';
+import {
+  getRegressionCoefficientsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
+import {
+  RegressionModelType,
+  RegressionPredictionAPIHookType,
+  RegressionCoefficientsVisualizationTypeEnum,
+  StatisticalAnalysisPredictionResultRendererProps,
+  useRegressionVisualizationTypeSelect,
+  REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
+  RegressionVariableInfoVisualizationType,
+} from './types';
+import { PlotParams } from 'react-plotly.js';
+import React from 'react';
+import { generateColorsFromSequence } from '@/common/utils/colors';
+import { RegressionConfigType } from '../../configuration/regression-common';
+import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
+import { ResultCard } from '@/components/visual/result-card';
+import { StatisticTestWarningsRenderer } from '../statistic-test/common';
+import { zip } from 'lodash-es';
+import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
+import { ToggleVisibility } from '@/components/visual/toggle-visibility';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { client } from '@/common/api/client';
+import BaseRegressionVariablesInfoSection from './variables-info';
+import { useVisualizationSubdatasetSelect } from '@/modules/visualization/components/configuration/subdatasets';
+import { useDisclosure } from '@mantine/hooks';
+
+const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
+  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
+  RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
+  RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
+];
+
+interface OrdinalRegressionCutpointsRendererProps {
+  thresholds: OrdinalRegressionThresholdModel[];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function OrdinalRegressionThresholdsRenderer(
+  props: OrdinalRegressionCutpointsRendererProps,
+) {
+  const { thresholds } = props;
+  const plot = React.useMemo<PlotParams>(() => {
+    const thresholdNames = thresholds.map(
+      (threshold) => `${threshold.from_level} - ${threshold.to_level}`,
+    );
+    const thresholdValues = thresholds.map((cutpoint) => cutpoint.value);
+    const { colors } = generateColorsFromSequence(thresholdNames);
+
+    return {
+      data: [
+        {
+          type: 'bar',
+          x: thresholdNames,
+          y: thresholdValues,
+          marker: {
+            color: colors,
+          },
+          customdata: zip(
+            thresholds.map((threshold) => threshold.from_level),
+            thresholds.map((threshold) => threshold.to_level),
+          ),
+          hovertemplate: [
+            '<b>Level</b>: %{x}',
+            '<b>Threshold</b>: %{y:.3f}',
+            `<b>From</b>: %{customdata[0]}`,
+            `<b>To</b>: %{customdata[1]}`,
+          ].join('<br>'),
+        },
+      ],
+      layout: {
+        height: 300,
+        title: 'Thresholds of the Dependent Variable Levels',
+        xaxis: {
+          title: 'Levels',
+          type: 'category',
+        },
+        yaxis: {
+          title: 'Thresholds',
+        },
+        barmode: 'stack',
+      },
+    } as PlotParams;
+  }, [thresholds]);
+
+  return (
+    <ToggleVisibility label="Thresholds" defaultVisible>
+      <div className="w-full">
+        <PlotRenderer plot={plot} />
+      </div>
+    </ToggleVisibility>
+  );
+}
+
+export function OrdinalRegressionCoefficientsPlot(
+  props: BaseStatisticalAnalysisResultRendererProps<
+    OrdinalRegressionResultModel,
+    RegressionConfigType
+  >,
+) {
+  const { data } = props;
+  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
+  const { Component: VisualizationSelect, type } =
+    useRegressionVisualizationTypeSelect({
+      supportedTypes: ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
+      dictionary: REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
+    });
+  const visdata = React.useMemo(() => {
+    return getRegressionCoefficientsVisualizationData({
+      coefficients: data.coefficients,
+      modelType: RegressionModelType.Ordinal,
+    });
+  }, [data.coefficients]);
+
+  const commonProps = {
+    alpha,
+    type,
+    data: visdata,
+  };
+  const coefficientPlot = useCoefficientRegressionResultPlot(commonProps);
+  const confidenceLevelPlot =
+    useConfidenceLevelRegressionResultPlot(commonProps);
+  const oddsRatioPlot = useOddsRatioRegressionResultPlot({
+    ...commonProps,
+    layout: {
+      yaxis: {
+        title: 'Odds Ratio in Lower/Equal Rank (Log-Scaled)',
+      },
+    },
+  });
+  const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
+
+  return (
+    <Stack>
+      <StatisticTestWarningsRenderer warnings={data.warnings} />
+      <Group wrap="wrap" align="stretch">
+        <ResultCard
+          label={'Log-Likelihood Ratio'}
+          value={data.fit_evaluation.log_likelihood_ratio}
+          info="Measures how much better the fitted model explains the data compared to the null model. Higher is better. Consider using the p-value or McFadden's Pseudo R-Squared to interpret the model fit rather than the Log-Likelihood Ratio as they are more interpretable/comparable."
+        />
+        <ResultCard
+          label={'P-Value'}
+          value={data.fit_evaluation.p_value}
+          info="Under the assumption that the null model is sufficient to explain the dependent variable, what is the likelihood that the fitted model explains the dependent variable better than the null model?"
+        />
+        <ResultCard
+          label={'Confidence Level'}
+          value={pValueToConfidenceLevel(data.fit_evaluation.p_value)}
+          percentage
+          info="How confident are we that the fitted model explains the dependent variable better than the null model?"
+        />
+        <ResultCard
+          label={"McFadden's Pseudo R-Squared"}
+          value={data.fit_evaluation.pseudo_r_squared}
+          info="Measures how much the independent variables help with predicting the dependent variables. McFadden's pseudo R-squared has a scale of 0 to 1, with higher numbers representing a better explanatory power. To be exact, it measures the % improvement in log-likelihood for the fitted model over the null model."
+        />
+        <ResultCard
+          label={'Sample Size'}
+          value={data.sample_size}
+          info="The number of rows used to fit the regression model."
+        />
+      </Group>
+      {data.reference && (
+        <ResultCard
+          label={'Reference'}
+          value={data.reference}
+          info="The independent variable used as the reference variable."
+        />
+      )}
+      <RegressionConvergenceResultRenderer
+        converged={data.fit_evaluation.converged}
+      />
+      {VisualizationSelect}
+      {AlphaSlider}
+      <OrdinalRegressionThresholdsRenderer thresholds={data.thresholds} />
+      <div>{usedPlot && <PlotRenderer plot={usedPlot} height={720} />}</div>
+    </Stack>
+  );
+}
+
+export function OrdinalRegressionPredictionResultRenderer(
+  props: StatisticalAnalysisPredictionResultRendererProps<
+    OrdinalRegressionPredictionResultModel,
+    RegressionConfigType
+  >,
+) {
+  const { result } = props;
+  const [showCumulative, { toggle: toggleCumulative }] = useDisclosure(false);
+  return (
+    <Stack>
+      <Switch
+        checked={showCumulative}
+        onChange={toggleCumulative}
+        label="Show cumulative probability distribution?"
+      />
+      <ResultCard
+        label="Latent Variable Value"
+        value={result.latent_score}
+        info="Ordinal regression works under the assumption that there is a latent score that defines the thresholds of the levels. This score represents the log-odds that a variable has a rank equal to or lower than the rank the latent variable value is associated with."
+      />
+      <PredictedProbabilityDistributionPlot
+        dependentVariableLevels={result.levels}
+        probabilities={
+          showCumulative
+            ? result.cumulative_probabilities
+            : result.probabilities
+        }
+        title={
+          showCumulative
+            ? 'Predicted Cumulative Probability Distribution'
+            : undefined
+        }
+      />
+    </Stack>
+  );
+}
+
+enum OrdinalRegressionPredictionDisplay {
+  LatentScore = 'latent-score',
+  ProbabilityDistribution = 'probability-distribution',
+  CumulativeProbabilityDistribution = 'cumulative-probability-distribution',
+}
+const ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY = {
+  [OrdinalRegressionPredictionDisplay.ProbabilityDistribution]: {
+    label: 'Probability Distribution',
+    value: OrdinalRegressionPredictionDisplay.ProbabilityDistribution,
+    description: 'Show the probabilities of each level.',
+  },
+  [OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution]: {
+    label: 'Cumulative Probability Distribution',
+    value: OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution,
+    description:
+      'Show the cumulative probabilities of predicting a level lower or equal in rank.',
+  },
+  [OrdinalRegressionPredictionDisplay.LatentScore]: {
+    label: 'Latent Score',
+    value: OrdinalRegressionPredictionDisplay.LatentScore,
+    description:
+      'Show the latent variable predictions. You can then compare the predicted values to the thresholds to see how much the subdataset is associated with lower/higher ranks.',
+  },
+};
+
+export function DefaultOrdinalRegressionPredictionResultRenderer(
+  props: BaseStatisticalAnalysisResultRendererProps<
+    OrdinalRegressionResultModel,
+    RegressionConfigType
+  >,
+) {
+  const { data, config } = props;
+  const [display, setDisplay] = React.useState(
+    OrdinalRegressionPredictionDisplay.ProbabilityDistribution,
+  );
+  const renderOption = useDescriptionBasedRenderOption(
+    ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY,
+  );
+
+  const baselineLayout = usePredictedResultsBaselineLine({
+    baseline: data.baseline_prediction.latent_score,
+  });
+  const latentScorePlot = React.useMemo<PlotParams>(() => {
+    const { colors } = generateColorsFromSequence(data.independent_variables);
+
+    return {
+      data: [
+        {
+          x: data.predictions.map((prediction) => prediction.variable),
+          y: data.predictions.map(
+            (prediction) => prediction.prediction.latent_score,
+          ),
+          type: 'bar',
+          customdata: zip(
+            data.coefficients.map((coefficient) => coefficient.value),
+            data.coefficients.map((coefficient) =>
+              formatConfidenceInterval(coefficient.confidence_interval),
+            ),
+            data.coefficients.map((coefficient) =>
+              pValueToConfidenceLevel(coefficient.p_value),
+            ),
+          ),
+          hovertemplate: [
+            '<b>Independent Variable</b>: %{x}',
+            '<b>Predicted Latent Score</b>: %{y:.3f}',
+            '='.repeat(30),
+            'Coefficient Information',
+            '<b>Coefficient</b>: %{customdata[0]:.3f}',
+            '<b>Confidence Interval</b>: %{customdata[1]}',
+            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
+          ].join('<br>'),
+          marker: {
+            color: colors,
+          },
+        },
+      ],
+      layout: {
+        title: `Predicted Latent Score of ${config.target} per Independent Variable`,
+        xaxis: {
+          title: 'Independent Variables (Subdatasets)',
+          type: 'category',
+        },
+        yaxis: {
+          title: `Predicted Latent Score`,
+        },
+        ...baselineLayout,
+      },
+    } as PlotParams;
+  }, [
+    data.independent_variables,
+    data.predictions,
+    data.coefficients,
+    config.target,
+    baselineLayout,
+  ]);
+
+  const probabilityLabel =
+    display ===
+    OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+      ? 'Cumulative Probability'
+      : 'Probability';
+
+  const probabilityDistributionPlot = React.useMemo<PlotParams>(() => {
+    const allPredictions = [
+      { variable: 'Baseline', prediction: data.baseline_prediction },
+    ].concat(data.predictions);
+    const x = data.levels.map((x) => x.name);
+    // use the coefficients rather than independent_variables.
+    // prediction order follows coefficients
+    const y = allPredictions.map((prediction) => prediction.variable);
+
+    const probabilities = allPredictions.map((prediction) => {
+      return prediction.prediction.probabilities.map(
+        (probability) => probability * 100,
+      );
+    });
+    const cumulativeProbabilities = allPredictions.map((prediction) => {
+      return prediction.prediction.cumulative_probabilities.map(
+        (probability) => probability * 100,
+      );
+    });
+    const z =
+      display ===
+      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+        ? cumulativeProbabilities
+        : probabilities;
+    return {
+      data: [
+        {
+          x,
+          y,
+          z,
+          zmin: 0,
+          zmax: 100,
+          type: 'heatmap',
+          texttemplate: '%{z:.3f}%',
+          hovertemplate: [
+            '<b>Independent Variable</b>: %{x}',
+            '<b>Dependent Variable Level</b>: %{y}',
+            `<b>${probabilityLabel}</b>: %{z:.3f}%`,
+          ].join('<br>'),
+        },
+      ],
+      layout: {
+        title: `Predicted ${probabilityLabel} Distribution of ${config.target}`,
+        xaxis: {
+          title: 'Independent Variables (Subdatasets)',
+          type: 'category',
+        },
+        yaxis: {
+          title: `Dependent Variable Levels`,
+          autorange: 'reversed',
+          type: 'category',
+        },
+      },
+    } as PlotParams;
+  }, [
+    data.levels,
+    data.baseline_prediction,
+    data.predictions,
+    display,
+    probabilityLabel,
+    config.target,
+  ]);
+
+  const namedData = React.useMemo(
+    () =>
+      data.predictions.map((prediction) => {
+        return {
+          name: prediction.variable,
+          data: prediction.prediction,
+        };
+      }),
+    [data.predictions],
+  );
+  const {
+    selectProps,
+    viewed,
+    viewedData: independentVariableData,
+  } = useVisualizationSubdatasetSelect({
+    data: namedData,
+    defaultValue: null,
+  });
+
+  const independentVariablePlot = React.useMemo<PlotParams | null>(() => {
+    if (!independentVariableData) return null;
+    const x = independentVariableData.data.levels;
+    const probabilities = independentVariableData.data.probabilities.map(
+      (probability) => probability * 100,
+    );
+    const cumulativeProbabilities =
+      independentVariableData.data.cumulative_probabilities.map(
+        (probability) => probability * 100,
+      );
+    const y =
+      display ===
+      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+        ? cumulativeProbabilities
+        : probabilities;
+    const baselineProbabilities =
+      display ===
+      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
+        ? data.baseline_prediction.cumulative_probabilities
+        : data.baseline_prediction.probabilities;
+    const baselineY = baselineProbabilities.map(
+      (probability) => probability * 100,
+    );
+
+    const customdata = zip(probabilities, cumulativeProbabilities);
+
+    return {
+      data: [
+        {
+          name: independentVariableData.name,
+          x,
+          y,
+          type: 'bar',
+          customdata: customdata as any,
+          hovertemplate: [
+            '<b>Dependent Variable Level</b>: %{x}',
+            `<b>${probabilityLabel}</b>: %{y:.3f}%`,
+          ].join('<br>'),
+        },
+        {
+          name: 'Baseline',
+          x,
+          y: baselineY,
+          type: 'bar',
+          hovertemplate: [
+            '<b>Dependent Variable Level</b>: %{x}',
+            `<b>${probabilityLabel}</b>: %{y:.3f}`,
+          ].join('<br>'),
+        },
+      ],
+      layout: {
+        title: `Predicted ${probabilityLabel} Distribution of ${config.target} (Input: ${independentVariableData.name})`,
+        xaxis: {
+          title: 'Dependent Variable Levels',
+          type: 'category',
+        },
+        yaxis: {
+          title: `Probability`,
+          ticksuffix: '%',
+          minallowed: 0,
+          maxallowed: 100,
+        },
+      },
+    } as PlotParams;
+  }, [
+    config.target,
+    data.baseline_prediction.cumulative_probabilities,
+    data.baseline_prediction.probabilities,
+    display,
+    independentVariableData,
+    probabilityLabel,
+  ]);
+
+  return (
+    <Stack>
+      <Select
+        label="Prediction Type"
+        description="Choose the type of prediction data to be displayed."
+        required
+        value={display}
+        data={Object.values(ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY)}
+        onChange={
+          setDisplay as React.Dispatch<React.SetStateAction<string | null>>
+        }
+        renderOption={renderOption}
+        allowDeselect={false}
+      />
+      <Select
+        label="Independent Variable"
+        description="Choose an independent variable to view its probability distribution."
+        clearable
+        {...selectProps}
+      />
+      <div>
+        <PlotRenderer
+          key={`${display}-${viewed}`}
+          plot={
+            display === OrdinalRegressionPredictionDisplay.LatentScore
+              ? latentScorePlot
+              : (independentVariablePlot ?? probabilityDistributionPlot)
+          }
+        />
+      </div>
+    </Stack>
+  );
+}
+
+export const useOrdinalRegressionPredictionAPIHook: RegressionPredictionAPIHookType<
+  OrdinalRegressionPredictionResultModel,
+  RegressionConfigType
+> = function (params) {
+  const { input } = params;
+  const mutationResult = client.useMutation(
+    'post',
+    '/statistical-analysis/{project_id}/regression/prediction/ordinal',
+  );
+  return useAdaptMutationToRegressionPredictionAPIResult<OrdinalRegressionPredictionResultModel>(
+    input,
+    mutationResult,
+  );
+};
+
+export function OrdinalRegressionVariablesInfoSection(
+  props: BaseStatisticalAnalysisResultRendererProps<
+    OrdinalRegressionResultModel,
+    RegressionConfigType
+  >,
+) {
+  const { data } = props;
+  return (
+    <BaseRegressionVariablesInfoSection
+      independentVariables={data.independent_variables}
+      dependentVariableLevels={data.levels}
+      supportedTypes={Object.values(RegressionVariableInfoVisualizationType)}
+    />
+  );
+}

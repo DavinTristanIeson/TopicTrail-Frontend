@@ -80,18 +80,19 @@ interface UseVisualizationSubdatasetSelectReturn<T> {
 
 interface UseVisualizationSubdatasetSelectParams<T> {
   data: NamedData<T>[];
+  defaultValue?: string | null;
 }
 
 export function useVisualizationSubdatasetSelect<T>(
   props: UseVisualizationSubdatasetSelectParams<T>,
 ): UseVisualizationSubdatasetSelectReturn<T> {
-  const { data } = props;
+  const { data, defaultValue } = props;
   const options = React.useMemo(
     () => data.map((subdataset) => subdataset.name),
     [data],
   );
   const [viewed, setViewed] = React.useState<string | null>(
-    data[0]?.name ?? null,
+    defaultValue === undefined ? (data[0]?.name ?? null) : defaultValue,
   );
   const inputContainer = useSelectLeftRightButtons({
     options,

@@ -106,6 +106,7 @@ export default function VisualizationProportionsComponent(
           title,
           xaxis: {
             title: 'Subdatasets',
+            type: 'category',
           },
           yaxis: {
             title: item.column,
@@ -139,6 +140,7 @@ export default function VisualizationProportionsComponent(
           title,
           xaxis: {
             title: 'Subdatasets',
+            type: 'category',
           },
           yaxis: {
             ...plotlyLayoutProps,
