@@ -155,8 +155,8 @@ export function DefaultLinearRegressionPredictionResultRenderer(
     return {
       data: [
         {
-          x: data.independent_variables.map((variable) => variable.name),
-          y: data.predictions.map((prediction) => prediction.mean),
+          x: data.predictions.map((prediction) => prediction.variable),
+          y: data.predictions.map((prediction) => prediction.prediction.mean),
           type: 'bar',
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
@@ -179,13 +179,7 @@ export function DefaultLinearRegressionPredictionResultRenderer(
         ...baselineLayout,
       },
     } as PlotParams;
-  }, [
-    data.independent_variables,
-    data.predictions,
-    data.coefficients,
-    config.target,
-    baselineLayout,
-  ]);
+  }, [data.predictions, data.coefficients, config.target, baselineLayout]);
   return <PlotRenderer plot={plot} />;
 }
 

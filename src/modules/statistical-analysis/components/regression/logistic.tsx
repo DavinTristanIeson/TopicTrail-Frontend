@@ -155,8 +155,10 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
     return {
       data: [
         {
-          x: data.independent_variables.map((variable) => variable.name),
-          y: data.predictions.map((prediction) => prediction.probability * 100),
+          x: data.predictions.map((prediction) => prediction.variable),
+          y: data.predictions.map(
+            (prediction) => prediction.prediction.probability,
+          ),
           type: 'bar',
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',

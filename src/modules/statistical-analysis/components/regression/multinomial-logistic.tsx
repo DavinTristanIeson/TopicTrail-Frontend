@@ -43,7 +43,6 @@ import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { useVisualizationSubdatasetSelect } from '@/modules/visualization/components/configuration/subdatasets';
-import { zip } from 'lodash-es';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -479,15 +478,13 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
   console.log(data.facets[0]?.coefficients, data.predictions);
   const namedData = React.useMemo(
     () =>
-      zip(data.predictions, data.facets[0]!.coefficients).map(
-        ([prediction, variable]) => {
-          return {
-            name: variable!.name,
-            data: prediction!,
-          };
-        },
-      ),
-    [data.facets, data.predictions],
+      data.predictions.map((prediction) => {
+        return {
+          name: prediction.variable,
+          data: prediction.prediction,
+        };
+      }),
+    [data.predictions],
   );
   const {
     selectProps,
@@ -498,12 +495,17 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
     defaultValue: null,
   });
   const wholePlot = React.useMemo<PlotParams>(() => {
-    const y = ['Baseline', ...data.facets[0]!.coefficients.map((x) => x.name)];
+    const allPredictions = [
+      { variable: 'Baseline', prediction: data.baseline_prediction },
+    ].concat(data.predictions);
+    // During prediction, the model returns the distribution for all (although coefficients is always levels - 1)
+    const y = allPredictions.map((prediction) => prediction.variable);
     const x = data.levels.map((level) => level.name);
 
-    const allPredictions = [data.baseline_prediction].concat(data.predictions);
     const z = allPredictions.map((prediction) => {
-      return prediction.probabilities.map((probability) => probability * 100);
+      return prediction.prediction.probabilities.map(
+        (probability) => probability * 100,
+      );
     });
 
     return {
@@ -536,13 +538,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
         },
       },
     } as PlotParams;
-  }, [
-    data.facets,
-    data.levels,
-    data.baseline_prediction,
-    data.predictions,
-    config.target,
-  ]);
+  }, [data.levels, data.baseline_prediction, data.predictions, config.target]);
 
   const independentVariablePlot = React.useMemo<PlotParams | null>(() => {
     if (!independentVariableData) return null;

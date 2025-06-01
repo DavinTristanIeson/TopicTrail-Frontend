@@ -1989,7 +1989,7 @@ export interface components {
             intercept: components["schemas"]["RegressionCoefficient"];
             fit_evaluation: components["schemas"]["LinearRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["LinearRegressionPredictionResult"][];
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_LinearRegressionPredictionResult_"][];
             baseline_prediction: components["schemas"]["LinearRegressionPredictionResult"];
             /** Standardized */
             standardized: boolean;
@@ -2064,7 +2064,7 @@ export interface components {
             intercept: components["schemas"]["LogisticRegressionCoefficient"];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["LogisticRegressionPredictionResult"][];
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_LogisticRegressionPredictionResult_"][];
             baseline_prediction: components["schemas"]["LogisticRegressionPredictionResult"];
         };
         /** MultinomialLogisticRegressionFacetResult */
@@ -2117,7 +2117,7 @@ export interface components {
             facets: components["schemas"]["MultinomialLogisticRegressionFacetResult"][];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["MultinomialLogisticRegressionPredictionResult"][];
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_MultinomialLogisticRegressionPredictionResult_"][];
             baseline_prediction: components["schemas"]["MultinomialLogisticRegressionPredictionResult"];
         };
         /** NamedTableFilter */
@@ -2298,7 +2298,7 @@ export interface components {
             levels: components["schemas"]["RegressionDependentVariableLevelInfo"][];
             fit_evaluation: components["schemas"]["OrdinalRegressionFitEvaluation"];
             /** Predictions */
-            predictions: components["schemas"]["OrdinalRegressionPredictionResult"][];
+            predictions: components["schemas"]["RegressionPredictionPerIndependentVariableResult_OrdinalRegressionPredictionResult_"][];
             baseline_prediction: components["schemas"]["OrdinalRegressionPredictionResult"];
         };
         /** OrdinalRegressionThreshold */
@@ -2435,6 +2435,30 @@ export interface components {
          * @enum {string}
          */
         RegressionInterpretation: "grand_mean_deviation" | "relative_to_reference" | "relative_to_baseline";
+        /** RegressionPredictionPerIndependentVariableResult[LinearRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_LinearRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["LinearRegressionPredictionResult"];
+        };
+        /** RegressionPredictionPerIndependentVariableResult[LogisticRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_LogisticRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["LogisticRegressionPredictionResult"];
+        };
+        /** RegressionPredictionPerIndependentVariableResult[MultinomialLogisticRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_MultinomialLogisticRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["MultinomialLogisticRegressionPredictionResult"];
+        };
+        /** RegressionPredictionPerIndependentVariableResult[OrdinalRegressionPredictionResult] */
+        RegressionPredictionPerIndependentVariableResult_OrdinalRegressionPredictionResult_: {
+            /** Variable */
+            variable: string;
+            prediction: components["schemas"]["OrdinalRegressionPredictionResult"];
+        };
         /**
          * SchemaColumnTypeEnum
          * @enum {string}

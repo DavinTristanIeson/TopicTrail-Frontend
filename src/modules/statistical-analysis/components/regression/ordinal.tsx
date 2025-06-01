@@ -282,8 +282,10 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     return {
       data: [
         {
-          x: data.independent_variables.map((variable) => variable.name),
-          y: data.predictions.map((prediction) => prediction.latent_score),
+          x: data.predictions.map((prediction) => prediction.variable),
+          y: data.predictions.map(
+            (prediction) => prediction.prediction.latent_score,
+          ),
           type: 'bar',
           customdata: zip(
             data.coefficients.map((coefficient) => coefficient.value),
@@ -335,23 +337,24 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
       : 'Probability';
 
   const probabilityDistributionPlot = React.useMemo<PlotParams>(() => {
+    const allPredictions = [
+      { variable: 'Baseline', prediction: data.baseline_prediction },
+    ].concat(data.predictions);
     const x = data.levels.map((x) => x.name);
     // use the coefficients rather than independent_variables.
     // prediction order follows coefficients
-    const y = ['Baseline', ...data.coefficients.map((x) => x.name)];
+    const y = allPredictions.map((prediction) => prediction.variable);
 
-    const probabilities = [data.baseline_prediction]
-      .concat(data.predictions)
-      .map((prediction) => {
-        return prediction.probabilities.map((probability) => probability * 100);
-      });
-    const cumulativeProbabilities = [data.baseline_prediction]
-      .concat(data.predictions)
-      .map((prediction) => {
-        return prediction.cumulative_probabilities.map(
-          (probability) => probability * 100,
-        );
-      });
+    const probabilities = allPredictions.map((prediction) => {
+      return prediction.prediction.probabilities.map(
+        (probability) => probability * 100,
+      );
+    });
+    const cumulativeProbabilities = allPredictions.map((prediction) => {
+      return prediction.prediction.cumulative_probabilities.map(
+        (probability) => probability * 100,
+      );
+    });
     const z =
       display ===
       OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
@@ -370,7 +373,7 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Dependent Variable Level</b>: %{y}',
-            `<b>${probabilityLabel}</b>: %{z}%`,
+            `<b>${probabilityLabel}</b>: %{z:.3f}%`,
           ].join('<br>'),
         },
       ],
@@ -389,7 +392,6 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     } as PlotParams;
   }, [
     data.levels,
-    data.coefficients,
     data.baseline_prediction,
     data.predictions,
     display,
@@ -399,13 +401,13 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
 
   const namedData = React.useMemo(
     () =>
-      zip(data.predictions, data.coefficients).map(([prediction, variable]) => {
+      data.predictions.map((prediction) => {
         return {
-          name: variable!.name,
-          data: prediction!,
+          name: prediction.variable,
+          data: prediction.prediction,
         };
       }),
-    [data.coefficients, data.predictions],
+    [data.predictions],
   );
   const {
     selectProps,
