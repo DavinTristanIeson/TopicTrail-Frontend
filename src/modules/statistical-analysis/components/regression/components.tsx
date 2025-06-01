@@ -21,6 +21,7 @@ import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
 import { pValueToConfidenceLevel } from './utils';
 import PlotRenderer from '@/components/widgets/plotly';
+import { formatNumber } from '@/common/utils/number';
 
 interface UseAlphaConstrainedColorsProps {
   coefficients: UltimateRegressionCoefficientModel[];
@@ -130,7 +131,7 @@ export function useConfidenceLevelRegressionResultPlot(
               xref: 'paper',
               y: confidence,
               yref: 'y',
-              text: `Alpha: ${alpha.toFixed(2)}<br>Confidence Level: ${confidence.toFixed()}%`,
+              text: `Alpha: ${formatNumber(alpha)}<br>Confidence Level: ${formatNumber(confidence)}%`,
             },
           ],
           shapes: [
@@ -305,7 +306,7 @@ export function usePredictedResultsBaselineLine(
           xref: 'paper',
           y: baseline,
           yref: 'y',
-          text: `Baseline: ${baseline.toFixed(3)}` + (percentage ? '%' : ''),
+          text: `Baseline: ${formatNumber(baseline)}` + (percentage ? '%' : ''),
         },
       ],
       shapes: [
@@ -352,19 +353,19 @@ export function RegressionInterceptResultRenderer(
     },
     {
       label: statisticName,
-      value: intercept.statistic.toFixed(3),
+      value: formatNumber(intercept.statistic),
     },
     {
       label: 'P-Value',
-      value: intercept.p_value.toFixed(3),
+      value: formatNumber(intercept.p_value),
     },
     {
       label: 'Confidence Level',
-      value: `${(100 * (1 - intercept.p_value)).toFixed(3)}%`,
+      value: `${formatNumber(pValueToConfidenceLevel(intercept.p_value))}%`,
     },
     {
       label: 'Confidence Interval (Alpha = 0.05)',
-      value: `${intercept.confidence_interval[0].toFixed(3)} - ${intercept.confidence_interval[1].toFixed(3)}`,
+      value: `${formatNumber(intercept.confidence_interval[0])} - ${formatNumber(intercept.confidence_interval[1])}`,
     },
   ];
 
@@ -377,7 +378,7 @@ export function RegressionInterceptResultRenderer(
             {'Intercept' + (withOdds ? ' (Odds Ratio)' : '')}
           </Text>
           <Text size="xl" fw={500} c="brand" style={{ fontSize: 36 }}>
-            {withOdds ? oddsRatio.toFixed(3) : intercept.value.toFixed(3)}
+            {withOdds ? formatNumber(oddsRatio) : formatNumber(intercept.value)}
           </Text>
           {reference && (
             <Text size="md" fw={500}>

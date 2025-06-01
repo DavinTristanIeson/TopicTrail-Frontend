@@ -1,4 +1,5 @@
 import { getTopicLabel, TopicModel } from '@/api/topic';
+import { formatNumber } from '@/common/utils/number';
 import { plotlyWrapText } from '@/modules/visualization/components/utils';
 
 interface ExtractTopicCustomdataForPlotlyParams {
@@ -35,7 +36,7 @@ export function extractTopicCustomdataForPlotly(
   if (toggles?.frequency !== false) {
     const topicFrequencies = topics.map((topic) => {
       if (percentage) {
-        return `${topic?.frequency.toFixed(2) ?? 0}%`;
+        return `${formatNumber(topic?.frequency ?? 0)}%`;
       } else {
         return topic?.frequency ?? 0;
       }
@@ -67,7 +68,7 @@ export function extractTopicCustomdataForPlotly(
       return plotlyWrapText(
         topic.words
           .slice(0, 20)
-          .map((word) => `(${word[0]}, ${word[1].toFixed(2)})`)
+          .map((word) => `(${word[0]}, ${formatNumber(word[1])})`)
           .join(', '),
       );
     });

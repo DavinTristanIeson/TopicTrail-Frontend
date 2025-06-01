@@ -37,6 +37,7 @@ import { without, zip } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
+import { formatNumber } from '@/common/utils/number';
 
 const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -132,7 +133,7 @@ export function LogisticRegressionPredictionResultRenderer(
   return (
     <ResultCard
       label="Predicted Probability"
-      value={`${(result.probability * 100).toFixed(3)}%`}
+      value={`${formatNumber(result.probability * 100)}%`}
     />
   );
 }

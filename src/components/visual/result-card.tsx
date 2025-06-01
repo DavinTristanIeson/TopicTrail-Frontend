@@ -2,6 +2,7 @@ import { Card, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 import React from 'react';
 import { MaybeText } from '../utility/maybe';
+import { formatNumber } from '@/common/utils/number';
 
 interface ResultCardProps {
   label: string;
@@ -44,19 +45,17 @@ function ResultCardNumberRenderer(props: ResultCardNumberRendererProps) {
   });
   const maxStringifiedNumber = value.toString();
 
-  console.log(stringifiedNumber, maxStringifiedNumber);
-
   if (
     maxStringifiedNumber.length === stringifiedNumber.length &&
     !maxStringifiedNumber.includes('e')
   ) {
-    return <ResultCardText>{stringifiedNumber + suffix}</ResultCardText>;
+    return <ResultCardText>{formatNumber(value) + suffix}</ResultCardText>;
   }
   return (
     <HoverCard position="bottom" withArrow>
       <HoverCard.Target>
         <div>
-          <ResultCardText>{stringifiedNumber + suffix}</ResultCardText>
+          <ResultCardText>{formatNumber(value) + suffix}</ResultCardText>
         </div>
       </HoverCard.Target>
       <HoverCard.Dropdown>

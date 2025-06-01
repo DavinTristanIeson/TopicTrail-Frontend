@@ -79,18 +79,18 @@ export function getRegressionCoefficientsVisualizationData(
 
   const hovertemplate = [
     '<b>Variable</b>: %{customdata[0]}',
-    '<b>Coefficient</b>: %{customdata[1]}',
+    '<b>Coefficient</b>: %{customdata[1]:.3f}',
     '<b>Confidence Interval</b>: %{customdata[2]} (for Alpha = 0.05)',
     ...maybeElement(withOdds, [
       '='.repeat(30),
-      '<b>Odds Ratio</b>: %{customdata[3]}',
+      '<b>Odds Ratio</b>: %{customdata[3]:.3f}',
       '<b>Confidence Interval</b>: %{customdata[4]}',
     ]),
     '='.repeat(30),
-    '<b>P-Value</b>: %{customdata[5]}',
+    '<b>P-Value</b>: %{customdata[5]:.3f}',
     '<b>Confidence</b>: %{customdata[6]:.3f}%',
-    `<b>${statisticName}</b>: %{customdata[7]}`,
-    '<b>Standard Error</b>: %{customdata[8]}',
+    `<b>${statisticName}</b>: %{customdata[7]:.3f}`,
+    '<b>Standard Error</b>: %{customdata[8]:.3f}',
   ].join('<br>');
   return {
     customdata,

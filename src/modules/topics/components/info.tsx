@@ -4,6 +4,7 @@ import {
   getTextColorBasedOnContrast,
   getPlotColor,
 } from '@/common/utils/colors';
+import { formatNumber } from '@/common/utils/number';
 import { Stack, Group, Badge, Text } from '@mantine/core';
 import chroma from 'chroma-js';
 
@@ -41,7 +42,7 @@ export function TopicWordsRenderer(props: TopicWordsRendererProps) {
               color: getTextColorBasedOnContrast(backgroundColor),
             }}
           >
-            {`${word} (${value.toFixed(2)})`}
+            {`${word} (${formatNumber(value)})`}
           </Text>
         );
       })}

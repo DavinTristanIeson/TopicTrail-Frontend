@@ -20,6 +20,7 @@ import { Eye } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
 import { max } from 'lodash-es';
 import { TopicEvaluationMetricsRenderer } from '@/modules/topic-evaluation/result';
+import { formatNumber } from '@/common/utils/number';
 
 interface TopicModelExperimentDetailsProps {
   data: BERTopicExperimentResultModel;
@@ -157,7 +158,8 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         },
         Cell({ cell: { getValue } }) {
           const coherence = getValue() as number | undefined;
-          return coherence?.toFixed(3);
+          if (coherence == null) return;
+          return formatNumber(coherence);
         },
       },
       {
@@ -174,7 +176,8 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
         },
         Cell({ cell: { getValue } }) {
           const diversity = getValue() as number | undefined;
-          return diversity?.toFixed(3);
+          if (diversity == null) return;
+          return formatNumber(diversity);
         },
       },
       {

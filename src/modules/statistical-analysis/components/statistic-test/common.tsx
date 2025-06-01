@@ -35,6 +35,7 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import { useDisclosure } from '@mantine/hooks';
 import React from 'react';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { formatNumber } from '@/common/utils/number';
 
 interface StatisticTestWarningsRendererProps {
   warnings: string[] | null | undefined;
@@ -143,7 +144,7 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
             const groupProportion = (group.valid_count / totalCount) * 100;
             return (
               <Tooltip
-                label={`${group.name}: ${group.valid_count} / ${totalCount} (${groupProportion.toFixed(2)}%) Rows`}
+                label={`${group.name}: ${group.valid_count} / ${totalCount} (${formatNumber(groupProportion)}%) Rows`}
                 key={group.name}
               >
                 <Progress.Section value={groupProportion} color={colors[index]}>
@@ -156,14 +157,14 @@ export function GroupCountsRenderer(props: GroupCountsRendererProps) {
           })}
           {emptyCount > 0 && (
             <Tooltip
-              label={`Empty: ${emptyCount} / ${totalCount} (${emptyProportion.toFixed(2)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
+              label={`Empty: ${emptyCount} / ${totalCount} (${formatNumber(emptyProportion)}%) Rows. This number includes all rows that are included in the subdatasets, but does not contain a valid value for the column \"${column}\".`}
             >
               <Progress.Section value={emptyProportion} color="red" />
             </Tooltip>
           )}
           {overlapCount > 0 && (
             <Tooltip
-              label={`Overlap: ${overlapCount} / ${totalCount} (${overlapProportion.toFixed(2)}%) Rows. This number includes all rows that are shared by two or more subdatasets.`}
+              label={`Overlap: ${overlapCount} / ${totalCount} (${formatNumber(overlapProportion)}%) Rows. This number includes all rows that are shared by two or more subdatasets.`}
             >
               <Progress.Section value={overlapProportion} color="yellow" />
             </Tooltip>
@@ -217,7 +218,7 @@ function EffectSizeResultRenderer(props: EffectSizeResultModel) {
           ? `Effect Size (${dictionaryEntry.label})`
           : 'Effect Size'
       }
-      value={props.value.toFixed(3)}
+      value={formatNumber(props.value)}
       info={dictionaryEntry.description}
     />
   );
