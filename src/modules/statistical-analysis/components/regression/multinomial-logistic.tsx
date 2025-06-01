@@ -35,9 +35,9 @@ import {
   getBalancedHeatmapZRange,
   getRawHeatmapZRange,
 } from '@/modules/visualization/components/configuration/heatmap';
-import { mask2D, zip2D } from '@/common/utils/iterable';
+import { mask2D } from '@/common/utils/iterable';
 import { ResultCard } from '@/components/visual/result-card';
-import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
+import { pValueToConfidenceLevel } from './utils';
 import { useSelectLeftRightButtons } from '@/components/visual/select';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { client } from '@/common/api/client';
@@ -498,55 +498,13 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
     defaultValue: null,
   });
   const wholePlot = React.useMemo<PlotParams>(() => {
-    const y = [
-      'Baseline',
-      ...data.independent_variables.map((variable) => variable.name),
-    ];
+    const y = ['Baseline', ...data.facets[0]!.coefficients.map((x) => x.name)];
     const x = data.levels.map((level) => level.name);
 
     const allPredictions = [data.baseline_prediction].concat(data.predictions);
     const z = allPredictions.map((prediction) => {
       return prediction.probabilities.map((probability) => probability * 100);
     });
-    const confidenceLevels = (
-      [data.independent_variables.map(() => 'None')] as unknown as number[][]
-    ).concat(
-      data.facets.map((facet) =>
-        facet.coefficients.map((coefficient) =>
-          pValueToConfidenceLevel(coefficient.p_value),
-        ),
-      ),
-    );
-    const oddsRatio = (
-      [data.independent_variables.map(() => 'None')] as unknown as number[][]
-    ).concat(
-      data.facets.map((facet) =>
-        facet.coefficients.map((coefficient) => coefficient.odds_ratio),
-      ),
-    );
-    const oddsRatioConfidenceIntervals = [
-      data.independent_variables.map(() => 'None'),
-    ].concat(
-      data.facets.map((facet) =>
-        facet.coefficients.map((coefficient) =>
-          formatConfidenceInterval(coefficient.odds_ratio_confidence_interval),
-        ),
-      ),
-    );
-    const customdata = zip2D<string | number>([
-      oddsRatio,
-      oddsRatioConfidenceIntervals,
-      confidenceLevels,
-    ]);
-    console.log(
-      x,
-      y,
-      z,
-      customdata,
-      oddsRatio,
-      oddsRatioConfidenceIntervals,
-      confidenceLevels,
-    );
 
     return {
       data: [
@@ -558,16 +516,10 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
           zmax: 100,
           type: 'heatmap',
           texttemplate: '%{z:.3f}%',
-          customdata: customdata as any,
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Dependent Variable Level</b>: %{y}',
             '<b>Predicted Probability</b>: %{z:.3f}%',
-            '='.repeat(30),
-            'Coefficient Information',
-            '<b>Odds Ratio</b>: %{customdata[0]:.3f}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
           ].join('<br>'),
         },
       ],
@@ -585,11 +537,10 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
       },
     } as PlotParams;
   }, [
-    data.independent_variables,
+    data.facets,
     data.levels,
     data.baseline_prediction,
     data.predictions,
-    data.facets,
     config.target,
   ]);
 
@@ -604,29 +555,6 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
       (probability) => probability * 100,
     );
 
-    const coefficients = data.facets.map((facet) =>
-      facet.coefficients.find(
-        (coefficient) => coefficient.name === independentVariableData.name,
-      ),
-    );
-
-    const confidenceLevels = coefficients.map((coefficient) =>
-      coefficient ? pValueToConfidenceLevel(coefficient.p_value) : 'None',
-    );
-    const oddsRatio = coefficients.map(
-      (coefficient) => coefficient?.odds_ratio ?? 'None',
-    );
-    const oddsRatioConfidenceIntervals = coefficients.map((coefficient) =>
-      coefficient
-        ? formatConfidenceInterval(coefficient.odds_ratio_confidence_interval)
-        : 'None',
-    );
-    const customdata = zip(
-      oddsRatio,
-      oddsRatioConfidenceIntervals,
-      confidenceLevels,
-    );
-
     return {
       data: [
         {
@@ -634,15 +562,9 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
           x,
           y,
           type: 'bar',
-          customdata: customdata as any,
           hovertemplate: [
             '<b>Dependent Variable Level</b>: %{x}',
             '<b>Predicted Probability</b>: %{y:.3f}',
-            '='.repeat(30),
-            'Coefficient Information',
-            '<b>Odds Ratio</b>: %{customdata[0]:.3f}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
           ].join('<br>'),
         },
         {
@@ -653,7 +575,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
           hovertemplate: [
             '<b>Dependent Variable Level</b>: %{x}',
             '<b>Predicted Probability</b>: %{y:.3f}',
-          ],
+          ].join('<br>'),
         },
       ],
       layout: {
@@ -673,7 +595,6 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
   }, [
     config.target,
     data.baseline_prediction.probabilities,
-    data.facets,
     independentVariableData,
   ]);
 

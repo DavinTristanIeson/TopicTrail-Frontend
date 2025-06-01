@@ -331,12 +331,14 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
   const probabilityLabel =
     display ===
     OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
-      ? 'Cumulative Probability Distribution'
-      : 'Probability Distribution';
+      ? 'Cumulative Probability'
+      : 'Probability';
 
   const probabilityDistributionPlot = React.useMemo<PlotParams>(() => {
     const x = data.levels.map((x) => x.name);
-    const y = ['Baseline', ...data.independent_variables.map((x) => x.name)];
+    // use the coefficients rather than independent_variables.
+    // prediction order follows coefficients
+    const y = ['Baseline', ...data.coefficients.map((x) => x.name)];
 
     const probabilities = [data.baseline_prediction]
       .concat(data.predictions)
@@ -355,20 +357,6 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
       OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
         ? cumulativeProbabilities
         : probabilities;
-    const pValues = data.coefficients.map((coefficient) => coefficient.p_value);
-    const customdataRow = zip(
-      probabilities,
-      cumulativeProbabilities,
-      data.coefficients.map((coefficient) => coefficient.odds_ratio),
-      data.coefficients.map((coefficient) =>
-        formatConfidenceInterval(coefficient.odds_ratio_confidence_interval),
-      ),
-      pValues.map(pValueToConfidenceLevel),
-    );
-    const customdata = [
-      Array.from(customdataRow, () => 'None') as any[],
-    ].concat(data.independent_variables.map(() => customdataRow));
-
     return {
       data: [
         {
@@ -379,22 +367,15 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
           zmax: 100,
           type: 'heatmap',
           texttemplate: '%{z:.3f}%',
-          customdata: customdata as any,
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Dependent Variable Level</b>: %{y}',
-            '<b>Predicted Probability</b>: %{customdata[0]:.3f}%',
-            '<b>Cumulative Probability</b>: %{customdata[1]:.3f}%',
-            '='.repeat(30),
-            'Coefficient Information',
-            '<b>Odds Ratio</b>: %{customdata[0]:.3f}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[1]:.3f}',
+            `<b>${probabilityLabel}</b>: %{z}%`,
           ].join('<br>'),
         },
       ],
       layout: {
-        title: `Predicted ${probabilityLabel} of ${config.target}`,
+        title: `Predicted ${probabilityLabel} Distribution of ${config.target}`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
           type: 'category',
@@ -408,10 +389,9 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     } as PlotParams;
   }, [
     data.levels,
-    data.independent_variables,
+    data.coefficients,
     data.baseline_prediction,
     data.predictions,
-    data.coefficients,
     display,
     probabilityLabel,
     config.target,
@@ -460,24 +440,7 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
       (probability) => probability * 100,
     );
 
-    const confidenceLevels = data.coefficients.map((coefficient) =>
-      coefficient ? pValueToConfidenceLevel(coefficient.p_value) : 'None',
-    );
-    const oddsRatio = data.coefficients.map(
-      (coefficient) => coefficient?.odds_ratio ?? 'None',
-    );
-    const oddsRatioConfidenceIntervals = data.coefficients.map((coefficient) =>
-      coefficient
-        ? formatConfidenceInterval(coefficient.odds_ratio_confidence_interval)
-        : 'None',
-    );
-    const customdata = zip(
-      probabilities,
-      cumulativeProbabilities,
-      oddsRatio,
-      oddsRatioConfidenceIntervals,
-      confidenceLevels,
-    );
+    const customdata = zip(probabilities, cumulativeProbabilities);
 
     return {
       data: [
@@ -489,13 +452,7 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
           customdata: customdata as any,
           hovertemplate: [
             '<b>Dependent Variable Level</b>: %{x}',
-            '<b>Predicted Probability</b>: %{customdata[0]:.3f}%',
-            '<b>Cumulative Probability</b>: %{customdata[1]:.3f}%',
-            '='.repeat(30),
-            'Coefficient Information',
-            '<b>Odds Ratio</b>: %{customdata[2]:.3f}',
-            '<b>Confidence Interval</b>: %{customdata[3]}',
-            '<b>Confidence Level</b>: %{customdata[4]:.3f}%',
+            `<b>${probabilityLabel}</b>: %{y:.3f}%`,
           ].join('<br>'),
         },
         {
@@ -505,12 +462,12 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
           type: 'bar',
           hovertemplate: [
             '<b>Dependent Variable Level</b>: %{x}',
-            '<b>Predicted Probability</b>: %{y:.3f}',
-          ],
+            `<b>${probabilityLabel}</b>: %{y:.3f}`,
+          ].join('<br>'),
         },
       ],
       layout: {
-        title: `Predicted ${probabilityLabel} of ${config.target} (Input: ${independentVariableData.name})`,
+        title: `Predicted ${probabilityLabel} Distribution of ${config.target} (Input: ${independentVariableData.name})`,
         xaxis: {
           title: 'Dependent Variable Levels',
           type: 'category',
@@ -527,7 +484,6 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     config.target,
     data.baseline_prediction.cumulative_probabilities,
     data.baseline_prediction.probabilities,
-    data.coefficients,
     display,
     independentVariableData,
     probabilityLabel,

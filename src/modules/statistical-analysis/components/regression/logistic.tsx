@@ -31,9 +31,9 @@ import { LogisticRegressionConfigType } from '../../configuration/logistic-regre
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
+import { pValueToConfidenceLevel } from './utils';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { without, zip } from 'lodash-es';
+import { without } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
@@ -158,24 +158,9 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
           x: data.independent_variables.map((variable) => variable.name),
           y: data.predictions.map((prediction) => prediction.probability * 100),
           type: 'bar',
-          customdata: zip(
-            data.coefficients.map((coefficient) => coefficient.odds_ratio),
-            data.coefficients.map((coefficient) =>
-              formatConfidenceInterval(
-                coefficient.odds_ratio_confidence_interval,
-              ),
-            ),
-            data.coefficients.map((coefficient) =>
-              pValueToConfidenceLevel(coefficient.p_value),
-            ),
-          ),
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Predicted Probability</b>: %{y}',
-            '='.repeat(30),
-            '<b>Odds Ratio</b>: %{customdata[0]:.3f}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
           ].join('<br>'),
           marker: {
             color: colors,
@@ -200,7 +185,6 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
   }, [
     baselineLayout,
     config.target,
-    data.coefficients,
     data.independent_variables,
     data.predictions,
   ]);

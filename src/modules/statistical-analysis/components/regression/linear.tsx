@@ -29,9 +29,9 @@ import {
 } from './types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
+import { pValueToConfidenceLevel } from './utils';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { without, zip } from 'lodash-es';
+import { without } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
@@ -158,22 +158,9 @@ export function DefaultLinearRegressionPredictionResultRenderer(
           x: data.independent_variables.map((variable) => variable.name),
           y: data.predictions.map((prediction) => prediction.mean),
           type: 'bar',
-          customdata: zip(
-            data.coefficients.map((coefficient) => coefficient.statistic),
-            data.coefficients.map((coefficient) =>
-              formatConfidenceInterval(coefficient.confidence_interval),
-            ),
-            data.coefficients.map((coefficient) =>
-              pValueToConfidenceLevel(coefficient.p_value),
-            ),
-          ),
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Predicted Mean</b>: %{y:.3f}',
-            '='.repeat(30),
-            '<b>Coefficient</b>: %{customdata[0]:.3f}',
-            '<b>Confidence Interval</b>: %{customdata[1]}',
-            '<b>Confidence Level</b>: %{customdata[2]:.3f}%',
           ].join('<br>'),
           marker: {
             color: colors,
