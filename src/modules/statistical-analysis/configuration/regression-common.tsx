@@ -119,13 +119,19 @@ interface CommonRegressionConfigFormProps {
   onChangeColumn?(): void;
   DependentVariableComponent?: React.ReactNode;
   Bottom?: React.ReactNode;
+  Top?: React.ReactNode;
 }
 
 export function CommonRegressionConfigForm(
   props: CommonRegressionConfigFormProps,
 ) {
-  const { supportedTypes, onChangeColumn, Bottom, DependentVariableComponent } =
-    props;
+  const {
+    supportedTypes,
+    onChangeColumn,
+    Top,
+    Bottom,
+    DependentVariableComponent,
+  } = props;
   const project = React.useContext(ProjectContext);
   const columns = filterProjectColumnsByType(project, supportedTypes);
   return (
@@ -136,6 +142,7 @@ export function CommonRegressionConfigForm(
         coefficients of each subdataset represents the effect of the independent
         variables on the dependent variable.
       </Alert>
+      {Top}
       {DependentVariableComponent ?? (
         <ProjectColumnSelectField
           label="Dependent Variable"

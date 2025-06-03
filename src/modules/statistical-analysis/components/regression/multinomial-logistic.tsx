@@ -22,6 +22,7 @@ import {
   useCoefficientRegressionResultPlot,
   useConfidenceLevelRegressionResultPlot,
   useOddsRatioRegressionResultPlot,
+  useRegressionCoefficientMultiSelect,
 } from './components';
 import React from 'react';
 import {
@@ -179,6 +180,7 @@ interface UseCompareLogisticRegressionResultPlotProps {
   alpha: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function useCompareLogisticRegressionResultPlot(
   props: UseCompareLogisticRegressionResultPlotProps,
 ) {
@@ -256,8 +258,14 @@ const MultinomialLogisticRegressionInterceptsRenderer = React.memo(
     props: MultinomialLogisticRegressionInterceptsRendererProps,
   ) {
     const { data, type } = props;
+
     const visdata = React.useMemo(() => {
-      const coefficients = data.facets.map((facet) => facet.intercept);
+      const coefficients = data.facets.map((facet) => {
+        return {
+          ...facet.intercept,
+          name: facet.level,
+        };
+      });
       const visdata = getRegressionCoefficientsVisualizationData({
         coefficients,
         modelType: RegressionModelType.MultinomialLogistic,
@@ -275,11 +283,16 @@ const MultinomialLogisticRegressionInterceptsRenderer = React.memo(
         customdata.push(interceptCustomdata[0]);
         hovertemplate = interceptHovertemplate;
       }
-      return {
-        ...visdata,
-        customdata: customdata,
-        hovertemplate: hovertemplate!,
-      };
+      return [
+        {
+          name: 'Intercepts',
+          data: {
+            ...visdata,
+            customdata: customdata,
+            hovertemplate: hovertemplate!,
+          },
+        },
+      ];
     }, [data.facets]);
 
     const coefficientPlot = useCoefficientRegressionResultPlot({
@@ -317,50 +330,16 @@ const MultinomialLogisticRegressionInterceptsRenderer = React.memo(
   },
 );
 
-interface MultinomialLogisticRegressionFacetResultRendererProps {
-  facet: MultinomialLogisticRegressionFacetResultModel;
-  config: MultinomialLogisticRegressionConfigType;
-  type: RegressionCoefficientsVisualizationTypeEnum;
-  alpha: number;
-}
-
-function MultinomialLogisticRegressionFacetResultRenderer(
-  props: MultinomialLogisticRegressionFacetResultRendererProps,
-) {
-  const { facet, type, alpha } = props;
-  const data = React.useMemo(() => {
-    return getRegressionCoefficientsVisualizationData({
-      coefficients: facet.coefficients,
-      modelType: RegressionModelType.MultinomialLogistic,
-    });
-  }, [facet.coefficients]);
-  const commonProps = {
-    alpha,
-    type,
-    data,
-  };
-  const coefficientPlot = useCoefficientRegressionResultPlot(commonProps);
-  const confidenceLevelPlot =
-    useConfidenceLevelRegressionResultPlot(commonProps);
-  const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
-  const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
-  return usedPlot && <PlotRenderer plot={usedPlot} height={720} />;
-}
-
 export function MultinomialLogisticRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
     MultinomialLogisticRegressionResultModel,
     MultinomialLogisticRegressionConfigType
   >,
 ) {
-  const { data: rawData, config } = props;
+  const { data } = props;
 
   // Constraints
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
-  const { Component: DependentVariableLevelSelect, facet } =
-    useMultinomialLogisticRegressionViewedDependentVariableLevel({
-      result: rawData,
-    });
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
       supportedTypes:
@@ -369,83 +348,94 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
     });
 
   // Plots
-  const compareResultsPlot = useCompareLogisticRegressionResultPlot({
-    data: rawData,
-    type,
-    alpha,
-    config,
-  });
+  const { Component: CoefficientMultiSelect, select: selectCoefficients } =
+    useRegressionCoefficientMultiSelect({
+      coefficients: data.facets[0]!.coefficients,
+    });
+  const visdata = React.useMemo(() => {
+    return data.facets.map((facet) => {
+      return {
+        name: facet.level,
+        data: getRegressionCoefficientsVisualizationData({
+          coefficients: selectCoefficients(facet.coefficients),
+          modelType: RegressionModelType.MultinomialLogistic,
+        }),
+      };
+    });
+  }, [data.facets, selectCoefficients]);
 
-  const usedPlot = compareResultsPlot;
+  const commonProps = {
+    alpha,
+    type,
+    data: visdata,
+  };
+
+  const coefficientPlot = useCoefficientRegressionResultPlot(commonProps);
+  const confidenceLevelPlot =
+    useConfidenceLevelRegressionResultPlot(commonProps);
+  const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
+  const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
 
   return (
     <Stack>
       <Group wrap="wrap" align="stretch">
         <ResultCard
           label={'Log-Likelihood Ratio'}
-          value={rawData.fit_evaluation.log_likelihood_ratio}
+          value={data.fit_evaluation.log_likelihood_ratio}
           info="Measures how much better the fitted model explains the data compared to the null model. Higher is better. Consider using the p-value or McFadden's Pseudo R-Squared to interpret the model fit rather than the Log-Likelihood Ratio as they are more interpretable/comparable."
         />
         <ResultCard
           label={'P-Value'}
-          value={rawData.fit_evaluation.p_value}
+          value={data.fit_evaluation.p_value}
           info="Under the assumption that the null model is sufficient to explain the dependent variable, what is the likelihood that the fitted model explains the dependent variable better than the null model?"
         />
         <ResultCard
           label={'Confidence Level'}
-          value={pValueToConfidenceLevel(rawData.fit_evaluation.p_value)}
+          value={pValueToConfidenceLevel(data.fit_evaluation.p_value)}
           percentage
           info="How confident are we that the fitted model explains the dependent variable better than the null model?"
         />
         <ResultCard
           label={"McFadden's Pseudo R-Squared"}
-          value={rawData.fit_evaluation.pseudo_r_squared}
+          value={data.fit_evaluation.pseudo_r_squared}
           info="Measures how much the independent variables help with predicting the dependent variables. McFadden's pseudo R-squared has a scale of 0 to 1, with higher numbers representing a better explanatory power. To be exact, it measures the % improvement in log-likelihood for the fitted model over the null model."
         />
         <ResultCard
           label={'Sample Size'}
-          value={rawData.sample_size}
+          value={data.sample_size}
           info="The number of rows used to fit the regression model."
         />
       </Group>
       <Group>
-        {rawData.reference && (
+        {data.reference && (
           <ResultCard
             label={'Independent Variable Reference'}
-            value={rawData.reference}
+            value={data.reference}
             info="The independent variable used as the reference variable."
             miw={512}
           />
         )}
-        {rawData.reference_dependent && (
+        {data.reference_dependent && (
           <ResultCard
             label={'Dependent Variable Level Reference'}
-            value={rawData.reference_dependent}
+            value={data.reference_dependent}
             info="The level of dependent variable used as the reference level."
             miw={512}
           />
         )}
       </Group>
       <RegressionConvergenceResultRenderer
-        converged={rawData.fit_evaluation.converged}
+        converged={data.fit_evaluation.converged}
       />
       {VisualizationSelect}
-      {DependentVariableLevelSelect}
       {AlphaSlider}
+      {CoefficientMultiSelect}
       <MultinomialLogisticRegressionInterceptsRenderer
         type={type}
-        data={rawData}
+        data={data}
       />
       <div>
-        {facet && (
-          <MultinomialLogisticRegressionFacetResultRenderer
-            alpha={alpha}
-            config={config}
-            type={type}
-            facet={facet}
-          />
-        )}
-        {!facet && usedPlot && (
+        {usedPlot && (
           <PlotRenderer plot={usedPlot} height={720} scrollZoom={false} />
         )}
       </div>
