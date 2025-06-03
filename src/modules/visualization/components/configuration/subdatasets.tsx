@@ -1,4 +1,10 @@
-import { MultiSelect, Group, Button, type SelectProps } from '@mantine/core';
+import {
+  MultiSelect,
+  Group,
+  Button,
+  type SelectProps,
+  type MultiSelectProps,
+} from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import React from 'react';
 import { NamedData } from '../../types/base';
@@ -14,12 +20,13 @@ interface UseVisualizationSubdatasetsMultiSelectReturn<T> {
 interface UseVisualizationSubdatasetsMultiSelectParams<T> {
   data: NamedData<T>[];
   limit: number | null;
+  selectProps?: MultiSelectProps;
 }
 
 export function useVisualizationSubdatasetsMultiSelect<T>(
   props: UseVisualizationSubdatasetsMultiSelectParams<T>,
 ): UseVisualizationSubdatasetsMultiSelectReturn<T> {
-  const { data, limit } = props;
+  const { data, limit, selectProps } = props;
   const options = React.useMemo(
     () => data.map((subdataset) => subdataset.name),
     [data],
@@ -32,11 +39,12 @@ export function useVisualizationSubdatasetsMultiSelect<T>(
 
   const Component = data.length > 1 && (
     <MultiSelect
+      label="Choose the subdatasets to visualize"
+      {...selectProps}
+      maxValues={limit ?? undefined}
       data={options}
       value={viewed}
       onChange={setViewed}
-      label="Choose the Subdatasets to Visualize"
-      maxValues={limit ?? undefined}
       inputContainer={
         withSelectAll
           ? (children) => (

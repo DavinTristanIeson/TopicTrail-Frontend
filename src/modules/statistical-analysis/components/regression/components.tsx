@@ -78,6 +78,10 @@ export function useRegressionCoefficientMultiSelect(
     useVisualizationSubdatasetsMultiSelect({
       data: namedData,
       limit: null,
+      selectProps: {
+        label: 'Independent Variables',
+        description: 'Choose the independent variables to visualize.',
+      },
     });
   const select = React.useCallback(
     (coefficients: UltimateRegressionCoefficientModel[]) => {

@@ -43,7 +43,7 @@ import { useSelectLeftRightButtons } from '@/components/visual/select';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
-import { useVisualizationSubdatasetSelect } from '@/modules/visualization/components/configuration/subdatasets';
+import { MultinomialPredictionPlot } from './multinomial-predictions';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -465,143 +465,14 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
   >,
 ) {
   const { data, config } = props;
-  console.log(data.facets[0]?.coefficients, data.predictions);
-  const namedData = React.useMemo(
-    () =>
-      data.predictions.map((prediction) => {
-        return {
-          name: prediction.variable,
-          data: prediction.prediction,
-        };
-      }),
-    [data.predictions],
-  );
-  const {
-    selectProps,
-    viewed,
-    viewedData: independentVariableData,
-  } = useVisualizationSubdatasetSelect({
-    data: namedData,
-    defaultValue: null,
-  });
-  const wholePlot = React.useMemo<PlotParams>(() => {
-    const allPredictions = [
-      { variable: 'Baseline', prediction: data.baseline_prediction },
-    ].concat(data.predictions);
-    // During prediction, the model returns the distribution for all (although coefficients is always levels - 1)
-    const y = allPredictions.map((prediction) => prediction.variable);
-    const x = data.levels.map((level) => level.name);
-
-    const z = allPredictions.map((prediction) => {
-      return prediction.prediction.probabilities.map(
-        (probability) => probability * 100,
-      );
-    });
-
-    return {
-      data: [
-        {
-          x,
-          y,
-          z,
-          zmin: 0,
-          zmax: 100,
-          type: 'heatmap',
-          texttemplate: '%{z:.3f}%',
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Dependent Variable Level</b>: %{y}',
-            '<b>Predicted Probability</b>: %{z:.3f}%',
-          ].join('<br>'),
-        },
-      ],
-      layout: {
-        title: `Predicted Probabilities for Levels of ${config.target}`,
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-          type: 'category',
-        },
-        yaxis: {
-          title: `Dependent Variable Levels`,
-          autorange: 'reversed',
-          type: 'category',
-        },
-      },
-    } as PlotParams;
-  }, [data.levels, data.baseline_prediction, data.predictions, config.target]);
-
-  const independentVariablePlot = React.useMemo<PlotParams | null>(() => {
-    if (!independentVariableData) return null;
-    const x = independentVariableData.data.levels;
-    const y = independentVariableData.data.probabilities.map(
-      (probability) => probability * 100,
-    );
-
-    const baseline = data.baseline_prediction.probabilities.map(
-      (probability) => probability * 100,
-    );
-
-    return {
-      data: [
-        {
-          name: independentVariableData.name,
-          x,
-          y,
-          type: 'bar',
-          hovertemplate: [
-            '<b>Dependent Variable Level</b>: %{x}',
-            '<b>Predicted Probability</b>: %{y:.3f}',
-          ].join('<br>'),
-        },
-        {
-          name: 'Baseline',
-          x,
-          y: baseline,
-          type: 'bar',
-          hovertemplate: [
-            '<b>Dependent Variable Level</b>: %{x}',
-            '<b>Predicted Probability</b>: %{y:.3f}',
-          ].join('<br>'),
-        },
-      ],
-      layout: {
-        title: `Predicted Probabilities for Levels of ${config.target} (Input: ${independentVariableData.name})`,
-        xaxis: {
-          title: 'Dependent Variable Levels',
-          type: 'category',
-        },
-        yaxis: {
-          title: `Probability`,
-          ticksuffix: '%',
-          minallowed: 0,
-          maxallowed: 100,
-        },
-      },
-    } as PlotParams;
-  }, [
-    config.target,
-    data.baseline_prediction.probabilities,
-    independentVariableData,
-  ]);
-
-  const usedPlot = independentVariablePlot ?? wholePlot;
-
   return (
-    <Stack>
-      <Select
-        label="Independent Variable"
-        description="Choose an independent variable to view its probability distribution."
-        clearable
-        {...selectProps}
-      />
-      <div>
-        <PlotRenderer
-          plot={usedPlot}
-          key={viewed}
-          scrollZoom={usedPlot !== wholePlot}
-        />
-      </div>
-    </Stack>
+    <MultinomialPredictionPlot
+      baselinePrediction={data.baseline_prediction}
+      levels={data.levels}
+      predictions={data.predictions}
+      supportsCumulative={false}
+      target={config.target}
+    />
   );
 }
 

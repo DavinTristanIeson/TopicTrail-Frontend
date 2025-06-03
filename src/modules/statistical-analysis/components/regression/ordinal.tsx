@@ -41,8 +41,8 @@ import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
-import { useVisualizationSubdatasetSelect } from '@/modules/visualization/components/configuration/subdatasets';
 import { useDisclosure } from '@mantine/hooks';
+import { MultinomialPredictionPlot } from './multinomial-predictions';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -249,19 +249,13 @@ export function OrdinalRegressionPredictionResultRenderer(
 enum OrdinalRegressionPredictionDisplay {
   LatentScore = 'latent-score',
   ProbabilityDistribution = 'probability-distribution',
-  CumulativeProbabilityDistribution = 'cumulative-probability-distribution',
 }
 const ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY = {
   [OrdinalRegressionPredictionDisplay.ProbabilityDistribution]: {
     label: 'Probability Distribution',
     value: OrdinalRegressionPredictionDisplay.ProbabilityDistribution,
-    description: 'Show the probabilities of each level.',
-  },
-  [OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution]: {
-    label: 'Cumulative Probability Distribution',
-    value: OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution,
     description:
-      'Show the cumulative probabilities of predicting a level lower or equal in rank.',
+      'Show the probabilities or the cumulative probabiltiies of each level.',
   },
   [OrdinalRegressionPredictionDisplay.LatentScore]: {
     label: 'Latent Score',
@@ -342,167 +336,6 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
     baselineLayout,
   ]);
 
-  const probabilityLabel =
-    display ===
-    OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
-      ? 'Cumulative Probability'
-      : 'Probability';
-
-  const probabilityDistributionPlot = React.useMemo<PlotParams>(() => {
-    const allPredictions = [
-      { variable: 'Baseline', prediction: data.baseline_prediction },
-    ].concat(data.predictions);
-    const x = data.levels.map((x) => x.name);
-    // use the coefficients rather than independent_variables.
-    // prediction order follows coefficients
-    const y = allPredictions.map((prediction) => prediction.variable);
-
-    const probabilities = allPredictions.map((prediction) => {
-      return prediction.prediction.probabilities.map(
-        (probability) => probability * 100,
-      );
-    });
-    const cumulativeProbabilities = allPredictions.map((prediction) => {
-      return prediction.prediction.cumulative_probabilities.map(
-        (probability) => probability * 100,
-      );
-    });
-    const z =
-      display ===
-      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
-        ? cumulativeProbabilities
-        : probabilities;
-    return {
-      data: [
-        {
-          x,
-          y,
-          z,
-          zmin: 0,
-          zmax: 100,
-          type: 'heatmap',
-          texttemplate: '%{z:.3f}%',
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Dependent Variable Level</b>: %{y}',
-            `<b>${probabilityLabel}</b>: %{z:.3f}%`,
-          ].join('<br>'),
-        },
-      ],
-      layout: {
-        title: `Predicted ${probabilityLabel} Distribution of ${config.target}`,
-        xaxis: {
-          title: 'Independent Variables (Subdatasets)',
-          type: 'category',
-        },
-        yaxis: {
-          title: `Dependent Variable Levels`,
-          autorange: 'reversed',
-          type: 'category',
-        },
-      },
-    } as PlotParams;
-  }, [
-    data.levels,
-    data.baseline_prediction,
-    data.predictions,
-    display,
-    probabilityLabel,
-    config.target,
-  ]);
-
-  const namedData = React.useMemo(
-    () =>
-      data.predictions.map((prediction) => {
-        return {
-          name: prediction.variable,
-          data: prediction.prediction,
-        };
-      }),
-    [data.predictions],
-  );
-  const {
-    selectProps,
-    viewed,
-    viewedData: independentVariableData,
-  } = useVisualizationSubdatasetSelect({
-    data: namedData,
-    defaultValue: null,
-  });
-
-  const independentVariablePlot = React.useMemo<PlotParams | null>(() => {
-    if (!independentVariableData) return null;
-    const x = independentVariableData.data.levels;
-    const probabilities = independentVariableData.data.probabilities.map(
-      (probability) => probability * 100,
-    );
-    const cumulativeProbabilities =
-      independentVariableData.data.cumulative_probabilities.map(
-        (probability) => probability * 100,
-      );
-    const y =
-      display ===
-      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
-        ? cumulativeProbabilities
-        : probabilities;
-    const baselineProbabilities =
-      display ===
-      OrdinalRegressionPredictionDisplay.CumulativeProbabilityDistribution
-        ? data.baseline_prediction.cumulative_probabilities
-        : data.baseline_prediction.probabilities;
-    const baselineY = baselineProbabilities.map(
-      (probability) => probability * 100,
-    );
-
-    const customdata = zip(probabilities, cumulativeProbabilities);
-
-    return {
-      data: [
-        {
-          name: independentVariableData.name,
-          x,
-          y,
-          type: 'bar',
-          customdata: customdata as any,
-          hovertemplate: [
-            '<b>Dependent Variable Level</b>: %{x}',
-            `<b>${probabilityLabel}</b>: %{y:.3f}%`,
-          ].join('<br>'),
-        },
-        {
-          name: 'Baseline',
-          x,
-          y: baselineY,
-          type: 'bar',
-          hovertemplate: [
-            '<b>Dependent Variable Level</b>: %{x}',
-            `<b>${probabilityLabel}</b>: %{y:.3f}`,
-          ].join('<br>'),
-        },
-      ],
-      layout: {
-        title: `Predicted ${probabilityLabel} Distribution of ${config.target} (Input: ${independentVariableData.name})`,
-        xaxis: {
-          title: 'Dependent Variable Levels',
-          type: 'category',
-        },
-        yaxis: {
-          title: `Probability`,
-          ticksuffix: '%',
-          minallowed: 0,
-          maxallowed: 100,
-        },
-      },
-    } as PlotParams;
-  }, [
-    config.target,
-    data.baseline_prediction.cumulative_probabilities,
-    data.baseline_prediction.probabilities,
-    display,
-    independentVariableData,
-    probabilityLabel,
-  ]);
-
   return (
     <Stack>
       <Select
@@ -517,21 +350,18 @@ export function DefaultOrdinalRegressionPredictionResultRenderer(
         renderOption={renderOption}
         allowDeselect={false}
       />
-      <Select
-        label="Independent Variable"
-        description="Choose an independent variable to view its probability distribution."
-        clearable
-        {...selectProps}
-      />
       <div>
-        <PlotRenderer
-          key={`${display}-${viewed}`}
-          plot={
-            display === OrdinalRegressionPredictionDisplay.LatentScore
-              ? latentScorePlot
-              : (independentVariablePlot ?? probabilityDistributionPlot)
-          }
-        />
+        {display === OrdinalRegressionPredictionDisplay.LatentScore ? (
+          <PlotRenderer plot={latentScorePlot} />
+        ) : (
+          <MultinomialPredictionPlot
+            baselinePrediction={data.baseline_prediction}
+            levels={data.levels}
+            predictions={data.predictions}
+            supportsCumulative
+            target={config.target}
+          />
+        )}
       </div>
     </Stack>
   );
