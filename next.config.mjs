@@ -4,6 +4,9 @@ import NextBundleAnalyzer from '@next/bundle-analyzer';
 const baseNextConfig = {
   reactStrictMode: true,
   output: 'export',
+  images: {
+    unoptimized: true,
+  },
   experimental: {
     optimizePackageImports: ['@phosphor-icons/react', '@tabler/icons-react', 'lodash-es'],
   },

@@ -4,6 +4,7 @@ import GlobalConfig from '@/common/constants/global';
 import { DoorOpen } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import { useElementSize } from '@mantine/hooks';
+import Image from 'next/image';
 
 interface AppHeaderProps {
   title?: string;
@@ -13,7 +14,8 @@ interface AppHeaderProps {
 export default function AppHeader(props: AppHeaderProps) {
   return (
     <Group className="flex-1" gap={8}>
-      <Title order={1}>{props.title ?? GlobalConfig.AppName}</Title>
+      <Image src={'AppIcon.png'} width={60} height={60} alt={'App Icon'}></Image>
+      {/* <Title order={1}>{props.title ?? GlobalConfig.AppName}</Title> */}
       {props.Right}
     </Group>
   );
