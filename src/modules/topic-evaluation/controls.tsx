@@ -19,14 +19,11 @@ export function TopicCoherenceExplanation() {
       is a quantitative measure of the interpretability of a topic. They assess
       how well the words that make up a topic is supported by the actual
       documents. The metric of topic coherence used in this evaluation is C_V
-      scoring which ranges from 0 (not coherent at all) to 1 (coherent).
-      Generally, C_v scores higher than 0.55 can be considered acceptably
-      coherent while scores less than 0.4 is low, but this varies from dataset
-      to dataset, and also from the number of topics. Higher C_v scores indicate
-      more coherent topics. If you keep on getting low C_V scores, consider
-      setting a maximum number of topics to constrain the number of topics. The
-      low scores may have been caused by the small topics discovered by the
-      topic modeling algorithm.
+      scoring which ranges from 0 (not coherent at all) to 1 (coherent). Higher
+      C_V scores indicate more coherent topics; however, you shouldn&apos;t
+      directly interpret the number. Rather, you should compare the C_V scores
+      from multiple topic models to figure out which model produces the most
+      coherent topics.
     </Text>
   );
 }

@@ -6,6 +6,7 @@ import { DefaultErrorViewBoundary } from '../visual/error';
 interface AppLayoutProps {
   Sidebar?: React.ReactNode;
   Header: React.ReactNode;
+  withHeader?: boolean;
   children?: React.ReactNode;
 }
 
@@ -16,9 +17,13 @@ export default function AppLayout(props: AppLayoutProps) {
 
   return (
     <AppShell
-      header={{
-        height: 60,
-      }}
+      header={
+        Header !== null
+          ? {
+              height: 60,
+            }
+          : undefined
+      }
       navbar={
         Sidebar
           ? {
@@ -33,12 +38,14 @@ export default function AppLayout(props: AppLayoutProps) {
       }
       layout="default"
     >
-      <AppShell.Header>
-        <Group h="100%" px="md">
-          {Sidebar && <Burger opened={opened} onClick={toggle} size="sm" />}
-          {Header}
-        </Group>
-      </AppShell.Header>
+      {Header !== null && (
+        <AppShell.Header>
+          <Group h="100%" px="md">
+            {Sidebar && <Burger opened={opened} onClick={toggle} size="sm" />}
+            {Header}
+          </Group>
+        </AppShell.Header>
+      )}
       {Sidebar && (
         <AppShell.Navbar>
           <div className="h-full p-2">{Sidebar}</div>

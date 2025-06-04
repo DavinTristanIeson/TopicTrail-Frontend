@@ -147,6 +147,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
         yaxis: {
           title: 'Topics',
           automargin: true,
+          autorange: 'reversed',
         },
       },
     };

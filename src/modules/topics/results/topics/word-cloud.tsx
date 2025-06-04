@@ -29,11 +29,6 @@ export function TopicVisualizationWordCloudRenderer(
         onChange={(topic) => setTopic(topic)}
         label="Topic"
         description="Choose a topic to view its topic words as a word cloud."
-        styles={{
-          input: {
-            width: 512,
-          },
-        }}
         inputContainer={inputContainer}
       />
       <VisualizationWordCloudRenderer
