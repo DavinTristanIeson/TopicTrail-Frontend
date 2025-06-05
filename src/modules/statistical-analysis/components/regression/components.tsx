@@ -555,7 +555,7 @@ export function PredictedProbabilityDistributionPlot(
           ticksuffix: '%',
         },
       },
-    };
+    } as PlotParams;
   }, [dependentVariableLevels, probabilities, title]);
   return <PlotRenderer plot={plot} />;
 }

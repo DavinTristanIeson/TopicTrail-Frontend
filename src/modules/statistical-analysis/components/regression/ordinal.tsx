@@ -155,7 +155,7 @@ export function OrdinalRegressionCoefficientsPlot(
       yaxis: {
         title: 'Odds Ratio in Lower/Equal Rank (Log-Scaled)',
       },
-    },
+    } as PlotParams['layout'],
   });
   const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
 

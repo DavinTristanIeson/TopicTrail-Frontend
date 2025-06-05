@@ -53,7 +53,7 @@ function VisualizationContinuousDataDistributionViolinBoxPlot(
           title: item.column,
         },
       },
-    };
+    } as PlotParams;
   }, [data, item.column, item.config.display]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }
@@ -158,7 +158,7 @@ export function VisualizationContinuousDataDistributionHistogram(
         updatemenus:
           column?.type === SchemaColumnTypeEnum.Temporal ? buttons : undefined,
       },
-    };
+    } as PlotParams;
   }, [column?.type, data, item.column]);
   return <PlotRenderer plot={plot} {...usePlotRendererHelperProps(item)} />;
 }

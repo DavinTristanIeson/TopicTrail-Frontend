@@ -224,7 +224,7 @@ export default function BinaryStatisticTestOnDistributionResultRenderer(
           type: 'category',
         },
       },
-    };
+    } as PlotParams;
   }, [mantineColors.gray, mantineColors.green, mantineColors.red, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
@@ -261,7 +261,7 @@ export default function BinaryStatisticTestOnDistributionResultRenderer(
           type: 'category',
         },
       },
-    };
+    } as PlotParams;
   }, [config.column, values]);
 
   const confidenceLevelsPlot = React.useMemo<PlotParams>(() => {
@@ -299,7 +299,7 @@ export default function BinaryStatisticTestOnDistributionResultRenderer(
           type: 'category',
         },
       },
-    };
+    } as PlotParams;
   }, [config.column, values]);
 
   let usedPlot: PlotParams;

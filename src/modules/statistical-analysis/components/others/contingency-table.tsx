@@ -196,7 +196,7 @@ export default function ContingencyTableResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [
     rows,
     columns,

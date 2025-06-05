@@ -149,7 +149,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [
     column.name,
     needsPercentage,

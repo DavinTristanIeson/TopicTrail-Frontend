@@ -113,7 +113,7 @@ export default function VisualizationProportionsComponent(
             autorange: 'reversed',
           },
         },
-      };
+      } as PlotParams;
     } else {
       return {
         data: uniqueValues.map((uniqueValue, idx) => {
@@ -126,7 +126,7 @@ export default function VisualizationProportionsComponent(
             y: y,
             hoveron: isAreaChart ? 'points' : undefined,
             stackgroup: isAreaChart ? 'all' : undefined,
-            type: isAreaChart ? 'scatter' : 'bar',
+            type: isAreaChart ? 'scattergl' : 'bar',
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,
               `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}${character}`,
@@ -149,7 +149,7 @@ export default function VisualizationProportionsComponent(
           },
           barmode: isBarChart ? 'stack' : undefined,
         },
-      };
+      } as PlotParams;
     }
   }, [
     character,

@@ -80,7 +80,7 @@ export default function SubdatasetCooccurrenceResultRenderer(
           minallowed: 0,
         },
       },
-    };
+    } as PlotParams;
   }, [data.frequencies, data.labels]);
   const cooccurrencesPlot = React.useMemo<PlotParams>(() => {
     const correlations = data.correlations;
@@ -158,7 +158,7 @@ export default function SubdatasetCooccurrenceResultRenderer(
           type: 'category',
         },
       },
-    };
+    } as PlotParams;
   }, [data.cooccurrences, data.correlations, data.labels, display]);
 
   const renderOption = useDescriptionBasedRenderOption(

@@ -190,7 +190,7 @@ export function PairwiseStatisticTestResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [method, config.column, chosenSubdatasets, data.results, filterAlpha]);
 
   const renderOption = useDescriptionBasedRenderOption(

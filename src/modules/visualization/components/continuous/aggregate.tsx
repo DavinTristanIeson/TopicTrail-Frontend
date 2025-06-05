@@ -107,7 +107,7 @@ export function VisualizationAggregateValuesRenderer(
             autorange: 'reversed',
           },
         },
-      };
+      } as PlotParams;
     } else {
       return {
         data: data.map(({ name, data: { values, categories } }, idx) => {
@@ -117,7 +117,7 @@ export function VisualizationAggregateValuesRenderer(
             mode: isLinePlot ? 'lines+markers' : undefined,
             x: pickArrayByIndex(categories, mask),
             y: pickArrayByIndex(values, mask),
-            type: isLinePlot ? 'scatter' : 'bar',
+            type: isLinePlot ? 'scattergl' : 'bar',
             hovertemplate: [
               `<b>${item.config.grouped_by}</b>: %{x}`,
               `<b>${capitalize(item.config.method)} of ${item.column}</b>: %{y}`,
@@ -137,7 +137,7 @@ export function VisualizationAggregateValuesRenderer(
             title: `${aggregationMethod} of ${item.column}`,
           },
         },
-      };
+      } as PlotParams;
     }
   }, [
     data,

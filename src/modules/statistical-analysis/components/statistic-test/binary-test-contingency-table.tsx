@@ -205,7 +205,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [columns, config.column, rows, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
@@ -249,7 +249,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           type: 'category',
         },
       },
-    };
+    } as PlotParams;
   }, [columns, config.column, rows, values]);
 
   const confidenceLevelsPlot = React.useMemo<PlotParams>(() => {
@@ -288,7 +288,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [columns, config.column, rows, values]);
 
   let usedPlot: PlotParams;

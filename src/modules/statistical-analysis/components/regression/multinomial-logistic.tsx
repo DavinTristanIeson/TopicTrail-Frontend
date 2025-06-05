@@ -243,7 +243,7 @@ function useCompareLogisticRegressionResultPlot(
           type: 'category',
         },
       },
-    };
+    } as PlotParams;
   }, [alpha, config.target, data.facets, type]);
 }
 
@@ -307,7 +307,7 @@ const MultinomialLogisticRegressionInterceptsRenderer = React.memo(
         yaxis: {
           title: 'Intercepts',
         },
-      },
+      } as PlotParams['layout'],
     });
     const oddsPlot = useOddsRatioRegressionResultPlot({
       alpha: 1,
@@ -315,7 +315,7 @@ const MultinomialLogisticRegressionInterceptsRenderer = React.memo(
       type: RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
       layout: {
         title: 'Base Odds Ratio of Intercepts',
-      },
+      } as PlotParams['layout'],
     });
     const usedPlot = coefficientPlot ?? oddsPlot;
 
