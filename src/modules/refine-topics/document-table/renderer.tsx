@@ -43,7 +43,11 @@ function useDocumentTableColumns(
           </Tooltip>
         ),
         Cell({ row: { original } }) {
-          return <TextualColumnCell>{original.original}</TextualColumnCell>;
+          return (
+            <TextualColumnCell spaceEfficient={false}>
+              {original.original}
+            </TextualColumnCell>
+          );
         },
       },
       {
@@ -58,7 +62,11 @@ function useDocumentTableColumns(
           </Tooltip>
         ),
         Cell({ row: { original } }) {
-          return <TextualColumnCell>{original.preprocessed}</TextualColumnCell>;
+          return (
+            <TextualColumnCell spaceEfficient={false}>
+              {original.preprocessed}
+            </TextualColumnCell>
+          );
         },
       },
       {
