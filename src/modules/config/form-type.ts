@@ -100,7 +100,6 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     max_topic_size: yupNullableNumber,
     max_topics: yupNullableNumber.positive(),
     no_outliers: Yup.boolean().required(),
-    represent_outliers: Yup.boolean().required(),
     embedding_method: Yup.string()
       .oneOf(Object.values(DocumentEmbeddingMethodEnum))
       .required(),
@@ -183,7 +182,6 @@ export function DefaultProjectSchemaColumnValues(
             max_topic_size: null,
             min_topic_size: 15,
             no_outliers: false,
-            represent_outliers: false,
             embedding_method: DocumentEmbeddingMethodEnum.All_MiniLM_L6_V2,
             topic_confidence_threshold: null,
             reference_document_count: 15,

@@ -4,7 +4,6 @@ import React from 'react';
 import { MagnifyingGlass, Plus, Upload } from '@phosphor-icons/react';
 import { useDebouncedState } from '@mantine/hooks';
 import Colors from '@/common/constants/colors';
-import AppHeader from '@/components/layout/header';
 import { useRouter } from 'next/router';
 import NavigationRoutes from '@/common/constants/routes';
 import { DisclosureTrigger } from '@/hooks/disclosure';
@@ -12,6 +11,7 @@ import { ImportProjectModal } from '@/modules/home/import-modal.tsx';
 import ProjectsListRenderer from '@/modules/home/list';
 import { client } from '@/common/api/client';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
+import Image from 'next/image';
 
 export default function HomePage() {
   const [q, setQ] = useDebouncedState<string | undefined>(undefined, 800);
@@ -21,10 +21,16 @@ export default function HomePage() {
   const query = client.useQuery('get', '/projects/');
   const data = query.data?.data;
   return (
-    <AppLayout Header={<AppHeader />}>
+    <AppLayout Header={null}>
       <ImportProjectModal ref={importProjectRemote} />
       <Stack w="100%" align="center">
         <Stack align="center" pt={64} maw={880} py={64}>
+          <Image
+            src="/app-icon.png"
+            width={160}
+            height={160}
+            alt={'TopicTrail'}
+          />
           <Title order={2}>Choose a Project!</Title>
           <Text className="text-wrap break-words" ta="center">
             Looks like you haven&apos;t opened any projects yet. Pick a project

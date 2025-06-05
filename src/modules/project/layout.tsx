@@ -7,7 +7,7 @@ import AppLayout from '@/components/layout/app';
 import AppHeader from '@/components/layout/header';
 import { AppSidebarLinkRenderer } from '@/components/layout/sidebar';
 import { UseQueryWrapperComponent } from '@/components/utility/fetch-wrapper';
-import { Button, Divider, Stack } from '@mantine/core';
+import { Button, Divider, Group, Stack } from '@mantine/core';
 import {
   ArrowCounterClockwise,
   FileMagnifyingGlass,
@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { ProjectContext } from './context';
 import { client } from '@/common/api/client';
+import Image from 'next/image';
 
 interface ProjectNavbarProps {
   config?: ProjectConfigModel;
@@ -30,6 +31,14 @@ function ProjectNavbar(props: ProjectNavbarProps) {
   const id = useRouter().query.id as string;
   return (
     <Stack>
+      <Group justify="center">
+        <Image
+          src="/app-icon.png"
+          width={128}
+          height={128}
+          alt={'TopicTrail'}
+        />
+      </Group>
       <AppSidebarLinkRenderer
         links={[
           {

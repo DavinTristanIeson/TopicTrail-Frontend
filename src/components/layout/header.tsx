@@ -1,9 +1,9 @@
 import { Button, Group, Paper, Title } from '@mantine/core';
 import React from 'react';
-import GlobalConfig from '@/common/constants/global';
 import { DoorOpen } from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import { useElementSize } from '@mantine/hooks';
+import GlobalConfig from '@/common/constants/global';
 
 interface AppHeaderProps {
   title?: string;
