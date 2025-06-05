@@ -11,16 +11,18 @@ import { BinaryStatisticTestOnContingencyTableMainResultModel } from '@/api/stat
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import {
   PlotInlineConfiguration,
-  StatisticTestEmptyPlotWarning,
   useCategoriesAxisMultiSelect,
-  useVisualizationAlphaSlider,
-  useVisualizationMinFrequencySlider,
 } from '@/modules/visualization/components/configuration';
 import { plotlyWrapText } from '@/modules/visualization/components/utils';
 import {
   useBinaryStatisticTestVisualizationMethodSelect,
   BinaryStatisticTestVisualizationType,
 } from './common';
+import {
+  useVisualizationMinFrequencySlider,
+  StatisticTestEmptyPlotWarning,
+  useVisualizationAlphaSlider,
+} from '../plot-config';
 
 export default function BinaryStatisticTestOnContingencyTableResultRenderer(
   props: BaseStatisticalAnalysisResultRendererProps<

@@ -12,7 +12,6 @@ import {
   usePredictedResultsBaselineLine,
   useRegressionCoefficientMultiSelect,
 } from './components';
-import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
 import { Group, Select, Stack, Switch } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
@@ -43,6 +42,7 @@ import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { useDisclosure } from '@mantine/hooks';
 import { MultinomialPredictionPlot } from './multinomial-predictions';
+import { useVisualizationAlphaSlider } from '../plot-config';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,

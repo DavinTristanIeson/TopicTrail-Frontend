@@ -18,8 +18,6 @@ import { BinaryStatisticTestOnDistributionResultModel } from '@/api/statistical-
 import {
   PlotInlineConfiguration,
   useCategoriesAxisMultiSelect,
-  useVisualizationAlphaSlider,
-  useVisualizationMinFrequencySlider,
 } from '@/modules/visualization/components/configuration';
 import { plotlyWrapText } from '@/modules/visualization/components/utils';
 import {
@@ -27,6 +25,10 @@ import {
   useBinaryStatisticTestVisualizationMethodSelect,
 } from './common';
 import { BinaryStatisticTestConfig } from '../../configuration/binary-statistic-test';
+import {
+  useVisualizationAlphaSlider,
+  useVisualizationMinFrequencySlider,
+} from '../plot-config';
 
 export default function BinaryStatisticTestOnDistributionResultRenderer(
   props: BaseStatisticalAnalysisResultRendererProps<
