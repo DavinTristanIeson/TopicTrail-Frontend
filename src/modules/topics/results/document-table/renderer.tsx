@@ -42,7 +42,11 @@ function useDocumentsPerTopicTableColumns(
         header: 'Original Text',
         size: 400,
         Cell({ row: { original } }) {
-          return <TextualColumnCell>{original.original}</TextualColumnCell>;
+          return (
+            <TextualColumnCell spaceEfficient={false}>
+              {original.original}
+            </TextualColumnCell>
+          );
         },
       },
       {
@@ -57,7 +61,9 @@ function useDocumentsPerTopicTableColumns(
           const relevantTopic = topics[relevantTopicIdx]!;
           if (relevantTopicIdx === -1 || !relevantTopic) {
             return (
-              <TextualColumnCell>{original.preprocessed}</TextualColumnCell>
+              <TextualColumnCell spaceEfficient={false}>
+                {original.preprocessed}
+              </TextualColumnCell>
             );
           }
           const highlightedWords = relevantTopic.words.map((word) => word[0]);
@@ -68,7 +74,7 @@ function useDocumentsPerTopicTableColumns(
               ? getTextColorBasedOnContrast(backgroundColor)
               : undefined;
           return (
-            <TextualColumnCell>
+            <TextualColumnCell spaceEfficient={false}>
               {/* @ts-expect-error This is a valid string, but JSX complains about original.preprocessed not being one */}
               <Highlight
                 highlight={highlightedWords ?? []}

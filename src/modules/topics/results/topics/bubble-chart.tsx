@@ -65,7 +65,7 @@ export function TopicVisualizationBubbleChartRenderer(
           title: 'D2',
         },
       },
-    };
+    } as PlotParams;
   }, [column.name, plotData]);
   return <PlotRenderer plot={plot} />;
 }

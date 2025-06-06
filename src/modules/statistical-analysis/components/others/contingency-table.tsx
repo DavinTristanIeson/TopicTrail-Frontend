@@ -10,11 +10,13 @@ import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import {
   PlotInlineConfiguration,
-  StatisticTestEmptyPlotWarning,
   useCategoriesAxisMultiSelect,
-  useVisualizationMinFrequencySlider,
 } from '@/modules/visualization/components/configuration';
 import { getBalancedHeatmapZRange } from '@/modules/visualization/components/configuration/heatmap';
+import {
+  StatisticTestEmptyPlotWarning,
+  useVisualizationMinFrequencySlider,
+} from '../plot-config';
 
 enum ContingencyTableVisualizationMethod {
   Observed = 'observed',
@@ -196,7 +198,7 @@ export default function ContingencyTableResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [
     rows,
     columns,

@@ -9,6 +9,8 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { Warning } from '@phosphor-icons/react';
 import React from 'react';
+import { pValueToConfidenceLevel } from './regression/utils';
+import { formatNumber } from '@/common/utils/number';
 
 interface UseVisualizationAlphaSlider {
   enabled?: boolean;
@@ -19,11 +21,11 @@ export function useVisualizationAlphaSlider(
 ) {
   const { enabled = true } = props;
   const [alpha, setAlpha] = React.useState(0.05);
-  const label = `Alpha: ${alpha} | Confidence Level: ${Math.round(100 - alpha * 100)}%`;
+  const label = `Alpha: ${alpha} | Confidence Level: ${formatNumber(pValueToConfidenceLevel(alpha))}%`;
   const Component = (
     <Input.Wrapper
       label="Alpha"
-      description="The p-value for the results of a statistic test to be considered significant."
+      description="The p-value for the results of a statistic test to be considered significant. This slider doesn't discriminate between one-tailed and two-tailed p-values."
     >
       <Group>
         <Text c="brand" size="sm" fw={500} miw={240}>
@@ -33,7 +35,7 @@ export function useVisualizationAlphaSlider(
           value={alpha}
           min={0}
           max={1}
-          step={0.01}
+          step={0.005}
           disabled={!enabled}
           onChange={setAlpha}
           label={label}

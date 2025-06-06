@@ -11,16 +11,18 @@ import { BinaryStatisticTestOnContingencyTableMainResultModel } from '@/api/stat
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import {
   PlotInlineConfiguration,
-  StatisticTestEmptyPlotWarning,
   useCategoriesAxisMultiSelect,
-  useVisualizationAlphaSlider,
-  useVisualizationMinFrequencySlider,
 } from '@/modules/visualization/components/configuration';
 import { plotlyWrapText } from '@/modules/visualization/components/utils';
 import {
   useBinaryStatisticTestVisualizationMethodSelect,
   BinaryStatisticTestVisualizationType,
 } from './common';
+import {
+  useVisualizationMinFrequencySlider,
+  StatisticTestEmptyPlotWarning,
+  useVisualizationAlphaSlider,
+} from '../plot-config';
 
 export default function BinaryStatisticTestOnContingencyTableResultRenderer(
   props: BaseStatisticalAnalysisResultRendererProps<
@@ -205,7 +207,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [columns, config.column, rows, values]);
 
   const effectSizesPlot = React.useMemo<PlotParams>(() => {
@@ -249,7 +251,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           type: 'category',
         },
       },
-    };
+    } as PlotParams;
   }, [columns, config.column, rows, values]);
 
   const confidenceLevelsPlot = React.useMemo<PlotParams>(() => {
@@ -288,7 +290,7 @@ export default function BinaryStatisticTestOnContingencyTableResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [columns, config.column, rows, values]);
 
   let usedPlot: PlotParams;

@@ -115,7 +115,11 @@ export function useSchemaColumnToMantineReactTableAdapter(
                 </HoverCard>
               );
             },
-            size: DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
+            // ensure the header column doesn't wrap
+            size: Math.max(
+              column.name.length * 10,
+              DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
+            ),
             enableSorting: SORTABLE_COLUMNS.includes(
               column.type as SchemaColumnTypeEnum,
             ),

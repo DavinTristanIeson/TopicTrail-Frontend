@@ -59,7 +59,7 @@ function VisualizationGeographicalMap(
           title: `${valueLabel} (Density)`,
           x: withScatter ? 1.15 : undefined,
         },
-      });
+      } as PlotParams['data'][number]);
     }
     if (withScatter) {
       subplots.push({
@@ -87,7 +87,7 @@ function VisualizationGeographicalMap(
         ]
           .filter(Boolean)
           .join('<br>'),
-      });
+      } as PlotParams['data'][number]);
     }
     return {
       data: subplots,
@@ -103,7 +103,7 @@ function VisualizationGeographicalMap(
           },
         },
       },
-    };
+    } as PlotParams;
   }, [title, valueLabel, viewedData, withHeatmap, withScatter]);
   const plotProps = usePlotRendererHelperProps(item);
   return (

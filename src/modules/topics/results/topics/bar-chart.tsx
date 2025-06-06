@@ -150,7 +150,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
           autorange: 'reversed',
         },
       },
-    };
+    } as PlotParams;
   }, [
     column.name,
     needsPercentage,

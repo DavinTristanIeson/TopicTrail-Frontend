@@ -9,7 +9,6 @@ import {
 import { Faders } from '@phosphor-icons/react';
 import React from 'react';
 export * from './categorical';
-export * from '../../../statistical-analysis/components/plot-config';
 
 export function PlotInlineConfiguration(props: React.PropsWithChildren) {
   const [opened, { toggle }] = useDisclosure();

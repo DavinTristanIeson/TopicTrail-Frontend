@@ -59,7 +59,7 @@ export function TopicModelExperimentResultSummaryPlot(
         {
           x,
           y,
-          type: 'scatter',
+          type: 'scattergl',
           mode: isLinePlot ? 'lines+markers' : 'markers',
           customdata,
           hovertemplate,
@@ -85,7 +85,7 @@ export function TopicModelExperimentResultSummaryPlot(
         },
         ...coherenceLayout,
       },
-    };
+    } as PlotParams;
   }, [
     coherenceLayout,
     colorConfig,

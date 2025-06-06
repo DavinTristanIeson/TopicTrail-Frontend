@@ -9,7 +9,6 @@ import {
   usePredictedResultsBaselineLine,
   useRegressionCoefficientMultiSelect,
 } from './components';
-import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
 import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
@@ -36,6 +35,7 @@ import { without } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
+import { useVisualizationAlphaSlider } from '../plot-config';
 
 const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,

@@ -8,12 +8,12 @@ import { getPlotColor } from '@/common/utils/colors';
 import { useTopicModelingResultOfColumn } from '@/modules/topics/components/context';
 import { TopicInfo } from '@/modules/topics/components/info';
 import {
-  Spoiler,
   Tooltip,
   Text,
   HoverCard,
   Box,
   useMantineTheme,
+  Spoiler,
 } from '@mantine/core';
 import { Check, X } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
@@ -49,12 +49,33 @@ const HighlightedCell = React.forwardRef<HTMLDivElement, HighlightedCellProps>(
   },
 );
 
-export function TextualColumnCell(props: React.PropsWithChildren) {
-  return (
-    <Spoiler hideLabel="Show Less" showLabel="Show More">
-      <DefaultColumnCell>{props.children}</DefaultColumnCell>
-    </Spoiler>
-  );
+interface TextualColumnCellProps {
+  children?: React.ReactNode;
+  spaceEfficient?: boolean;
+}
+
+export function TextualColumnCell(props: TextualColumnCellProps) {
+  const { children: text, spaceEfficient } = props;
+  if (spaceEfficient) {
+    return (
+      <HoverCard position="top">
+        <HoverCard.Target>
+          <Text size="sm" className="text-ellipsis line-clamp-2">
+            {text}
+          </Text>
+        </HoverCard.Target>
+        <HoverCard.Dropdown maw={640}>
+          <Text size="sm">{text}</Text>
+        </HoverCard.Dropdown>
+      </HoverCard>
+    );
+  } else {
+    return (
+      <Spoiler hideLabel="Show Less" showLabel="Show More">
+        {text}
+      </Spoiler>
+    );
+  }
 }
 
 interface TemporalColumnCellProps {
@@ -223,7 +244,7 @@ export function ColumnCellRenderer(props: ColumnCellRendererProps) {
   switch (column.type) {
     case SchemaColumnTypeEnum.Textual:
     case SchemaColumnTypeEnum.Unique: {
-      return <TextualColumnCell>{value}</TextualColumnCell>;
+      return <TextualColumnCell spaceEfficient>{value}</TextualColumnCell>;
     }
     case SchemaColumnTypeEnum.Continuous:
     case SchemaColumnTypeEnum.Geospatial: {

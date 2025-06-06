@@ -70,7 +70,7 @@ function IndividualTopicEvaluationBarChart(
           title: 'Topics',
         },
       },
-    };
+    } as PlotParams;
   }, [topicEvaluations, column]);
 
   return <PlotRenderer plot={plot} />;

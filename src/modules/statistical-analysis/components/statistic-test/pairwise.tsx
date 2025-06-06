@@ -6,15 +6,17 @@ import type { PlotParams } from 'react-plotly.js';
 import { map2D, mask2D, zip2D } from '@/common/utils/iterable';
 import {
   PlotInlineConfiguration,
-  StatisticTestEmptyPlotWarning,
   useCategoriesAxisMultiSelect,
-  useVisualizationAlphaSlider,
 } from '@/modules/visualization/components/configuration';
 import { getBalancedHeatmapZRange } from '@/modules/visualization/components/configuration/heatmap';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { Info } from '@phosphor-icons/react';
 import { ContingencyTableConfig } from '../../configuration/contingency-table';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
+import {
+  useVisualizationAlphaSlider,
+  StatisticTestEmptyPlotWarning,
+} from '../plot-config';
 
 enum PairwiseStatisticTestVisualizationMethod {
   Confidence = 'confidence',
@@ -190,7 +192,7 @@ export function PairwiseStatisticTestResultRenderer(
           automargin: true,
         },
       },
-    };
+    } as PlotParams;
   }, [method, config.column, chosenSubdatasets, data.results, filterAlpha]);
 
   const renderOption = useDescriptionBasedRenderOption(

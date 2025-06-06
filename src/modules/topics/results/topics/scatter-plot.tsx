@@ -84,7 +84,7 @@ export function TopicVisualizationScatterPlotRenderer(
           title: 'D2',
         },
       },
-    };
+    } as PlotParams;
   }, [
     column.name,
     data.documents,

@@ -125,7 +125,7 @@ export default function VisualizationFrequencyDistributionComponent(
             type: 'category',
           },
         },
-      };
+      } as PlotParams;
     } else {
       return {
         data: data.map(({ name, data: { frequencies, categories } }, idx) => {
@@ -137,7 +137,7 @@ export default function VisualizationFrequencyDistributionComponent(
             mode: 'lines+markers',
             x: x,
             y: y,
-            type: isLinePlot ? 'scatter' : 'bar',
+            type: isLinePlot ? 'scattergl' : 'bar',
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,
               `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}${character}`,
@@ -158,7 +158,7 @@ export default function VisualizationFrequencyDistributionComponent(
           },
           barmode: isBarChart ? 'group' : undefined,
         },
-      };
+      } as PlotParams;
     }
   }, [
     allCategories.length,
