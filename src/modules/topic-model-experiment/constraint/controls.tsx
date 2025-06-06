@@ -30,6 +30,7 @@ import { FormEditableContext } from '@/components/standard/fields/context';
 import PromiseButton from '@/components/standard/button/promise';
 import { handleError } from '@/common/utils/error';
 import { TopicModelExperimentEnvironment } from '@/api/topic';
+import { ErrorAlert } from '@/components/standard/fields/watcher';
 
 interface NumericHyperparameterRangeFieldProps {
   label: string;
@@ -101,6 +102,7 @@ function TopicModelExperimentHyperparameterControlsFormBody() {
   const topics = topicModelResult!.result!.topics;
   return (
     <Stack>
+      <ErrorAlert />
       <RHFField
         type="number"
         name="n_trials"

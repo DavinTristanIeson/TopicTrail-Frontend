@@ -37,11 +37,8 @@ import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 
-const LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES = [
-  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
-];
 const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  ...LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES,
+  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
   RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
 ];
 
@@ -57,9 +54,7 @@ export function LinearRegressionCoefficientsPlot(
   });
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
-      supportedTypes: config.standardized
-        ? LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES
-        : LINEAR_REGRESSION_NON_STANDARDIZED_SUPPORTED_VISUALIZATION_TYPES,
+      supportedTypes: LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
       dictionary: REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
     });
 

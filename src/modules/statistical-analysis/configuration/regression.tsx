@@ -34,8 +34,8 @@ export function LinearRegressionConfigForm() {
         <RHFField
           name="standardized"
           type="switch"
-          label="Standardize independent variable?"
-          description="Should the values of the independent variable be standardized? This means that the coefficients cannot be interpreted as absolute units but rather as standard deviations. It may help in comparing effect sizes for each independent variables or identifying which independent variable causes significant deviations."
+          label="Standardize dependent variable?"
+          description="Should the values of the dependent variable be standardized? This means that the coefficients cannot be interpreted as absolute units but rather as standard deviations. It may help in comparing effect sizes for each independent variables or identifying which independent variable causes significant deviations."
         />
       }
     />

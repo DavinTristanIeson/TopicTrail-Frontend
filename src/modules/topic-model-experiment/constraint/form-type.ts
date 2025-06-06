@@ -10,7 +10,15 @@ const optionalRangeSchema = Yup.array()
   )
   .nullable()
   .of(Yup.number().positive())
-  .length(2);
+  .length(2)
+  .transform((value) => {
+    if (!Array.isArray(value)) return value;
+    if (value[0] > value[1]) {
+      return [value[1], value[0]];
+    } else {
+      return [value[0], value[1]];
+    }
+  });
 
 export const TopicModelHyperparameterConstraintSchema = Yup.object({
   n_trials: Yup.number().positive().min(5).required(),

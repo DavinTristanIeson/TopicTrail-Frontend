@@ -79,12 +79,67 @@ function StatisticalAnalysisSelectPurpose(
       onChange={
         setPurpose as React.Dispatch<React.SetStateAction<string | null>>
       }
-      data={Object.values(STATISTICAL_ANALYSIS_CONFIGURATION).map((config) => {
-        return {
-          label: config.label,
-          value: config.type,
-        };
-      })}
+      data={[
+        {
+          group: 'Regression',
+          items: [
+            {
+              label: 'Linear Regression',
+              value: StatisticalAnalysisPurpose.LinearRegression,
+            },
+            {
+              label: 'Logistic Regression',
+              value: StatisticalAnalysisPurpose.LogisticRegression,
+            },
+            {
+              label: 'Multinomial Logistic Regression',
+              value: StatisticalAnalysisPurpose.MultinomialLogisticRegression,
+            },
+            {
+              label: 'Ordinal Regression',
+              value: StatisticalAnalysisPurpose.OrdinalRegression,
+            },
+          ],
+        },
+        {
+          group: 'Statistic Tests',
+          items: [
+            {
+              label: 'Two-Sample Statistic Test',
+              value: StatisticalAnalysisPurpose.TwoSample,
+            },
+            {
+              label: 'Omnibus Statistic Test',
+              value: StatisticalAnalysisPurpose.Omnibus,
+            },
+            {
+              label: 'Pairwise Statistic Test',
+              value: StatisticalAnalysisPurpose.Pairwise,
+            },
+            {
+              label: 'Binary Statistic Test on Distribution',
+              value: StatisticalAnalysisPurpose.BinaryTestDistribution,
+            },
+            {
+              label: 'Binary Statistic Test on Contingency Table',
+              value: StatisticalAnalysisPurpose.BinaryTestContingencyTable,
+            },
+          ],
+        },
+        {
+          group: 'Miscellaneous',
+          items: [
+            {
+              label: 'Subdataset Co-occurrence',
+              value: StatisticalAnalysisPurpose.SubdatasetCooccurrence,
+            },
+            {
+              label: 'Contingency Table',
+              value: StatisticalAnalysisPurpose.ContingencyTable,
+            },
+          ],
+        },
+      ]}
       miw={512}
       label="Type"
       description="What kind of statistic test would you like to perform?"

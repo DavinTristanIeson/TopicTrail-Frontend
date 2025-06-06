@@ -125,7 +125,7 @@ function getRegressionParams(config: RegressionConfigType) {
       config.interpretation,
   };
   if (config.constrain_by_groups) {
-    base['Constrain by Groups'] = 'Yes';
+    base['Constrain by Subdatasets'] = 'Yes';
   }
   if (config.reference) {
     base['Reference'] = config.reference;
