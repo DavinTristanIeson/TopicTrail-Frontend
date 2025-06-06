@@ -9,6 +9,7 @@ import {
   useConfidenceLevelRegressionResultPlot,
   useOddsRatioRegressionResultPlot,
   usePredictedResultsBaselineLine,
+  useRegressionCoefficientMultiSelect,
 } from './components';
 import { useVisualizationAlphaSlider } from '@/modules/visualization/components/configuration';
 import { Group, Stack } from '@mantine/core';
@@ -58,12 +59,22 @@ export function LogisticRegressionCoefficientsPlot(
       supportedTypes: LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
       dictionary: REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
     });
-  const visdata = React.useMemo(() => {
-    return getRegressionCoefficientsVisualizationData({
+
+  const { Component: CoefficientMultiSelect, coefficients } =
+    useRegressionCoefficientMultiSelect({
       coefficients: data.coefficients,
-      modelType: RegressionModelType.Logistic,
     });
-  }, [data.coefficients]);
+  const visdata = React.useMemo(() => {
+    return [
+      {
+        name: 'Coefficients',
+        data: getRegressionCoefficientsVisualizationData({
+          coefficients,
+          modelType: RegressionModelType.Logistic,
+        }),
+      },
+    ];
+  }, [coefficients]);
 
   const commonProps = {
     alpha,
@@ -118,6 +129,7 @@ export function LogisticRegressionCoefficientsPlot(
       />
       {VisualizationSelect}
       {AlphaSlider}
+      {CoefficientMultiSelect}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
   );

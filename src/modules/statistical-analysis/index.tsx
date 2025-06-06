@@ -101,7 +101,7 @@ export default function StatisticalAnalysisPage() {
   );
   const [purpose, setPurpose] =
     React.useState<StatisticalAnalysisPurpose | null>(
-      recentInput?.type ?? StatisticalAnalysisPurpose.TwoSample,
+      recentInput?.type ?? StatisticalAnalysisPurpose.LinearRegression,
     );
   const [input, setInput] = React.useState<any | null>(
     recentInput?.config ?? null,
