@@ -2781,11 +2781,6 @@ export interface components {
              * @default 3
              */
             min_word_length: number;
-            /** N Gram Range */
-            n_gram_range: [
-                number,
-                number
-            ];
         };
         /** TextualSchemaColumn */
         "TextualSchemaColumn-Input": {

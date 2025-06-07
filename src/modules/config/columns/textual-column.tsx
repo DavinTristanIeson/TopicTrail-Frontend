@@ -124,31 +124,6 @@ function PreprocessingConfigurationFormBody(
           bounded
           description="Words with frequencies above this threshold will be removed from the documents. This ensures that frequent, generic words (e.g.: go, and, from) are not included in the topic representation."
         />
-        <Stack>
-          <Group align="start">
-            <RHFField
-              type="number"
-              name={`${PREPROCESSING_NAME}.n_gram_range[0]`}
-              label="N-Gram Range Start"
-              min={1}
-              className="flex-1"
-            />
-            <RHFField
-              type="number"
-              name={`${PREPROCESSING_NAME}.n_gram_range[1]`}
-              label="N-Gram Range End"
-              min={1}
-              className="flex-1"
-            />
-          </Group>
-          <Text size="sm" c="gray">
-            N-Gram Range specifies the length of the phrases that can be used as
-            the topic representation. For example, n-gram range of length (1, 2)
-            will allow phrases like &quot;door&quot; and &quot;door hinge&quot;
-            to be included into the the topic representation; but phrases like
-            &quot;the door hinge&quot; will be excluded.
-          </Text>
-        </Stack>
         <RHFField
           name={`${PREPROCESSING_NAME}.max_unique_words`}
           label="Max. Unique Words"

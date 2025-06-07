@@ -87,9 +87,6 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     max_unique_words: Yup.number().positive().required(),
     min_document_length: Yup.number().positive().required(),
     min_word_length: Yup.number().positive().required(),
-    n_gram_range: Yup.array(Yup.number().positive().required())
-      .length(2)
-      .required(),
   }).when('type', {
     is: SchemaColumnTypeEnum.Textual,
     then: (schema) => schema.required(),
@@ -171,7 +168,6 @@ export function DefaultProjectSchemaColumnValues(
             min_df: 5,
             min_document_length: 3,
             min_word_length: 3,
-            n_gram_range: [1, 2],
             pipeline_type: DocumentPreprocessingMethodEnum.English,
           }
         : null,
