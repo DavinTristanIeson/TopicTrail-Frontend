@@ -11,10 +11,13 @@ import {
 } from '@/api/statistical-analysis';
 import { BaseStatisticalAnalysisDataProviderHook } from '../types';
 import { LinearRegressionConfigType } from '../configuration/linear-regression';
-import { RegressionConfigType } from '../configuration/regression-common';
 import { LogisticRegressionConfigType } from '../configuration/logistic-regression';
 import { NamedTableFilterModel } from '@/api/comparison';
-import { MultinomialLogisticRegressionConfigType, OrdinalRegressionConfigType } from '../configuration/multinomial-regression';
+import {
+  MultinomialLogisticRegressionConfigType,
+  OrdinalRegressionConfigType,
+} from '../configuration/multinomial-regression';
+import { TableFilterModel } from '@/api/table';
 
 export const useLinearRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   LinearRegressionResultModel,
@@ -59,7 +62,10 @@ export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProvi
         constrain_by_groups: config.constrain_by_groups,
         interpretation: config.interpretation,
         reference: config.reference ?? null,
-        target: config.target as NamedTableFilterModel,
+        target: {
+          name: config.target,
+          filter: config.filter as TableFilterModel,
+        },
         groups: subdatasets,
       },
       params,
@@ -85,7 +91,10 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalys
         constrain_by_groups: config.constrain_by_groups,
         interpretation: config.interpretation,
         reference: config.reference ?? null,
-        target: config.target,
+        target:
+          config.subdatasets != null
+            ? (config.subdatasets as NamedTableFilterModel[])
+            : config.target,
         groups: subdatasets,
         reference_dependent: config.reference_dependent ?? null,
       },
@@ -112,7 +121,10 @@ export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProvid
         constrain_by_groups: config.constrain_by_groups,
         interpretation: config.interpretation,
         reference: config.reference ?? null,
-        target: config.target,
+        target:
+          config.subdatasets != null
+            ? (config.subdatasets as NamedTableFilterModel[])
+            : config.target,
         groups: subdatasets,
       },
       params,

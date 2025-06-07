@@ -13,6 +13,7 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { fromPairs } from 'lodash-es';
 import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
 import { UserDataModel } from '@/api/userdata';
+import { useUncontrolled } from '@mantine/hooks';
 
 interface LoadUserDataActionComponentProps<T>
   extends UserDataManagerRendererProps<T> {
@@ -111,15 +112,26 @@ export function LoadUserDataActionComponent<T>(
 
 interface LoadUserDataSelectInputProps<T> {
   data: UserDataModel<T>[];
-  value: string;
-  onChange(data: UserDataModel<T> | null): void;
+  value?: string | null;
+  defaultValue?: string | null;
+  onChange?(data: UserDataModel<T> | null): void;
   selectProps?: SelectProps;
 }
 
 export function LoadUserDataSelectInput<T>(
   props: LoadUserDataSelectInputProps<T>,
 ) {
-  const { data, value, onChange, selectProps } = props;
+  const {
+    data,
+    value: controlledValue,
+    defaultValue,
+    onChange: onChangeControlled,
+    selectProps,
+  } = props;
+  const [value, onChange] = useUncontrolled({
+    value: controlledValue,
+    defaultValue: defaultValue,
+  });
 
   const dictionary = React.useMemo(() => {
     return fromPairs(
@@ -151,7 +163,8 @@ export function LoadUserDataSelectInput<T>(
       })}
       disabled={data.length === 0}
       onChange={(value, option) => {
-        onChange((option as UserDataComboboxItem<T>)?.data ?? null);
+        onChange(value);
+        onChangeControlled?.((option as UserDataComboboxItem<T>)?.data ?? null);
       }}
       renderOption={renderOption}
       filter={(input) => {

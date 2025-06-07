@@ -16,6 +16,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import * as Yup from 'yup';
 
 export const regressionInputSchema = Yup.object({
+  target: Yup.string().required(),
   interpretation: Yup.string()
     .oneOf(Object.values(RegressionInterpretation))
     .required(),

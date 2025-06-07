@@ -1,4 +1,4 @@
-import { yupNullableString } from '@/common/utils/form';
+import { yupNullableArray, yupNullableString } from '@/common/utils/form';
 import {
   CommonRegressionConfigForm,
   DependentVariableSelectField,
@@ -10,15 +10,29 @@ import { useController, useFormContext, useWatch } from 'react-hook-form';
 import React from 'react';
 import { ProjectContext } from '@/modules/project/context';
 import { TableUniqueValueSelectField } from '@/modules/filter/select/select-unique-values';
-import { Alert, Card, Fieldset, Stack, Text } from '@mantine/core';
-import { Warning } from '@phosphor-icons/react';
+import {
+  Alert,
+  Button,
+  Card,
+  Group,
+  Spoiler,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { Eye, Warning } from '@phosphor-icons/react';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
 import RHFField from '@/components/standard/fields';
-import { ComparisonStateItemModel } from '@/api/comparison';
+import {
+  ComparisonStateItemModel,
+  NamedTableFilterModel,
+} from '@/api/comparison';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { LoadUserDataSelectInput } from '@/modules/userdata/load-data';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
 import { identity } from 'lodash-es';
+import { comparisonFilterFormSchema } from '@/modules/comparison/subdatasets/form-type';
+import ReadonlyFilterDrawer from '@/modules/filter/drawer/readonly';
+import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
 
 // region Enums
 
@@ -37,7 +51,7 @@ const MULTINOMIAL_REGRESSION_MODE_DICTIONARY = {
     label: 'Use Subdatasets',
     description:
       "If there are too many unique values inside the columns, or if you'd like more control over which rows are assigned to which categories, considering using subdatasets. The subdatasets must be mutually exclusive with each other.",
-    value: MultinomialRegressionDependentVariableMode.Column,
+    value: MultinomialRegressionDependentVariableMode.Subdatasets,
   },
 };
 
@@ -45,8 +59,10 @@ const MULTINOMIAL_REGRESSION_MODE_DICTIONARY = {
 export const multinomialRegressionInputSchema = regressionInputSchema.shape({
   dependent_variable_mode: Yup.string()
     .oneOf(Object.values(MultinomialRegressionDependentVariableMode))
-    .required(),
+    .required()
+    .default(MultinomialRegressionDependentVariableMode.Column),
   target: Yup.string().required(),
+  subdatasets: yupNullableArray.of(comparisonFilterFormSchema),
 });
 
 export const multinomialLogisticRegressionInputSchema =
@@ -80,55 +96,78 @@ function MultinomialSubdatasetsField() {
   const { control, clearErrors, setValue } =
     useFormContext<InternalMultinomialRegressionConfigType>();
 
-  const [shownGroups, setShownGroups] = React.useState<
-    ComparisonStateItemModel[]
-  >([]);
   const userdataManagerProps = useComparisonStateDataManager({
     onApply: identity,
     state: null,
   });
 
   const { field, fieldState } = useController({
+    name: 'subdatasets',
+    control,
+  });
+  const { field: targetField, fieldState: targetFieldState } = useController({
     name: 'target',
     control,
   });
 
+  const remote =
+    React.useRef<ParametrizedDisclosureTrigger<NamedTableFilterModel> | null>(
+      null,
+    );
+
+  const loadUserDataValue =
+    userdataManagerProps.data.find((item) => item.name === targetField.value)
+      ?.id ?? null;
+
   return (
     <>
-      <Fieldset legend="Choose subdatasets">
-        <Text size="sm" c="gray">
-          Create the subdatasets you&apos;d like to use as the levels of the
-          dependent variable from the &quot;Subdatasets&quot;. Afterwards, save
-          those subdatasets from the &quot;Manage Subdatasets&quot; menu so that
-          you can use them here.
-        </Text>
-        <LoadUserDataSelectInput
-          data={userdataManagerProps.data}
-          value={field.value}
-          onChange={(data) => {
-            field.onChange(data?.id ?? '');
-            setValue('subdatasets', data?.data.groups);
-            setShownGroups(data?.data?.groups ?? []);
-            if (data) {
-              clearErrors('target');
-            }
-          }}
-        />
-        {fieldState.error && (
-          <Text size="sm" c="red">
-            {fieldState.error.message}
-          </Text>
-        )}
-      </Fieldset>
-      <Stack>
-        {shownGroups.map((tgt) => {
-          return (
-            <Card key={tgt.name}>
-              <Text fw={500}>{tgt.name}</Text>
-            </Card>
-          );
-        })}
-      </Stack>
+      <LoadUserDataSelectInput
+        data={userdataManagerProps.data}
+        defaultValue={loadUserDataValue}
+        onChange={(data) => {
+          field.onChange(data?.data.groups ?? null);
+          targetField.onChange(data?.name ?? '');
+          setValue('reference_dependent' as any, null);
+          if (data) {
+            clearErrors('subdatasets');
+            clearErrors('target');
+          }
+        }}
+        selectProps={{
+          label: 'Subdatasets as Dependent Variable',
+          description: `Create the subdatasets you'd like to use as the levels of the
+        dependent variable from the "Subdatasets". Afterwards, save
+        those subdatasets from the "Manage Subdatasets" menu so that
+        you can use them here.`,
+          allowDeselect: false,
+        }}
+      />
+      <Text size="sm" c="red">
+        {fieldState.error?.message ?? targetFieldState.error?.message}
+      </Text>
+      <ReadonlyFilterDrawer ref={remote} />
+      <Spoiler hideLabel="Hide Subdatasets" showLabel="Show Subdatasets">
+        <Stack>
+          {field.value?.map((tgt) => {
+            return (
+              <Card key={tgt.name}>
+                <Group justify="space-between">
+                  <Text fw={500}>{tgt.name}</Text>
+                  <Button
+                    leftSection={<Eye />}
+                    variant="outline"
+                    onClick={() => {
+                      remote.current?.open(tgt as NamedTableFilterModel);
+                    }}
+                  >
+                    View Filter
+                  </Button>
+                </Group>
+              </Card>
+            );
+          })}
+        </Stack>
+      </Spoiler>
     </>
   );
 }
@@ -163,6 +202,7 @@ function MultinomialDependentVariableField(
         renderOption={renderOption}
         onChange={() => {
           setValue('target', '');
+          setValue('subdatasets', null as any);
         }}
       />
       {dependentVariableMode ===
@@ -197,6 +237,7 @@ function MultinomialLogisticRegressionFormReferenceDependentField() {
   };
 
   if (mode === MultinomialRegressionDependentVariableMode.Column) {
+    if (!target) return null;
     return (
       <TableUniqueValueSelectField
         {...commonProps}
@@ -206,6 +247,7 @@ function MultinomialLogisticRegressionFormReferenceDependentField() {
     );
   }
   if (mode === MultinomialRegressionDependentVariableMode.Subdatasets) {
+    if (!subdatasets) return null;
     return (
       <RHFField
         type="select"

@@ -5,9 +5,6 @@ import {
 import { ProjectContext } from '@/modules/project/context';
 import { UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
-import { MultinomialRegressionDependentVariableMode } from '../configuration/multinomial-regression';
-import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
-import { identity } from 'lodash-es';
 
 interface UseStatisticalAnalysisDataProviderPropsProps {
   groups: string[] | null;

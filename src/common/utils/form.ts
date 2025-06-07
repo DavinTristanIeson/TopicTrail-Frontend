@@ -71,7 +71,10 @@ function nullIfFalsey(value: any): any | null {
 }
 
 function nullIfFalseyMixed(value: any): any | null {
-  if ((typeof value === 'number' && isNaN(value)) || !value) {
+  if (typeof value === 'number') {
+    return isNaN(value) ? null : value;
+  }
+  if (!value) {
     return null;
   }
   return value;

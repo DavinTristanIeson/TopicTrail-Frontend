@@ -9,7 +9,6 @@ import React from 'react';
 import RHFField from '@/components/standard/fields';
 
 export const linearRegressionInputSchema = regressionInputSchema.shape({
-  target: Yup.string().required(),
   standardized: Yup.boolean().required().default(true),
 });
 

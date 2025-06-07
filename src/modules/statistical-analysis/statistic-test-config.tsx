@@ -120,19 +120,9 @@ function getExcludeOverlappingRowsParams(config: {
   };
 }
 
-export function stringifyDependentVariable(target: any) {
-  let stringifiedTarget: string;
-  if (target.name) {
-    stringifiedTarget = target.name;
-  } else {
-    stringifiedTarget = String(target);
-  }
-  return stringifiedTarget;
-}
-
-function getRegressionParams(config: RegressionConfigType & { target: any }) {
+function getRegressionParams(config: RegressionConfigType) {
   const base: Record<string, string> = {
-    'Dependent Variable': stringifyDependentVariable(config.target),
+    'Dependent Variable': config.target,
     Interpretation:
       REGRESSION_INTERPRETATION_DICTIONARY[config.interpretation]?.label ??
       config.interpretation,
@@ -198,10 +188,7 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
       'Use each subdataset as the independent variable of a linear regression to figure out how the criteria of each subdataset contributes to the odds of predicting whether the dependent variable is true or false.',
     label: 'Logistic Regression',
     getParams(config) {
-      return getRegressionParams({
-        ...config,
-        target: config.target.name,
-      });
+      return getRegressionParams(config);
     },
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<

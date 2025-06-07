@@ -132,6 +132,7 @@ function useMultinomialPredictionProbabilityDistributionHeatmapPlot(
           zmax: 100,
           type: 'heatmap',
           texttemplate: '%{z:.3f}%',
+          colorscale: 'Viridis',
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
             '<b>Dependent Variable Level</b>: %{y}',
@@ -259,7 +260,7 @@ export function MultinomialPredictionPlot(
       ) : undefined}
       <div>
         <PlotRenderer
-          key={display}
+          key={`${display} ${cumulative}`}
           plot={usedPlot}
           scrollZoom={usedPlot !== heatmapPlot}
         />
