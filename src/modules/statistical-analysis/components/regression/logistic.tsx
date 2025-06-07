@@ -182,7 +182,7 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
         },
       ],
       layout: {
-        title: `Predicted Probabilities of ${config.target.name} per Independent Variable`,
+        title: `Predicted Probabilities of ${config.target} per Independent Variable`,
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
           type: 'category',

@@ -4,7 +4,7 @@ import {
   MultinomialLogisticRegressionResultModel,
 } from '@/api/statistical-analysis';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
-import { MultinomialLogisticRegressionConfigType } from '../../configuration/regression';
+import { MultinomialLogisticRegressionConfigType } from '../../configuration/multinomial-regression';
 import { Group, Select, Stack } from '@mantine/core';
 import {
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,

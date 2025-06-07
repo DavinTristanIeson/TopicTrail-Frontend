@@ -43,6 +43,7 @@ import BaseRegressionVariablesInfoSection from './variables-info';
 import { useDisclosure } from '@mantine/hooks';
 import { MultinomialPredictionPlot } from './multinomial-predictions';
 import { useVisualizationAlphaSlider } from '../plot-config';
+import { OrdinalRegressionConfigType } from '../../configuration/multinomial-regression';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -212,7 +213,7 @@ export function OrdinalRegressionCoefficientsPlot(
 export function OrdinalRegressionPredictionResultRenderer(
   props: StatisticalAnalysisPredictionResultRendererProps<
     OrdinalRegressionPredictionResultModel,
-    RegressionConfigType
+    OrdinalRegressionConfigType
   >,
 ) {
   const { result } = props;
@@ -268,7 +269,7 @@ const ORDINAL_REGRESSION_PREDICTION_DISPLAY_DICTIONARY = {
 export function DefaultOrdinalRegressionPredictionResultRenderer(
   props: BaseStatisticalAnalysisResultRendererProps<
     OrdinalRegressionResultModel,
-    RegressionConfigType
+    OrdinalRegressionConfigType
   >,
 ) {
   const { data, config } = props;

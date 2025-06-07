@@ -21,6 +21,7 @@ import { useFilterDataManager } from '@/modules/userdata/data-manager';
 import { useDebouncedValue } from '@mantine/hooks';
 import UserDataManager from '@/modules/userdata';
 import { CancelButton } from '@/components/standard/button/variants';
+import { FormEditableContext } from '@/components/standard/fields/context';
 
 interface TableFilterUserDataManagerProps {
   setFilter: React.Dispatch<TableFilterModel | null>;
@@ -58,6 +59,7 @@ interface TableFilterDrawerComponentProps {
   close(): void;
   name: string;
   AboveForm?: React.ReactNode;
+  canReset?: boolean;
 }
 
 export function TableFilterDrawerFormBody(
@@ -69,7 +71,8 @@ export function TableFilterDrawerFormBody(
     setValue,
     formState: { isSubmitting },
   } = useFormContext();
-  const { setFilter, close, AboveForm, name } = props;
+  const { setFilter, close, AboveForm, name, canReset } = props;
+  const { editable } = React.useContext(FormEditableContext);
 
   return (
     <>
@@ -90,24 +93,28 @@ export function TableFilterDrawerFormBody(
         }}
       />
       <Drawer.Header>
-        <Group className="py-3 w-full">
-          <Button
-            color="red"
-            leftSection={<Warning />}
-            onClick={() => {
-              confirmResetRemote.current?.open();
-            }}
-            disabled={isSubmitting}
-          >
-            Reset
-          </Button>
-          <div className="flex-1" />
-          <CancelButton onClick={close} />
-          <SubmitButton>Apply</SubmitButton>
-        </Group>
+        {editable && (
+          <Group className="py-3 w-full">
+            {canReset && (
+              <Button
+                color="red"
+                leftSection={<Warning />}
+                onClick={() => {
+                  confirmResetRemote.current?.open();
+                }}
+                disabled={isSubmitting}
+              >
+                Reset
+              </Button>
+            )}
+            <div className="flex-1" />
+            <CancelButton onClick={close} />
+            <SubmitButton>Apply</SubmitButton>
+          </Group>
+        )}
       </Drawer.Header>
       {AboveForm}
-      <TableFilterUserDataManager setFilter={setFilter} />
+      {editable && <TableFilterUserDataManager setFilter={setFilter} />}
       <TableFilterComponent name={name} />
     </>
   );

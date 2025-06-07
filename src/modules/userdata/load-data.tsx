@@ -1,4 +1,10 @@
-import { Group, Button, Select, type ComboboxItem } from '@mantine/core';
+import {
+  Group,
+  Button,
+  Select,
+  type ComboboxItem,
+  type SelectProps,
+} from '@mantine/core';
 import { Download, PencilSimple } from '@phosphor-icons/react';
 
 import React from 'react';
@@ -7,6 +13,7 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { fromPairs } from 'lodash-es';
 import { filterByString, pickArrayByIndex } from '@/common/utils/iterable';
 import { UserDataModel } from '@/api/userdata';
+import { useUncontrolled } from '@mantine/hooks';
 
 interface LoadUserDataActionComponentProps<T>
   extends UserDataManagerRendererProps<T> {
@@ -100,5 +107,81 @@ export function LoadUserDataActionComponent<T>(
         Edit
       </Button>
     </Group>
+  );
+}
+
+interface LoadUserDataSelectInputProps<T> {
+  data: UserDataModel<T>[];
+  value?: string | null;
+  defaultValue?: string | null;
+  onChange?(data: UserDataModel<T> | null): void;
+  selectProps?: SelectProps;
+}
+
+export function LoadUserDataSelectInput<T>(
+  props: LoadUserDataSelectInputProps<T>,
+) {
+  const {
+    data,
+    value: controlledValue,
+    defaultValue,
+    onChange: onChangeControlled,
+    selectProps,
+  } = props;
+  const [value, onChange] = useUncontrolled({
+    value: controlledValue,
+    defaultValue: defaultValue,
+  });
+
+  const dictionary = React.useMemo(() => {
+    return fromPairs(
+      data.map((item) => {
+        return [
+          item.id,
+          {
+            label: item.name,
+            description: item.description,
+            tags: item.tags,
+          },
+        ];
+      }),
+    );
+  }, [data]);
+
+  const renderOption = useDescriptionBasedRenderOption(dictionary);
+
+  return (
+    <Select
+      {...selectProps}
+      value={value}
+      data={data.map((item) => {
+        return {
+          label: item.name,
+          value: item.id,
+          data: item,
+        } as UserDataComboboxItem<T>;
+      })}
+      disabled={data.length === 0}
+      onChange={(value, option) => {
+        onChange(value);
+        onChangeControlled?.((option as UserDataComboboxItem<T>)?.data ?? null);
+      }}
+      renderOption={renderOption}
+      filter={(input) => {
+        const data = input.options.map(
+          (option) => (option as UserDataComboboxItem<T>).data,
+        );
+        const indices = filterByString(
+          input.search,
+          data.map((item) => {
+            return {
+              tags: item.tags ?? [],
+              name: item.name,
+            };
+          }),
+        );
+        return pickArrayByIndex(input.options, indices);
+      }}
+    />
   );
 }

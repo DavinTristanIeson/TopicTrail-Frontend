@@ -52,11 +52,7 @@ import {
   LinearRegressionConfigForm,
   LinearRegressionConfigType,
   linearRegressionInputSchema,
-  MultinomialLogisticRegressionConfigForm,
-  MultinomialLogisticRegressionConfigType,
-  multinomialLogisticRegressionInputSchema,
-  OrdinalRegressionConfigForm,
-} from './configuration/regression';
+} from './configuration/linear-regression';
 import {
   useLinearRegressionDataProvider,
   useLogisticRegressionDataProvider,
@@ -66,7 +62,6 @@ import {
 import {
   REGRESSION_INTERPRETATION_DICTIONARY,
   RegressionConfigType,
-  regressionInputSchema,
 } from './configuration/regression-common';
 import {
   LogisticRegressionConfigForm,
@@ -92,6 +87,14 @@ import {
 } from './data-provider/statistic-test';
 import { RegressionResultRenderer } from './components/regression';
 import { RegressionModelType } from './components/regression/types';
+import {
+  MultinomialLogisticRegressionConfigForm,
+  MultinomialLogisticRegressionConfigType,
+  multinomialLogisticRegressionInputSchema,
+  multinomialRegressionInputSchema,
+  OrdinalRegressionConfigForm,
+  OrdinalRegressionConfigType,
+} from './configuration/multinomial-regression';
 
 function getBasicStatisticTestParams(config: {
   column: string;
@@ -185,10 +188,7 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
       'Use each subdataset as the independent variable of a linear regression to figure out how the criteria of each subdataset contributes to the odds of predicting whether the dependent variable is true or false.',
     label: 'Logistic Regression',
     getParams(config) {
-      return getRegressionParams({
-        ...config,
-        target: config.target.name,
-      });
+      return getRegressionParams(config);
     },
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<
@@ -234,7 +234,7 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
       );
     },
     configForm: OrdinalRegressionConfigForm,
-    configValidator: regressionInputSchema,
+    configValidator: multinomialRegressionInputSchema,
     dataProvider: useOrdinalRegressionDataProvider,
     description:
       'Use each subdataset as the independent variable of an ordinal regression to figure out how the criteria of each subdataset contributes to the odds of a value being higher-ranked or lower-ranked.',
@@ -243,7 +243,7 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<
     OrdinalRegressionResultModel,
-    RegressionConfigType
+    OrdinalRegressionConfigType
   >,
   [StatisticalAnalysisPurpose.TwoSample]: {
     type: StatisticalAnalysisPurpose.TwoSample,
