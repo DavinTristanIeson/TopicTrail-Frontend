@@ -21,10 +21,7 @@ import {
   RegressionPredictionAPIHookType,
   StatisticalAnalysisPredictionResultRendererProps,
 } from './types';
-import {
-  LinearRegressionConfigType,
-  MultinomialLogisticRegressionConfigType,
-} from '../../configuration/regression';
+import { LinearRegressionConfigType } from '../../configuration/linear-regression';
 import { LogisticRegressionConfigType } from '../../configuration/logistic-regression';
 import {
   DefaultLogisticRegressionPredictionResultRenderer,
@@ -48,6 +45,7 @@ import {
   useOrdinalRegressionPredictionAPIHook,
 } from './ordinal';
 import { RegressionConfigType } from '../../configuration/regression-common';
+import { MultinomialLogisticRegressionConfigType } from '../../configuration/multinomial-regression';
 
 type StatisticalAnalysisResultRenderer<TData, TConfig> = (
   props: BaseStatisticalAnalysisResultRendererProps<TData, TConfig>,

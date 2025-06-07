@@ -10,13 +10,11 @@ import {
   OrdinalRegressionResultModel,
 } from '@/api/statistical-analysis';
 import { BaseStatisticalAnalysisDataProviderHook } from '../types';
-import {
-  LinearRegressionConfigType,
-  MultinomialLogisticRegressionConfigType,
-} from '../configuration/regression';
+import { LinearRegressionConfigType } from '../configuration/linear-regression';
 import { RegressionConfigType } from '../configuration/regression-common';
 import { LogisticRegressionConfigType } from '../configuration/logistic-regression';
 import { NamedTableFilterModel } from '@/api/comparison';
+import { MultinomialLogisticRegressionConfigType, OrdinalRegressionConfigType } from '../configuration/multinomial-regression';
 
 export const useLinearRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   LinearRegressionResultModel,
@@ -100,7 +98,7 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalys
 
 export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   OrdinalRegressionResultModel,
-  RegressionConfigType
+  OrdinalRegressionConfigType
 > = function (config) {
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({

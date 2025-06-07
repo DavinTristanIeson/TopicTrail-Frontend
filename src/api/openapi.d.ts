@@ -1954,8 +1954,6 @@ export interface components {
         };
         /** LinearRegressionInput */
         LinearRegressionInput: {
-            /** Target */
-            target: string;
             /** Groups */
             groups: components["schemas"]["NamedTableFilter"][];
             /** Reference */
@@ -1963,6 +1961,8 @@ export interface components {
             interpretation: components["schemas"]["RegressionInterpretation"];
             /** Constrain By Groups */
             constrain_by_groups: boolean;
+            /** Target */
+            target: string;
             /** Standardized */
             standardized: boolean;
         };
@@ -2034,12 +2034,12 @@ export interface components {
         LogisticRegressionInput: {
             /** Groups */
             groups: components["schemas"]["NamedTableFilter"][];
-            target: components["schemas"]["NamedTableFilter"];
             /** Reference */
             reference: string | null;
             interpretation: components["schemas"]["RegressionInterpretation"];
             /** Constrain By Groups */
             constrain_by_groups: boolean;
+            target: components["schemas"]["NamedTableFilter"];
         };
         /** LogisticRegressionPredictionResult */
         LogisticRegressionPredictionResult: {
@@ -2077,8 +2077,6 @@ export interface components {
         };
         /** MultinomialLogisticRegressionInput */
         MultinomialLogisticRegressionInput: {
-            /** Target */
-            target: string;
             /** Groups */
             groups: components["schemas"]["NamedTableFilter"][];
             /** Reference */
@@ -2088,6 +2086,8 @@ export interface components {
             constrain_by_groups: boolean;
             /** Reference Dependent */
             reference_dependent: string | null;
+            /** Target */
+            target: components["schemas"]["NamedTableFilter"][] | string;
         };
         /** MultinomialLogisticRegressionPredictionResult */
         MultinomialLogisticRegressionPredictionResult: {
@@ -2256,8 +2256,6 @@ export interface components {
         };
         /** OrdinalRegressionInput */
         OrdinalRegressionInput: {
-            /** Target */
-            target: string;
             /** Groups */
             groups: components["schemas"]["NamedTableFilter"][];
             /** Reference */
@@ -2265,6 +2263,8 @@ export interface components {
             interpretation: components["schemas"]["RegressionInterpretation"];
             /** Constrain By Groups */
             constrain_by_groups: boolean;
+            /** Target */
+            target: components["schemas"]["NamedTableFilter"][] | string;
         };
         /** OrdinalRegressionPredictionResult */
         OrdinalRegressionPredictionResult: {

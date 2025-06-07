@@ -1,4 +1,4 @@
-import { filterProjectColumnsByType } from '@/api/project';
+import { filterProjectColumnsByType, SchemaColumnModel } from '@/api/project';
 import {
   RegressionInterpretation,
   SchemaColumnTypeEnum,
@@ -16,7 +16,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import * as Yup from 'yup';
 
 export const regressionInputSchema = Yup.object({
-  target: Yup.string().required(),
   interpretation: Yup.string()
     .oneOf(Object.values(RegressionInterpretation))
     .required(),
@@ -114,10 +113,30 @@ function RegressionInterpretationSelectInput() {
   );
 }
 
-interface CommonRegressionConfigFormProps {
+interface DependentVariableSelectFieldProps {
+  onChange?(column: SchemaColumnModel | null): void;
   supportedTypes: SchemaColumnTypeEnum[];
-  onChangeColumn?(): void;
-  DependentVariableComponent?: React.ReactNode;
+}
+
+export function DependentVariableSelectField(
+  props: DependentVariableSelectFieldProps,
+) {
+  const { onChange, supportedTypes } = props;
+  const project = React.useContext(ProjectContext);
+  const columns = filterProjectColumnsByType(project, supportedTypes);
+
+  return (
+    <ProjectColumnSelectField
+      label="Dependent Variable"
+      name="target"
+      data={columns}
+      placeholder="Choose the column that will be used as the dependent variable for the regression."
+      onChange={onChange}
+    />
+  );
+}
+
+interface CommonRegressionConfigFormProps {
   Bottom?: React.ReactNode;
   Top?: React.ReactNode;
 }
@@ -125,15 +144,7 @@ interface CommonRegressionConfigFormProps {
 export function CommonRegressionConfigForm(
   props: CommonRegressionConfigFormProps,
 ) {
-  const {
-    supportedTypes,
-    onChangeColumn,
-    Top,
-    Bottom,
-    DependentVariableComponent,
-  } = props;
-  const project = React.useContext(ProjectContext);
-  const columns = filterProjectColumnsByType(project, supportedTypes);
+  const { Top, Bottom } = props;
   return (
     <Stack>
       <Alert color="blue" icon={<Info />}>
@@ -143,15 +154,6 @@ export function CommonRegressionConfigForm(
         variables on the dependent variable.
       </Alert>
       {Top}
-      {DependentVariableComponent ?? (
-        <ProjectColumnSelectField
-          label="Dependent Variable"
-          name="target"
-          data={columns}
-          placeholder="Choose the column that will be used as the dependent variable for the regression."
-          onChange={onChangeColumn}
-        />
-      )}
       <RegressionInterpretationSelectInput />
       <ConstrainByGroupsCheckbox />
       <ReferenceSelectInput />

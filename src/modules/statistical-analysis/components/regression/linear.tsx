@@ -12,7 +12,7 @@ import {
 import { Group, Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
-import { LinearRegressionConfigType } from '../../configuration/regression';
+import { LinearRegressionConfigType } from '../../configuration/linear-regression';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import {
   getRegressionCoefficientsVisualizationData,

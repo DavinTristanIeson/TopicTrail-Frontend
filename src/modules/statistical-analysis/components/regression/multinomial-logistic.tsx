@@ -4,7 +4,7 @@ import {
   MultinomialLogisticRegressionResultModel,
 } from '@/api/statistical-analysis';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
-import { MultinomialLogisticRegressionConfigType } from '../../configuration/regression';
+import { MultinomialLogisticRegressionConfigType } from '../../configuration/multinomial-regression';
 import { Group, Select, Stack } from '@mantine/core';
 import {
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
@@ -44,6 +44,7 @@ import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { MultinomialPredictionPlot } from './multinomial-predictions';
+import { stringifyDependentVariable } from '../../statistic-test-config';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -471,7 +472,7 @@ export function DefaultMultinomialLogisticRegressionPredictionResultRenderer(
       levels={data.levels}
       predictions={data.predictions}
       supportsCumulative={false}
-      target={config.target}
+      target={stringifyDependentVariable(config.target)}
     />
   );
 }

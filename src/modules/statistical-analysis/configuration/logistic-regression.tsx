@@ -206,8 +206,7 @@ function LogisticRegressionDependentVariableField() {
 export function LogisticRegressionConfigForm() {
   return (
     <CommonRegressionConfigForm
-      supportedTypes={[]}
-      DependentVariableComponent={<LogisticRegressionDependentVariableField />}
+      Top={<LogisticRegressionDependentVariableField />}
     />
   );
 }

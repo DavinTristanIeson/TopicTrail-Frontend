@@ -52,11 +52,7 @@ import {
   LinearRegressionConfigForm,
   LinearRegressionConfigType,
   linearRegressionInputSchema,
-  MultinomialLogisticRegressionConfigForm,
-  MultinomialLogisticRegressionConfigType,
-  multinomialLogisticRegressionInputSchema,
-  OrdinalRegressionConfigForm,
-} from './configuration/regression';
+} from './configuration/linear-regression';
 import {
   useLinearRegressionDataProvider,
   useLogisticRegressionDataProvider,
@@ -66,7 +62,6 @@ import {
 import {
   REGRESSION_INTERPRETATION_DICTIONARY,
   RegressionConfigType,
-  regressionInputSchema,
 } from './configuration/regression-common';
 import {
   LogisticRegressionConfigForm,
@@ -92,6 +87,14 @@ import {
 } from './data-provider/statistic-test';
 import { RegressionResultRenderer } from './components/regression';
 import { RegressionModelType } from './components/regression/types';
+import {
+  MultinomialLogisticRegressionConfigForm,
+  MultinomialLogisticRegressionConfigType,
+  multinomialLogisticRegressionInputSchema,
+  multinomialRegressionInputSchema,
+  OrdinalRegressionConfigForm,
+  OrdinalRegressionConfigType,
+} from './configuration/multinomial-regression';
 
 function getBasicStatisticTestParams(config: {
   column: string;
@@ -117,9 +120,19 @@ function getExcludeOverlappingRowsParams(config: {
   };
 }
 
-function getRegressionParams(config: RegressionConfigType) {
+export function stringifyDependentVariable(target: any) {
+  let stringifiedTarget: string;
+  if (target.name) {
+    stringifiedTarget = target.name;
+  } else {
+    stringifiedTarget = String(target);
+  }
+  return stringifiedTarget;
+}
+
+function getRegressionParams(config: RegressionConfigType & { target: any }) {
   const base: Record<string, string> = {
-    'Dependent Variable': config.target,
+    'Dependent Variable': stringifyDependentVariable(config.target),
     Interpretation:
       REGRESSION_INTERPRETATION_DICTIONARY[config.interpretation]?.label ??
       config.interpretation,
@@ -234,7 +247,7 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
       );
     },
     configForm: OrdinalRegressionConfigForm,
-    configValidator: regressionInputSchema,
+    configValidator: multinomialRegressionInputSchema,
     dataProvider: useOrdinalRegressionDataProvider,
     description:
       'Use each subdataset as the independent variable of an ordinal regression to figure out how the criteria of each subdataset contributes to the odds of a value being higher-ranked or lower-ranked.',
@@ -243,7 +256,7 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<
     OrdinalRegressionResultModel,
-    RegressionConfigType
+    OrdinalRegressionConfigType
   >,
   [StatisticalAnalysisPurpose.TwoSample]: {
     type: StatisticalAnalysisPurpose.TwoSample,
