@@ -100,16 +100,16 @@ export function TopicEvaluationMetricsRenderer(
       />
       <ResultCard
         label="Outlier Frequency"
-        value={null}
-        info="The number of rows that are classified as outliers."
-      >
-        <Text inherit>
-          <Text span inherit c="red">
-            {outlier_count}
+        value={
+          <Text inherit>
+            <Text span inherit c="red">
+              {outlier_count}
+            </Text>
+            /{total_count}
           </Text>
-          /{total_count}
-        </Text>
-      </ResultCard>
+        }
+        info="The number of rows that are classified as outliers."
+      />
     </Group>
   );
 }

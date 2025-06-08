@@ -123,7 +123,7 @@ function TopicModelExperimentHyperparameterControlsFormBody() {
         description="The range of topic counts to test out. Note that BERTopic may produce less topics than this number."
         defaultValue={topics.length}
         min={1}
-        name="max_topics"
+        name="constraint.max_topics"
       />
       <NumericHyperparameterRangeField
         label="Topic Confidence Threshold"

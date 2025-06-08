@@ -20,7 +20,7 @@ interface PlotRendererProps {
   scrollZoom?: boolean;
 }
 export default function PlotRenderer(props: PlotRendererProps) {
-  const { plot, height, scrollZoom } = props;
+  const { plot, height, scrollZoom = true } = props;
   const toggleState = React.useRef(true);
   const { colors } = useMantineTheme();
   return (
