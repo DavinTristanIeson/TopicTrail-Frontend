@@ -38,7 +38,7 @@ import { RegressionCoefficientsTable } from './coefficients-table';
 
 const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = without(
   Object.values(RegressionCoefficientsVisualizationTypeEnum),
-  RegressionCoefficientsVisualizationTypeEnum.Table,
+  RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
 );
 
 export function LinearRegressionCoefficientsPlot(
@@ -99,6 +99,9 @@ export function LinearRegressionCoefficientsPlot(
 
   return (
     <Stack>
+      {VisualizationSelect}
+      {AlphaSlider}
+      {CoefficientMultiSelect}
       {data.intercept && (
         <RegressionInterceptResultRenderer
           intercept={data.intercept}
@@ -106,9 +109,6 @@ export function LinearRegressionCoefficientsPlot(
           statisticName="T-Statistic"
         />
       )}
-      {VisualizationSelect}
-      {AlphaSlider}
-      {CoefficientMultiSelect}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
   );

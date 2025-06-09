@@ -10,7 +10,7 @@ import {
 } from './types';
 import React from 'react';
 import { formatNumber } from '@/common/utils/number';
-import { Text, Tooltip } from '@mantine/core';
+import { Text, Tooltip, useMantineTheme } from '@mantine/core';
 import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
 import {
   LogisticRegressionCoefficientModel,
@@ -44,9 +44,23 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
     const withOdds = !!REGRESSION_MODEL_QUIRKS[modelType].withOdds;
     const columns: MRT_ColumnDef<UltimateRegressionCoefficientModel>[] = [
       {
+        id: 'name',
+        header: 'Name',
+        minSize: 250,
+        Header: () => (
+          <TooltipHeader tooltip="The name of the coefficients." title="Name" />
+        ),
+        Cell({ row: { original } }) {
+          return original.name;
+        },
+      },
+      {
         id: 'coefficient',
         header: 'Coefficient',
-        minSize: 100,
+        minSize: 150,
+        size: 150,
+        accessorFn: (coef) => coef.value,
+        enableSorting: true,
         Header: () => (
           <TooltipHeader
             tooltip="The actual parameter value of the model."
@@ -61,7 +75,10 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
       {
         id: 'stderr',
         header: 'Std. Error',
-        minSize: 100,
+        minSize: 150,
+        size: 150,
+        enableSorting: true,
+        accessorFn: (coef) => coef.std_err,
         Header: () => (
           <TooltipHeader
             tooltip="The standard error of the model. A large standard error indicates that the effect of this coefficient is uncertain or that the data doesn't provide strong evidence for the effect of that variable."
@@ -76,7 +93,10 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
       {
         id: 'statistic',
         header: 'Statistic',
-        minSize: 100,
+        minSize: 150,
+        size: 150,
+        enableSorting: true,
+        accessorFn: (coef) => coef.statistic,
         Header: () =>
           modelType === RegressionModelType.Linear ? (
             <TooltipHeader
@@ -97,7 +117,10 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
       {
         id: 'p_value',
         header: 'P Value',
-        minSize: 100,
+        minSize: 150,
+        size: 150,
+        enableSorting: true,
+        accessorFn: (coef) => coef.p_value,
         Header: () => (
           <TooltipHeader
             tooltip="The likelihood of observing the data with the assumption that the population coefficient of this independent variable is zero; as in, the independent variable doesn't have an effect on the dependent variable at all."
@@ -111,12 +134,15 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
       },
       {
         id: 'confidence_level',
-        header: 'Confidence Level',
-        minSize: 100,
+        header: 'Confidence',
+        minSize: 170,
+        size: 170,
+        enableSorting: true,
+        accessorFn: (coef) => pValueToConfidenceLevel(coef.p_value),
         Header: () => (
           <TooltipHeader
             tooltip="The probability that the population coefficient is not zero; which means that the independent variable has a statistically significant effect on the dependent variable."
-            title="Confidence Level"
+            title="Confidence"
           />
         ),
         Cell({ row: { original } }) {
@@ -127,11 +153,12 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
       {
         id: 'confidence_interval',
         header: 'Confidence Interval',
-        minSize: 200,
+        minSize: 210,
+        size: 210,
         Header: () => (
           <TooltipHeader
             tooltip="The interval that has a 95% chance to contain the population coefficient. A wide confidence interval indicates that the effect of the coefficient is uncertain. A confidence interval that crosses the zero-line (goes from negative to positive) indicates that the effect of the coefficient is ambiguous - it's not clear if it has a positive or negative effect on the dependent variable."
-            title="Confidence Level"
+            title="Confidence Interval"
           />
         ),
         Cell({ row: { original } }) {
@@ -145,7 +172,11 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
         {
           id: 'odds_ratio',
           header: 'Odds Ratio',
-          minSize: 100,
+          minSize: 150,
+          size: 150,
+          enableSorting: true,
+          accessorFn: (coef) =>
+            (coef as LogisticRegressionCoefficientModel).odds_ratio,
           Header: () => (
             <TooltipHeader
               tooltip="The transformation of the coefficients into odds ratios. Interpretation of the odds ratios depends on the model type."
@@ -161,11 +192,12 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
         {
           id: 'odds_ratio',
           header: 'Odds Ratio Confidence Interval',
-          minSize: 200,
+          minSize: 270,
+          size: 270,
           Header: () => (
             <TooltipHeader
               tooltip="The interval that has a 95% chance to contain the actual odds ratio."
-              title="Odds Ratio"
+              title="Odds Ratio Confidence Interval"
             />
           ),
           Cell({ row: { original } }) {
@@ -182,6 +214,21 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
   }, [modelType]);
 }
 
+function RowPinningColorProvider(props: React.PropsWithChildren) {
+  const { colors: mantineColors } = useMantineTheme();
+  return (
+    <div
+      style={
+        {
+          '--mrt-pinned-row-background-color': mantineColors.brand[1],
+        } as React.CSSProperties
+      }
+    >
+      {props.children}
+    </div>
+  );
+}
+
 interface RegressionCoefficientsTableProps {
   modelType: RegressionModelType;
   coefficients: UltimateRegressionCoefficientModel[];
@@ -196,7 +243,16 @@ export function RegressionCoefficientsTable(
     modelType,
   });
   const rows = React.useMemo(
-    () => (intercept ? [intercept, ...coefficients] : coefficients),
+    () =>
+      intercept
+        ? [
+            {
+              ...intercept,
+              name: 'Intercept',
+            },
+            ...coefficients,
+          ]
+        : coefficients,
     [coefficients, intercept],
   );
   const table = useMantineReactTable({
@@ -205,15 +261,34 @@ export function RegressionCoefficientsTable(
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,
+    getRowId: React.useCallback(
+      (originalRow: UltimateRegressionCoefficientModel) => {
+        return originalRow.name;
+      },
+      [],
+    ),
     enablePagination: false,
+    enableSorting: true,
+    enableMultiSort: true,
+    enableSortingRemoval: true,
+    enableRowPinning: true,
+    enableColumnActions: true,
     layoutMode: 'grid',
   });
-  return <MantineReactTable table={table} />;
+  return (
+    <RowPinningColorProvider>
+      <MantineReactTable table={table} />
+    </RowPinningColorProvider>
+  );
 }
 
 interface RegressionCoefficientsPerFacetTableProps {
   facets: MultinomialLogisticRegressionFacetResultModel[];
 }
+
+type CoefficientWithLevelModel = UltimateRegressionCoefficientModel & {
+  level: string;
+};
 
 export function RegressionCoefficientsPerFacetTable(
   props: RegressionCoefficientsPerFacetTableProps,
@@ -222,12 +297,13 @@ export function RegressionCoefficientsPerFacetTable(
   const columns = useCoefficientsTableColumns({
     modelType: RegressionModelType.MultinomialLogistic,
   });
-  const rows = React.useMemo(() => {
+  const rows = React.useMemo<CoefficientWithLevelModel[]>(() => {
     return facets
       .map((facet) => {
-        return [facet.intercept, ...facet.coefficients].map((coef) => {
+        return [facet.intercept, ...facet.coefficients].map((coef, index) => {
           return {
             ...coef,
+            name: index === 0 ? 'Intercept' : coef.name,
             level: facet.level,
           };
         });
@@ -235,13 +311,16 @@ export function RegressionCoefficientsPerFacetTable(
       .flat();
   }, [facets]);
   const columnsWithLevel = React.useMemo<
-    MRT_ColumnDef<UltimateRegressionCoefficientModel>[]
+    MRT_ColumnDef<CoefficientWithLevelModel>[]
   >(() => {
     return [
       {
         id: 'level',
         header: 'Level',
         minSize: 100,
+        getGroupingValue(row) {
+          return row.level;
+        },
         Header: () => (
           <TooltipHeader
             tooltip="The dependent variable level associated with this coefficient."
@@ -252,19 +331,33 @@ export function RegressionCoefficientsPerFacetTable(
           return (original as any).level;
         },
       },
-      ...columns,
+      ...(columns as MRT_ColumnDef<CoefficientWithLevelModel>[]),
     ];
   }, [columns]);
   const table = useMantineReactTable({
     data: rows,
     columns: columnsWithLevel,
+    initialState: { grouping: ['level'] },
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,
+    getRowId: React.useCallback((originalRow: CoefficientWithLevelModel) => {
+      return `${originalRow.level}-${originalRow.name}`;
+    }, []),
     enablePagination: false,
+    enableSorting: true,
+    enableMultiSort: true,
+    enableSortingRemoval: true,
+    enableRowPinning: true,
+    enableGrouping: true,
+    enableColumnActions: true,
     layoutMode: 'grid',
   });
-  return <MantineReactTable table={table} />;
+  return (
+    <RowPinningColorProvider>
+      <MantineReactTable table={table} />
+    </RowPinningColorProvider>
+  );
 }
 
 interface RegressionThresholdsTableProps {
@@ -282,7 +375,7 @@ export function RegressionThresholdsTable(
       {
         id: 'from_level',
         header: 'From Level',
-        minSize: 150,
+        minSize: 200,
         Cell({ row: { original } }) {
           return original.from_level;
         },
@@ -290,7 +383,7 @@ export function RegressionThresholdsTable(
       {
         id: 'to_level',
         header: 'To Level',
-        minSize: 150,
+        minSize: 200,
         Cell({ row: { original } }) {
           return original.to_level;
         },
@@ -298,7 +391,9 @@ export function RegressionThresholdsTable(
       {
         id: 'threshold_value',
         header: 'Threshold Value',
-        minSize: 100,
+        minSize: 120,
+        size: 120,
+        enableSorting: true,
         Header: () => (
           <TooltipHeader
             tooltip="The threshold that must be reached in latent variable space to cross from the lower level to the upper level."

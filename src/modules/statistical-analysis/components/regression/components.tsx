@@ -16,7 +16,7 @@ import {
   RegressionCoefficientsVisualizationTypeEnum,
 } from './types';
 import { RegressionVisualizationData } from './data';
-import { CheckCircle, Info, PlusMinus, XCircle } from '@phosphor-icons/react';
+import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
 import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
@@ -25,6 +25,7 @@ import { formatNumber } from '@/common/utils/number';
 import { NamedData } from '@/modules/visualization/types/base';
 import { useVisualizationSubdatasetsMultiSelect } from '@/modules/visualization/components/configuration/subdatasets';
 import { pickArrayById } from '@/common/utils/iterable';
+import chroma from 'chroma-js';
 
 interface UseAlphaConstrainedColorsProps {
   alpha: number;
@@ -34,7 +35,6 @@ export function useRegressionAlphaConstrainedColors(
   props: UseAlphaConstrainedColorsProps,
 ) {
   const { alpha } = props;
-  const { colors: mantineColors } = useMantineTheme();
   return React.useCallback(
     (facets: NamedData<UltimateRegressionCoefficientModel[]>[]) => {
       const { colorMap } = generateColorsFromSequence(
@@ -46,15 +46,15 @@ export function useRegressionAlphaConstrainedColors(
           const baseColor = colorMap.get(facet.name);
           const colors = coefficients.map((coefficient) => {
             if (coefficient!.p_value < alpha) {
-              return baseColor;
+              return baseColor!;
             }
-            return mantineColors.gray[3];
+            return chroma(baseColor!).set('hsv.s', 0.05).hex();
           });
           return [facet.name, colors];
         }),
       );
     },
-    [alpha, mantineColors.gray],
+    [alpha],
   );
 }
 
@@ -450,7 +450,6 @@ export function RegressionInterceptResultRenderer(
   ];
 
   const [opened, { toggle, close: onClose }] = useDisclosure();
-  const { colors: mantineColors } = useMantineTheme();
   return (
     <TaskControlsCard>
       <Group justify="space-between" align="start">
@@ -461,16 +460,13 @@ export function RegressionInterceptResultRenderer(
           <Text size="xl" fw={500} c="brand" style={{ fontSize: 36 }}>
             {withOdds ? formatNumber(oddsRatio) : formatNumber(intercept.value)}
           </Text>
-          <Group>
-            <PlusMinus size={14} color={mantineColors.brand[6]} />
-            <Text size="md" fw={500} c="brand" style={{ fontSize: 36 }}>
-              {formatConfidenceInterval(
-                withOdds
-                  ? oddsRatioConfidenceInterval
-                  : intercept.confidence_interval,
-              )}
-            </Text>
-          </Group>
+          <Text size="md" fw={500} c="brand">
+            {formatConfidenceInterval(
+              withOdds
+                ? oddsRatioConfidenceInterval
+                : intercept.confidence_interval,
+            )}
+          </Text>
           {reference && (
             <Text size="md" fw={500}>
               Relative to &quot;{reference}&quot;

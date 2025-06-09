@@ -110,9 +110,7 @@ const mantineTheme = createTheme({
     }),
     Tooltip: Tooltip.extend({
       defaultProps: {
-        color: 'white',
-        c: 'black',
-        className: 'border border-solid border-gray',
+        maw: 480,
         multiline: true,
       },
     }),

@@ -130,6 +130,24 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
           }
         },
       },
+      {
+        header: 'Optuna Metric',
+        accessorKey: 'optuna_metric',
+        filterVariant: 'range-slider',
+        filterFn: 'inNumberRange',
+        sortUndefined: 'last',
+        mantineFilterRangeSliderProps: {
+          step: 0.01,
+          min: -1,
+          max: 1,
+          minRange: 0.01,
+        },
+        Cell({ cell: { getValue } }) {
+          const metric = getValue() as number | undefined;
+          if (metric == null) return;
+          return formatNumber(metric);
+        },
+      },
       ...hyperparameterColumns,
       {
         header: 'Topic Coherence',
@@ -230,6 +248,11 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
   const table = useMantineReactTable({
     data: data.trials,
     columns,
+    initialState: {
+      columnVisibility: {
+        optuna_metric: false,
+      },
+    },
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,

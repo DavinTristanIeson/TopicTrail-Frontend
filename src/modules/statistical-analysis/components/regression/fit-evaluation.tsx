@@ -9,8 +9,10 @@ import {
   type MRT_ColumnDef,
 } from 'mantine-react-table';
 import { MantineReactTableBehaviors } from '@/modules/table/adapter';
-import { Stack } from '@mantine/core';
+import { Group, Stack, Text, Tooltip } from '@mantine/core';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
+import { Info } from '@phosphor-icons/react';
+import Colors from '@/common/constants/colors';
 
 type LikelihoodBasedRegressionResultModel = Exclude<
   UltimateRegressionResult,
@@ -210,6 +212,20 @@ export default function FitEvaluationTable(props: FitEvaluationTableProps) {
         header: 'Label',
         accessorKey: 'label',
         minSize: 200,
+        Cell({ row: { original } }) {
+          return (
+            <Tooltip
+              label={original.description}
+              disabled={!original.description}
+              maw={480}
+            >
+              <Group>
+                <Text fw={500}>{original.label}</Text>
+                {original.description && <Info color={Colors.brand} />}
+              </Group>
+            </Tooltip>
+          );
+        },
       },
       {
         header: 'Value',
@@ -224,6 +240,9 @@ export default function FitEvaluationTable(props: FitEvaluationTableProps) {
     ...MantineReactTableBehaviors.Default,
     ...MantineReactTableBehaviors.Resizable,
     ...MantineReactTableBehaviors.ColumnActions,
+    enableColumnOrdering: false,
+    enableSorting: false,
+    enableFilters: false,
     enablePagination: false,
     layoutMode: 'grid',
   });

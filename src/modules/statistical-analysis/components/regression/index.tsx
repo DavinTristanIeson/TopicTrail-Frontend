@@ -1,7 +1,12 @@
 import { Stack, Tabs, Tooltip } from '@mantine/core';
 import React from 'react';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
-import { ArrowsDownUp, List, Question } from '@phosphor-icons/react';
+import {
+  ArrowsDownUp,
+  CheckCircle,
+  List,
+  Question,
+} from '@phosphor-icons/react';
 import { RegressionModelType, UltimateRegressionResult } from './types';
 import { REGRESSION_MODEL_CONFIG } from './regression-model-config';
 import RegressionModelPredictionTab from './prediction';
@@ -42,8 +47,8 @@ export function RegressionResultRenderer<
             maw={320}
           >
             <Tabs.Tab
-              value={RegressionTabType.Coefficients}
-              leftSection={<ArrowsDownUp />}
+              value={RegressionTabType.FitEvaluation}
+              leftSection={<CheckCircle />}
             >
               Model Fit
             </Tabs.Tab>

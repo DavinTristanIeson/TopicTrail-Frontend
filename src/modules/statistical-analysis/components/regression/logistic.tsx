@@ -39,11 +39,9 @@ import { formatNumber } from '@/common/utils/number';
 import { useVisualizationAlphaSlider } from '../plot-config';
 import { RegressionCoefficientsTable } from './coefficients-table';
 
-const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
-  RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
-  RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
-];
+const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = Object.values(
+  RegressionCoefficientsVisualizationTypeEnum,
+);
 
 export function LogisticRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
@@ -86,13 +84,19 @@ export function LogisticRegressionCoefficientsPlot(
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
   const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
 
+  const Header = (
+    <>
+      <RegressionConvergenceResultRenderer
+        converged={data.fit_evaluation.converged}
+      />
+      {VisualizationSelect}
+    </>
+  );
+
   if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
     return (
       <Stack>
-        <RegressionConvergenceResultRenderer
-          converged={data.fit_evaluation.converged}
-        />
-        {VisualizationSelect}
+        {Header}
         <RegressionCoefficientsTable
           coefficients={data.coefficients}
           intercept={data.intercept}
@@ -103,6 +107,9 @@ export function LogisticRegressionCoefficientsPlot(
   }
   return (
     <Stack>
+      {Header}
+      {AlphaSlider}
+      {CoefficientMultiSelect}
       {data.intercept && (
         <RegressionInterceptResultRenderer
           intercept={data.intercept}
@@ -110,12 +117,6 @@ export function LogisticRegressionCoefficientsPlot(
           statisticName="T-Statistic"
         />
       )}
-      <RegressionConvergenceResultRenderer
-        converged={data.fit_evaluation.converged}
-      />
-      {VisualizationSelect}
-      {AlphaSlider}
-      {CoefficientMultiSelect}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}
     </Stack>
   );

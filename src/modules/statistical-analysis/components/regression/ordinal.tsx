@@ -48,12 +48,9 @@ import {
   RegressionThresholdsTable,
 } from './coefficients-table';
 
-const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
-  RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
-  RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
-];
-
+const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = Object.values(
+  RegressionCoefficientsVisualizationTypeEnum,
+);
 interface OrdinalRegressionCutpointsRendererProps {
   thresholds: OrdinalRegressionThresholdModel[];
 }

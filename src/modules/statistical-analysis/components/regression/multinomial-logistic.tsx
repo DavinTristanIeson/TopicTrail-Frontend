@@ -46,11 +46,8 @@ import BaseRegressionVariablesInfoSection from './variables-info';
 import { MultinomialPredictionPlot } from './multinomial-predictions';
 import { RegressionCoefficientsPerFacetTable } from './coefficients-table';
 
-const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
-  RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
-  RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
-];
+const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES =
+  Object.values(RegressionCoefficientsVisualizationTypeEnum);
 
 interface UseMultinomialLogisticRegressionViewedDependentVariableLevelProps {
   result: MultinomialLogisticRegressionResultModel;
@@ -415,18 +412,14 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
 
   return (
     <Stack>
-      {VisualizationSelect}
+      {Header}
       {AlphaSlider}
       {CoefficientMultiSelect}
       <MultinomialLogisticRegressionInterceptsRenderer
         type={type}
         data={data}
       />
-      <div>
-        {usedPlot && (
-          <PlotRenderer plot={usedPlot} height={720} scrollZoom={false} />
-        )}
-      </div>
+      <div>{usedPlot && <PlotRenderer plot={usedPlot} height={720} />}</div>
     </Stack>
   );
 }
