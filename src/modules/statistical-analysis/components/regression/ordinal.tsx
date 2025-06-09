@@ -81,7 +81,7 @@ function OrdinalRegressionThresholdsRenderer(
             thresholds.map((threshold) => threshold.to_level),
           ),
           hovertemplate: [
-            '<b>Level</b>: %{x}',
+            '<b>Independent Variable</b>: %{x}',
             '<b>Threshold</b>: %{y:.3f}',
             `<b>From</b>: %{customdata[0]}`,
             `<b>To</b>: %{customdata[1]}`,
