@@ -44,6 +44,7 @@ import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { MultinomialPredictionPlot } from './multinomial-predictions';
+import { RegressionCoefficientsPerFacetTable } from './coefficients-table';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -376,8 +377,8 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
   const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
 
-  return (
-    <Stack>
+  const Header = (
+    <>
       <Group>
         {data.reference && (
           <ResultCard
@@ -399,6 +400,21 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
       <RegressionConvergenceResultRenderer
         converged={data.fit_evaluation.converged}
       />
+      {VisualizationSelect}
+    </>
+  );
+
+  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+    return (
+      <Stack>
+        {Header}
+        <RegressionCoefficientsPerFacetTable facets={data.facets} />
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack>
       {VisualizationSelect}
       {AlphaSlider}
       {CoefficientMultiSelect}

@@ -182,13 +182,15 @@ function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
   }, [modelType]);
 }
 
-interface CoefficientsTableProps {
+interface RegressionCoefficientsTableProps {
   modelType: RegressionModelType;
   coefficients: UltimateRegressionCoefficientModel[];
   intercept: UltimateRegressionCoefficientModel | null;
 }
 
-export function CoefficientsTable(props: CoefficientsTableProps) {
+export function RegressionCoefficientsTable(
+  props: RegressionCoefficientsTableProps,
+) {
   const { modelType, coefficients, intercept } = props;
   const columns = useCoefficientsTableColumns({
     modelType,
@@ -209,12 +211,12 @@ export function CoefficientsTable(props: CoefficientsTableProps) {
   return <MantineReactTable table={table} />;
 }
 
-interface CoefficientsPerFacetTableProps {
+interface RegressionCoefficientsPerFacetTableProps {
   facets: MultinomialLogisticRegressionFacetResultModel[];
 }
 
-export function CoefficientsPerFacetTable(
-  props: CoefficientsPerFacetTableProps,
+export function RegressionCoefficientsPerFacetTable(
+  props: RegressionCoefficientsPerFacetTableProps,
 ) {
   const { facets } = props;
   const columns = useCoefficientsTableColumns({

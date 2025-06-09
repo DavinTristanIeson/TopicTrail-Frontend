@@ -29,7 +29,6 @@ import {
 import { ResultCard } from '@/components/visual/result-card';
 import { LogisticRegressionConfigType } from '../../configuration/logistic-regression';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
-import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { without } from 'lodash-es';
@@ -38,6 +37,7 @@ import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { formatNumber } from '@/common/utils/number';
 import { useVisualizationAlphaSlider } from '../plot-config';
+import { RegressionCoefficientsTable } from './coefficients-table';
 
 const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -85,9 +85,24 @@ export function LogisticRegressionCoefficientsPlot(
     useConfidenceLevelRegressionResultPlot(commonProps);
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
   const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
+
+  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+    return (
+      <Stack>
+        <RegressionConvergenceResultRenderer
+          converged={data.fit_evaluation.converged}
+        />
+        {VisualizationSelect}
+        <RegressionCoefficientsTable
+          coefficients={data.coefficients}
+          intercept={data.intercept}
+          modelType={RegressionModelType.Logistic}
+        />
+      </Stack>
+    );
+  }
   return (
     <Stack>
-      <StatisticTestWarningsRenderer warnings={data.warnings} />
       {data.intercept && (
         <RegressionInterceptResultRenderer
           intercept={data.intercept}

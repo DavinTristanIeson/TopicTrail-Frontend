@@ -33,7 +33,6 @@ import { generateColorsFromSequence } from '@/common/utils/colors';
 import { RegressionConfigType } from '../../configuration/regression-common';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { ResultCard } from '@/components/visual/result-card';
-import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import { zip } from 'lodash-es';
 import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
@@ -44,6 +43,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { MultinomialPredictionPlot } from './multinomial-predictions';
 import { useVisualizationAlphaSlider } from '../plot-config';
 import { OrdinalRegressionConfigType } from '../../configuration/multinomial-regression';
+import {
+  RegressionCoefficientsTable,
+  RegressionThresholdsTable,
+} from './coefficients-table';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
   RegressionCoefficientsVisualizationTypeEnum.Coefficient,
@@ -160,9 +163,8 @@ export function OrdinalRegressionCoefficientsPlot(
   });
   const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
 
-  return (
-    <Stack>
-      <StatisticTestWarningsRenderer warnings={data.warnings} />
+  const Header = (
+    <>
       {data.reference && (
         <ResultCard
           label={'Reference'}
@@ -174,6 +176,26 @@ export function OrdinalRegressionCoefficientsPlot(
         converged={data.fit_evaluation.converged}
       />
       {VisualizationSelect}
+    </>
+  );
+
+  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+    return (
+      <Stack>
+        {Header}
+        <RegressionThresholdsTable thresholds={data.thresholds} />
+        <RegressionCoefficientsTable
+          coefficients={data.coefficients}
+          intercept={null}
+          modelType={RegressionModelType.Ordinal}
+        />
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack>
+      {Header}
       {AlphaSlider}
       {CoefficientMultiSelect}
       <OrdinalRegressionThresholdsRenderer thresholds={data.thresholds} />

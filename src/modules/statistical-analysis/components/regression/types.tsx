@@ -27,6 +27,7 @@ export enum RegressionCoefficientsVisualizationTypeEnum {
   Coefficient = 'coefficient',
   ConfidenceLevel = 'confidence',
   OddsRatio = 'odds-ratio',
+  Table = 'table',
 }
 
 export const REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY = {
@@ -50,6 +51,12 @@ export const REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY = {
     plotLabel: 'Odds Ratio',
     description:
       'Show how each independent variable contributes to the odds of seeing an outcome in the independent variable. Interpretation may vary depending on your selected interpretation method and the type of the independent variable itself.',
+  },
+  [RegressionCoefficientsVisualizationTypeEnum.Table]: {
+    label: 'Table',
+    value: RegressionCoefficientsVisualizationTypeEnum.Table,
+    plotLabel: 'Table',
+    description: 'Show each coefficient as a table.',
   },
 };
 

@@ -34,11 +34,12 @@ import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { useVisualizationAlphaSlider } from '../plot-config';
+import { RegressionCoefficientsTable } from './coefficients-table';
 
-const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
-  RegressionCoefficientsVisualizationTypeEnum.Coefficient,
-  RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
-];
+const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = without(
+  Object.values(RegressionCoefficientsVisualizationTypeEnum),
+  RegressionCoefficientsVisualizationTypeEnum.Table,
+);
 
 export function LinearRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
@@ -82,6 +83,20 @@ export function LinearRegressionCoefficientsPlot(
     useConfidenceLevelRegressionResultPlot(commonProps);
 
   const usedPlot = coefficientPlot ?? confidenceLevelPlot;
+
+  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+    return (
+      <Stack>
+        {VisualizationSelect}
+        <RegressionCoefficientsTable
+          coefficients={data.coefficients}
+          intercept={data.intercept}
+          modelType={RegressionModelType.Linear}
+        />
+      </Stack>
+    );
+  }
+
   return (
     <Stack>
       {data.intercept && (
