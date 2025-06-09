@@ -3,10 +3,20 @@ import {
   LogisticRegressionCoefficientModel,
   OrdinalRegressionCoefficientModel,
   RegressionPredictionInput,
+  LinearRegressionResultModel,
+  LogisticRegressionResultModel,
+  MultinomialLogisticRegressionResultModel,
+  OrdinalRegressionResultModel,
 } from '@/api/statistical-analysis';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { type ComboboxItem, Select } from '@mantine/core';
 import React from 'react';
+
+export type UltimateRegressionResult =
+  | LinearRegressionResultModel
+  | LogisticRegressionResultModel
+  | OrdinalRegressionResultModel
+  | MultinomialLogisticRegressionResultModel;
 
 export type UltimateRegressionCoefficientModel =
   | RegressionCoefficientModel

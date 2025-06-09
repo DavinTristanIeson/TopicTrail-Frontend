@@ -1945,12 +1945,22 @@ export interface components {
             converged: boolean;
             /** P Value */
             p_value: number;
+            /** Model Dof */
+            model_dof: number;
+            /** Residual Dof */
+            residual_dof: number;
             /** F Statistic */
             f_statistic: number;
             /** R Squared */
             r_squared: number;
             /** Rmse */
             rmse: number;
+            /** Log Likelihood */
+            log_likelihood: number;
+            /** Aic */
+            aic: number;
+            /** Bic */
+            bic: number;
         };
         /** LinearRegressionInput */
         LinearRegressionInput: {
@@ -2025,10 +2035,24 @@ export interface components {
             converged: boolean;
             /** P Value */
             p_value: number;
-            /** Pseudo R Squared */
-            pseudo_r_squared: number;
+            /** Model Dof */
+            model_dof: number;
+            /** Residual Dof */
+            residual_dof: number;
             /** Log Likelihood Ratio */
             log_likelihood_ratio: number;
+            /** Log Likelihood */
+            log_likelihood: number;
+            /** Log Likelihood Null */
+            log_likelihood_null: number;
+            /** Aic */
+            aic: number;
+            /** Bic */
+            bic: number;
+            /** Pseudo R Squared */
+            pseudo_r_squared: number;
+            /** Likelihood Ratio */
+            readonly likelihood_ratio: number;
         };
         /** LogisticRegressionInput */
         LogisticRegressionInput: {
@@ -2249,10 +2273,24 @@ export interface components {
             converged: boolean;
             /** P Value */
             p_value: number;
+            /** Model Dof */
+            model_dof: number;
+            /** Residual Dof */
+            residual_dof: number;
             /** Log Likelihood Ratio */
             log_likelihood_ratio: number;
+            /** Log Likelihood */
+            log_likelihood: number;
+            /** Log Likelihood Null */
+            log_likelihood_null: number;
+            /** Aic */
+            aic: number;
+            /** Bic */
+            bic: number;
             /** Pseudo R Squared */
             pseudo_r_squared: number;
+            /** Likelihood Ratio */
+            readonly likelihood_ratio: number;
         };
         /** OrdinalRegressionInput */
         OrdinalRegressionInput: {

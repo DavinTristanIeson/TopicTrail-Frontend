@@ -378,34 +378,6 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
 
   return (
     <Stack>
-      <Group wrap="wrap" align="stretch">
-        <ResultCard
-          label={'Log-Likelihood Ratio'}
-          value={data.fit_evaluation.log_likelihood_ratio}
-          info="Measures how much better the fitted model explains the data compared to the null model. Higher is better. Consider using the p-value or McFadden's Pseudo R-Squared to interpret the model fit rather than the Log-Likelihood Ratio as they are more interpretable/comparable."
-        />
-        <ResultCard
-          label={'P-Value'}
-          value={data.fit_evaluation.p_value}
-          info="Under the assumption that the null model is sufficient to explain the dependent variable, what is the likelihood that the fitted model explains the dependent variable better than the null model?"
-        />
-        <ResultCard
-          label={'Confidence Level'}
-          value={pValueToConfidenceLevel(data.fit_evaluation.p_value)}
-          percentage
-          info="How confident are we that the fitted model explains the dependent variable better than the null model?"
-        />
-        <ResultCard
-          label={"McFadden's Pseudo R-Squared"}
-          value={data.fit_evaluation.pseudo_r_squared}
-          info="Measures how much the independent variables help with predicting the dependent variables. McFadden's pseudo R-squared has a scale of 0 to 1, with higher numbers representing a better explanatory power. To be exact, it measures the % improvement in log-likelihood for the fitted model over the null model."
-        />
-        <ResultCard
-          label={'Sample Size'}
-          value={data.sample_size}
-          info="The number of rows used to fit the regression model."
-        />
-      </Group>
       <Group>
         {data.reference && (
           <ResultCard

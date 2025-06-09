@@ -16,10 +16,10 @@ import {
   RegressionCoefficientsVisualizationTypeEnum,
 } from './types';
 import { RegressionVisualizationData } from './data';
-import { CheckCircle, Info, XCircle } from '@phosphor-icons/react';
+import { CheckCircle, Info, PlusMinus, XCircle } from '@phosphor-icons/react';
 import { TaskControlsCard } from '@/modules/task/controls';
 import { useDisclosure } from '@mantine/hooks';
-import { pValueToConfidenceLevel } from './utils';
+import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
 import PlotRenderer from '@/components/widgets/plotly';
 import { formatNumber } from '@/common/utils/number';
 import { NamedData } from '@/modules/visualization/types/base';
@@ -418,6 +418,9 @@ export function RegressionInterceptResultRenderer(
   const { intercept, statisticName, reference } = props;
   const oddsRatio = (intercept as LogisticRegressionCoefficientModel)
     .odds_ratio;
+  const oddsRatioConfidenceInterval = (
+    intercept as LogisticRegressionCoefficientModel
+  ).odds_ratio_confidence_interval;
   const withOdds = oddsRatio != null;
   const interceptData = [
     {
@@ -447,6 +450,7 @@ export function RegressionInterceptResultRenderer(
   ];
 
   const [opened, { toggle, close: onClose }] = useDisclosure();
+  const { colors: mantineColors } = useMantineTheme();
   return (
     <TaskControlsCard>
       <Group justify="space-between" align="start">
@@ -457,6 +461,16 @@ export function RegressionInterceptResultRenderer(
           <Text size="xl" fw={500} c="brand" style={{ fontSize: 36 }}>
             {withOdds ? formatNumber(oddsRatio) : formatNumber(intercept.value)}
           </Text>
+          <Group>
+            <PlusMinus size={14} color={mantineColors.brand[6]} />
+            <Text size="md" fw={500} c="brand" style={{ fontSize: 36 }}>
+              {formatConfidenceInterval(
+                withOdds
+                  ? oddsRatioConfidenceInterval
+                  : intercept.confidence_interval,
+              )}
+            </Text>
+          </Group>
           {reference && (
             <Text size="md" fw={500}>
               Relative to &quot;{reference}&quot;
@@ -509,7 +523,10 @@ export function RegressionConvergenceResultRenderer(
               The regression model wasn&apos;t able to converge successfully;
               this means that the optimization algorithm wasn&apos;t able to
               find best-fit parameters for the model. The coefficients
-              shouldn&apos;t be relied on.
+              shouldn&apos;t be relied on. This may happen because of complete
+              or quasi-complete separation; consider dropping or merging
+              independent variables with ridiculously high standard errors as
+              they are the prime suspects for the separation.
             </Text>
           </>
         )}

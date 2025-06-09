@@ -11,7 +11,7 @@ import {
   usePredictedResultsBaselineLine,
   useRegressionCoefficientMultiSelect,
 } from './components';
-import { Group, Stack } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
   RegressionModelType,
@@ -31,7 +31,6 @@ import { LogisticRegressionConfigType } from '../../configuration/logistic-regre
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { StatisticTestWarningsRenderer } from '../statistic-test/common';
 import React from 'react';
-import { pValueToConfidenceLevel } from './utils';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import { without } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
@@ -89,34 +88,6 @@ export function LogisticRegressionCoefficientsPlot(
   return (
     <Stack>
       <StatisticTestWarningsRenderer warnings={data.warnings} />
-      <Group wrap="wrap" align="stretch">
-        <ResultCard
-          label={'Log-Likelihood Ratio'}
-          value={data.fit_evaluation.log_likelihood_ratio}
-          info="Measures how much better the fitted model explains the data compared to the null model. Higher is better. Consider using the p-value or McFadden's Pseudo R-Squared to interpret the model fit rather than the Log-Likelihood Ratio as they are more interpretable/comparable."
-        />
-        <ResultCard
-          label={'P-Value'}
-          value={data.fit_evaluation.p_value}
-          info="Under the assumption that the null model is sufficient to explain the dependent variable, what is the likelihood that the fitted model explains the dependent variable better than the null model?"
-        />
-        <ResultCard
-          label={'Confidence Level'}
-          value={pValueToConfidenceLevel(data.fit_evaluation.p_value)}
-          percentage
-          info="How confident are we that the fitted model explains the dependent variable better than the null model?"
-        />
-        <ResultCard
-          label={"McFadden's Pseudo R-Squared"}
-          value={data.fit_evaluation.pseudo_r_squared}
-          info="Measures how much the independent variables help with predicting the dependent variables. McFadden's pseudo R-squared has a scale of 0 to 1, with higher numbers representing a better explanatory power. To be exact, it measures the % improvement in log-likelihood for the fitted model over the null model."
-        />
-        <ResultCard
-          label={'Sample Size'}
-          value={data.sample_size}
-          info="The number of rows used to fit the regression model."
-        />
-      </Group>
       {data.intercept && (
         <RegressionInterceptResultRenderer
           intercept={data.intercept}

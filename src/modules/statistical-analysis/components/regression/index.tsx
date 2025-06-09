@@ -2,27 +2,17 @@ import { Stack, Tabs, Tooltip } from '@mantine/core';
 import React from 'react';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { ArrowsDownUp, List, Question } from '@phosphor-icons/react';
-import { RegressionModelType } from './types';
+import { RegressionModelType, UltimateRegressionResult } from './types';
 import { REGRESSION_MODEL_CONFIG } from './regression-model-config';
 import RegressionModelPredictionTab from './prediction';
-import {
-  LinearRegressionResultModel,
-  LogisticRegressionResultModel,
-  MultinomialLogisticRegressionResultModel,
-  OrdinalRegressionResultModel,
-} from '@/api/statistical-analysis';
+import FitEvaluationTable from './fit-evaluation';
 
 enum RegressionTabType {
+  FitEvaluation = 'fit-evaluation',
   Coefficients = 'coefficients',
   Predictions = 'predictions',
   VariableInfo = 'variable-info',
 }
-
-type UltimateRegressionResult =
-  | LinearRegressionResultModel
-  | LogisticRegressionResultModel
-  | OrdinalRegressionResultModel
-  | MultinomialLogisticRegressionResultModel;
 
 interface RegressionResultRendererProps<
   TData extends UltimateRegressionResult,
@@ -36,7 +26,7 @@ export function RegressionResultRenderer<
   TConfig,
 >(allProps: RegressionResultRendererProps<TData, TConfig>) {
   const { modelType, ...props } = allProps;
-  const [tab, setTab] = React.useState(RegressionTabType.Coefficients);
+  const [tab, setTab] = React.useState(RegressionTabType.FitEvaluation);
   const { CoefficientsRenderer, VariableInfoRenderer } =
     REGRESSION_MODEL_CONFIG[modelType];
   return (
@@ -47,6 +37,17 @@ export function RegressionResultRenderer<
         allowTabDeactivation={false}
       >
         <Tabs.List>
+          <Tooltip
+            label="Evaluate the fit of the regression model; to see whether the presence of the independent variables (the fitted model) explains the dependent variable any better than if they were not present in the first place (the null model)."
+            maw={320}
+          >
+            <Tabs.Tab
+              value={RegressionTabType.Coefficients}
+              leftSection={<ArrowsDownUp />}
+            >
+              Model Fit
+            </Tabs.Tab>
+          </Tooltip>
           <Tooltip
             label="Analyze the coefficients of the regression model to figure out which independent variable has a significant impact on the dependent variable."
             maw={320}
@@ -82,7 +83,9 @@ export function RegressionResultRenderer<
           </Tooltip>
         </Tabs.List>
       </Tabs>
-      {tab === RegressionTabType.Coefficients ? (
+      {tab === RegressionTabType.FitEvaluation ? (
+        <FitEvaluationTable {...props} modelType={modelType} />
+      ) : tab === RegressionTabType.Coefficients ? (
         <CoefficientsRenderer {...(props as any)} />
       ) : tab === RegressionTabType.Predictions ? (
         <RegressionModelPredictionTab
