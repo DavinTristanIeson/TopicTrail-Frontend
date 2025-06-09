@@ -24,9 +24,6 @@ export function getTrialResultCustomdata(
     builder.push(trial.evaluation?.coherence_v ?? 'None');
     builder.push(trial.evaluation?.topic_diversity ?? 'None');
     builder.push(trial.evaluation?.topics.length ?? 'None');
-    if (constraint.max_topics != null) {
-      builder.push(trial.candidate.max_topics);
-    }
     if (constraint.min_topic_size != null) {
       builder.push(trial.candidate.min_topic_size);
     }
@@ -41,9 +38,6 @@ export function getTrialResultCustomdata(
     '<b>Diversity</b>',
     '<b>Topic Count</b>',
   ];
-  if (constraint.max_topics != null) {
-    hovertemplates.push('<b>Max. Topics</b>');
-  }
   if (constraint.min_topic_size != null) {
     hovertemplates.push('<b>Min. Topic Size</b>');
   }

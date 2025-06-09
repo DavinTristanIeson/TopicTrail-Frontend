@@ -166,12 +166,6 @@ const TopicModelExperimentResultTopicsModal =
               <Stack>
                 <Text fw={500}>Hyperparameters</Text>
                 <Group wrap="wrap">
-                  {trial.candidate.max_topics && (
-                    <ResultCard
-                      label="Max. Topics"
-                      value={trial.candidate.max_topics}
-                    />
-                  )}
                   {trial.candidate.min_topic_size && (
                     <ResultCard
                       label="Min. Topic Size"

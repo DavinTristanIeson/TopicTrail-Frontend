@@ -119,18 +119,18 @@ function TopicModelExperimentHyperparameterControlsFormBody() {
         name="constraint.min_topic_size"
       />
       <NumericHyperparameterRangeField
-        label="Max. Topics"
-        description="The range of topic counts to test out. Note that BERTopic may produce less topics than this number."
-        defaultValue={topics.length}
-        min={1}
-        name="constraint.max_topics"
-      />
-      <NumericHyperparameterRangeField
         label="Topic Confidence Threshold"
-        description="The range of topic confidence threshold to test out. The range should not be greater than min. topic size."
+        description="The range of topic confidence threshold to test out. We recommend testing ranges that are the same as min. topic size."
         defaultValue={column.topic_modeling.topic_confidence_threshold ?? 15}
         min={2}
         name="constraint.topic_confidence_threshold"
+      />
+      <NumericHyperparameterRangeField
+        label="Topic Count"
+        description="The range of topics that the model should strive for. The hyperparameter optimization algorithm will be encouraged to produce hyperparameters that causes BERTopic to produce more topics than the minimum topic count. The upper topic count limit will be used as the max. topics hyperparameter for BERTopic."
+        defaultValue={topics.length}
+        min={1}
+        name="constraint.topic_count"
       />
     </Stack>
   );
@@ -185,7 +185,7 @@ export default function TopicModelExperimentHyperparameterControls() {
     defaultValues: React.useMemo(() => {
       return {
         constraint: {
-          max_topics: environment?.constraint?.max_topics ?? null,
+          topic_count: environment?.constraint?.topic_count ?? null,
           min_topic_size: environment?.constraint?.min_topic_size ?? null,
           topic_confidence_threshold:
             environment?.constraint?.topic_confidence_threshold ?? null,
@@ -193,9 +193,9 @@ export default function TopicModelExperimentHyperparameterControls() {
         n_trials: environment?.n_trials ?? 5,
       } as TopicModelHyperparameterConstraintFormType;
     }, [
-      environment?.constraint?.max_topics,
       environment?.constraint?.min_topic_size,
       environment?.constraint?.topic_confidence_threshold,
+      environment?.constraint?.topic_count,
       environment?.n_trials,
     ]),
   });

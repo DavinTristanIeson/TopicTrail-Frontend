@@ -10,7 +10,6 @@ export enum TopicModelExperimentValueType {
   TopicCoherence = 'topic-coherence',
   TopicDiversity = 'topic-diversity',
   TrialNumber = 'trial-number',
-  MaxTopics = 'max-topics',
   MinTopicSize = 'min-topic-size',
   TopicConfidenceThreshold = 'topic-confidence-threshold',
 }
@@ -27,12 +26,6 @@ export const TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY: Record<
   TopicModelExperimentValueType,
   TopicModelExperimentValueTypeEntryType
 > = {
-  [TopicModelExperimentValueType.MaxTopics]: {
-    label: 'Max. Topics',
-    value: TopicModelExperimentValueType.MaxTopics,
-    accessor: (trial: BERTopicExperimentTrialResultModel) =>
-      trial.candidate.max_topics,
-  },
   [TopicModelExperimentValueType.MinTopicSize]: {
     label: 'Min. Topic Size',
     value: TopicModelExperimentValueType.MinTopicSize,
@@ -81,13 +74,6 @@ export function useTopicModelExperimentValueOptions(
 
   return React.useMemo(() => {
     const hyperparameterOptions: ComboboxItem[] = [];
-    if (!constraint || constraint.max_topics) {
-      hyperparameterOptions.push(
-        TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY[
-          TopicModelExperimentValueType.MaxTopics
-        ],
-      );
-    }
     if (!constraint || constraint.min_topic_size) {
       hyperparameterOptions.push(
         TOPIC_MODEL_EXPERIMENT_VALUE_TYPE_DICTIONARY[

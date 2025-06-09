@@ -58,19 +58,6 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
   >(() => {
     const hyperparameterColumns: MRT_ColumnDef<BERTopicExperimentTrialResultModel>[] =
       [];
-    if (data.constraint.max_topics != null) {
-      hyperparameterColumns.push({
-        header: 'Max. Topics',
-        accessorKey: 'candidate.max_topics',
-        filterVariant: 'range-slider',
-        filterFn: 'betweenInclusive',
-        mantineFilterRangeSliderProps: {
-          minRange: 1,
-          min: data.constraint.max_topics[0],
-          max: data.constraint.max_topics[1],
-        },
-      });
-    }
     if (data.constraint.min_topic_size != null) {
       hyperparameterColumns.push({
         header: 'Min. Topic Size',
@@ -233,7 +220,6 @@ function TopicModelExperimentDetails(props: TopicModelExperimentDetailsProps) {
       },
     ];
   }, [
-    data.constraint.max_topics,
     data.constraint.min_topic_size,
     data.constraint.topic_confidence_threshold,
     data.trials.length,

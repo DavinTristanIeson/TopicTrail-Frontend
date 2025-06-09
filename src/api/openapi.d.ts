@@ -1322,13 +1322,13 @@ export interface components {
                 number,
                 number
             ] | null;
-            /** Max Topics */
-            max_topics: [
+            /** Topic Confidence Threshold */
+            topic_confidence_threshold: [
                 number,
                 number
             ] | null;
-            /** Topic Confidence Threshold */
-            topic_confidence_threshold: [
+            /** Topic Count */
+            topic_count: [
                 number,
                 number
             ] | null;

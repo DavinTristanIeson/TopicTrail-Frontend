@@ -23,7 +23,7 @@ const optionalRangeSchema = Yup.array()
 export const TopicModelHyperparameterConstraintSchema = Yup.object({
   n_trials: Yup.number().positive().min(5).required(),
   constraint: Yup.object({
-    max_topics: optionalRangeSchema,
+    topic_count: optionalRangeSchema,
     min_topic_size: optionalRangeSchema,
     topic_confidence_threshold: optionalRangeSchema,
   }).required(),
