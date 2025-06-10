@@ -33,6 +33,13 @@ type ColumnAccessor<T> = {
 const COMMON_REGRESSION_ACCESSORS: ColumnAccessor<UltimateRegressionResult>[] =
   [
     {
+      label: 'Number of Observations',
+      description: 'The number of observations used to fit the model.',
+      accessor(data) {
+        return data.sample_size;
+      },
+    },
+    {
       label: 'Model Degrees of Freedom',
       description: 'The number of predictors used to fit the model.',
       accessor(data) {
@@ -136,6 +143,12 @@ const LINEAR_COLUMN_ACCESSORS: ColumnAccessor<LinearRegressionResultModel>[] = [
       'A p value calculated from the F test. A very small p value indicates that the fitted model explains the dependent variable significantly better than the null model.',
     accessor(data: LinearRegressionResultModel) {
       return data.fit_evaluation.p_value;
+    },
+  },
+  {
+    label: 'Confidence Level',
+    accessor(data: LikelihoodBasedRegressionResultModel) {
+      return `${formatNumber(pValueToConfidenceLevel(data.fit_evaluation.p_value))}%`;
     },
   },
   {

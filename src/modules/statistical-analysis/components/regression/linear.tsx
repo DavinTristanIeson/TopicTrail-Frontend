@@ -47,10 +47,8 @@ export function LinearRegressionCoefficientsPlot(
     LinearRegressionConfigType
   >,
 ) {
-  const { data: data, config } = props;
-  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({
-    enabled: config.standardized,
-  });
+  const { data: data } = props;
+  const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
       supportedTypes: LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES,
