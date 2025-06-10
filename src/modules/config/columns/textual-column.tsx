@@ -1,14 +1,9 @@
 import { DocumentEmbeddingMethodEnum } from '@/common/constants/enum';
-import { Text, Select, Stack, Divider, Group, Spoiler } from '@mantine/core';
-import { useController, useFormContext, useWatch } from 'react-hook-form';
+import { Text, Select, Stack, Divider, Group } from '@mantine/core';
+import { useController } from 'react-hook-form';
 import RHFField from '@/components/standard/fields';
-import {
-  ProjectConfigColumnFormProps,
-  useInferProjectDatasetColumn,
-} from './utils';
-import { DescriptiveStatisticsTableComponent } from '@/modules/visualization/components/continuous/descriptive-statistics';
+import { ProjectConfigColumnFormProps } from './utils';
 import React from 'react';
-import { ProjectConfigFormType } from '../form-type';
 
 function EmbeddingMethodSelectField(props: ProjectConfigColumnFormProps) {
   const { field } = useController({
@@ -224,42 +219,8 @@ function TopicModelingConfigurationFormBody(
 export function ProjectConfigColumnTextualForm(
   props: ProjectConfigColumnFormProps,
 ) {
-  const { index } = props;
-
-  const { data: column, loading } = useInferProjectDatasetColumn(index);
-  const { control } = useFormContext<ProjectConfigFormType>();
-  const columnName = useWatch({
-    name: `columns.${index}.name`,
-    control,
-    defaultValue: 'Value',
-  });
-
   return (
     <Stack>
-      {column?.descriptive_statistics && (
-        <Spoiler
-          hideLabel={'Hide Descriptive Statistics'}
-          showLabel={'Show Descriptive Statistics'}
-          maxHeight={100}
-        >
-          <Text fw="bold" ta="center">
-            Descriptive Statistics (of Document Lengths)
-          </Text>
-          <DescriptiveStatisticsTableComponent
-            loading={loading}
-            data={
-              column?.descriptive_statistics
-                ? [
-                    {
-                      name: columnName,
-                      data: column?.descriptive_statistics,
-                    },
-                  ]
-                : []
-            }
-          />
-        </Spoiler>
-      )}
       <PreprocessingConfigurationFormBody {...props} />
       <Divider />
       <TopicModelingConfigurationFormBody {...props} />

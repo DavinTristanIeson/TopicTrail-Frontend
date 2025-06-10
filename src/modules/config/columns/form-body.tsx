@@ -7,7 +7,6 @@ import { Divider, Stack } from '@mantine/core';
 import React from 'react';
 import RHFField from '@/components/standard/fields';
 import { SchemaColumnTypeEnum } from '@/common/constants/enum';
-import { ProjectConfigColumnContinuousForm } from './continuous-column';
 import {
   ProjectConfigColumnCategoricalForm,
   ProjectConfigColumnOrderedCategoricalForm,
@@ -32,10 +31,6 @@ function ProjectConfigColumnFormSwitcher(
     control,
   });
   switch (type) {
-    case SchemaColumnTypeEnum.Continuous: {
-      component = <ProjectConfigColumnContinuousForm index={index} />;
-      break;
-    }
     case SchemaColumnTypeEnum.OrderedCategorical: {
       component = <ProjectConfigColumnOrderedCategoricalForm index={index} />;
       break;

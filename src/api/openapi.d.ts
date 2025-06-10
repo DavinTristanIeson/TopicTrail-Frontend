@@ -1298,6 +1298,8 @@ export interface components {
             trial_number: number;
             candidate: components["schemas"]["BERTopicHyperparameterCandidate"];
             evaluation: components["schemas"]["TopicEvaluationResult"] | null;
+            /** Optuna Metric */
+            optuna_metric: number;
             /** Error */
             error: string | null;
             /**
@@ -1566,13 +1568,6 @@ export interface components {
              * @enum {string}
              */
             type: "continuous";
-            /** Bins */
-            bins?: number[] | null;
-            /**
-             * Bin Count
-             * @default 3
-             */
-            bin_count: number;
         };
         /** Dashboard */
         "Dashboard-Input": {
@@ -2347,8 +2342,6 @@ export interface components {
             to_level: string;
             /** Value */
             value: number;
-            /** Odds Ratio */
-            readonly odds_ratio: number;
         };
         /** PaginationMeta */
         PaginationMeta: {

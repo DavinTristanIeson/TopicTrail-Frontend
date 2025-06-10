@@ -22,21 +22,6 @@ export const ProjectConfigColumnFormSchema = Yup.object({
   name: Yup.string().required(),
   description: yupNullableString,
   type: yupNullableString.oneOf(Object.values(SchemaColumnTypeEnum)),
-  bin_count: yupNullableNumber.positive().when('type', {
-    is: SchemaColumnTypeEnum.Continuous,
-    then: (schema) =>
-      schema.when('bins', {
-        is: null,
-        then: (schema) => schema.required(),
-        otherwise: (schema) => schema.strip(),
-      }),
-    otherwise: (schema) => schema.strip(),
-  }),
-  bins: yupNullableArray.of(Yup.number().required()).when('type', {
-    is: SchemaColumnTypeEnum.Continuous,
-    otherwise: (schema) => schema.strip(),
-  }),
-
   min_frequency: yupNullableNumber.when('type', {
     is: (value: string) =>
       value === SchemaColumnTypeEnum.Categorical ||
@@ -184,8 +169,6 @@ export function DefaultProjectSchemaColumnValues(
             top_n_words: 50,
           }
         : null,
-    bin_count: type === SchemaColumnTypeEnum.Continuous ? 3 : null,
-    bins: null,
     min_frequency:
       type === SchemaColumnTypeEnum.Categorical ||
       type === SchemaColumnTypeEnum.OrderedCategorical
