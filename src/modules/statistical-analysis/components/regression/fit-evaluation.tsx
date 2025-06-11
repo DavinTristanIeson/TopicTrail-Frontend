@@ -87,14 +87,6 @@ const COMMON_REGRESSION_FIT_COMPARISON_ACCESSORS: ColumnAccessor<UltimateRegress
 const COMMON_LIKELIHOOD_BASED_COLUMN_ACCESSORS: ColumnAccessor<LikelihoodBasedRegressionResultModel>[] =
   [
     {
-      label: 'Likelihood Ratio',
-      description:
-        'The likelihood ratio quantifies how many times more likely the observed data appears under the fitted model compared to the null model.',
-      accessor(data: LikelihoodBasedRegressionResultModel) {
-        return data.fit_evaluation.likelihood_ratio;
-      },
-    },
-    {
       label: 'Log-Likelihood Ratio',
       description:
         'A test statistic that compares the fit of the fitted model and the null model (model fitted without any independent variables). This is used to calculate the p value.',
