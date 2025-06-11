@@ -258,7 +258,7 @@ export function MultinomialPredictionPlot(
           onChange={() => toggle()}
         />
       ) : undefined}
-      <div>
+      <div style={{ minHeight: 512 }}>
         <PlotRenderer
           key={`${display} ${cumulative}`}
           plot={usedPlot}

@@ -67,6 +67,7 @@ export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProvi
           filter: config.filter as TableFilterModel,
         },
         groups: subdatasets,
+        penalty: config.penalty || null,
       },
       params,
     },
@@ -97,6 +98,7 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalys
             : config.target,
         groups: subdatasets,
         reference_dependent: config.reference_dependent ?? null,
+        penalty: config.penalty || null,
       },
       params,
     },
@@ -126,6 +128,7 @@ export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProvid
             ? (config.subdatasets as NamedTableFilterModel[])
             : config.target,
         groups: subdatasets,
+        penalty: config.penalty || null,
       },
       params,
     },

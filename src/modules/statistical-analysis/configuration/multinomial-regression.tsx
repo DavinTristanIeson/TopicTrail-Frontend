@@ -1,8 +1,13 @@
-import { yupNullableArray, yupNullableString } from '@/common/utils/form';
+import {
+  yupNullableArray,
+  yupNullableNumber,
+  yupNullableString,
+} from '@/common/utils/form';
 import {
   CommonRegressionConfigForm,
   DependentVariableSelectField,
   regressionInputSchema,
+  RegressionPenaltyField,
 } from './regression-common';
 
 import * as Yup from 'yup';
@@ -68,10 +73,19 @@ export const multinomialRegressionInputSchema = regressionInputSchema.shape({
 export const multinomialLogisticRegressionInputSchema =
   multinomialRegressionInputSchema.shape({
     reference_dependent: yupNullableString,
+    penalty: yupNullableNumber,
+  });
+
+export const ordinalRegressionInputSchema =
+  multinomialRegressionInputSchema.shape({
+    penalty: yupNullableNumber,
   });
 
 export type MultinomialRegressionConfigType = Yup.InferType<
   typeof multinomialRegressionInputSchema
+>;
+export type OrdinalRegressionConfigType = Yup.InferType<
+  typeof ordinalRegressionInputSchema
 >;
 
 type InternalMultinomialRegressionConfigType =
@@ -79,7 +93,6 @@ type InternalMultinomialRegressionConfigType =
     subdatasets: ComparisonStateItemModel[] | undefined;
   };
 
-export type OrdinalRegressionConfigType = MultinomialRegressionConfigType;
 export type MultinomialLogisticRegressionConfigType = Yup.InferType<
   typeof multinomialLogisticRegressionInputSchema
 >;
@@ -284,7 +297,12 @@ export function MultinomialLogisticRegressionConfigForm() {
           />
         </>
       }
-      Bottom={<MultinomialLogisticRegressionFormReferenceDependentField />}
+      Bottom={
+        <>
+          <MultinomialLogisticRegressionFormReferenceDependentField />
+          <RegressionPenaltyField />
+        </>
+      }
     />
   );
 }
@@ -299,6 +317,7 @@ export function OrdinalRegressionConfigForm() {
           }
         />
       }
+      Bottom={<RegressionPenaltyField />}
     />
   );
 }

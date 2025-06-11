@@ -136,6 +136,20 @@ function getRegressionParams(config: RegressionConfigType) {
   return base;
 }
 
+function getRegularizedRegressionParams(
+  config:
+    | LogisticRegressionConfigType
+    | MultinomialLogisticRegressionConfigType
+    | OrdinalRegressionConfigType,
+) {
+  if (config.penalty == null) {
+    return undefined;
+  }
+  return {
+    Regularization: String(config.penalty),
+  };
+}
+
 const REGRESSION_ACTION_LABEL = 'Fit Regression Model';
 const STATISTIC_TEST_ACTION_LABEL = 'Perform Statistic Test';
 
@@ -188,7 +202,10 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
       'Use each subdataset as the independent variable of a linear regression to figure out how the criteria of each subdataset contributes to the odds of predicting whether the dependent variable is true or false.',
     label: 'Logistic Regression',
     getParams(config) {
-      return getRegressionParams(config);
+      return {
+        ...getRegressionParams(config),
+        ...getRegularizedRegressionParams(config),
+      };
     },
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<
@@ -216,7 +233,10 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
       if (config.reference_dependent) {
         base['Dependent Variable Reference'] = config.reference_dependent;
       }
-      return base;
+      return {
+        ...base,
+        ...getRegularizedRegressionParams(config),
+      };
     },
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<
@@ -239,7 +259,12 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
     description:
       'Use each subdataset as the independent variable of an ordinal regression to figure out how the criteria of each subdataset contributes to the odds of a value being higher-ranked or lower-ranked.',
     label: 'Ordinal Regression',
-    getParams: getRegressionParams,
+    getParams(config) {
+      return {
+        ...getRegressionParams(config),
+        ...getRegularizedRegressionParams(config),
+      };
+    },
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<
     OrdinalRegressionResultModel,

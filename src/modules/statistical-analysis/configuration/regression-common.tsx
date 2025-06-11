@@ -9,7 +9,7 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { ComparisonSubdatasetSelectField } from '@/modules/comparison/subdatasets/select-subdataset';
 import { ProjectContext } from '@/modules/project/context';
 import { ProjectColumnSelectField } from '@/modules/project/select-column-input';
-import { Stack, Alert } from '@mantine/core';
+import { Stack, Alert, Switch } from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 import React from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -159,6 +159,39 @@ export function CommonRegressionConfigForm(
       <ConstrainByGroupsCheckbox />
       <ReferenceSelectInput />
       {Bottom}
+    </Stack>
+  );
+}
+
+export function RegressionPenaltyField() {
+  const penalty = useWatch({
+    name: 'penalty',
+  }) as number | undefined;
+  const { setValue } = useFormContext();
+  const checked = penalty != null;
+  return (
+    <Stack>
+      <Switch
+        label="Apply regularization?"
+        description="Logistic regression models can suffer from complete or quasi-complete separation, where the coefficients of the model gets artificially inflated due to a combination of independent variables perfectly (or near-perfectly) isolating a specific level of the dependent variable. We recommend either merging/excluding the problematic level, or applying regularization. Keep in mind that the coefficients of regularized models are shrunken, so they may underestimate the effects of the independent variable on the dependent variable."
+        checked={checked}
+        onChange={(e) => {
+          if (e.target.checked) {
+            setValue('penalty', 0.0001);
+          } else {
+            setValue('penalty', null);
+          }
+        }}
+      />
+      {checked && (
+        <RHFField
+          type="number"
+          name="penalty"
+          label="Penalty"
+          required
+          description="The magnitude of the penalty term in the Lasso regularization applied to the model. Consider testing out smaller values like 1e-5, 1e-4, 1e-3, and so on first until the model reaches convergence, to avoid shrinking the coefficients too extremely."
+        />
+      )}
     </Stack>
   );
 }

@@ -2059,6 +2059,8 @@ export interface components {
             /** Constrain By Groups */
             constrain_by_groups: boolean;
             target: components["schemas"]["NamedTableFilter"];
+            /** Penalty */
+            penalty: number | null;
         };
         /** LogisticRegressionPredictionResult */
         LogisticRegressionPredictionResult: {
@@ -2107,6 +2109,8 @@ export interface components {
             reference_dependent: string | null;
             /** Target */
             target: components["schemas"]["NamedTableFilter"][] | string;
+            /** Penalty */
+            penalty: number | null;
         };
         /** MultinomialLogisticRegressionPredictionResult */
         MultinomialLogisticRegressionPredictionResult: {
@@ -2298,6 +2302,8 @@ export interface components {
             constrain_by_groups: boolean;
             /** Target */
             target: components["schemas"]["NamedTableFilter"][] | string;
+            /** Penalty */
+            penalty: number | null;
         };
         /** OrdinalRegressionPredictionResult */
         OrdinalRegressionPredictionResult: {

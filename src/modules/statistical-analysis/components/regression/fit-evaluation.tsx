@@ -121,7 +121,7 @@ const COMMON_LIKELIHOOD_BASED_COLUMN_ACCESSORS: ColumnAccessor<LikelihoodBasedRe
       description:
         "McFadden's R-Squared is a pseudo R-Squared metric for logistic regression that measures the proportional improvement (log-likelihood gain) of the model over the null model. Values around 0.2 to 0.4 generally indicates a decent fit.",
       accessor(data: LikelihoodBasedRegressionResultModel) {
-        return data.fit_evaluation.p_value;
+        return data.fit_evaluation.pseudo_r_squared;
       },
     },
     ...COMMON_REGRESSION_FIT_COMPARISON_ACCESSORS,

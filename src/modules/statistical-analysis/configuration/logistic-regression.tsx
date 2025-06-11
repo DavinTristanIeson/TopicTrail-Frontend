@@ -18,11 +18,13 @@ import * as Yup from 'yup';
 import {
   CommonRegressionConfigForm,
   regressionInputSchema,
+  RegressionPenaltyField,
 } from './regression-common';
 import { DisclosureTrigger, useDisclosureTrigger } from '@/hooks/disclosure';
 import { PencilSimple } from '@phosphor-icons/react';
 import { get } from 'lodash-es';
 import { getAnyError } from '@/common/utils/error';
+import { yupNullableNumber } from '@/common/utils/form';
 
 interface LogisticRegressionFilterDrawerContents {
   onClose(): void;
@@ -30,6 +32,7 @@ interface LogisticRegressionFilterDrawerContents {
 
 export const logisticRegressionInputSchema = regressionInputSchema.shape({
   filter: tableFilterFormSchema.default(defaultTableFilterFormValues),
+  penalty: yupNullableNumber,
 });
 export type LogisticRegressionConfigType = Yup.InferType<
   typeof logisticRegressionInputSchema
@@ -167,6 +170,7 @@ export function LogisticRegressionConfigForm() {
   return (
     <CommonRegressionConfigForm
       Top={<LogisticRegressionDependentVariableField />}
+      Bottom={<RegressionPenaltyField />}
     />
   );
 }
