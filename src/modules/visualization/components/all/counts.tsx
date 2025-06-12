@@ -71,7 +71,10 @@ export default function VisualizationColumnCountsRingChart(
               color: 'green',
             },
             {
-              value: normalizeRingProgress(data.invalid, data.total),
+              value: normalizeRingProgress(
+                data.invalid - (data.outlier ?? 0),
+                data.total,
+              ),
               tooltip: `Empty Rows: ${data.invalid}`,
               color: 'red',
             },

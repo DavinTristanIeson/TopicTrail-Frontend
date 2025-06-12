@@ -54,7 +54,6 @@ function ReorderCategoryOrderDrawerStateManager(
           Cancel
         </Button>
         <Button
-          variant="default"
           onClick={() => {
             setFormCategories(localCategories);
             onClose();
@@ -149,6 +148,7 @@ export function ProjectConfigColumnOrderedCategoricalForm(
         <>
           <TagsInput
             value={categories}
+            key={categories.toString()}
             label="Categories"
             className="flex-1"
             readOnly

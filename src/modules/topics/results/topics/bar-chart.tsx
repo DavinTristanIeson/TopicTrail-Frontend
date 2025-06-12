@@ -5,11 +5,19 @@ import { zip } from 'lodash-es';
 import React from 'react';
 import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
-import { Alert, Anchor, Select, Stack } from '@mantine/core';
+import {
+  Alert,
+  Anchor,
+  Select,
+  Stack,
+  Switch,
+  useMantineTheme,
+} from '@mantine/core';
 import { Info } from '@phosphor-icons/react';
 import { TopicVisualizationRendererProps } from './data-providers';
 import { useCategoricalDataFrequencyModeState } from '@/modules/visualization/components/configuration';
 import { useTopNWordsSlider } from '@/modules/visualization/components/textual/renderer';
+import { useDisclosure } from '@mantine/hooks';
 
 export function TopicWordsBarChartRenderer(
   props: TopicVisualizationRendererProps,
@@ -99,16 +107,30 @@ export function TopicWordsBarChartRenderer(
 }
 
 export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
-  const { data: topics, column } = props;
+  const { data: topics, column, outlierCount } = props;
   const {
     plotlyLayoutProps,
     selectProps,
     transformFrequencies,
     needsPercentage,
   } = useCategoricalDataFrequencyModeState();
+  const [includeOutlier, { toggle: toggleOutlier }] = useDisclosure(false);
+  const { colors: mantineColors } = useMantineTheme();
+
   const plot: PlotParams = React.useMemo(() => {
     const y = topics.map((topic) => getTopicLabel(topic));
-    const x = transformFrequencies(topics.map((topic) => topic.frequency));
+    const topicFrequencies = topics.map((topic) => topic.frequency);
+    let x: number[];
+    let outlierX: number | undefined;
+    if (includeOutlier && outlierCount != null) {
+      topicFrequencies.push(outlierCount);
+      const transformedFrequencies = transformFrequencies(topicFrequencies);
+      x = transformedFrequencies.slice(0, transformedFrequencies.length - 1);
+      outlierX = transformedFrequencies[transformedFrequencies.length - 1];
+    } else {
+      x = transformFrequencies(topicFrequencies);
+      outlierX = undefined;
+    }
 
     const { customdata: topicsCustomdata, hovertemplate: topicsHovertemplate } =
       extractTopicCustomdataForPlotly({
@@ -119,25 +141,41 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
     const { colors } = generateColorsFromSequence(
       topics.map((topic) => topic.id),
     );
-    return {
-      data: [
-        {
-          x,
-          y,
-          hovertemplate: topicsHovertemplate,
-          customdata: customdata,
-          type: 'bar',
-          orientation: 'h',
-          marker: {
-            color: colors,
-          },
+
+    const traces: PlotParams['data'] = [
+      {
+        x,
+        y,
+        hovertemplate: topicsHovertemplate,
+        customdata: customdata,
+        type: 'bar',
+        orientation: 'h',
+        showlegend: false,
+        marker: {
+          color: colors,
         },
-      ],
+      },
+    ];
+    if (outlierX != null) {
+      traces.push({
+        x: [outlierX],
+        y: ['Outlier'],
+        type: 'bar',
+        showlegend: false,
+        orientation: 'h',
+        hovertemplate: '<b>Outlier</b><br><b>Frequency</b>: %{x}',
+        marker: {
+          color: mantineColors.gray[3],
+        },
+      });
+    }
+    return {
+      data: traces,
       layout: {
         xaxis: {
           ...plotlyLayoutProps,
           minallowed: 0,
-          title: 'Frequency',
+          title: needsPercentage ? 'Proportion (%)' : 'Frequency',
         },
         height: 720,
         title: {
@@ -153,7 +191,10 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
     } as PlotParams;
   }, [
     column.name,
+    includeOutlier,
+    mantineColors.gray,
     needsPercentage,
+    outlierCount,
     plotlyLayoutProps,
     topics,
     transformFrequencies,
@@ -161,6 +202,7 @@ export function TopicBarChartRenderer(props: TopicVisualizationRendererProps) {
   return (
     <Stack>
       <Select {...selectProps} maw={512} />
+      <Switch label="Include outlier?" onClick={toggleOutlier} />
       <PlotRenderer plot={plot} />
     </Stack>
   );

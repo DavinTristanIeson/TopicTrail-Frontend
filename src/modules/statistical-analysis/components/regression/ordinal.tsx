@@ -89,7 +89,7 @@ function OrdinalRegressionThresholdsRenderer(
         },
       ],
       layout: {
-        height: 300,
+        height: 512,
         title: 'Thresholds of the Dependent Variable Levels',
         xaxis: {
           title: 'Levels',
@@ -105,7 +105,7 @@ function OrdinalRegressionThresholdsRenderer(
 
   return (
     <ToggleVisibility label="Thresholds" defaultVisible>
-      <div className="w-full">
+      <div className="w-full" style={{ height: 512 }}>
         <PlotRenderer plot={plot} />
       </div>
     </ToggleVisibility>

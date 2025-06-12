@@ -62,6 +62,8 @@ function TopicModelExperimentResultTopicsRenderer(
     );
   }, [evaluation?.topics]);
 
+  const outlierCount = evaluation?.outlier_count;
+
   return (
     <Stack>
       <Select
@@ -78,7 +80,11 @@ function TopicModelExperimentResultTopicsRenderer(
         maw={512}
       />
       {method === TopicVisualizationMethodEnum.TopicWordsBarchart ? (
-        <TopicWordsBarChartRenderer data={topics} column={column} />
+        <TopicWordsBarChartRenderer
+          data={topics}
+          column={column}
+          outlierCount={outlierCount}
+        />
       ) : method === TopicVisualizationMethodEnum.TopicsBarchart ? (
         <TopicBarChartRenderer data={topics} column={column} />
       ) : method === TopicVisualizationMethodEnum.TopicWordsWordCloud ? (

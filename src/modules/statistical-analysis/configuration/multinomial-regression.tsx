@@ -38,6 +38,7 @@ import { identity } from 'lodash-es';
 import { comparisonFilterFormSchema } from '@/modules/comparison/subdatasets/form-type';
 import ReadonlyFilterDrawer from '@/modules/filter/drawer/readonly';
 import { ParametrizedDisclosureTrigger } from '@/hooks/disclosure';
+import { ORDERED_CATEGORICAL_SCHEMA_COLUMN_TYPES } from '@/api/project';
 
 // region Enums
 
@@ -76,10 +77,7 @@ export const multinomialLogisticRegressionInputSchema =
     penalty: yupNullableNumber,
   });
 
-export const ordinalRegressionInputSchema =
-  multinomialRegressionInputSchema.shape({
-    penalty: yupNullableNumber,
-  });
+export const ordinalRegressionInputSchema = multinomialRegressionInputSchema;
 
 export type MultinomialRegressionConfigType = Yup.InferType<
   typeof multinomialRegressionInputSchema
@@ -312,12 +310,9 @@ export function OrdinalRegressionConfigForm() {
     <CommonRegressionConfigForm
       Top={
         <MultinomialDependentVariableField
-          supportedTypes={
-            MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_COLUMN_TYPES
-          }
+          supportedTypes={ORDERED_CATEGORICAL_SCHEMA_COLUMN_TYPES}
         />
       }
-      Bottom={<RegressionPenaltyField />}
     />
   );
 }

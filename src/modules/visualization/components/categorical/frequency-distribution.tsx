@@ -16,7 +16,7 @@ import {
   useCategoriesAxisMultiSelectForFrequencyDistribution,
 } from '../configuration';
 import { pickArrayByIndex } from '@/common/utils/iterable';
-import { fromPairs, uniq, zip } from 'lodash-es';
+import { fromPairs, zip } from 'lodash-es';
 
 export default function VisualizationFrequencyDistributionComponent(
   props: BaseVisualizationComponentProps<
@@ -73,11 +73,7 @@ export default function VisualizationFrequencyDistributionComponent(
       },
     };
     if (isHeatmap) {
-      const allCategories = uniq(
-        data.flatMap((entry) => entry.data.categories),
-      );
-      const mask = indexed(allCategories);
-      const x = pickArrayByIndex(allCategories, mask);
+      const x = allCategories;
       const y = data.map((entry) => entry.name);
       const z = data.map(({ data: { frequencies, categories } }) => {
         const categoryFrequencyMap = fromPairs(
@@ -86,7 +82,7 @@ export default function VisualizationFrequencyDistributionComponent(
             number,
           ][],
         );
-        const z = categories.map(
+        const z = allCategories.map(
           (category) => categoryFrequencyMap[category] ?? 0,
         );
         return z;
@@ -161,16 +157,16 @@ export default function VisualizationFrequencyDistributionComponent(
       } as PlotParams;
     }
   }, [
-    allCategories.length,
+    allCategories,
     data,
     item.column,
     isHeatmap,
     needsPercentage,
-    indexed,
     character,
     transformFrequencies,
     plotlyLayoutProps,
     isBarChart,
+    indexed,
     isLinePlot,
   ]);
 
