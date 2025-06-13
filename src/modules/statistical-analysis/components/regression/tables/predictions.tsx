@@ -37,22 +37,36 @@ function useMultinomialPredictionProbabilityDistributionTableColumns(
   cumulative: boolean,
 ) {
   return React.useMemo<MRT_ColumnDef<NamedMultinomialPrediction>[]>(() => {
-    return columns.map((column) => {
-      return {
-        id: column,
-        header: column,
-        minSize: 150,
-        size: 150,
-        enableSorting: true,
-        Cell({ row: { original, index } }) {
-          const probability: number = cumulative
-            ? (original.prediction as OrdinalRegressionPredictionResultModel)
-                .cumulative_probabilities[index]!
-            : original.prediction.probabilities[index]!;
-          return `${formatNumber(probability * 100)}%`;
-        },
-      };
-    });
+    const perLevelColumns: MRT_ColumnDef<NamedMultinomialPrediction>[] =
+      columns.map((column, index) => {
+        return {
+          id: column,
+          header: column,
+          minSize: 150,
+          size: 150,
+          enableSorting: true,
+          accessorFn(original) {
+            const probability: number = cumulative
+              ? (original.prediction as OrdinalRegressionPredictionResultModel)
+                  .cumulative_probabilities[index]!
+              : original.prediction.probabilities[index]!;
+            return probability * 100;
+          },
+          Cell({ renderedCellValue }) {
+            return `${formatNumber(renderedCellValue as number)}%`;
+          },
+        };
+      });
+    const variableNameColumn: MRT_ColumnDef<NamedMultinomialPrediction> = {
+      id: 'variable',
+      header: 'Independent Variable',
+      minSize: 200,
+      size: 200,
+      accessorFn(original) {
+        return original.variable;
+      },
+    };
+    return [variableNameColumn, ...perLevelColumns];
   }, [columns, cumulative]);
 }
 

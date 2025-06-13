@@ -24,6 +24,7 @@ export function getRegressionProbabilityMarginalEffectsVisualizationData(
         coefficient.confidence_interval[1] * 100,
       ] as [number, number],
   );
+  console.log(marginalEffects, probabilities, confidenceIntervals);
   const confidenceIntervalStrings = marginalEffects
     .map((coefficient) => coefficient.confidence_interval)
     .map(formatProbabilityConfidenceInterval);
@@ -54,10 +55,10 @@ export function getRegressionProbabilityMarginalEffectsVisualizationData(
     '<b>Marginal Effect</b>: %{customdata[1]:.3f}%',
     '<b>Confidence Interval</b>: %{customdata[2]} (for Alpha = 0.05)',
     '='.repeat(30),
-    '<b>P-Value</b>: %{customdata[5]:.3f}',
-    '<b>Confidence</b>: %{customdata[6]:.3f}%',
-    `<b>Z-Statistic</b>: %{customdata[7]:.3f}`,
-    '<b>Standard Error</b>: %{customdata[8]:.3f}',
+    '<b>P-Value</b>: %{customdata[3]:.3f}',
+    '<b>Confidence</b>: %{customdata[4]:.3f}%',
+    `<b>Z-Statistic</b>: %{customdata[5]:.3f}`,
+    '<b>Standard Error</b>: %{customdata[6]:.3f}',
   ].join('<br>');
   return {
     customdata,

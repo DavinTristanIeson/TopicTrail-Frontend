@@ -56,14 +56,15 @@ export const REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY = {
   },
   [RegressionParametersVisualizationTypeEnum.MarginalEffects]: {
     label: 'Marginal Effects of Independent Variables',
-    value: RegressionParametersVisualizationTypeEnum.Coefficient,
+    value: RegressionParametersVisualizationTypeEnum.MarginalEffects,
     plotLabel: 'Coefficient',
     description:
       'Show the marginal effects of each independent variable. For logit-based regressions, this effect represents the change in probability when a given independent variable is present.',
   },
   [RegressionParametersVisualizationTypeEnum.MarginalEffectsConfidenceLevel]: {
     label: 'Confidence Level of Marginal Effects',
-    value: RegressionParametersVisualizationTypeEnum.Coefficient,
+    value:
+      RegressionParametersVisualizationTypeEnum.MarginalEffectsConfidenceLevel,
     plotLabel: 'Coefficient',
     description:
       'Show the confidence level that the actual marginal effect is not zero. Note that it is possible for a coefficient to be considered significant, but its marginal effect is not significant; or vice versa.',

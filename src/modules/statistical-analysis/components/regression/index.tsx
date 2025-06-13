@@ -11,6 +11,7 @@ import { RegressionModelType, UltimateRegressionResult } from './types';
 import { REGRESSION_MODEL_CONFIG } from './regression-model-config';
 import RegressionModelPredictionTab from './prediction';
 import FitEvaluationTable from './fit-evaluation';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 enum RegressionTabType {
   FitEvaluation = 'fit-evaluation',
@@ -89,17 +90,25 @@ export function RegressionResultRenderer<
         </Tabs.List>
       </Tabs>
       {tab === RegressionTabType.FitEvaluation ? (
-        <FitEvaluationTable {...props} modelType={modelType} />
+        <DefaultErrorViewBoundary>
+          <FitEvaluationTable {...props} modelType={modelType} />
+        </DefaultErrorViewBoundary>
       ) : tab === RegressionTabType.Coefficients ? (
-        <CoefficientsRenderer {...(props as any)} />
+        <DefaultErrorViewBoundary>
+          <CoefficientsRenderer {...(props as any)} />
+        </DefaultErrorViewBoundary>
       ) : tab === RegressionTabType.Predictions ? (
-        <RegressionModelPredictionTab
-          {...(props as any)}
-          modelId={props.data.model_id}
-          modelType={modelType}
-        />
+        <DefaultErrorViewBoundary>
+          <RegressionModelPredictionTab
+            {...(props as any)}
+            modelId={props.data.model_id}
+            modelType={modelType}
+          />
+        </DefaultErrorViewBoundary>
       ) : tab === RegressionTabType.VariableInfo ? (
-        <VariableInfoRenderer {...(props as any)} />
+        <DefaultErrorViewBoundary>
+          <VariableInfoRenderer {...(props as any)} />
+        </DefaultErrorViewBoundary>
       ) : null}
     </Stack>
   );

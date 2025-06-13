@@ -179,7 +179,7 @@ export function useMultinomialInterceptsTableColumns(
         },
       },
       {
-        id: 'odds_ratio',
+        id: 'odds_ratio_confidence_interval',
         header: 'Odds Ratio Confidence Interval',
         minSize: 270,
         size: 270,
@@ -200,8 +200,9 @@ export function useMultinomialInterceptsTableColumns(
       {
         id: 'logistic',
         header: 'Logistic Regression',
-        minSize: 270,
-        size: 270,
+        minSize: 50,
+        size: 50,
+        enableColumnActions: false,
         Header: () => null,
         Cell({ row: { original } }) {
           return (

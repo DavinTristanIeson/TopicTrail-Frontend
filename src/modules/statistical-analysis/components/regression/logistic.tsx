@@ -61,10 +61,13 @@ export function LogisticRegressionCoefficientsPlot(
       dictionary: REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
     });
 
-  const { Component: CoefficientMultiSelect, coefficients } =
-    useRegressionCoefficientMultiSelect({
-      coefficients: data.coefficients,
-    });
+  const {
+    Component: CoefficientMultiSelect,
+    coefficients,
+    select: selectCoefficients,
+  } = useRegressionCoefficientMultiSelect({
+    coefficients: data.coefficients,
+  });
   const visdata = React.useMemo(() => {
     return [
       {
@@ -92,11 +95,11 @@ export function LogisticRegressionCoefficientsPlot(
       {
         name: 'Marginal Effects',
         data: getRegressionProbabilityMarginalEffectsVisualizationData({
-          marginalEffects: coefficients,
+          marginalEffects: selectCoefficients(data.marginal_effects),
         }),
       },
     ];
-  }, [coefficients]);
+  }, [data.marginal_effects, selectCoefficients]);
 
   const commonMarginalEffectsProps = {
     alpha,
@@ -180,7 +183,7 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
 ) {
   const { data, config } = props;
   const baselineLayout = usePredictedResultsBaselineLine({
-    baseline: data.baseline_prediction.probability,
+    baseline: data.baseline_prediction.probability * 100,
     percentage: true,
   });
 
@@ -191,12 +194,12 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
         {
           x: data.predictions.map((prediction) => prediction.variable),
           y: data.predictions.map(
-            (prediction) => prediction.prediction.probability,
+            (prediction) => prediction.prediction.probability * 100,
           ),
           type: 'bar',
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
-            '<b>Predicted Probability</b>: %{y}',
+            '<b>Predicted Probability</b>: %{y}%',
           ].join('<br>'),
           marker: {
             color: colors,

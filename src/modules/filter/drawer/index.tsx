@@ -22,6 +22,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 import UserDataManager from '@/modules/userdata';
 import { CancelButton } from '@/components/standard/button/variants';
 import { FormEditableContext } from '@/components/standard/fields/context';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 interface TableFilterUserDataManagerProps {
   setFilter: React.Dispatch<TableFilterModel | null>;
@@ -75,7 +76,7 @@ export function TableFilterDrawerFormBody(
   const { editable } = React.useContext(FormEditableContext);
 
   return (
-    <>
+    <DefaultErrorViewBoundary>
       <ConfirmationDialog
         ref={confirmResetRemote}
         title="Reset Filter"
@@ -116,7 +117,7 @@ export function TableFilterDrawerFormBody(
       {AboveForm}
       {editable && <TableFilterUserDataManager setFilter={setFilter} />}
       <TableFilterComponent name={name} />
-    </>
+    </DefaultErrorViewBoundary>
   );
 }
 
@@ -186,7 +187,9 @@ const TableFilterDrawer = React.forwardRef<
       closeOnEscape={false}
       size="xl"
     >
-      {opened && <TableFilterDrawerForm {...props} onClose={close} />}
+      <DefaultErrorViewBoundary>
+        {opened && <TableFilterDrawerForm {...props} onClose={close} />}
+      </DefaultErrorViewBoundary>
     </Drawer>
   );
 });

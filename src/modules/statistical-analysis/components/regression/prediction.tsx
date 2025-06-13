@@ -19,6 +19,7 @@ import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { RegressionModelType } from './types';
 import { REGRESSION_MODEL_CONFIG } from './regression-model-config';
 import { RegressionInterpretation } from '@/common/constants/enum';
+import { DefaultErrorViewBoundary } from '@/components/visual/error';
 
 interface RegressionModelPredictionInputCardProps {
   setInputState: React.Dispatch<React.SetStateAction<boolean[]>>;
@@ -142,9 +143,11 @@ export default function RegressionModelPredictionTab(
           is a single independent variable. Use this to gauge the individual
           effects of each independent variable.
         </Alert>
-        <div>
-          <DefaultPredictionsRenderer config={config} data={data} />
-        </div>
+        <DefaultErrorViewBoundary>
+          <div>
+            <DefaultPredictionsRenderer config={config} data={data} />
+          </div>
+        </DefaultErrorViewBoundary>
 
         {config.interpretation ===
           RegressionInterpretation.RelativeToBaseline && (
@@ -159,9 +162,11 @@ export default function RegressionModelPredictionTab(
               that produces probability distributions for you to consider in
               your analysis.
             </Alert>
-            <div>
-              <RegressionModelPredictionSection {...props} />
-            </div>
+            <DefaultErrorViewBoundary>
+              <div>
+                <RegressionModelPredictionSection {...props} />
+              </div>
+            </DefaultErrorViewBoundary>
           </>
         )}
       </Stack>

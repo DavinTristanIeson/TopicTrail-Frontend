@@ -65,9 +65,6 @@ export function useRegressionMarginalEffectsBarChartPlot(
         },
         yaxis: {
           title: `Probability (%)`,
-          minallowed: 0,
-          maxallowed: 100,
-          range: [0, 100],
           ticksuffix: '%',
         },
       },

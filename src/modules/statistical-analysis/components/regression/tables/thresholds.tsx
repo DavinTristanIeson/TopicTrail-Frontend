@@ -8,7 +8,7 @@ import {
 } from 'mantine-react-table';
 import React from 'react';
 import { TooltipHeader } from './common';
-import { ActionIcon, Tooltip } from '@mantine/core';
+import { ActionIcon, Stack, Title, Tooltip } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
 import { OrdinalRegressionConfigType } from '@/modules/statistical-analysis/configuration/multinomial-regression';
 import { useComparisonAppState } from '@/modules/comparison/app-state';
@@ -132,8 +132,9 @@ export function RegressionThresholdsTable(
       {
         id: 'logistic_regression',
         header: 'Logistic Regression',
-        minSize: 120,
-        size: 120,
+        minSize: 50,
+        size: 50,
+        enableColumnActions: false,
         Header: () => null,
         Cell({ row: { original } }) {
           return (
@@ -156,5 +157,10 @@ export function RegressionThresholdsTable(
     enablePagination: false,
     layoutMode: 'grid',
   });
-  return <MantineReactTable table={table} />;
+  return (
+    <Stack>
+      <Title order={3}>Thresholds Table</Title>
+      <MantineReactTable table={table} />
+    </Stack>
+  );
 }

@@ -2,7 +2,7 @@ import {
   OrdinalRegressionPredictionResultModel,
   OrdinalRegressionResultModel,
 } from '@/api/statistical-analysis';
-import { Select, Stack, Switch } from '@mantine/core';
+import { Divider, Select, Stack, Switch } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
   RegressionModelType,
@@ -45,9 +45,13 @@ import {
 import { RegressionCoefficientsTable } from './tables';
 import { RegressionThresholdsTable } from './tables/thresholds';
 
-const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = Object.values(
-  RegressionParametersVisualizationTypeEnum,
-);
+const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
+  RegressionParametersVisualizationTypeEnum.Coefficient,
+  RegressionParametersVisualizationTypeEnum.ConfidenceLevel,
+  RegressionParametersVisualizationTypeEnum.OddsRatio,
+  RegressionParametersVisualizationTypeEnum.Table,
+];
+
 export function OrdinalRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
     OrdinalRegressionResultModel,
@@ -120,6 +124,7 @@ export function OrdinalRegressionCoefficientsPlot(
           thresholds={data.thresholds}
           config={config}
         />
+        <Divider />
         <RegressionCoefficientsTable
           coefficients={data.coefficients}
           intercept={null}

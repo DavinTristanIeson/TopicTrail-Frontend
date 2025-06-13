@@ -37,10 +37,11 @@ import {
   useAdaptMutationToRegressionPredictionAPIResult,
 } from './data';
 
-const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = without(
-  Object.values(RegressionParametersVisualizationTypeEnum),
-  RegressionParametersVisualizationTypeEnum.OddsRatio,
-);
+const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = [
+  RegressionParametersVisualizationTypeEnum.Coefficient,
+  RegressionParametersVisualizationTypeEnum.ConfidenceLevel,
+  RegressionParametersVisualizationTypeEnum.Table,
+];
 
 export function LinearRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<

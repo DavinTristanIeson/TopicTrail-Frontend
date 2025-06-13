@@ -93,11 +93,11 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
       return {
         name: facet.level,
         data: getRegressionProbabilityMarginalEffectsVisualizationData({
-          marginalEffects: facet.marginal_effects,
+          marginalEffects: selectCoefficients(facet.marginal_effects),
         }),
       };
     });
-  }, [data.marginal_effects]);
+  }, [data.marginal_effects, selectCoefficients]);
 
   const commonMarginalEffectsProps = {
     alpha,
@@ -154,10 +154,18 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
           <Title order={3}>Intercept</Title>
           <RegressionInterceptsTable
             config={config}
-            intercepts={data.facets.map((facet) => facet.intercept)}
+            intercepts={data.facets.map((facet) => {
+              return {
+                ...facet.intercept,
+                name: facet.level,
+              };
+            })}
           />
         </Stack>
-        <RegressionCoefficientsPerFacetTable facets={data.facets} />
+        <RegressionCoefficientsPerFacetTable
+          facets={data.facets}
+          marginalEffects={data.marginal_effects}
+        />
       </Stack>
     );
   }
@@ -167,10 +175,13 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
       {Header}
       {AlphaSlider}
       {CoefficientMultiSelect}
-      <MultinomialLogisticRegressionInterceptsRenderer
-        type={type}
-        data={data}
-      />
+      {(type === RegressionParametersVisualizationTypeEnum.Coefficient ||
+        type === RegressionParametersVisualizationTypeEnum.OddsRatio) && (
+        <MultinomialLogisticRegressionInterceptsRenderer
+          type={type}
+          data={data}
+        />
+      )}
       <div>{usedPlot && <PlotRenderer plot={usedPlot} height={720} />}</div>
     </Stack>
   );

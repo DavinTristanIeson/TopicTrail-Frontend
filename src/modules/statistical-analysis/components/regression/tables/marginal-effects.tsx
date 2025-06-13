@@ -46,8 +46,8 @@ function useMarginalEffectsTableColumns() {
       {
         id: 'marginal_effect',
         header: 'Marginal Effect',
-        minSize: 150,
-        size: 150,
+        minSize: 180,
+        size: 180,
         accessorFn: (coef) => coef.value * 100,
         enableSorting: true,
         Header: () => (
