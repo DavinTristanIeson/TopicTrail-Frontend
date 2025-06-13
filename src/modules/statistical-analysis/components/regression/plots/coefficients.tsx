@@ -31,18 +31,24 @@ export function useCommonConfidenceLevelPlot(
     const { colorMap } = generateColorsFromSequence(
       data.map((facet) => facet.name),
     );
-    const traces = data.map((data) => {
+    const traces = data.map((data, idx, arr) => {
       const {
         name,
         data: { variables: x, confidenceLevels: y, customdata, hovertemplate },
       } = data;
+      let color: string[] | string;
+      if (arr.length === 1){
+        color = generateColorsFromSequence(x).colors;
+      } else {
+        color = colorMap.get(name)!;
+      }
       return {
         name,
         x,
         y,
         type: 'bar',
         marker: {
-          color: colorMap.get(name),
+          color,
         },
         customdata,
         hovertemplate,
