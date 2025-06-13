@@ -8,15 +8,90 @@ import {
 } from 'mantine-react-table';
 import React from 'react';
 import { TooltipHeader } from './common';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import { TestTube } from '@phosphor-icons/react';
+import { OrdinalRegressionConfigType } from '@/modules/statistical-analysis/configuration/multinomial-regression';
+import { useComparisonAppState } from '@/modules/comparison/app-state';
+import { StatisticalAnalysisPurpose } from '@/modules/statistical-analysis/types';
+import { LogisticRegressionConfigType } from '@/modules/statistical-analysis/configuration/logistic-regression';
+import { shrinkTableFilter } from '@/modules/filter/utils';
+import { TableFilterModel } from '@/api/table';
+
+interface RegressionThresholdLogisticRegressionButtonProps {
+  config: OrdinalRegressionConfigType;
+  original: OrdinalRegressionThresholdModel;
+}
+
+function RegressionThresholdLogisticRegressionButton(
+  props: RegressionThresholdLogisticRegressionButtonProps,
+) {
+  const { config, original } = props;
+  const setInput = useComparisonAppState(
+    (store) => store.statisticalAnalysis.setInput,
+  );
+  return (
+    <Tooltip label="Perform logistic regression with this threshold.">
+      <ActionIcon
+        variant="subtle"
+        onClick={() => {
+          if (config.subdatasets) {
+            const index = config.subdatasets.findIndex(
+              (subdataset) => subdataset.name === original.to_level,
+            );
+            const positiveGroup = config.subdatasets.slice(index);
+            setInput({
+              type: StatisticalAnalysisPurpose.LogisticRegression,
+              config: {
+                target: `${original.from_level}/${original.to_level}`,
+                constrain_by_groups: false,
+                filter: {
+                  type: 'and',
+                  operands: positiveGroup.map((namedFilter) => {
+                    return shrinkTableFilter(
+                      namedFilter.filter as TableFilterModel,
+                    );
+                  }),
+                },
+                interpretation: config.interpretation,
+              } as LogisticRegressionConfigType,
+            });
+          } else {
+            setInput({
+              type: StatisticalAnalysisPurpose.LogisticRegression,
+              config: {
+                target: `${original.from_level}/${original.to_level}`,
+                constrain_by_groups: false,
+                filter: {
+                  type: 'and',
+                  operands: [
+                    {
+                      type: 'greater_than_or_equal_to',
+                      target: config.target,
+                      value: original.to_level,
+                    },
+                  ],
+                },
+                interpretation: config.interpretation,
+              } as LogisticRegressionConfigType,
+            });
+          }
+        }}
+      >
+        <TestTube />
+      </ActionIcon>
+    </Tooltip>
+  );
+}
 
 interface RegressionThresholdsTableProps {
   thresholds: OrdinalRegressionThresholdModel[];
+  config: OrdinalRegressionConfigType;
 }
 
 export function RegressionThresholdsTable(
   props: RegressionThresholdsTableProps,
 ) {
-  const { thresholds } = props;
+  const { thresholds, config } = props;
   const columns = React.useMemo<
     MRT_ColumnDef<OrdinalRegressionThresholdModel>[]
   >(() => {
@@ -54,8 +129,23 @@ export function RegressionThresholdsTable(
           return formatNumber(original.value);
         },
       },
+      {
+        id: 'logistic_regression',
+        header: 'Logistic Regression',
+        minSize: 120,
+        size: 120,
+        Header: () => null,
+        Cell({ row: { original } }) {
+          return (
+            <RegressionThresholdLogisticRegressionButton
+              config={config}
+              original={original}
+            />
+          );
+        },
+      },
     ];
-  }, []);
+  }, [config]);
 
   const table = useMantineReactTable({
     data: thresholds,

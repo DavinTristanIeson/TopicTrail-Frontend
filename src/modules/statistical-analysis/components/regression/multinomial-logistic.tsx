@@ -4,7 +4,7 @@ import {
 } from '@/api/statistical-analysis';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { MultinomialLogisticRegressionConfigType } from '../../configuration/multinomial-regression';
-import { Group, Stack } from '@mantine/core';
+import { Group, Stack, Title } from '@mantine/core';
 import {
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
   RegressionModelType,
@@ -20,7 +20,7 @@ import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
-import { MultinomialPredictionPlot } from './multinomial-predictions';
+import { MultinomialPredictionPlot } from './plots/multinomial-predictions';
 import {
   getRegressionCoefficientsVisualizationData,
   getRegressionProbabilityMarginalEffectsVisualizationData,
@@ -38,6 +38,7 @@ import {
   useRegressionMarginalEffectsBarChartPlot,
 } from './plots';
 import { RegressionCoefficientsPerFacetTable } from './tables';
+import { RegressionInterceptsTable } from './tables/intercepts';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES =
   Object.values(RegressionParametersVisualizationTypeEnum);
@@ -48,7 +49,7 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
     MultinomialLogisticRegressionConfigType
   >,
 ) {
-  const { data } = props;
+  const { data, config } = props;
 
   // Constraints
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
@@ -149,6 +150,13 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
     return (
       <Stack>
         {Header}
+        <Stack>
+          <Title order={3}>Intercept</Title>
+          <RegressionInterceptsTable
+            config={config}
+            intercepts={data.facets.map((facet) => facet.intercept)}
+          />
+        </Stack>
         <RegressionCoefficientsPerFacetTable facets={data.facets} />
       </Stack>
     );

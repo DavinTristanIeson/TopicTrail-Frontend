@@ -29,7 +29,9 @@ interface UseCoefficientsTableColumnsProps {
   modelType: RegressionModelType;
 }
 
-function useCoefficientsTableColumns(props: UseCoefficientsTableColumnsProps) {
+export function useCoefficientsTableColumns(
+  props: UseCoefficientsTableColumnsProps,
+) {
   const { modelType } = props;
   return React.useMemo<
     MRT_ColumnDef<UltimateRegressionCoefficientModel>[]
@@ -263,10 +265,23 @@ export function RegressionCoefficientsPerFacetTableRenderer(
   const rows = React.useMemo<UltimateRegressionCoefficientModel[]>(() => {
     return facets
       .map((facet) => {
-        return [facet.intercept, ...facet.coefficients].map((coef, index) => {
+        return [
+          {
+            confidence_interval: facet.intercept.confidence_interval,
+            name: 'Intercept',
+            odds_ratio: facet.intercept.odds_ratio,
+            odds_ratio_confidence_interval:
+              facet.intercept.odds_ratio_confidence_interval,
+            std_err: facet.intercept.std_err,
+            value: facet.intercept.value,
+            // This value is not really useful for interpretation
+            p_value: undefined as any,
+            statistic: undefined as any,
+          } as UltimateRegressionCoefficientModel,
+          ...facet.coefficients,
+        ].map((coef) => {
           return {
             ...coef,
-            name: index === 0 ? 'Intercept' : coef.name,
             level: facet.level,
           };
         });

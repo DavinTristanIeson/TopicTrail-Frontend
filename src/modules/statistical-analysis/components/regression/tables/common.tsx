@@ -1,6 +1,5 @@
 import { MantineReactTableBehaviors } from '@/modules/table/adapter';
 import { Text, Tooltip, useMantineTheme } from '@mantine/core';
-import { UltimateRegressionCoefficientModel } from '../types';
 import { type MRT_ColumnDef, type MRT_RowData } from 'mantine-react-table';
 import React from 'react';
 
@@ -36,7 +35,7 @@ export const SHARED_REGRESSION_COEFFICIENT_MRT_PROPS = {
   ...MantineReactTableBehaviors.Default,
   ...MantineReactTableBehaviors.Resizable,
   ...MantineReactTableBehaviors.ColumnActions,
-  getRowId: (originalRow: UltimateRegressionCoefficientModel) => {
+  getRowId: (originalRow: { name: string }) => {
     return originalRow.name;
   },
   enablePagination: false,

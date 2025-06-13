@@ -9,6 +9,7 @@ import { Select, Stack, Switch } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import PlotRenderer from '@/components/widgets/plotly';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { MultinomialPredictionProbabilityDistributionTable } from '../tables/predictions';
 
 type MultinomialPrediction =
   | MultinomialLogisticRegressionPredictionResultModel
@@ -161,6 +162,7 @@ enum MultinomialPredictionVisualizationType {
   Heatmap = 'heatmap',
   BarChart = 'bar-chart',
   LinePlot = 'line-plot',
+  Table = 'table',
 }
 
 const MULTINOMIAL_PREDICTION_VISUALIZATION_TYPE_DICTIONARY = {
@@ -181,6 +183,12 @@ const MULTINOMIAL_PREDICTION_VISUALIZATION_TYPE_DICTIONARY = {
     value: MultinomialPredictionVisualizationType.LinePlot,
     description:
       'Show the probability distribution of each independent variable as a line plot. Use this if you want to compare the shape of the probability distribution for many independent variables at once.',
+  },
+  [MultinomialPredictionVisualizationType.Table]: {
+    label: 'Table',
+    value: MultinomialPredictionVisualizationType.Table,
+    description:
+      'Show the probability distribution of each independent variable as a table.',
   },
 };
 
@@ -237,8 +245,8 @@ export function MultinomialPredictionPlot(
     MULTINOMIAL_PREDICTION_VISUALIZATION_TYPE_DICTIONARY,
   );
 
-  return (
-    <Stack>
+  const Header = (
+    <>
       <Select
         label="Display as"
         data={Object.values(
@@ -258,6 +266,26 @@ export function MultinomialPredictionPlot(
           onChange={() => toggle()}
         />
       ) : undefined}
+    </>
+  );
+
+  if (display === MultinomialPredictionVisualizationType.Table) {
+    return (
+      <Stack>
+        {Header}
+        <MultinomialPredictionProbabilityDistributionTable
+          baselinePrediction={baselinePrediction}
+          cumulative={cumulative}
+          levels={levels}
+          predictions={predictions}
+        />
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack>
+      {Header}
       <div style={{ minHeight: 512 }}>
         <PlotRenderer
           key={`${display} ${cumulative}`}

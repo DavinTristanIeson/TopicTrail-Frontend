@@ -25,7 +25,7 @@ import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { useDisclosure } from '@mantine/hooks';
-import { MultinomialPredictionPlot } from './multinomial-predictions';
+import { MultinomialPredictionPlot } from './plots/multinomial-predictions';
 import { useVisualizationAlphaSlider } from '../plot-config';
 import { OrdinalRegressionConfigType } from '../../configuration/multinomial-regression';
 import {
@@ -51,10 +51,10 @@ const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = Object.values(
 export function OrdinalRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
     OrdinalRegressionResultModel,
-    RegressionConfigType
+    OrdinalRegressionConfigType
   >,
 ) {
-  const { data } = props;
+  const { data, config } = props;
   const { Component: AlphaSlider, alpha } = useVisualizationAlphaSlider({});
   const { Component: VisualizationSelect, type } =
     useRegressionVisualizationTypeSelect({
@@ -116,7 +116,10 @@ export function OrdinalRegressionCoefficientsPlot(
     return (
       <Stack>
         {Header}
-        <RegressionThresholdsTable thresholds={data.thresholds} />
+        <RegressionThresholdsTable
+          thresholds={data.thresholds}
+          config={config}
+        />
         <RegressionCoefficientsTable
           coefficients={data.coefficients}
           intercept={null}

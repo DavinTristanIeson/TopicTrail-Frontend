@@ -5,16 +5,13 @@ import {
 } from '@/api/statistical-analysis';
 import { formatNumber } from '@/common/utils/number';
 import { TaskControlsCard } from '@/modules/task/controls';
-import { Text, Group, Button, Modal, Table } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { Info } from '@phosphor-icons/react';
+import { Text, Group } from '@mantine/core';
 import {
-  REGRESSION_MODEL_QUIRKS,
   RegressionModelType,
   RegressionParametersVisualizationTypeEnum,
   UltimateRegressionCoefficientModel,
 } from '../types';
-import { pValueToConfidenceLevel, formatConfidenceInterval } from '../utils';
+import { formatConfidenceInterval } from '../utils';
 import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import PlotRenderer from '@/components/widgets/plotly';
 import React from 'react';
@@ -39,42 +36,14 @@ interface InterceptRendererProps {
 export function RegressionInterceptResultRenderer(
   props: InterceptRendererProps,
 ) {
-  const { intercept, modelType, reference } = props;
-  const statisticName = REGRESSION_MODEL_QUIRKS[modelType].statisticName;
+  const { intercept, reference } = props;
   const oddsRatio = (intercept as LogisticRegressionCoefficientModel)
     .odds_ratio;
   const oddsRatioConfidenceInterval = (
     intercept as LogisticRegressionCoefficientModel
   ).odds_ratio_confidence_interval;
   const withOdds = oddsRatio != null;
-  const interceptData = [
-    {
-      label: 'Value',
-      value: intercept.value,
-    },
-    {
-      label: 'Std. Err',
-      value: intercept.std_err,
-    },
-    {
-      label: statisticName,
-      value: formatNumber(intercept.statistic),
-    },
-    {
-      label: 'P-Value',
-      value: formatNumber(intercept.p_value),
-    },
-    {
-      label: 'Confidence Level',
-      value: `${formatNumber(pValueToConfidenceLevel(intercept.p_value))}%`,
-    },
-    {
-      label: 'Confidence Interval (Alpha = 0.05)',
-      value: `${formatNumber(intercept.confidence_interval[0])} - ${formatNumber(intercept.confidence_interval[1])}`,
-    },
-  ];
 
-  const [opened, { toggle, close: onClose }] = useDisclosure();
   return (
     <TaskControlsCard>
       <Group justify="space-between" align="start">
@@ -98,20 +67,7 @@ export function RegressionInterceptResultRenderer(
             </Text>
           )}
         </div>
-        <Button leftSection={<Info />} onClick={toggle} variant="subtle">
-          View Info
-        </Button>
       </Group>
-      <Modal opened={opened} onClose={onClose} title="Intercept Information">
-        <Table>
-          {interceptData.map((row) => (
-            <Table.Tr key={row.label}>
-              <Table.Th>{row.label}</Table.Th>
-              <Table.Td>{row.value}</Table.Td>
-            </Table.Tr>
-          ))}
-        </Table>
-      </Modal>
     </TaskControlsCard>
   );
 }
