@@ -43,6 +43,8 @@ export type LogisticRegressionPredictionResultModel =
   components['schemas']['LogisticRegressionPredictionResult'];
 export type MultinomialLogisticRegressionPredictionResultModel =
   components['schemas']['MultinomialLogisticRegressionPredictionResult'];
+export type MultinomialLogisticRegressionMarginalEffectsFacetResultModel =
+  components['schemas']['MultinomialLogisticRegressionMarginalEffectsFacetResult'];
 export type OrdinalRegressionPredictionResultModel =
   components['schemas']['OrdinalRegressionPredictionResult'];
 

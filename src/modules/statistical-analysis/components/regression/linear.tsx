@@ -2,26 +2,16 @@ import {
   LinearRegressionPredictionResultModel,
   LinearRegressionResultModel,
 } from '@/api/statistical-analysis';
-import {
-  RegressionInterceptResultRenderer,
-  useCoefficientRegressionResultPlot,
-  useConfidenceLevelRegressionResultPlot,
-  usePredictedResultsBaselineLine,
-  useRegressionCoefficientMultiSelect,
-} from './components';
+
 import { Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import { ResultCard } from '@/components/visual/result-card';
 import { LinearRegressionConfigType } from '../../configuration/linear-regression';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import {
-  getRegressionCoefficientsVisualizationData,
-  useAdaptMutationToRegressionPredictionAPIResult,
-} from './data';
-import {
   RegressionModelType,
   RegressionPredictionAPIHookType,
-  RegressionCoefficientsVisualizationTypeEnum,
+  RegressionParametersVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
@@ -34,11 +24,22 @@ import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { useVisualizationAlphaSlider } from '../plot-config';
-import { RegressionCoefficientsTable } from './coefficients-table';
+import {
+  useRegressionCoefficientMultiSelect,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
+  RegressionInterceptResultRenderer,
+  usePredictedResultsBaselineLine,
+} from './plots';
+import { RegressionCoefficientsTable } from './tables';
+import {
+  getRegressionCoefficientsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
 
 const LINEAR_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = without(
-  Object.values(RegressionCoefficientsVisualizationTypeEnum),
-  RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
+  Object.values(RegressionParametersVisualizationTypeEnum),
+  RegressionParametersVisualizationTypeEnum.OddsRatio,
 );
 
 export function LinearRegressionCoefficientsPlot(
@@ -82,7 +83,7 @@ export function LinearRegressionCoefficientsPlot(
 
   const usedPlot = coefficientPlot ?? confidenceLevelPlot;
 
-  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+  if (type === RegressionParametersVisualizationTypeEnum.Table) {
     return (
       <Stack>
         {VisualizationSelect}
@@ -104,7 +105,7 @@ export function LinearRegressionCoefficientsPlot(
         <RegressionInterceptResultRenderer
           intercept={data.intercept}
           reference={data.reference}
-          statisticName="T-Statistic"
+          modelType={RegressionModelType.Logistic}
         />
       )}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}

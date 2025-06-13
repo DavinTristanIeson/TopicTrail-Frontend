@@ -2082,6 +2082,8 @@ export interface components {
             warnings: string[];
             /** Coefficients */
             coefficients: components["schemas"]["LogisticRegressionCoefficient"][];
+            /** Marginal Effects */
+            marginal_effects: components["schemas"]["RegressionCoefficient"][];
             intercept: components["schemas"]["LogisticRegressionCoefficient"];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
             /** Predictions */
@@ -2112,6 +2114,13 @@ export interface components {
             /** Penalty */
             penalty: number | null;
         };
+        /** MultinomialLogisticRegressionMarginalEffectsFacetResult */
+        MultinomialLogisticRegressionMarginalEffectsFacetResult: {
+            /** Level */
+            level: string;
+            /** Marginal Effects */
+            marginal_effects: components["schemas"]["RegressionCoefficient"][];
+        };
         /** MultinomialLogisticRegressionPredictionResult */
         MultinomialLogisticRegressionPredictionResult: {
             /** Probabilities */
@@ -2136,6 +2145,8 @@ export interface components {
             reference_dependent: string;
             /** Levels */
             levels: components["schemas"]["RegressionDependentVariableLevelInfo"][];
+            /** Marginal Effects */
+            marginal_effects: components["schemas"]["MultinomialLogisticRegressionMarginalEffectsFacetResult"][];
             /** Facets */
             facets: components["schemas"]["MultinomialLogisticRegressionFacetResult"][];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];

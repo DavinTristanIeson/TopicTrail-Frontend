@@ -1,332 +1,46 @@
 import {
-  MultinomialLogisticRegressionFacetResultModel,
   MultinomialLogisticRegressionPredictionResultModel,
   MultinomialLogisticRegressionResultModel,
 } from '@/api/statistical-analysis';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { MultinomialLogisticRegressionConfigType } from '../../configuration/multinomial-regression';
-import { Group, Select, Stack } from '@mantine/core';
+import { Group, Stack } from '@mantine/core';
 import {
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
   RegressionModelType,
   RegressionPredictionAPIHookType,
-  RegressionCoefficientsVisualizationTypeEnum,
+  RegressionParametersVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
   useRegressionVisualizationTypeSelect,
   RegressionVariableInfoVisualizationType,
 } from './types';
 import { useVisualizationAlphaSlider } from '../plot-config';
-import {
-  PredictedProbabilityDistributionPlot,
-  RegressionConvergenceResultRenderer,
-  useCoefficientRegressionResultPlot,
-  useConfidenceLevelRegressionResultPlot,
-  useOddsRatioRegressionResultPlot,
-  useRegressionCoefficientMultiSelect,
-} from './components';
 import React from 'react';
-import {
-  getRegressionCoefficientsVisualizationData,
-  getRegressionInterceptVisualizationData,
-  useAdaptMutationToRegressionPredictionAPIResult,
-} from './data';
 import PlotRenderer from '@/components/widgets/plotly';
-import { PlotParams } from 'react-plotly.js';
-import {
-  getBalancedHeatmapZRange,
-  getRawHeatmapZRange,
-} from '@/modules/visualization/components/configuration/heatmap';
-import { mask2D } from '@/common/utils/iterable';
 import { ResultCard } from '@/components/visual/result-card';
-import { pValueToConfidenceLevel } from './utils';
-import { useSelectLeftRightButtons } from '@/components/visual/select';
-import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { MultinomialPredictionPlot } from './multinomial-predictions';
-import { RegressionCoefficientsPerFacetTable } from './coefficients-table';
+import {
+  getRegressionCoefficientsVisualizationData,
+  getRegressionProbabilityMarginalEffectsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
+import {
+  useRegressionCoefficientMultiSelect,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
+  useOddsRatioRegressionResultPlot,
+  RegressionConvergenceResultRenderer,
+  MultinomialLogisticRegressionInterceptsRenderer,
+  PredictedProbabilityDistributionPlot,
+  useMarginalEffectsConfidenceLevelRegressionResultPlot,
+  useRegressionMarginalEffectsBarChartPlot,
+} from './plots';
+import { RegressionCoefficientsPerFacetTable } from './tables';
 
 const MULTINOMIAL_LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES =
-  Object.values(RegressionCoefficientsVisualizationTypeEnum);
-
-interface UseMultinomialLogisticRegressionViewedDependentVariableLevelProps {
-  result: MultinomialLogisticRegressionResultModel;
-}
-
-export function useMultinomialLogisticRegressionViewedDependentVariableLevel(
-  props: UseMultinomialLogisticRegressionViewedDependentVariableLevelProps,
-) {
-  const { result } = props;
-  const levels = React.useMemo(
-    () => result.facets.map((facet) => facet.level),
-    [result.facets],
-  );
-  const [level, setLevel] = React.useState<string | null>(null);
-  const inputContainer = useSelectLeftRightButtons({
-    onChange: setLevel,
-    options: levels,
-    value: level,
-  });
-  const Component = (
-    <Select
-      value={level}
-      onChange={setLevel}
-      data={levels}
-      label="Level of Dependent Variable"
-      description="Choose a specific level (also called category) of the independent variable to be visualized."
-      inputContainer={inputContainer}
-      clearable
-    />
-  );
-  const facet = result.facets.find((facet) => {
-    return facet.level === level;
-  });
-
-  return { Component, level, facet };
-}
-
-interface PrepareCompareFacetsCoefficientsDataParams {
-  facets: MultinomialLogisticRegressionFacetResultModel[];
-  type: RegressionCoefficientsVisualizationTypeEnum;
-  alpha: number;
-}
-
-function prepareCompareFacetsCoefficientsData(
-  params: PrepareCompareFacetsCoefficientsDataParams,
-) {
-  const { facets, type, alpha } = params;
-  const facetData = facets.map((facet) =>
-    getRegressionCoefficientsVisualizationData({
-      coefficients: facet.coefficients,
-      modelType: RegressionModelType.MultinomialLogistic,
-    }),
-  );
-  const configEntry =
-    REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY[type];
-
-  // 2D. Make sure all 2D is properly transposed.
-  const invalidMask = facetData.map((row) =>
-    row.pValues.map((pValue) => pValue > alpha),
-  );
-  let grandZ = facets.map((facet) =>
-    facet.coefficients.map((coefficient) => {
-      switch (type) {
-        case RegressionCoefficientsVisualizationTypeEnum.Coefficient: {
-          return coefficient.value;
-        }
-        case RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel: {
-          return pValueToConfidenceLevel(coefficient.p_value);
-        }
-        case RegressionCoefficientsVisualizationTypeEnum.OddsRatio: {
-          return coefficient.odds_ratio;
-        }
-        default: {
-          throw new Error(`Unsupported visualization type: ${type}`);
-        }
-      }
-    }),
-  );
-  if (type !== RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel) {
-    grandZ = mask2D(grandZ, invalidMask, undefined) as number[][];
-  }
-
-  const customdata = facetData.map((facet) => facet.customdata);
-
-  // Axis
-  const facetLevels = facets.map((facet) => facet.level);
-  const variables = facets[0]!.coefficients.map(
-    (coefficient) => coefficient.name,
-  );
-  const hovertemplate = facetData[0]?.hovertemplate;
-
-  let zmin: number;
-  let zmax: number;
-  let colorscale = 'Viridis';
-
-  if (type === RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel) {
-    zmin = 0;
-    zmax = 100;
-  } else if (type === RegressionCoefficientsVisualizationTypeEnum.OddsRatio) {
-    zmin = 0;
-    zmax = getRawHeatmapZRange(grandZ as number[][])[1];
-    colorscale = 'Viridis';
-  } else {
-    [zmin, zmax] = getBalancedHeatmapZRange(grandZ as number[][]);
-    colorscale = 'RdBu';
-  }
-
-  return {
-    configEntry,
-    facetData,
-    invalidMask,
-    z: grandZ,
-    x: variables,
-    y: facetLevels,
-    customdata,
-    hovertemplate,
-    zmin,
-    zmax,
-    yaxisTitle: facetData[0]?.xaxisTitle,
-    colorscale,
-  };
-}
-
-interface UseCompareLogisticRegressionResultPlotProps {
-  data: MultinomialLogisticRegressionResultModel;
-  type: RegressionCoefficientsVisualizationTypeEnum;
-  config: MultinomialLogisticRegressionConfigType;
-  alpha: number;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function useCompareLogisticRegressionResultPlot(
-  props: UseCompareLogisticRegressionResultPlotProps,
-) {
-  const { data, type, config, alpha } = props;
-  return React.useMemo<PlotParams | null>(() => {
-    if (data.facets.length === 0) {
-      return null;
-    }
-    const {
-      x,
-      y,
-      z,
-      invalidMask,
-      zmin,
-      zmax,
-      customdata,
-      hovertemplate,
-      configEntry,
-      yaxisTitle,
-      colorscale,
-    } = prepareCompareFacetsCoefficientsData({
-      alpha,
-      type,
-      facets: data.facets,
-    });
-
-    return {
-      data: [
-        {
-          x,
-          y,
-          z: mask2D(z, invalidMask, undefined) as number[][],
-          texttemplate:
-            '%{z:.3f}' +
-            (type ===
-            RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel
-              ? '%'
-              : ''),
-          hoverongaps: false,
-          zmin,
-          zmax,
-          customdata: customdata as any,
-          showlegend: false,
-          hovertemplate,
-          type: 'heatmap',
-          colorbar: {
-            title: configEntry.plotLabel,
-          },
-          colorscale,
-        },
-      ] as PlotParams['data'],
-      layout: {
-        title: configEntry.label,
-        xaxis: {
-          title: `Levels of ${config.target}`,
-          type: 'category',
-        },
-        yaxis: {
-          title: yaxisTitle,
-          type: 'category',
-        },
-      },
-    } as PlotParams;
-  }, [alpha, config.target, data.facets, type]);
-}
-
-interface MultinomialLogisticRegressionInterceptsRendererProps {
-  type: RegressionCoefficientsVisualizationTypeEnum;
-  data: MultinomialLogisticRegressionResultModel;
-}
-
-// React.memo prevents this component from rerendering constantly, which causes relayouting issue
-const MultinomialLogisticRegressionInterceptsRenderer = React.memo(
-  function MultinomialLogisticRegressionInterceptsRenderer(
-    props: MultinomialLogisticRegressionInterceptsRendererProps,
-  ) {
-    const { data, type } = props;
-
-    const visdata = React.useMemo(() => {
-      const coefficients = data.facets.map((facet) => {
-        return {
-          ...facet.intercept,
-          name: facet.level,
-        };
-      });
-      const visdata = getRegressionCoefficientsVisualizationData({
-        coefficients,
-        modelType: RegressionModelType.MultinomialLogistic,
-      });
-      let hovertemplate: string | undefined = undefined;
-      const customdata: any[] = [];
-      for (const facet of data.facets) {
-        const {
-          customdata: interceptCustomdata,
-          hovertemplate: interceptHovertemplate,
-        } = getRegressionInterceptVisualizationData({
-          intercept: facet.intercept,
-          modelType: RegressionModelType.MultinomialLogistic,
-        });
-        customdata.push(interceptCustomdata[0]);
-        hovertemplate = interceptHovertemplate;
-      }
-      return [
-        {
-          name: 'Intercepts',
-          data: {
-            ...visdata,
-            customdata: customdata,
-            hovertemplate: hovertemplate!,
-          },
-        },
-      ];
-    }, [data.facets]);
-
-    const coefficientPlot = useCoefficientRegressionResultPlot({
-      alpha: 1,
-      data: visdata,
-      type:
-        type === RegressionCoefficientsVisualizationTypeEnum.Coefficient
-          ? type
-          : ('' as any),
-      layout: {
-        title: 'Intercepts',
-        yaxis: {
-          title: 'Intercepts',
-        },
-      } as PlotParams['layout'],
-    });
-    const oddsPlot = useOddsRatioRegressionResultPlot({
-      alpha: 1,
-      data: visdata,
-      type: RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
-      layout: {
-        title: 'Base Odds Ratio of Intercepts',
-      } as PlotParams['layout'],
-    });
-    const usedPlot = coefficientPlot ?? oddsPlot;
-
-    if (!usedPlot) return;
-    return (
-      <ToggleVisibility label="Intercepts" defaultVisible>
-        <div className="w-full">
-          <PlotRenderer plot={usedPlot} key={type} />
-        </div>
-      </ToggleVisibility>
-    );
-  },
-);
+  Object.values(RegressionParametersVisualizationTypeEnum);
 
 export function MultinomialLogisticRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
@@ -372,7 +86,37 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
   const confidenceLevelPlot =
     useConfidenceLevelRegressionResultPlot(commonProps);
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
-  const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
+
+  const visdataMarginalEffects = React.useMemo(() => {
+    return data.marginal_effects.map((facet) => {
+      return {
+        name: facet.level,
+        data: getRegressionProbabilityMarginalEffectsVisualizationData({
+          marginalEffects: facet.marginal_effects,
+        }),
+      };
+    });
+  }, [data.marginal_effects]);
+
+  const commonMarginalEffectsProps = {
+    alpha,
+    type,
+    data: visdataMarginalEffects,
+  };
+  const marginalEffectsPlot = useRegressionMarginalEffectsBarChartPlot(
+    commonMarginalEffectsProps,
+  );
+  const marginalEffectsConfidenceLevelsPlot =
+    useMarginalEffectsConfidenceLevelRegressionResultPlot(
+      commonMarginalEffectsProps,
+    );
+
+  const usedPlot =
+    coefficientPlot ??
+    confidenceLevelPlot ??
+    oddsRatioPlot ??
+    marginalEffectsPlot ??
+    marginalEffectsConfidenceLevelsPlot;
 
   const Header = (
     <>
@@ -401,7 +145,7 @@ export function MultinomialLogisticRegressionCoefficientsPlot(
     </>
   );
 
-  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+  if (type === RegressionParametersVisualizationTypeEnum.Table) {
     return (
       <Stack>
         {Header}

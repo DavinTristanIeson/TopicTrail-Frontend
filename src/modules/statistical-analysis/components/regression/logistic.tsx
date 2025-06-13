@@ -2,30 +2,18 @@ import {
   LogisticRegressionPredictionResultModel,
   LogisticRegressionResultModel,
 } from '@/api/statistical-analysis';
-import {
-  RegressionConvergenceResultRenderer,
-  RegressionInterceptResultRenderer,
-  useCoefficientRegressionResultPlot,
-  useConfidenceLevelRegressionResultPlot,
-  useOddsRatioRegressionResultPlot,
-  usePredictedResultsBaselineLine,
-  useRegressionCoefficientMultiSelect,
-} from './components';
+
 import { Stack } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
   RegressionModelType,
   RegressionPredictionAPIHookType,
-  RegressionCoefficientsVisualizationTypeEnum,
+  RegressionParametersVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
   RegressionVariableInfoVisualizationType,
 } from './types';
-import {
-  getRegressionCoefficientsVisualizationData,
-  useAdaptMutationToRegressionPredictionAPIResult,
-} from './data';
 import { ResultCard } from '@/components/visual/result-card';
 import { LogisticRegressionConfigType } from '../../configuration/logistic-regression';
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
@@ -37,10 +25,26 @@ import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
 import { formatNumber } from '@/common/utils/number';
 import { useVisualizationAlphaSlider } from '../plot-config';
-import { RegressionCoefficientsTable } from './coefficients-table';
+import {
+  getRegressionCoefficientsVisualizationData,
+  getRegressionProbabilityMarginalEffectsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
+import {
+  useRegressionCoefficientMultiSelect,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
+  useOddsRatioRegressionResultPlot,
+  RegressionConvergenceResultRenderer,
+  RegressionInterceptResultRenderer,
+  usePredictedResultsBaselineLine,
+  useRegressionMarginalEffectsBarChartPlot,
+  useMarginalEffectsConfidenceLevelRegressionResultPlot,
+} from './plots';
+import { RegressionCoefficientsTable } from './tables';
 
 const LOGISTIC_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = Object.values(
-  RegressionCoefficientsVisualizationTypeEnum,
+  RegressionParametersVisualizationTypeEnum,
 );
 
 export function LogisticRegressionCoefficientsPlot(
@@ -82,7 +86,37 @@ export function LogisticRegressionCoefficientsPlot(
   const confidenceLevelPlot =
     useConfidenceLevelRegressionResultPlot(commonProps);
   const oddsRatioPlot = useOddsRatioRegressionResultPlot(commonProps);
-  const usedPlot = coefficientPlot ?? confidenceLevelPlot ?? oddsRatioPlot;
+
+  const visdataMarginalEffects = React.useMemo(() => {
+    return [
+      {
+        name: 'Marginal Effects',
+        data: getRegressionProbabilityMarginalEffectsVisualizationData({
+          marginalEffects: coefficients,
+        }),
+      },
+    ];
+  }, [coefficients]);
+
+  const commonMarginalEffectsProps = {
+    alpha,
+    type,
+    data: visdataMarginalEffects,
+  };
+  const marginalEffectsPlot = useRegressionMarginalEffectsBarChartPlot(
+    commonMarginalEffectsProps,
+  );
+  const marginalEffectsConfidenceLevelsPlot =
+    useMarginalEffectsConfidenceLevelRegressionResultPlot(
+      commonMarginalEffectsProps,
+    );
+
+  const usedPlot =
+    coefficientPlot ??
+    confidenceLevelPlot ??
+    oddsRatioPlot ??
+    marginalEffectsPlot ??
+    marginalEffectsConfidenceLevelsPlot;
 
   const Header = (
     <>
@@ -93,13 +127,14 @@ export function LogisticRegressionCoefficientsPlot(
     </>
   );
 
-  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+  if (type === RegressionParametersVisualizationTypeEnum.Table) {
     return (
       <Stack>
         {Header}
         <RegressionCoefficientsTable
           coefficients={data.coefficients}
           intercept={data.intercept}
+          marginalEffects={data.marginal_effects}
           modelType={RegressionModelType.Logistic}
         />
       </Stack>
@@ -114,7 +149,7 @@ export function LogisticRegressionCoefficientsPlot(
         <RegressionInterceptResultRenderer
           intercept={data.intercept}
           reference={data.reference}
-          statisticName="T-Statistic"
+          modelType={RegressionModelType.Logistic}
         />
       )}
       {usedPlot && <PlotRenderer plot={usedPlot} height={720} />}

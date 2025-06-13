@@ -23,40 +23,57 @@ export type UltimateRegressionCoefficientModel =
   | LogisticRegressionCoefficientModel
   | OrdinalRegressionCoefficientModel;
 
-export enum RegressionCoefficientsVisualizationTypeEnum {
+export enum RegressionParametersVisualizationTypeEnum {
   Coefficient = 'coefficient',
   ConfidenceLevel = 'confidence',
   OddsRatio = 'odds-ratio',
   Table = 'table',
+  MarginalEffects = 'marginal-effects',
+  MarginalEffectsConfidenceLevel = 'marginal-effects-confidence-level',
 }
 
 export const REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY = {
-  [RegressionCoefficientsVisualizationTypeEnum.Coefficient]: {
+  [RegressionParametersVisualizationTypeEnum.Coefficient]: {
     label: 'Coefficient of Independent Variables',
-    value: RegressionCoefficientsVisualizationTypeEnum.Coefficient,
+    value: RegressionParametersVisualizationTypeEnum.Coefficient,
     plotLabel: 'Coefficient',
     description:
       'Show the actual coefficients of each independent variable. Interpretation may vary depending on your selected interpretation method.',
   },
-  [RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel]: {
+  [RegressionParametersVisualizationTypeEnum.ConfidenceLevel]: {
     label: 'Confidence Level of Independent Variable Effects',
     plotLabel: 'Confidence Level',
-    value: RegressionCoefficientsVisualizationTypeEnum.ConfidenceLevel,
+    value: RegressionParametersVisualizationTypeEnum.ConfidenceLevel,
     description:
       'Show the confidence level that an independent variable does have an effect on the dependent variable.',
   },
-  [RegressionCoefficientsVisualizationTypeEnum.OddsRatio]: {
+  [RegressionParametersVisualizationTypeEnum.OddsRatio]: {
     label: 'Odds Ratio of Independent Variables',
-    value: RegressionCoefficientsVisualizationTypeEnum.OddsRatio,
+    value: RegressionParametersVisualizationTypeEnum.OddsRatio,
     plotLabel: 'Odds Ratio',
     description:
       'Show how each independent variable contributes to the odds of seeing an outcome in the independent variable. Interpretation may vary depending on your selected interpretation method and the type of the independent variable itself.',
   },
-  [RegressionCoefficientsVisualizationTypeEnum.Table]: {
+  [RegressionParametersVisualizationTypeEnum.MarginalEffects]: {
+    label: 'Marginal Effects of Independent Variables',
+    value: RegressionParametersVisualizationTypeEnum.Coefficient,
+    plotLabel: 'Coefficient',
+    description:
+      'Show the marginal effects of each independent variable. For logit-based regressions, this effect represents the change in probability when a given independent variable is present.',
+  },
+  [RegressionParametersVisualizationTypeEnum.MarginalEffectsConfidenceLevel]: {
+    label: 'Confidence Level of Marginal Effects',
+    value: RegressionParametersVisualizationTypeEnum.Coefficient,
+    plotLabel: 'Coefficient',
+    description:
+      'Show the confidence level that the actual marginal effect is not zero. Note that it is possible for a coefficient to be considered significant, but its marginal effect is not significant; or vice versa.',
+  },
+  [RegressionParametersVisualizationTypeEnum.Table]: {
     label: 'Table',
-    value: RegressionCoefficientsVisualizationTypeEnum.Table,
+    value: RegressionParametersVisualizationTypeEnum.Table,
     plotLabel: 'Table',
-    description: 'Show each coefficient as a table.',
+    description:
+      'Show each coefficient (and if it exists, their marginal effects) as a table.',
   },
 };
 

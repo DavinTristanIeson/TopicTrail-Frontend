@@ -20,3 +20,12 @@ export function formatConfidenceInterval(interval: [number, number]) {
   }
   return `${formatNumber(interval[0])} - ${formatNumber(interval[1])}`;
 }
+
+export function formatProbabilityConfidenceInterval(
+  interval: [number, number],
+) {
+  if (interval[0] == null || interval[1] == null) {
+    return '-';
+  }
+  return `${formatNumber(interval[0] * 100)}% - ${formatNumber(interval[1] * 100)}%`;
+}

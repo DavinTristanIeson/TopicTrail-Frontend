@@ -1,27 +1,13 @@
 import {
-  OrdinalRegressionThresholdModel,
   OrdinalRegressionPredictionResultModel,
   OrdinalRegressionResultModel,
 } from '@/api/statistical-analysis';
-import {
-  PredictedProbabilityDistributionPlot,
-  RegressionConvergenceResultRenderer,
-  useCoefficientRegressionResultPlot,
-  useConfidenceLevelRegressionResultPlot,
-  useOddsRatioRegressionResultPlot,
-  usePredictedResultsBaselineLine,
-  useRegressionCoefficientMultiSelect,
-} from './components';
 import { Select, Stack, Switch } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import {
-  getRegressionCoefficientsVisualizationData,
-  useAdaptMutationToRegressionPredictionAPIResult,
-} from './data';
-import {
   RegressionModelType,
   RegressionPredictionAPIHookType,
-  RegressionCoefficientsVisualizationTypeEnum,
+  RegressionParametersVisualizationTypeEnum,
   StatisticalAnalysisPredictionResultRendererProps,
   useRegressionVisualizationTypeSelect,
   REGRESSION_COEFFICIENTS_VISUALIZATION_TYPE_DICTIONARY,
@@ -35,7 +21,6 @@ import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import { ResultCard } from '@/components/visual/result-card';
 import { zip } from 'lodash-es';
 import { formatConfidenceInterval, pValueToConfidenceLevel } from './utils';
-import { ToggleVisibility } from '@/components/visual/toggle-visibility';
 import { useDescriptionBasedRenderOption } from '@/components/visual/select';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
@@ -44,74 +29,25 @@ import { MultinomialPredictionPlot } from './multinomial-predictions';
 import { useVisualizationAlphaSlider } from '../plot-config';
 import { OrdinalRegressionConfigType } from '../../configuration/multinomial-regression';
 import {
-  RegressionCoefficientsTable,
-  RegressionThresholdsTable,
-} from './coefficients-table';
+  getRegressionCoefficientsVisualizationData,
+  useAdaptMutationToRegressionPredictionAPIResult,
+} from './data';
+import {
+  useRegressionCoefficientMultiSelect,
+  useCoefficientRegressionResultPlot,
+  useConfidenceLevelRegressionResultPlot,
+  useOddsRatioRegressionResultPlot,
+  RegressionConvergenceResultRenderer,
+  PredictedProbabilityDistributionPlot,
+  usePredictedResultsBaselineLine,
+  OrdinalRegressionThresholdsRenderer,
+} from './plots';
+import { RegressionCoefficientsTable } from './tables';
+import { RegressionThresholdsTable } from './tables/thresholds';
 
 const ORDINAL_REGRESSION_SUPPORTED_VISUALIZATION_TYPES = Object.values(
-  RegressionCoefficientsVisualizationTypeEnum,
+  RegressionParametersVisualizationTypeEnum,
 );
-interface OrdinalRegressionCutpointsRendererProps {
-  thresholds: OrdinalRegressionThresholdModel[];
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function OrdinalRegressionThresholdsRenderer(
-  props: OrdinalRegressionCutpointsRendererProps,
-) {
-  const { thresholds } = props;
-  const plot = React.useMemo<PlotParams>(() => {
-    const thresholdNames = thresholds.map(
-      (threshold) => `${threshold.from_level} - ${threshold.to_level}`,
-    );
-    const thresholdValues = thresholds.map((cutpoint) => cutpoint.value);
-    const { colors } = generateColorsFromSequence(thresholdNames);
-
-    return {
-      data: [
-        {
-          type: 'bar',
-          x: thresholdNames,
-          y: thresholdValues,
-          marker: {
-            color: colors,
-          },
-          customdata: zip(
-            thresholds.map((threshold) => threshold.from_level),
-            thresholds.map((threshold) => threshold.to_level),
-          ),
-          hovertemplate: [
-            '<b>Independent Variable</b>: %{x}',
-            '<b>Threshold</b>: %{y:.3f}',
-            `<b>From</b>: %{customdata[0]}`,
-            `<b>To</b>: %{customdata[1]}`,
-          ].join('<br>'),
-        },
-      ],
-      layout: {
-        height: 300,
-        title: 'Thresholds of the Dependent Variable Levels',
-        xaxis: {
-          title: 'Levels',
-          type: 'category',
-        },
-        yaxis: {
-          title: 'Thresholds',
-        },
-        barmode: 'stack',
-      },
-    } as PlotParams;
-  }, [thresholds]);
-
-  return (
-    <ToggleVisibility label="Thresholds" defaultVisible>
-      <div className="w-full">
-        <PlotRenderer plot={plot} />
-      </div>
-    </ToggleVisibility>
-  );
-}
-
 export function OrdinalRegressionCoefficientsPlot(
   props: BaseStatisticalAnalysisResultRendererProps<
     OrdinalRegressionResultModel,
@@ -176,7 +112,7 @@ export function OrdinalRegressionCoefficientsPlot(
     </>
   );
 
-  if (type === RegressionCoefficientsVisualizationTypeEnum.Table) {
+  if (type === RegressionParametersVisualizationTypeEnum.Table) {
     return (
       <Stack>
         {Header}
