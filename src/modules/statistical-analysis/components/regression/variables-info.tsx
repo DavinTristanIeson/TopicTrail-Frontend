@@ -47,6 +47,7 @@ export function useSampleSizeRegressionResultPlot(
         },
       ],
       layout: {
+        title: 'Sample Sizes of Each Independent Variables',
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
           type: 'category',
@@ -124,12 +125,13 @@ export function useVarianceInflationFactorRegressionResultPlot(
         },
       ],
       layout: {
+        title: 'Variance Inflation Factors of Each Independent Variables',
         xaxis: {
           title: 'Independent Variables (Subdatasets)',
           type: 'category',
         },
         yaxis: {
-          title: 'Variance Inflation Factory',
+          title: 'Variance Inflation Factor',
           minallowed: 0,
           range: [0, 6],
         },
@@ -171,8 +173,9 @@ function useDependentVariableLevelSampleSizePlot(
         },
       ],
       layout: {
+        title: 'Sample Size of Each Dependent Variable Level',
         xaxis: {
-          title: 'Independent Variables (Subdatasets)',
+          title: 'Dependent Variable Level',
           type: 'category',
         },
         yaxis: {

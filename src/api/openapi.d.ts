@@ -2313,8 +2313,6 @@ export interface components {
             constrain_by_groups: boolean;
             /** Target */
             target: components["schemas"]["NamedTableFilter"][] | string;
-            /** Penalty */
-            penalty: number | null;
         };
         /** OrdinalRegressionPredictionResult */
         OrdinalRegressionPredictionResult: {

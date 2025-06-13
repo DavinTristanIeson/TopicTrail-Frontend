@@ -31,7 +31,9 @@ export default function PlotRenderer(props: PlotRendererProps) {
         {
           dragmode: 'pan',
           xaxis: {},
-          yaxis: {},
+          yaxis: {
+            automargin: true,
+          },
           height,
           modebar: {
             orientation: 'v',

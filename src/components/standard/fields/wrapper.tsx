@@ -150,5 +150,10 @@ export function DateTimeField(props: DateTimeFieldProps) {
       return e;
     },
   });
-  return <DateTimePicker {...mergedProps} />;
+  return (
+    <DateTimePicker
+      {...mergedProps}
+      value={mergedProps.value ? new Date(mergedProps.value) : null}
+    />
+  );
 }

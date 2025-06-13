@@ -84,6 +84,7 @@ function useDocumentsPerTopicTableColumns(
                   paddingLeft: 4,
                   paddingRight: 4,
                 }}
+                size="sm"
               >
                 {original.preprocessed}
               </Highlight>

@@ -14,6 +14,7 @@ import { useTopicModelingResultOfColumn } from '../../components/context';
 
 export interface TopicVisualizationRendererProps {
   data: TopicModel[];
+  outlierCount?: number;
   column: TextualSchemaColumnModel;
 }
 interface TopicVisualizationDataProviderProps {
@@ -27,7 +28,13 @@ export function TopicVisualizationDataProvider(
   const column = useTopicAppState((store) => store.column!);
   const topicModelingResult = useTopicModelingResultOfColumn(column.name);
   if (!topicModelingResult?.result) return null;
-  return <Child data={topicModelingResult.result.topics} column={column} />;
+  return (
+    <Child
+      data={topicModelingResult.result.topics}
+      outlierCount={topicModelingResult.result.outlier_count}
+      column={column}
+    />
+  );
 }
 
 export interface SemanticTopicVisualizationRendererProps {

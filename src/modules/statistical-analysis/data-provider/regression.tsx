@@ -128,7 +128,6 @@ export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProvid
             ? (config.subdatasets as NamedTableFilterModel[])
             : config.target,
         groups: subdatasets,
-        penalty: config.penalty || null,
       },
       params,
     },
