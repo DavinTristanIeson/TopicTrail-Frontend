@@ -218,7 +218,12 @@ function MultinomialDependentVariableField(
       />
       {dependentVariableMode ===
       MultinomialRegressionDependentVariableMode.Column ? (
-        <DependentVariableSelectField supportedTypes={supportedTypes} />
+        <DependentVariableSelectField
+          supportedTypes={supportedTypes}
+          onChange={() => {
+            setValue('reference_dependent' as any, null);
+          }}
+        />
       ) : (
         <MultinomialSubdatasetsField />
       )}

@@ -62,14 +62,9 @@ function RegressionThresholdLogisticRegressionButton(
                 target: `${original.from_level}/${original.to_level}`,
                 constrain_by_groups: false,
                 filter: {
-                  type: 'and',
-                  operands: [
-                    {
-                      type: 'greater_than_or_equal_to',
-                      target: config.target,
-                      value: original.to_level,
-                    },
-                  ],
+                  type: 'greater_than_or_equal_to',
+                  target: config.target,
+                  value: original.to_level,
                 },
                 interpretation: config.interpretation,
               } as LogisticRegressionConfigType,

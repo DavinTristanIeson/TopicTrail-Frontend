@@ -95,6 +95,9 @@ const FILTER_COMBOBOXES = {
   },
 };
 const ALLOWED_FILTER_TYPES_FOR_ALL_COLUMNS = [
+  TableFilterTypeEnum.And,
+  TableFilterTypeEnum.Or,
+  TableFilterTypeEnum.Not,
   TableFilterTypeEnum.Empty,
   TableFilterTypeEnum.NotEmpty,
   TableFilterTypeEnum.EqualTo,

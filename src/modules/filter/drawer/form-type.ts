@@ -68,6 +68,6 @@ export type TableFilterFormType = Yup.InferType<
 };
 
 export const defaultTableFilterFormValues: TableFilterFormType = {
-  type: TableFilterTypeEnum.And,
-  operands: [],
+  type: null as any,
+  target: null,
 };

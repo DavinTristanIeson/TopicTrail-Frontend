@@ -91,14 +91,9 @@ function EnumerateTopicValuesActionsInner(
         name: label!,
         visible: true,
         filter: {
-          type: 'and',
-          operands: [
-            {
-              type: 'equal_to',
-              target: column.name,
-              value: topic!.id,
-            },
-          ],
+          type: 'equal_to',
+          target: column.name,
+          value: topic!.id,
         },
       } as ComparisonStateItemModel;
     });
@@ -136,14 +131,9 @@ function EnumerateTopicValuesActionsInner(
         return {
           name: name,
           filter: {
-            type: 'and',
-            operands: [
-              {
-                type: 'is_one_of',
-                target: column.name,
-                values: topics!.map((topic) => topic.id),
-              },
-            ],
+            type: 'is_one_of',
+            target: column.name,
+            values: topics!.map((topic) => topic.id),
           },
         } as ComparisonStateItemModel;
       });
@@ -152,14 +142,9 @@ function EnumerateTopicValuesActionsInner(
       subdatasets.push({
         name: subdatasetNames[subdatasetNames.length - 1]!,
         filter: {
-          type: 'and',
-          operands: [
-            {
-              type: 'is_one_of',
-              target: column.name,
-              values: ungroupedTopics.map((topic) => topic.id),
-            },
-          ],
+          type: 'is_one_of',
+          target: column.name,
+          values: ungroupedTopics.map((topic) => topic.id),
         },
       });
     }

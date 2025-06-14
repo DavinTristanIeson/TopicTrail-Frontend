@@ -28,13 +28,8 @@ export default function EnumerationSubdatasetsBooleanColumns() {
         name: column.name,
         visible: true,
         filter: {
-          type: 'and',
-          operands: [
-            {
-              type: 'is_true',
-              target: column.name,
-            },
-          ],
+          type: 'is_true',
+          target: column.name,
         },
       } as ComparisonStateItemModel;
     });

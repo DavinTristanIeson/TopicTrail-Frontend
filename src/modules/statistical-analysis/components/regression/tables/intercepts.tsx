@@ -17,9 +17,8 @@ import { MultinomialLogisticRegressionConfigType } from '@/modules/statistical-a
 import { useComparisonAppState } from '@/modules/comparison/app-state';
 import { StatisticalAnalysisPurpose } from '@/modules/statistical-analysis/types';
 import { LogisticRegressionConfigType } from '@/modules/statistical-analysis/configuration/logistic-regression';
-import { shrinkTableFilter } from '@/modules/filter/utils';
-import { TableFilterModel } from '@/api/table';
 import { formatConfidenceInterval } from '../utils';
+import { TableFilterTypeEnum } from '@/common/constants/enum';
 
 interface RegressionCategoryLogisticRegressionButtonProps {
   config: MultinomialLogisticRegressionConfigType;
@@ -48,12 +47,7 @@ function RegressionCategoryLogisticRegressionButton(
               config: {
                 target: subdataset?.name,
                 constrain_by_groups: false,
-                filter: {
-                  type: 'and',
-                  operands: shrinkTableFilter(
-                    subdataset.filter as TableFilterModel,
-                  ),
-                },
+                filter: subdataset.filter,
                 interpretation: config.interpretation,
               } as LogisticRegressionConfigType,
             });
@@ -64,14 +58,9 @@ function RegressionCategoryLogisticRegressionButton(
                 target: original.name,
                 constrain_by_groups: false,
                 filter: {
-                  type: 'and',
-                  operands: [
-                    {
-                      type: 'is_equal_to',
-                      target: config.target,
-                      value: original.name,
-                    },
-                  ],
+                  type: TableFilterTypeEnum.EqualTo,
+                  target: config.target,
+                  value: original.name,
                 },
                 interpretation: config.interpretation,
               } as LogisticRegressionConfigType,

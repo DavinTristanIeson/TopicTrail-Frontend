@@ -60,14 +60,9 @@ export default function EnumerateCategoricalValuesActions(
             name: label!,
             visible: true,
             filter: {
-              type: 'and',
-              operands: [
-                {
-                  type: 'equal_to',
-                  target: column.name,
-                  value: value as string | number,
-                },
-              ],
+              type: 'equal_to',
+              target: column.name,
+              value: value as string | number,
             },
           } as ComparisonStateItemModel;
         },

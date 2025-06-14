@@ -70,8 +70,7 @@ export function TableFilterScaffold(props: TableFilterScaffoldProps) {
             required
             // RERENDER DAMMIT
             key={`${type}-${target}`}
-            // don't allow deselect for top level filters.
-            allowDeselect={!!onDelete}
+            clearable
             onChange={(e) => {
               setValue(
                 name,
@@ -89,6 +88,7 @@ export function TableFilterScaffold(props: TableFilterScaffoldProps) {
             // RERENDER DAMMIT
             key={`${type}-${target}`}
             required
+            clearable
             onChange={(e) => {
               setValue(
                 name,
