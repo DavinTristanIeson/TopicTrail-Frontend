@@ -31,6 +31,7 @@ interface ComparisonAppStateContextType {
     input: StatisticalAnalysisStateItem | null;
     setInput: (state: StatisticalAnalysisStateItem | null) => void;
     history: StatisticalAnalysisStateItem[];
+    reset(): void;
   };
   reset(): void;
 }
@@ -63,11 +64,17 @@ function useComparisonStatisticalAnalysisAppState() {
     },
     [],
   );
+  const reset = React.useCallback(() => {
+    setHistory([]);
+    setStatisticalAnalysisInput(null);
+  }, [setStatisticalAnalysisInput]);
+
   return {
     input: statisticalAnalysisInput,
     setInput: setStatisticalAnalysisInput,
     history,
     setHistory,
+    reset,
   };
 }
 
@@ -91,14 +98,14 @@ export default function ComparisonAppStateProvider(
   const { setState: setDashboard } = dashboardHandlers;
 
   const statisticTest = useComparisonStatisticalAnalysisAppState();
-  const { setHistory } = statisticTest;
+  const { reset: resetStatisticalAnalysis } = statisticTest;
 
   const reset = React.useCallback(() => {
     setGroups([]);
     setDashboard([]);
     setGroupVisibility(new Map());
-    setHistory([]);
-  }, [setDashboard, setGroups, setHistory]);
+    resetStatisticalAnalysis();
+  }, [resetStatisticalAnalysis, setDashboard, setGroups]);
 
   return (
     <ComparisonAppStateContext.Provider

@@ -18,6 +18,7 @@ import {
   StatisticalAnalysisStateItem,
 } from './types';
 import { TestTube, Warning } from '@phosphor-icons/react';
+import ConfirmationDialog from '@/components/widgets/confirmation';
 
 interface StatisticalAnalysisHistoryProps {
   setPurpose: React.Dispatch<
@@ -92,6 +93,31 @@ function StatisticalAnalysisHistoryBody() {
   );
 }
 
+function StatisticalAnalysisClearHistoryButton() {
+  const reset = useComparisonAppState(
+    (store) => store.statisticalAnalysis.reset,
+  );
+  const remote = React.useRef<DisclosureTrigger | null>(null);
+  return (
+    <>
+      <ConfirmationDialog
+        message="Are you sure you want to clear the history?"
+        onConfirm={reset}
+        ref={remote}
+      />
+      <Button
+        color="red"
+        variant="outline"
+        onClick={() => {
+          remote.current?.open();
+        }}
+      >
+        Clear History
+      </Button>
+    </>
+  );
+}
+
 const StatisticalAnalysisHistory = React.forwardRef<
   DisclosureTrigger | null,
   StatisticalAnalysisHistoryProps
@@ -117,6 +143,9 @@ const StatisticalAnalysisHistory = React.forwardRef<
       opened={opened}
       size="xl"
     >
+      <Drawer.Header>
+        <StatisticalAnalysisClearHistoryButton />
+      </Drawer.Header>
       <StatisticalAnalysisHistoryContext.Provider value={{ onApply }}>
         {opened && <StatisticalAnalysisHistoryBody />}
       </StatisticalAnalysisHistoryContext.Provider>

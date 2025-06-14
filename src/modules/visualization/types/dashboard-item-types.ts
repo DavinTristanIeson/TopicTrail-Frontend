@@ -18,6 +18,7 @@ export enum DashboardItemTypeEnum {
   WordFrequencies = 'word-frequencies',
   TopicWords = 'topic-words',
   PairedValues = 'paired-values',
+  MeanStd = 'mean-std',
 
   SubdatasetWords = 'subdataset-words',
 }
@@ -42,6 +43,7 @@ export const SUPPORTED_DASHBOARD_ITEM_TYPES_PER_COLUMN: Record<
     DashboardItemTypeEnum.DescriptiveStatistics,
     DashboardItemTypeEnum.DataDistribution,
     DashboardItemTypeEnum.Aggregate,
+    DashboardItemTypeEnum.MeanStd,
     DashboardItemTypeEnum.GeographicalAggregate,
   ],
   [SchemaColumnTypeEnum.Geospatial]: [

@@ -83,6 +83,7 @@ import {
   VisualizationPairedValuesConfigType,
 } from '../configuration/paired-values';
 import VisualizationPairedValuesComponent from '../components/continuous/paired-values';
+import VisualizationContinuousDataDistributionMeanStdDotPlot from '../components/continuous/mean-std';
 
 export const DASHBOARD_ITEM_CONFIGURATION: Record<
   DashboardItemTypeEnum,
@@ -193,6 +194,16 @@ export const DASHBOARD_ITEM_CONFIGURATION: Record<
     VisualizationGeographicalPointsModel,
     VisualizationGeographicalAggregateValuesConfigType
   >,
+  [DashboardItemTypeEnum.MeanStd]: {
+    type: DashboardItemTypeEnum.MeanStd,
+    label: 'Mean and Standard Deviations',
+    description:
+      'Show the mean and standard deviations of each subdataset as a dot plot.',
+    component: VisualizationContinuousDataDistributionMeanStdDotPlot,
+    dataProvider: useVisualizationDescriptiveStatisticsDataProvider,
+    configForm: null,
+    configValidator: null,
+  } as VisualizationConfigEntry<DescriptiveStatisticsModel, object>,
   [DashboardItemTypeEnum.PairedValues]: {
     type: DashboardItemTypeEnum.PairedValues,
     label: 'Paired Data Distribution',
