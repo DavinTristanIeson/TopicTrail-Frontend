@@ -1,5 +1,3 @@
-import { ComparisonStateItemModel } from '@/api/comparison';
-import { useVisibleComparisonGroups } from '@/modules/comparison/app-state';
 import {
   Alert,
   Stack,
@@ -24,7 +22,7 @@ import { DefaultErrorViewBoundary } from '@/components/visual/error';
 interface RegressionModelPredictionInputCardProps {
   setInputState: React.Dispatch<React.SetStateAction<boolean[]>>;
   inputState: boolean[];
-  variable: ComparisonStateItemModel;
+  variable: string;
   index: number;
 }
 
@@ -51,7 +49,7 @@ function RegressionModelPredictionInputCard(
             <XCircle size={32} color="red" />
           )}
         </ActionIcon>
-        <Text>{variable.name}</Text>
+        <Text>{variable}</Text>
       </Group>
     </Card>
   );
@@ -61,21 +59,18 @@ interface RegressionModelPredictionSectionProps
   extends BaseStatisticalAnalysisResultRendererProps<any, any> {
   modelId: string;
   modelType: RegressionModelType;
-  reference: string | null;
+  coefficients: string[];
 }
 
 function RegressionModelPredictionSection(
   props: RegressionModelPredictionSectionProps,
 ) {
-  const { modelType, config, modelId, reference } = props;
+  const { modelType, config, modelId, coefficients } = props;
   const configEntry = REGRESSION_MODEL_CONFIG[modelType];
   const { usePredictionAPI, PredictionsRenderer } = configEntry;
 
-  const independentVariables = useVisibleComparisonGroups().filter(
-    (group) => group.name !== reference,
-  );
   const [inputState, setInputState] = React.useState(
-    Array(independentVariables.length).fill(false),
+    Array(coefficients.length).fill(false),
   );
 
   const {
@@ -95,10 +90,10 @@ function RegressionModelPredictionSection(
       <Text c="gray" size="sm">
         Choose the subdatasets to be used as input of the prediction task.
       </Text>
-      {independentVariables.map((variable, idx) => {
+      {coefficients.map((variable, idx) => {
         return (
           <RegressionModelPredictionInputCard
-            key={variable.name}
+            key={variable}
             setInputState={setInputState}
             index={idx}
             inputState={inputState}

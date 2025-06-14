@@ -43,24 +43,14 @@ function ComparisonDashboardUserDataManager() {
 export default function ComparisonDashboard() {
   const dashboard = useComparisonAppState((store) => store.dashboard.state);
   const handlers = useComparisonAppState((store) => store.dashboard.handlers);
-  const includeWholeDataset = useComparisonAppState(
-    (store) => store.groups.includeWholeDataset,
-  );
   const groups = useVisibleComparisonGroups();
 
   const dashboardSubdatasets =
     React.useMemo<DashboardSubdatasetsContextType>(() => {
-      const defaultSubdatasets = groups;
-      if (includeWholeDataset) {
-        defaultSubdatasets.unshift({
-          name: 'Dataset',
-          filter: null as any,
-        });
-      }
       return {
-        default: defaultSubdatasets,
+        default: groups,
       };
-    }, [groups, includeWholeDataset]);
+    }, [groups]);
   const { append } = handlers;
   return (
     <DashboardSubdatasetsContext.Provider value={dashboardSubdatasets}>

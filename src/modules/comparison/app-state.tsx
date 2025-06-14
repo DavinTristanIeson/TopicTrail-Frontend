@@ -26,6 +26,8 @@ interface ComparisonAppStateContextType {
     setVisibility: React.Dispatch<React.SetStateAction<Map<string, boolean>>>;
     includeWholeDataset: boolean;
     setIncludeWholeDataset: React.Dispatch<React.SetStateAction<boolean>>;
+    includeAntiSubdataset: boolean;
+    setIncludeAntiSubdataset: React.Dispatch<React.SetStateAction<boolean>>;
   };
   statisticalAnalysis: {
     input: StatisticalAnalysisStateItem | null;
@@ -83,10 +85,15 @@ export default function ComparisonAppStateProvider(
 ) {
   const [tab, setTab] = React.useState(ComparisonPageTab.GroupsManager);
   const [groups, groupHandlers] = useListState<ComparisonStateItemModel>();
+  // Visibility is decoupled from the comparison groups themselves.
+  // This makes state management a lot more complex; but it makes updating visibility more efficient if you have a lot of groups.
+  // ...not like you should have a lot of groups anyway.
   const [groupVisibility, setGroupVisibility] = React.useState<
     Map<string, boolean>
   >(new Map());
   const [includeWholeDataset, setIncludeWholeDataset] =
+    React.useState<boolean>(false);
+  const [includeAntiSubdataset, setIncludeAntiSubdataset] =
     React.useState<boolean>(false);
   const [dashboard, dashboardHandlers] = useListState<DashboardItemModel>([]);
 
@@ -119,6 +126,8 @@ export default function ComparisonAppStateProvider(
           handlers: groupHandlers,
           includeWholeDataset,
           setIncludeWholeDataset,
+          includeAntiSubdataset,
+          setIncludeAntiSubdataset,
         },
         dashboard: {
           state: dashboard,
@@ -196,8 +205,39 @@ export function useCheckComparisonSubdatasetsSpecificVisibility(name: string) {
 export function useVisibleComparisonGroups() {
   const { onlyVisible } = useCheckComparisonSubdatasetsVisibility();
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
-  return React.useMemo(
-    () => onlyVisible(comparisonGroups),
-    [comparisonGroups, onlyVisible],
+  const includeWholeDataset = useComparisonAppState(
+    (store) => store.groups.includeWholeDataset,
   );
+  const includeAntiSubdataset = useComparisonAppState(
+    (store) => store.groups.includeAntiSubdataset,
+  );
+  return React.useMemo((): ComparisonStateItemModel[] => {
+    const subdatasets = onlyVisible(comparisonGroups);
+    if (includeWholeDataset) {
+      subdatasets.push({
+        name: 'Dataset',
+        filter: null,
+        internal: true,
+      } as any);
+    }
+    if (includeAntiSubdataset) {
+      subdatasets.push({
+        name: 'Other',
+        filter: {
+          type: 'not',
+          operand: {
+            type: 'or',
+            operands: comparisonGroups.map((group) => group.filter),
+          },
+        },
+        internal: true,
+      } as any);
+    }
+    return subdatasets;
+  }, [
+    comparisonGroups,
+    includeAntiSubdataset,
+    includeWholeDataset,
+    onlyVisible,
+  ]);
 }

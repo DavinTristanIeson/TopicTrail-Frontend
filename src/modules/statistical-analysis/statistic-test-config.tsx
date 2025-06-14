@@ -139,8 +139,7 @@ function getRegressionParams(config: RegressionConfigType) {
 function getRegularizedRegressionParams(
   config:
     | LogisticRegressionConfigType
-    | MultinomialLogisticRegressionConfigType
-    | OrdinalRegressionConfigType,
+    | MultinomialLogisticRegressionConfigType,
 ) {
   if (config.penalty == null) {
     return undefined;
@@ -260,10 +259,7 @@ export const STATISTICAL_ANALYSIS_CONFIGURATION: Record<
       'Use each subdataset as the independent variable of an ordinal regression to figure out how the criteria of each subdataset contributes to the odds of a value being higher-ranked or lower-ranked.',
     label: 'Ordinal Regression',
     getParams(config) {
-      return {
-        ...getRegressionParams(config),
-        ...getRegularizedRegressionParams(config),
-      };
+      return getRegressionParams(config);
     },
     actionLabel: REGRESSION_ACTION_LABEL,
   } as StatisticalAnalysisConfigurationEntry<

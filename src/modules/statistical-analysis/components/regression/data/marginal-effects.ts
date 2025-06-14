@@ -24,7 +24,6 @@ export function getRegressionProbabilityMarginalEffectsVisualizationData(
         coefficient.confidence_interval[1] * 100,
       ] as [number, number],
   );
-  console.log(marginalEffects, probabilities, confidenceIntervals);
   const confidenceIntervalStrings = marginalEffects
     .map((coefficient) => coefficient.confidence_interval)
     .map(formatProbabilityConfidenceInterval);

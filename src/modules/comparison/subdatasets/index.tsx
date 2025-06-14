@@ -15,7 +15,15 @@ import {
   Stack,
   Tooltip,
 } from '@mantine/core';
-import { CaretDown, Eye, EyeSlash, Plus, Warning } from '@phosphor-icons/react';
+import {
+  CaretDown,
+  Eye,
+  EyeSlash,
+  Plus,
+  Subtract,
+  Unite,
+  Warning,
+} from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { ComparisonStateItemModel } from '@/api/comparison';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
@@ -27,6 +35,8 @@ import {
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { EnumerationSubdatasets } from './enumeration';
 import { useNegateComparisonSubdataset } from './utils';
+import MergeSubdatasetModal from './merge-subdataset';
+import { showNotification } from '@mantine/notifications';
 
 const SortableNamedTableFilterDndContext = dynamic(
   () => import('./sortable-filter-context'),
@@ -76,7 +86,7 @@ function ComparisonStateManagerShowHideAllButton() {
 
   return (
     <Button
-      variant="subtle"
+      variant="outline"
       color={isAll ? 'red' : 'green'}
       leftSection={isAll ? <EyeSlash /> : <Eye />}
       disabled={groups.length === 0}
@@ -92,55 +102,53 @@ function ComparisonStateManagerShowHideAllButton() {
 function ComparisonStateManagerMoreActionsButton() {
   const negate = useNegateComparisonSubdataset();
   const subdatasets = useComparisonAppState((store) => store.groups.state);
-  const addSubdataset = useComparisonAppState(
-    (store) => store.groups.handlers.append,
-  );
+  const onNegateAll = React.useCallback(() => {
+    for (const subdataset of subdatasets) {
+      negate(subdataset);
+    }
+    showNotification({
+      message:
+        'Successfully created negated versions of all of the existing subdatasets.',
+      color: 'green',
+    });
+  }, [negate, subdatasets]);
+  const mergeRemote = React.useRef<DisclosureTrigger | null>(null);
+
   return (
-    <Popover>
-      <Popover.Target>
-        <Button variant="outline" rightSection={<CaretDown />}>
-          More Actions
-        </Button>
-      </Popover.Target>
-      <Popover.Dropdown>
-        <Stack>
-          <Tooltip label="Create a subdataset that includes all rows that are not included in the existing subdatasets.">
-            <Button
-              variant="subtle"
-              onClick={() => {
-                for (const subdataset of subdatasets) {
-                  negate(subdataset);
-                }
-              }}
-            >
-              Negate All
-            </Button>
-          </Tooltip>
-          <Tooltip label="Create a subdataset that includes all the rows that are not included in the current subdatasets.">
-            <Button
-              variant="subtle"
-              onClick={() => {
-                addSubdataset({
-                  name: 'Null Subdataset',
-                  filter: {
-                    type: 'not',
-                    operand: {
-                      type: 'or',
-                      operands: subdatasets.map(
-                        (subdataset) => subdataset.filter,
-                      ),
-                    },
-                  },
-                });
-              }}
-            >
-              Create Negative Group
-            </Button>
-          </Tooltip>
-          <ComparisonStateManagerShowHideAllButton />
-        </Stack>
-      </Popover.Dropdown>
-    </Popover>
+    <>
+      <Popover zIndex={20}>
+        <Popover.Target>
+          <Button variant="outline" rightSection={<CaretDown />}>
+            More Actions
+          </Button>
+        </Popover.Target>
+        <Popover.Dropdown>
+          <Stack>
+            <Tooltip label="Negate all of the existing subdatasets. This may be helpful if you want to do pairwise comparisons between values that are part of a subdataset and values that are not, for all subdatasets.">
+              <Button
+                variant="subtle"
+                onClick={onNegateAll}
+                leftSection={<Subtract />}
+              >
+                Negate All Subdataset
+              </Button>
+            </Tooltip>
+            <Tooltip label="Merge two or more subdatasets into a new subdataset or into an existing subdataset.">
+              <Button
+                variant="subtle"
+                onClick={() => {
+                  mergeRemote.current?.open();
+                }}
+                leftSection={<Unite />}
+              >
+                Merge Subdatasets
+              </Button>
+            </Tooltip>
+          </Stack>
+        </Popover.Dropdown>
+      </Popover>
+      <MergeSubdatasetModal ref={mergeRemote} />
+    </>
   );
 }
 
@@ -151,13 +159,27 @@ function ComparisonStateManagerWholeDatasetCheckbox() {
   const setIncludeWholeDataset = useComparisonAppState(
     (store) => store.groups.setIncludeWholeDataset,
   );
+  const includeAntiSubdataset = useComparisonAppState(
+    (store) => store.groups.includeAntiSubdataset,
+  );
+  const setIncludeAntiSubdataset = useComparisonAppState(
+    (store) => store.groups.setIncludeAntiSubdataset,
+  );
   return (
-    <Checkbox
-      label="Include whole dataset?"
-      description="You can include the whole dataset in your comparison. This may be helpful when comparing the frequency distributions of the subdatasets to the original dataset to see if there's any noticeable deviation."
-      checked={includeWholeDataset}
-      onChange={(e) => setIncludeWholeDataset(e.target.checked)}
-    />
+    <>
+      <Checkbox
+        label="Include whole dataset?"
+        description="You can include the whole dataset in your comparison. This may be helpful when comparing the data of the subdatasets to the original dataset to see if there's any noticeable deviation."
+        checked={includeWholeDataset}
+        onChange={(e) => setIncludeWholeDataset(e.target.checked)}
+      />
+      <Checkbox
+        label="Include unused rows?"
+        description="You can include the rows that are not included in any subdatasets. This may be helpful when comparing the data that match certain conditions (e.g.: documents with a topic) to data that don't match the conditions (e.g.: outlier documents) to see if there's any noticeable deviation."
+        checked={includeAntiSubdataset}
+        onChange={(e) => setIncludeAntiSubdataset(e.target.checked)}
+      />
+    </>
   );
 }
 
@@ -196,6 +218,8 @@ export default function NamedFiltersManager() {
           >
             Add New Subdataset
           </Button>
+          <ComparisonStateManagerShowHideAllButton />
+          <ComparisonStateManagerMoreActionsButton />
           <div className="flex-1" />
           <ConfirmationDialog
             dangerous

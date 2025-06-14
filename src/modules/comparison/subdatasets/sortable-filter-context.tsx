@@ -16,13 +16,14 @@ import {
   Group,
   Modal,
   Popover,
+  Stack,
   Text,
   Tooltip,
 } from '@mantine/core';
 import {
   DotsThree,
-  Minus,
   PencilSimple,
+  Subtract,
   Table,
   TrashSimple,
 } from '@phosphor-icons/react';
@@ -80,8 +81,7 @@ function ComparisonStateItemExtraActionsButton(
           <Tooltip label="Create a new subdataset that is the negation of this subdataset; as in, the new subdataset contains all rows that are not included in this subdataset.">
             <Button
               variant="subtle"
-              leftSection={<Minus />}
-              color="red"
+              leftSection={<Subtract />}
               onClick={() => {
                 onNegate(item);
               }}
