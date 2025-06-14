@@ -41,6 +41,7 @@ export default function VisualizationContinuousDataDistributionMeanStdDotPlot(
             '<b>Mean +- Std. Dev</b>: %{y}',
           ].join('<br>'),
           marker: {
+            size: 24,
             color: colors,
           },
         },

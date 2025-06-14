@@ -18,6 +18,9 @@ interface UseAdaptDataProviderQueriesParams<TQuery, TData> {
 export function useAdaptDataProviderQueries<TQuery, TData>(
   props: UseAdaptDataProviderQueriesParams<TQuery, TData>,
 ): ReturnType<BaseVisualizationDataProviderHook<TData, any>> {
+  const problematicQuery = zip(props.groups, props.queries).find(
+    ([, query]) => !!query!.error,
+  );
   return {
     data: zip(props.groups, props.queries)
       .filter((item) => !!item[1]?.data)
@@ -28,7 +31,9 @@ export function useAdaptDataProviderQueries<TQuery, TData>(
         };
       }),
     loading: props.queries.some((query) => query.isFetching),
-    error: props.queries.find((query) => !!query.error)?.error?.message,
+    error: problematicQuery?.[1]?.error
+      ? `An error occurred for subdataset "${problematicQuery[0]!.name}". ${problematicQuery[1]!.error.message}`
+      : undefined,
     refetch: () => {
       for (const query of props.queries) {
         if (query.error || !query.data) {

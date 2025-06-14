@@ -98,7 +98,7 @@ function MergeSubdatasetBody(props: MergeSubdatasetBodyProps) {
         <Checkbox
           checked={shouldDeleteSubdatasets}
           onChange={(e) => setShouldDeleteSubdatasets(e.target.checked)}
-          label="Delete merged subdatasets?"
+          label="Delete subdatasets after merge?"
           description="Should the selected subdatasets be deleted after the merge?"
         />
         <Switch

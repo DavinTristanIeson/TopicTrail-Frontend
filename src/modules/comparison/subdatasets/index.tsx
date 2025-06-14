@@ -130,7 +130,7 @@ function ComparisonStateManagerMoreActionsButton() {
                 onClick={onNegateAll}
                 leftSection={<Subtract />}
               >
-                Negate All Subdataset
+                Negate All Subdatasets
               </Button>
             </Tooltip>
             <Tooltip label="Merge two or more subdatasets into a new subdataset or into an existing subdataset.">
