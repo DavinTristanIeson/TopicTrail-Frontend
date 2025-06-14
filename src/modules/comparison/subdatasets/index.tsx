@@ -7,8 +7,15 @@ import {
 import dynamic from 'next/dynamic';
 import React from 'react';
 import ComparisonFilterDrawer from './drawer';
-import { Button, Checkbox, Group, Stack } from '@mantine/core';
-import { Eye, EyeSlash, Plus, Warning } from '@phosphor-icons/react';
+import {
+  Button,
+  Checkbox,
+  Group,
+  Popover,
+  Stack,
+  Tooltip,
+} from '@mantine/core';
+import { CaretDown, Eye, EyeSlash, Plus, Warning } from '@phosphor-icons/react';
 import { defaultTableFilterFormValues } from '@/modules/filter/drawer/form-type';
 import { ComparisonStateItemModel } from '@/api/comparison';
 import { useComparisonStateDataManager } from '@/modules/userdata/data-manager';
@@ -19,6 +26,7 @@ import {
 } from '../app-state';
 import ConfirmationDialog from '@/components/widgets/confirmation';
 import { EnumerationSubdatasets } from './enumeration';
+import { useNegateComparisonSubdataset } from './utils';
 
 const SortableNamedTableFilterDndContext = dynamic(
   () => import('./sortable-filter-context'),
@@ -68,7 +76,7 @@ function ComparisonStateManagerShowHideAllButton() {
 
   return (
     <Button
-      variant="outline"
+      variant="subtle"
       color={isAll ? 'red' : 'green'}
       leftSection={isAll ? <EyeSlash /> : <Eye />}
       disabled={groups.length === 0}
@@ -78,6 +86,61 @@ function ComparisonStateManagerShowHideAllButton() {
     >
       {isAll ? 'Hide' : 'Show'} All
     </Button>
+  );
+}
+
+function ComparisonStateManagerMoreActionsButton() {
+  const negate = useNegateComparisonSubdataset();
+  const subdatasets = useComparisonAppState((store) => store.groups.state);
+  const addSubdataset = useComparisonAppState(
+    (store) => store.groups.handlers.append,
+  );
+  return (
+    <Popover>
+      <Popover.Target>
+        <Button variant="outline" rightSection={<CaretDown />}>
+          More Actions
+        </Button>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Stack>
+          <Tooltip label="Create a subdataset that includes all rows that are not included in the existing subdatasets.">
+            <Button
+              variant="subtle"
+              onClick={() => {
+                for (const subdataset of subdatasets) {
+                  negate(subdataset);
+                }
+              }}
+            >
+              Negate All
+            </Button>
+          </Tooltip>
+          <Tooltip label="Create a subdataset that includes all the rows that are not included in the current subdatasets.">
+            <Button
+              variant="subtle"
+              onClick={() => {
+                addSubdataset({
+                  name: 'Null Subdataset',
+                  filter: {
+                    type: 'not',
+                    operand: {
+                      type: 'or',
+                      operands: subdatasets.map(
+                        (subdataset) => subdataset.filter,
+                      ),
+                    },
+                  },
+                });
+              }}
+            >
+              Create Negative Group
+            </Button>
+          </Tooltip>
+          <ComparisonStateManagerShowHideAllButton />
+        </Stack>
+      </Popover.Dropdown>
+    </Popover>
   );
 }
 
@@ -133,7 +196,6 @@ export default function NamedFiltersManager() {
           >
             Add New Subdataset
           </Button>
-          <ComparisonStateManagerShowHideAllButton />
           <div className="flex-1" />
           <ConfirmationDialog
             dangerous

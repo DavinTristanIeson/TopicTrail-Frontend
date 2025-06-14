@@ -9,8 +9,23 @@ import {
   useControlledGridstack,
   useSortableGridStack,
 } from '@/hooks/gridstack';
-import { Button, Card, Group, Modal, Text } from '@mantine/core';
-import { PencilSimple, Table, TrashSimple } from '@phosphor-icons/react';
+import {
+  ActionIcon,
+  Button,
+  Card,
+  Group,
+  Modal,
+  Popover,
+  Text,
+  Tooltip,
+} from '@mantine/core';
+import {
+  DotsThree,
+  Minus,
+  PencilSimple,
+  Table,
+  TrashSimple,
+} from '@phosphor-icons/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import {
@@ -22,6 +37,63 @@ import {
   CancelButton,
   VisibilityActionIcon,
 } from '@/components/standard/button/variants';
+import { ProjectContext } from '@/modules/project/context';
+import { useNegateComparisonSubdataset } from './utils';
+
+interface ComparisonStateItemExtraActionsButtonProps {
+  item: ComparisonStateItemModel;
+}
+
+function ComparisonStateItemExtraActionsButton(
+  props: ComparisonStateItemExtraActionsButtonProps,
+) {
+  const { item } = props;
+  const setFilter = useTableAppState((store) => store.params.setFilter);
+  const onNegate = useNegateComparisonSubdataset();
+  const router = useRouter();
+  const project = React.useContext(ProjectContext);
+
+  return (
+    <Popover>
+      <Popover.Target>
+        <ActionIcon>
+          <DotsThree />
+        </ActionIcon>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Stack>
+          <Button
+            variant="subtle"
+            leftSection={<Table />}
+            onClick={() => {
+              setFilter(item.filter);
+              router.push({
+                pathname: NavigationRoutes.ProjectTable,
+                query: {
+                  id: project.id,
+                },
+              });
+            }}
+          >
+            View Table
+          </Button>
+          <Tooltip label="Create a new subdataset that is the negation of this subdataset; as in, the new subdataset contains all rows that are not included in this subdataset.">
+            <Button
+              variant="subtle"
+              leftSection={<Minus />}
+              color="red"
+              onClick={() => {
+                onNegate(item);
+              }}
+            >
+              Negate
+            </Button>
+          </Tooltip>
+        </Stack>
+      </Popover.Dropdown>
+    </Popover>
+  );
+}
 
 interface SortableComparisonStateDndContextProps {
   editRemote: React.MutableRefObject<ParametrizedDisclosureTrigger<ComparisonStateItemModel> | null>;
@@ -38,9 +110,6 @@ const ComparisonStateItemComponent = React.memo(
     props: ComparisonStateItemComponentProps,
   ) {
     const { item, editRemote, deleteRemote } = props;
-    const router = useRouter();
-    const projectId = router.query.id as string;
-    const setFilter = useTableAppState((store) => store.params.setFilter);
     const { visible, toggle } = useCheckComparisonSubdatasetsSpecificVisibility(
       item.name,
     );
@@ -54,21 +123,6 @@ const ComparisonStateItemComponent = React.memo(
           <VisibilityActionIcon visible={visible} setVisibility={toggle} />
           <Text>{item.name}</Text>
           <div className="flex-1"></div>
-          <Button
-            variant="outline"
-            leftSection={<Table />}
-            onClick={() => {
-              setFilter(item.filter);
-              router.push({
-                pathname: NavigationRoutes.ProjectTable,
-                query: {
-                  id: projectId,
-                },
-              });
-            }}
-          >
-            View Table
-          </Button>
           <Button
             leftSection={<PencilSimple />}
             onClick={() => {
@@ -87,6 +141,7 @@ const ComparisonStateItemComponent = React.memo(
           >
             Delete
           </Button>
+          <ComparisonStateItemExtraActionsButton item={item} />
         </Group>
       </Card>
     );
