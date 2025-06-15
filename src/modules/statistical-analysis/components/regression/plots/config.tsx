@@ -30,7 +30,7 @@ export function useRegressionAlphaConstrainedColors(
             if (coefficient!.p_value < alpha) {
               return baseColor!;
             }
-            return chroma(baseColor!).set('hsv.s', 0.05).hex();
+            return chroma(baseColor!).set('hsv.s', 0.03).hex();
           },
         );
         return {

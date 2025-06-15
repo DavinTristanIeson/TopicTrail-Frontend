@@ -130,7 +130,6 @@ function useMultinomialPredictionProbabilityDistributionHeatmapPlot(
           y,
           z,
           zmin: 0,
-          zmax: 100,
           type: 'heatmap',
           texttemplate: '%{z:.3f}%',
           colorscale: 'Viridis',

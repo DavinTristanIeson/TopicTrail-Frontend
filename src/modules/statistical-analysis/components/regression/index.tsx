@@ -101,6 +101,15 @@ export function RegressionResultRenderer<
         <DefaultErrorViewBoundary>
           <RegressionModelPredictionTab
             {...(props as any)}
+            coefficients={
+              ('facets' in props.data
+                ? props.data.facets[0]?.coefficients.map(
+                    (coefficient) => coefficient.name,
+                  )
+                : props.data.coefficients.map(
+                    (coefficient) => coefficient.name,
+                  )) ?? []
+            }
             modelId={props.data.model_id}
             modelType={modelType}
           />

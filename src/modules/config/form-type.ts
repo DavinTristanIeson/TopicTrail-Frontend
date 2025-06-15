@@ -174,8 +174,7 @@ export function DefaultProjectSchemaColumnValues(
       type === SchemaColumnTypeEnum.OrderedCategorical
         ? 0
         : null,
-    category_order:
-      type === SchemaColumnTypeEnum.OrderedCategorical ? [] : null,
+    category_order: null,
     role:
       type === SchemaColumnTypeEnum.Geospatial
         ? name.startsWith('long') || name.startsWith('lng')

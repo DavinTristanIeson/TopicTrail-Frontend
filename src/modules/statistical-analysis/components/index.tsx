@@ -22,15 +22,6 @@ export default function StatisticalAnalysisResultRenderer(
   }
   const { data, error, loading, refetch } = useDataProvider(input);
 
-  const mountedOn = React.useRef(new Date());
-  React.useEffect(() => {
-    if (Date.now() - mountedOn.current.getTime() <= 1000) {
-      // stupid hack to make sure that refetch is only called when input changes, and not because of react lifecycle.
-      return;
-    }
-    refetch();
-  }, [input, refetch]);
-
   return (
     <FetchWrapperComponent
       loadingComponent={<Skeleton w="100%" h={720} />}

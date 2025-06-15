@@ -58,7 +58,7 @@ function useMarginalEffectsTableColumns() {
         ),
         Cell({ row: { original } }) {
           if (original.value == null) return null;
-          return `${formatNumber(original.value * 100)}%`;
+          return `${formatNumber(original.value * 100, 2)}%`;
         },
       },
       {
@@ -112,7 +112,7 @@ function useMarginalEffectsTableColumns() {
         ),
         Cell({ row: { original } }) {
           if (original.p_value == null) return null;
-          return formatNumber(original.p_value);
+          return formatNumber(original.p_value, 4);
         },
       },
       {
@@ -130,7 +130,7 @@ function useMarginalEffectsTableColumns() {
         ),
         Cell({ row: { original } }) {
           if (original.p_value == null) return null;
-          return `${formatNumber(pValueToConfidenceLevel(original.p_value))}%`;
+          return `${formatNumber(pValueToConfidenceLevel(original.p_value), 2)}%`;
         },
       },
       {

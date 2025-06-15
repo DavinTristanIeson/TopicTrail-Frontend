@@ -3,7 +3,7 @@ import chroma from 'chroma-js';
 import { uniq } from 'lodash-es';
 
 const DISCRETE_PLOT_COLORS: string[] = chroma.brewer.Dark2;
-DISCRETE_PLOT_COLORS[7] = '#CC77CC';
+DISCRETE_PLOT_COLORS[7] = '#9922BB';
 
 export function getPlotColor(seed: number) {
   return DISCRETE_PLOT_COLORS[seed % DISCRETE_PLOT_COLORS.length];

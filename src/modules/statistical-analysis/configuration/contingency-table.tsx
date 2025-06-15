@@ -4,7 +4,6 @@ import React from 'react';
 
 import {
   ExcludeOverlappingRowsCheckbox,
-  StatisticTestMethodFormBody,
   StatisticTestOverlappingSubdatasetsWarning,
   StatisticTestProjectColumnSelectField,
 } from './utils';
@@ -26,7 +25,6 @@ export function ContingencyTableConfigForm() {
       <StatisticTestProjectColumnSelectField
         resets={['statistic_test_preference', 'effect_size_preference']}
       />
-      <StatisticTestMethodFormBody />
       <ExcludeOverlappingRowsCheckbox />
     </Stack>
   );

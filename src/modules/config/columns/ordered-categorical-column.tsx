@@ -152,10 +152,11 @@ export function ProjectConfigColumnOrderedCategoricalForm(
             label="Categories"
             className="flex-1"
             readOnly
+            w="100%"
             inputContainer={(children) => {
               return (
                 <Group align="start">
-                  {children}
+                  <div className="flex-1">{children}</div>
                   <Button onClick={() => drawerRemote.current?.open()}>
                     Reorder
                   </Button>

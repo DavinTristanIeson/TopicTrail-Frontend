@@ -124,7 +124,7 @@ export function useCoefficientsTableColumns(
         ),
         Cell({ row: { original } }) {
           if (original.p_value == null) return null;
-          return formatNumber(original.p_value);
+          return formatNumber(original.p_value, 4);
         },
       },
       {
@@ -142,7 +142,7 @@ export function useCoefficientsTableColumns(
         ),
         Cell({ row: { original } }) {
           if (original.p_value == null) return null;
-          return `${formatNumber(pValueToConfidenceLevel(original.p_value))}%`;
+          return `${formatNumber(pValueToConfidenceLevel(original.p_value), 2)}%`;
         },
       },
       {
@@ -185,7 +185,7 @@ export function useCoefficientsTableColumns(
           },
         },
         {
-          id: 'odds_ratio',
+          id: 'odds_ratio_confidence_interval',
           header: 'Odds Ratio Confidence Interval',
           minSize: 270,
           size: 270,
@@ -274,9 +274,8 @@ export function RegressionCoefficientsPerFacetTableRenderer(
               facet.intercept.odds_ratio_confidence_interval,
             std_err: facet.intercept.std_err,
             value: facet.intercept.value,
-            // This value is not really useful for interpretation
-            p_value: undefined as any,
-            statistic: undefined as any,
+            p_value: facet.intercept.p_value,
+            statistic: facet.intercept.statistic,
           } as UltimateRegressionCoefficientModel,
           ...facet.coefficients,
         ].map((coef) => {
