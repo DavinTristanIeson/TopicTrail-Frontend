@@ -1,7 +1,7 @@
 import { getTopicLabel } from '@/api/topic';
 import { generateColorsFromSequence } from '@/common/utils/colors';
 import PlotRenderer from '@/components/widgets/plotly';
-import { zip } from 'lodash-es';
+import { max, zip } from 'lodash-es';
 import React from 'react';
 import type { PlotParams } from 'react-plotly.js';
 import { extractTopicCustomdataForPlotly } from './utils';
@@ -20,6 +20,8 @@ export function useTopicVisualizationPlotlyData(
         topics: data.map((item) => item.topic),
       });
     const sizes = data.map((item) => item.frequency);
+    const maxSize = max(sizes)!;
+    const normalizedSizes = sizes.map((size) => (size / maxSize) * 196);
     const customdata = zip(...topicsCustomdata) as string[][];
     const { colors } = generateColorsFromSequence(
       data.map((item) => item.topic.id),
@@ -36,7 +38,7 @@ export function useTopicVisualizationPlotlyData(
         customdata,
         marker: {
           color: colors,
-          size: sizes as any,
+          size: normalizedSizes as any,
         },
       },
     ];
