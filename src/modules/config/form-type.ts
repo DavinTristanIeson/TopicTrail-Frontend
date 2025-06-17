@@ -29,11 +29,7 @@ export const ProjectConfigColumnFormSchema = Yup.object({
     then: (schema) => schema.required().min(0),
     otherwise: (schema) => schema.strip(),
   }),
-  category_order: yupNullableArray.of(Yup.string().required()).when('type', {
-    is: SchemaColumnTypeEnum.OrderedCategorical,
-    then: (schema) => schema.required(),
-    otherwise: (schema) => schema.strip(),
-  }),
+  category_order: yupNullableArray.of(Yup.string().required()),
 
   datetime_format: yupNullableString.when('type', {
     is: SchemaColumnTypeEnum.Temporal,

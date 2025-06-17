@@ -63,8 +63,8 @@ export function PredictedProbabilityDistributionPlot(
           y: probabilities.map((probability) => probability * 100),
           type: 'bar',
           hovertemplate: [
-            'Dependent Variable Level: %{x}',
-            'Probability: %{y:.3f}%',
+            '<b>Dependent Variable Level</b>: %{x}',
+            '<b>Probability</b>: %{y:.3f}%',
           ].join('<br>'),
         },
       ],
