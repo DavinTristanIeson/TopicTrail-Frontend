@@ -218,7 +218,6 @@ export function useCategoricalDataFrequencyModeState() {
     transformFrequencies,
     selectProps,
     needsPercentage: needsPercentage,
-    character: needsPercentage ? '%' : '',
   };
 }
 

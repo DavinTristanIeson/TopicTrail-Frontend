@@ -29,7 +29,6 @@ export default function VisualizationProportionsComponent(
     plotlyLayoutProps,
     selectProps: frequencyModeSelectProps,
     needsPercentage,
-    character,
   } = useCategoricalDataFrequencyModeState();
 
   const isAreaChart =
@@ -92,7 +91,7 @@ export default function VisualizationProportionsComponent(
             hovertemplate: [
               `<b>${item.column}</b>: %{y}`,
               `<b>Subdataset</b>: %{x}`,
-              `<b>${valueLabel}</b>: %{z}${character}`,
+              `<b>${valueLabel}</b>: %{z}${needsPercentage ? '%' : ''}`,
             ].join('<br>'),
             texttemplate: needsPercentage ? '%{z:.3f}%' : '%{z}',
             zmin: 0,
@@ -129,7 +128,7 @@ export default function VisualizationProportionsComponent(
             type: isAreaChart ? 'scattergl' : 'bar',
             hovertemplate: [
               `<b>${item.column}</b>: %{x}`,
-              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}${character}`,
+              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`,
             ].join('<br>'),
             marker: {
               color: colors[idx],
@@ -152,7 +151,6 @@ export default function VisualizationProportionsComponent(
       } as PlotParams;
     }
   }, [
-    character,
     data,
     isAreaChart,
     isBarChart,
