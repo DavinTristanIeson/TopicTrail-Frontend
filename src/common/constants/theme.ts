@@ -9,6 +9,7 @@ import {
   InputWrapper,
   LoadingOverlay,
   Modal,
+  MultiSelect,
   Paper,
   ScrollArea,
   Select,
@@ -123,6 +124,11 @@ const mantineTheme = createTheme({
       },
     }),
     Select: Select.extend({
+      defaultProps: {
+        searchable: true,
+      },
+    }),
+    MultiSelect: MultiSelect.extend({
       defaultProps: {
         searchable: true,
       },

@@ -36,7 +36,7 @@ function RegressionCategoryLogisticRegressionButton(
     (store) => store.statisticalAnalysis.setInput,
   );
   return (
-    <Tooltip label="Perform logistic regression with this threshold.">
+    <Tooltip label="Perform logistic regression with this intercept.">
       <ActionIcon
         variant="subtle"
         onClick={() => {
