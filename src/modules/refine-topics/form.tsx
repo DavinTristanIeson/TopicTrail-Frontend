@@ -33,6 +33,8 @@ export default function RefineTopicsForm() {
         return {
           id: topic.id,
           label: topic.label,
+          tags: topic.tags,
+          description: topic.description,
           original: topic,
         };
       }),

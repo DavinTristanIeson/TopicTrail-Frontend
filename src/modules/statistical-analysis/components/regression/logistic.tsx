@@ -198,7 +198,7 @@ export function DefaultLogisticRegressionPredictionResultRenderer(
           type: 'bar',
           hovertemplate: [
             '<b>Independent Variable</b>: %{x}',
-            '<b>Predicted Probability</b>: %{y}%',
+            '<b>Predicted Probability</b>: %{y}',
           ].join('<br>'),
           marker: {
             color: colors,
