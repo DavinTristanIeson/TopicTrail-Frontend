@@ -2058,7 +2058,8 @@ export interface components {
             interpretation: components["schemas"]["RegressionInterpretation"];
             /** Constrain By Groups */
             constrain_by_groups: boolean;
-            target: components["schemas"]["NamedTableFilter"];
+            /** Target */
+            target: components["schemas"]["NamedTableFilter"] | string;
             /** Penalty */
             penalty: number | null;
         };
@@ -2084,6 +2085,8 @@ export interface components {
             coefficients: components["schemas"]["LogisticRegressionCoefficient"][];
             /** Marginal Effects */
             marginal_effects: components["schemas"]["RegressionCoefficient"][];
+            /** Levels */
+            levels: components["schemas"]["RegressionDependentVariableLevelInfo"][];
             intercept: components["schemas"]["LogisticRegressionCoefficient"];
             fit_evaluation: components["schemas"]["LogisticRegressionFitEvaluation"];
             /** Predictions */

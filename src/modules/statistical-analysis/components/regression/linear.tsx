@@ -191,11 +191,13 @@ export function LinearRegressionVariablesInfoSection(
     LinearRegressionConfigType
   >,
 ) {
-  const { data } = props;
+  const { data, config } = props;
   return (
     <BaseRegressionVariablesInfoSection
       independentVariables={data.independent_variables}
       dependentVariableLevels={undefined}
+      interpretation={config.interpretation}
+      observationCount={data.sample_size}
       supportedTypes={without(
         Object.values(RegressionVariableInfoVisualizationType),
         RegressionVariableInfoVisualizationType.LevelSampleSize,

@@ -10,7 +10,10 @@ import React from 'react';
 import { TooltipHeader } from './common';
 import { ActionIcon, Stack, Title, Tooltip } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
-import { OrdinalRegressionConfigType } from '@/modules/statistical-analysis/configuration/multinomial-regression';
+import {
+  MultinomialRegressionDependentVariableMode,
+  OrdinalRegressionConfigType,
+} from '@/modules/statistical-analysis/configuration/multinomial-regression';
 import { useComparisonAppState } from '@/modules/comparison/app-state';
 import { StatisticalAnalysisPurpose } from '@/modules/statistical-analysis/types';
 import { LogisticRegressionConfigType } from '@/modules/statistical-analysis/configuration/logistic-regression';
@@ -53,6 +56,8 @@ function RegressionThresholdLogisticRegressionButton(
                   }),
                 },
                 interpretation: config.interpretation,
+                dependent_variable_mode:
+                  MultinomialRegressionDependentVariableMode.Subdatasets,
               } as LogisticRegressionConfigType,
             });
           } else {

@@ -324,11 +324,13 @@ export function OrdinalRegressionVariablesInfoSection(
     RegressionConfigType
   >,
 ) {
-  const { data } = props;
+  const { data, config } = props;
   return (
     <BaseRegressionVariablesInfoSection
       independentVariables={data.independent_variables}
       dependentVariableLevels={data.levels}
+      interpretation={config.interpretation}
+      observationCount={data.sample_size}
       supportedTypes={Object.values(RegressionVariableInfoVisualizationType)}
     />
   );

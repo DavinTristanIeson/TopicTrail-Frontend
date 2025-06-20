@@ -62,10 +62,12 @@ export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProvi
         constrain_by_groups: config.constrain_by_groups,
         interpretation: config.interpretation,
         reference: config.reference ?? null,
-        target: {
-          name: config.target,
-          filter: config.filter as TableFilterModel,
-        },
+        target: config.filter
+          ? {
+              name: config.target,
+              filter: config.filter as TableFilterModel,
+            }
+          : config.target,
         groups: subdatasets,
         penalty: config.penalty || null,
       },

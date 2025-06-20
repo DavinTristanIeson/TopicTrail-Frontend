@@ -10,21 +10,31 @@ import {
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { Skeleton, Stack, useMantineTheme } from '@mantine/core';
+import { Skeleton, Stack, Switch, useMantineTheme } from '@mantine/core';
 import PlotRenderer from '@/components/widgets/plotly';
 import { useStatisticTestSubdatasetCooccurrenceDataProvider } from '../../data-provider/contingency-table';
 import FetchWrapperComponent from '@/components/utility/fetch-wrapper';
 import SubdatasetCooccurrenceResultRenderer from '../others/subdataset-cooccurrence';
+import { sum } from 'lodash-es';
+import { useDisclosure } from '@mantine/hooks';
+import { RegressionInterpretation } from '@/common/constants/enum';
 
 interface UseRegressionStatisticPlotProps {
   independentVariables: RegressionIndependentVariableInfo[];
+  observationCount: number;
   type: RegressionVariableInfoVisualizationType;
+  interpretation: RegressionInterpretation;
 }
 
 export function useSampleSizeRegressionResultPlot(
   props: UseRegressionStatisticPlotProps,
 ) {
-  const { independentVariables, type } = props;
+  const { independentVariables, observationCount, interpretation, type } =
+    props;
+  const [includeBaseline, { toggle: toggleIncludeBaseline }] =
+    useDisclosure(false);
+
+  const { colors: mantineColors } = useMantineTheme();
   const plot = React.useMemo<PlotParams | null>(() => {
     if (type !== RegressionVariableInfoVisualizationType.SampleSize) {
       return null;
@@ -34,6 +44,11 @@ export function useSampleSizeRegressionResultPlot(
       (coefficient) => coefficient.sample_size,
     );
     const { colors } = generateColorsFromSequence(x);
+    if (includeBaseline) {
+      x.push('Baseline');
+      y.push(observationCount - sum(y)!);
+      colors.push(mantineColors.gray[3]);
+    }
     return {
       data: [
         {
@@ -43,7 +58,10 @@ export function useSampleSizeRegressionResultPlot(
           marker: {
             color: colors,
           },
-          hovertemplate: ['Variable: %{x}', 'Sample Size: %{y}'].join('<br>'),
+          hovertemplate: [
+            '<b>Variable</b>: %{x}',
+            '<b>Sample Size</b>: %{y}',
+          ].join('<br>'),
         },
       ],
       layout: {
@@ -58,8 +76,22 @@ export function useSampleSizeRegressionResultPlot(
         },
       },
     } as PlotParams;
-  }, [independentVariables, type]);
-  return plot;
+  }, [
+    includeBaseline,
+    independentVariables,
+    mantineColors.gray,
+    observationCount,
+    type,
+  ]);
+  const BaselineSwitch =
+    interpretation === RegressionInterpretation.RelativeToBaseline ? (
+      <Switch
+        label="Include baseline?"
+        description="Should the number of observations used as the baseline be shown?"
+        onClick={toggleIncludeBaseline}
+      />
+    ) : undefined;
+  return { plot, BaselineSwitch };
 }
 
 interface UseVarianceInflationFactorRegressionResultPlotProps {
@@ -116,8 +148,8 @@ export function useVarianceInflationFactorRegressionResultPlot(
           y,
           type: 'bar',
           hovertemplate: [
-            'Independent Variable: %{x}',
-            'Variance Inflation Factor: %{y}',
+            '<b>Independent Variable</b>: %{x}',
+            '<b>Variance Inflation Factor</b>: %{y}',
           ].join('<br>'),
           marker: {
             color: colors,
@@ -169,7 +201,10 @@ function useDependentVariableLevelSampleSizePlot(
           marker: {
             color: generateColorsFromSequence(x).colors,
           },
-          hovertemplate: ['Level: %{x}', 'Sample Size: %{y}'].join('<br>'),
+          hovertemplate: [
+            '<b>Level</b>: %{x}',
+            '<b>Sample Size</b>: %{y}',
+          ].join('<br>'),
         },
       ],
       layout: {
@@ -207,13 +242,20 @@ interface BaseRegressionVariablesInfoSection {
   independentVariables: RegressionIndependentVariableInfo[];
   dependentVariableLevels?: RegressionDependentVariableLevelInfo[];
   supportedTypes: RegressionVariableInfoVisualizationType[];
+  interpretation: RegressionInterpretation;
+  observationCount: number;
 }
 
 export default function BaseRegressionVariablesInfoSection(
   props: BaseRegressionVariablesInfoSection,
 ) {
-  const { independentVariables, dependentVariableLevels, supportedTypes } =
-    props;
+  const {
+    independentVariables,
+    dependentVariableLevels,
+    supportedTypes,
+    interpretation,
+    observationCount,
+  } = props;
   const { type, Component: SelectType } = useRegressionVisualizationTypeSelect({
     dictionary: REGRESSION_VARIABLE_INFO_VISUALIZATION_TYPE_DICTIONARY,
     supportedTypes,
@@ -222,10 +264,13 @@ export default function BaseRegressionVariablesInfoSection(
     independentVariables,
     type,
   });
-  const sampleSizePlot = useSampleSizeRegressionResultPlot({
-    independentVariables,
-    type,
-  });
+  const { plot: sampleSizePlot, BaselineSwitch } =
+    useSampleSizeRegressionResultPlot({
+      independentVariables,
+      type,
+      interpretation,
+      observationCount,
+    });
   const dependentVariablesPlot = useDependentVariableLevelSampleSizePlot({
     dependentVariableLevels: dependentVariableLevels,
     type,
@@ -248,6 +293,7 @@ export default function BaseRegressionVariablesInfoSection(
   return (
     <Stack>
       {SelectType}
+      {BaselineSwitch}
       {usedPlot && <PlotRenderer plot={usedPlot} />}
     </Stack>
   );

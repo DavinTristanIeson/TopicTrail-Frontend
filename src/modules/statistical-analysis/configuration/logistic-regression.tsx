@@ -13,10 +13,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Drawer, Group, Indicator, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import React from 'react';
-import { useForm, useFormContext, useFormState } from 'react-hook-form';
+import {
+  useForm,
+  useFormContext,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 import * as Yup from 'yup';
 import {
   CommonRegressionConfigForm,
+  DependentVariableSelectField,
   regressionInputSchema,
   RegressionPenaltyField,
 } from './regression-common';
@@ -25,14 +31,38 @@ import { PencilSimple } from '@phosphor-icons/react';
 import { get } from 'lodash-es';
 import { getAnyError } from '@/common/utils/error';
 import { yupNullableNumber } from '@/common/utils/form';
+import { SchemaColumnTypeEnum } from '@/common/constants/enum';
+import { useDescriptionBasedRenderOption } from '@/components/visual/select';
+import { MultinomialRegressionDependentVariableMode } from './multinomial-regression';
 
 interface LogisticRegressionFilterDrawerContents {
   onClose(): void;
 }
 
+const LOGISTIC_REGRESSION_MODE_DICTIONARY = {
+  [MultinomialRegressionDependentVariableMode.Column]: {
+    label: 'Use Column Values',
+    description:
+      'Use the boolean values of a column as the dependent variable.',
+    value: MultinomialRegressionDependentVariableMode.Column,
+  },
+  [MultinomialRegressionDependentVariableMode.Subdatasets]: {
+    label: 'Use Subdataset',
+    description:
+      'Use this if you need to specify a custom condition to be predicted using a filter.',
+    value: MultinomialRegressionDependentVariableMode.Subdatasets,
+  },
+};
+
 export const logisticRegressionInputSchema = regressionInputSchema.shape({
-  filter: tableFilterFormSchema.default(defaultTableFilterFormValues),
+  filter: tableFilterFormSchema
+    .default(defaultTableFilterFormValues)
+    .nullable(),
   penalty: yupNullableNumber,
+  dependent_variable_mode: Yup.string()
+    .oneOf(Object.values(MultinomialRegressionDependentVariableMode))
+    .required()
+    .default(MultinomialRegressionDependentVariableMode.Column),
 });
 export type LogisticRegressionConfigType = Yup.InferType<
   typeof logisticRegressionInputSchema
@@ -98,6 +128,7 @@ function LogisticRegressionFilterDrawerContents(
         name=""
         close={onClose}
         setFilter={loadFilter}
+        canReset
       />
     </FormWrapper>
   );
@@ -121,7 +152,7 @@ const LogisticRegressionNamedTableFilterDrawer = React.forwardRef<
   );
 });
 
-function LogisticRegressionDependentVariableField() {
+function LogisticRegressionSubdatasetField() {
   const remote = React.useRef<DisclosureTrigger | null>(null);
   const { errors } = useFormState({
     name: 'target',
@@ -162,6 +193,46 @@ function LogisticRegressionDependentVariableField() {
         )}
       />
       <LogisticRegressionNamedTableFilterDrawer ref={remote} />
+    </>
+  );
+}
+
+function LogisticRegressionDependentVariableField() {
+  const { control, setValue } = useFormContext<LogisticRegressionConfigType>();
+  const dependentVariableMode = useWatch({
+    name: 'dependent_variable_mode',
+    control,
+  });
+  const renderOption = useDescriptionBasedRenderOption(
+    LOGISTIC_REGRESSION_MODE_DICTIONARY,
+  );
+  return (
+    <>
+      <RHFField
+        type="select"
+        name="dependent_variable_mode"
+        data={Object.values(LOGISTIC_REGRESSION_MODE_DICTIONARY)}
+        label="Dependent Variable Mode"
+        description="The method used to get the levels of the dependent variable."
+        required
+        allowDeselect={false}
+        renderOption={renderOption}
+        onChange={() => {
+          setValue('target', '');
+          setValue('filter', null as any);
+        }}
+      />
+      {dependentVariableMode ===
+      MultinomialRegressionDependentVariableMode.Column ? (
+        <DependentVariableSelectField
+          supportedTypes={[SchemaColumnTypeEnum.Boolean]}
+          onChange={() => {
+            setValue('filter', null);
+          }}
+        />
+      ) : (
+        <LogisticRegressionSubdatasetField />
+      )}
     </>
   );
 }

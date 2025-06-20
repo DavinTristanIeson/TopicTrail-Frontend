@@ -19,7 +19,6 @@ import { LogisticRegressionConfigType } from '../../configuration/logistic-regre
 import { BaseStatisticalAnalysisResultRendererProps } from '../../types';
 import React from 'react';
 import { generateColorsFromSequence } from '@/common/utils/colors';
-import { without } from 'lodash-es';
 import { PlotParams } from 'react-plotly.js';
 import { client } from '@/common/api/client';
 import BaseRegressionVariablesInfoSection from './variables-info';
@@ -251,15 +250,14 @@ export function LogisticRegressionVariablesInfoSection(
     LogisticRegressionConfigType
   >,
 ) {
-  const { data } = props;
+  const { data, config } = props;
   return (
     <BaseRegressionVariablesInfoSection
       independentVariables={data.independent_variables}
-      dependentVariableLevels={undefined}
-      supportedTypes={without(
-        Object.values(RegressionVariableInfoVisualizationType),
-        RegressionVariableInfoVisualizationType.LevelSampleSize,
-      )}
+      dependentVariableLevels={data.levels}
+      interpretation={config.interpretation}
+      observationCount={data.sample_size}
+      supportedTypes={Object.values(RegressionVariableInfoVisualizationType)}
     />
   );
 }

@@ -13,7 +13,10 @@ import {
 } from './common';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { TestTube } from '@phosphor-icons/react';
-import { MultinomialLogisticRegressionConfigType } from '@/modules/statistical-analysis/configuration/multinomial-regression';
+import {
+  MultinomialLogisticRegressionConfigType,
+  MultinomialRegressionDependentVariableMode,
+} from '@/modules/statistical-analysis/configuration/multinomial-regression';
 import { useComparisonAppState } from '@/modules/comparison/app-state';
 import { StatisticalAnalysisPurpose } from '@/modules/statistical-analysis/types';
 import { LogisticRegressionConfigType } from '@/modules/statistical-analysis/configuration/logistic-regression';
@@ -49,6 +52,8 @@ function RegressionCategoryLogisticRegressionButton(
                 constrain_by_groups: false,
                 filter: subdataset.filter,
                 interpretation: config.interpretation,
+                dependent_variable_mode:
+                  MultinomialRegressionDependentVariableMode.Subdatasets,
               } as LogisticRegressionConfigType,
             });
           } else {
@@ -63,6 +68,8 @@ function RegressionCategoryLogisticRegressionButton(
                   value: original.name,
                 },
                 interpretation: config.interpretation,
+                dependent_variable_mode:
+                  MultinomialRegressionDependentVariableMode.Subdatasets,
               } as LogisticRegressionConfigType,
             });
           }
