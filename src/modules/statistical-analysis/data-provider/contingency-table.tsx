@@ -11,10 +11,12 @@ import { SubdatasetCooccurrenceModel } from '@/api/comparison';
 export const useContingencyTableStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   ContingencyTableModel,
   ContingencyTableConfig
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options: options,
     });
   const query = client.useQuery(
     'post',
@@ -35,10 +37,11 @@ export const useContingencyTableStatisticTestDataProvider: BaseStatisticalAnalys
 export const useStatisticTestSubdatasetCooccurrenceDataProvider: BaseStatisticalAnalysisDataProviderHook<
   SubdatasetCooccurrenceModel,
   object
-> = function () {
+> = function (options) {
   const { params, subdatasets, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options: options,
     });
   // Exclude default subdataset
   const groups = subdatasets.filter((group) => !!group.filter);

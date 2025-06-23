@@ -7,12 +7,13 @@ import { Skeleton } from '@mantine/core';
 interface StatisticalAnalysisResultRendererProps {
   purpose: StatisticalAnalysisPurpose;
   input: any;
+  committed: boolean;
 }
 
 export default function StatisticalAnalysisResultRenderer(
   props: StatisticalAnalysisResultRendererProps,
 ) {
-  const { purpose, input } = props;
+  const { purpose, input, committed } = props;
   const configItem = STATISTICAL_ANALYSIS_CONFIGURATION[purpose];
   const useDataProvider = configItem.dataProvider;
   const ResultRenderer = configItem.component;
@@ -20,7 +21,10 @@ export default function StatisticalAnalysisResultRenderer(
   if (!configItem) {
     throw new Error(`Statistical analysis for ${purpose} is not implemented.`);
   }
-  const { data, error, loading, refetch } = useDataProvider(input);
+  const { data, error, loading, refetch } = useDataProvider({
+    config: input,
+    committed,
+  });
 
   return (
     <FetchWrapperComponent
@@ -29,7 +33,7 @@ export default function StatisticalAnalysisResultRenderer(
       error={error}
       onRetry={refetch}
     >
-      <ResultRenderer config={input} data={data} />
+      {data && <ResultRenderer config={input} data={data} />}
     </FetchWrapperComponent>
   );
 }

@@ -17,13 +17,15 @@ import {
 export const useTwoSampleStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   StatisticTestResultModel,
   TwoSampleStatisticTestConfig
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: React.useMemo(
         () => [config.group1, config.group2],
         [config.group1, config.group2],
       ),
+      options: options,
     });
   const query = client.useQuery(
     'post',
@@ -47,10 +49,12 @@ export const useTwoSampleStatisticTestDataProvider: BaseStatisticalAnalysisDataP
 export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   PairwiseStatisticTestResultModel,
   TwoSampleStatisticTestConfig
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options: options,
     });
   const query = client.useQuery(
     'post',
@@ -73,10 +77,12 @@ export const usePairwiseTwoSampleStatisticTestDataProvider: BaseStatisticalAnaly
 export const useOmnibusStatisticTestDataProvider: BaseStatisticalAnalysisDataProviderHook<
   StatisticTestResultModel,
   OmnibusStatisticTestConfig
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options: options,
     });
   const query = client.useQuery(
     'post',

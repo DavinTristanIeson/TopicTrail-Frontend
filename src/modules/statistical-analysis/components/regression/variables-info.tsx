@@ -225,7 +225,10 @@ function useDependentVariableLevelSampleSizePlot(
 
 function RegressionIndependentVariablesCooccurrenceRenderer() {
   const { data, error, loading, refetch } =
-    useStatisticTestSubdatasetCooccurrenceDataProvider({});
+    useStatisticTestSubdatasetCooccurrenceDataProvider({
+      config: {},
+      committed: true,
+    });
   return (
     <FetchWrapperComponent
       error={error}

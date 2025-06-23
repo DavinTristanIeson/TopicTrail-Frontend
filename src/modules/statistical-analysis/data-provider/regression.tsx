@@ -22,10 +22,12 @@ import { TableFilterModel } from '@/api/table';
 export const useLinearRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   LinearRegressionResultModel,
   LinearRegressionConfigType
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options: options,
     });
   const query = client.useQuery(
     'post',
@@ -49,10 +51,12 @@ export const useLinearRegressionDataProvider: BaseStatisticalAnalysisDataProvide
 export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   LogisticRegressionResultModel,
   LogisticRegressionConfigType
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options,
     });
   const query = client.useQuery(
     'post',
@@ -81,10 +85,12 @@ export const useLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProvi
 export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   MultinomialLogisticRegressionResultModel,
   MultinomialLogisticRegressionConfigType
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options,
     });
   const query = client.useQuery(
     'post',
@@ -112,10 +118,12 @@ export const useMultinomialLogisticRegressionDataProvider: BaseStatisticalAnalys
 export const useOrdinalRegressionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   OrdinalRegressionResultModel,
   OrdinalRegressionConfigType
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options,
     });
   const query = client.useQuery(
     'post',

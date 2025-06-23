@@ -12,11 +12,12 @@ import { DefaultErrorViewBoundary } from '@/components/visual/error';
 interface StatisticalAnalysisSwitcherProps {
   purpose: StatisticalAnalysisPurpose;
   input: any | null | undefined;
+  committed: boolean;
   setInput: (config: any) => void;
 }
 
 function StatisticalAnalysisSwitcher(props: StatisticalAnalysisSwitcherProps) {
-  const { purpose, input, setInput } = props;
+  const { purpose, input, setInput, committed } = props;
   const statisticTestConfig = STATISTICAL_ANALYSIS_CONFIGURATION[purpose];
   const setStatisticTestHistoryEntry = useComparisonAppState(
     (store) => store.statisticalAnalysis.setInput,
@@ -51,6 +52,7 @@ function StatisticalAnalysisSwitcher(props: StatisticalAnalysisSwitcherProps) {
             <StatisticalAnalysisResultRenderer
               purpose={purpose}
               input={input}
+              committed={committed}
             />
           </DefaultErrorViewBoundary>
         </>
@@ -158,9 +160,14 @@ export default function StatisticalAnalysisPage() {
     React.useState<StatisticalAnalysisPurpose | null>(
       recentInput?.type ?? StatisticalAnalysisPurpose.LinearRegression,
     );
-  const [input, setInput] = React.useState<any | null>(
+  const [input, _setInput] = React.useState<any | null>(
     recentInput?.config ?? null,
   );
+  const [committed, setCommitted] = React.useState(false);
+  const setInput = React.useCallback((input: any | null) => {
+    _setInput(input);
+    setCommitted(input != null);
+  }, []);
 
   return (
     <Stack>
@@ -183,6 +190,7 @@ export default function StatisticalAnalysisPage() {
         <StatisticalAnalysisSwitcher
           purpose={purpose}
           input={input}
+          committed={committed}
           setInput={setInput}
           key={purpose}
         />

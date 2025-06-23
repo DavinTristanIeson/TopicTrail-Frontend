@@ -16,10 +16,12 @@ import {
 export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticalAnalysisDataProviderHook<
   BinaryStatisticTestOnDistributionResultModel,
   BinaryStatisticTestConfig
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options: options,
     });
   const query = client.useQuery(
     'post',
@@ -41,10 +43,12 @@ export const useBinaryStatisticTestOnDistributionDataProvider: BaseStatisticalAn
 export const useBinaryStatisticTestOnContingencyTableDataProvider: BaseStatisticalAnalysisDataProviderHook<
   BinaryStatisticTestOnContingencyTableMainResultModel,
   BinaryContingencyTableConfig
-> = function (config) {
+> = function (options) {
+  const { config } = options;
   const { subdatasets, params, queryConfig } =
     useStatisticalAnalysisDataProviderParams({
       groups: null,
+      options: options,
     });
   const query = client.useQuery(
     'post',

@@ -1,7 +1,12 @@
 import * as Yup from 'yup';
 
+export interface BaseStatisticalAnalysisDataProviderOptions<TConfig> {
+  config: TConfig;
+  committed: boolean;
+}
+
 export type BaseStatisticalAnalysisDataProviderHook<TData, TConfig> = (
-  config: TConfig,
+  options: BaseStatisticalAnalysisDataProviderOptions<TConfig>,
 ) => {
   data: TData | undefined;
   loading: boolean;

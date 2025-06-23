@@ -5,15 +5,20 @@ import {
 import { ProjectContext } from '@/modules/project/context';
 import { UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
+import { BaseStatisticalAnalysisDataProviderOptions } from '../types';
 
 interface UseStatisticalAnalysisDataProviderPropsProps {
   groups: string[] | null;
+  options: BaseStatisticalAnalysisDataProviderOptions<any>;
 }
 
 export function useStatisticalAnalysisDataProviderParams(
   props: UseStatisticalAnalysisDataProviderPropsProps,
 ) {
-  const { groups } = props;
+  const {
+    groups,
+    options: { committed },
+  } = props;
   const comparisonGroups = useComparisonAppState((store) => store.groups.state);
   const { onlyVisible } = useCheckComparisonSubdatasetsVisibility();
   const subdatasets = React.useMemo(() => {
@@ -40,7 +45,9 @@ export function useStatisticalAnalysisDataProviderParams(
         project_id: project.id,
       },
     },
-    queryConfig: {},
+    queryConfig: {
+      enabled: committed,
+    },
   };
 }
 
