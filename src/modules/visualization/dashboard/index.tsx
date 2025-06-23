@@ -79,10 +79,10 @@ export default function GridstackDashboard(props: GridstackDashboardProps) {
             return {
               ...item,
               rect: {
-                x: change.x,
-                height: change.h,
-                width: change.w,
-                y: change.y,
+                x: change.x ?? item?.rect?.x,
+                height: change.h ?? item.rect?.height ?? 3,
+                width: change.w ?? item.rect?.width ?? 3,
+                y: change.y ?? item?.rect?.y,
               },
             };
           });

@@ -86,7 +86,7 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
     // Wait until Gridstack.js resolves the sizes of the grid items first.
     setTimeout(() => {
       setShouldRender(true);
-    }, 500);
+    }, 1000);
   }, []);
 
   if (!dashboardConfig) {
@@ -105,7 +105,7 @@ export function DashboardItemRenderer(props: DashboardItemModel) {
       </Alert>
     );
   }
-  if (!shouldRender) return;
+  if (!shouldRender) return <Skeleton className="w-full h-full" />;
   return (
     <div className="relative">
       <DashboardItemRendererInternal
