@@ -60,6 +60,7 @@ interface TopicUpdateWordsRendererProps {
 function TopicUpdateWordsRenderer(props: TopicUpdateWordsRendererProps) {
   const { topic } = props;
   const [viewingTopic, { toggle: toggleViewingTopic }] = useDisclosure(false);
+  if (!topic?.words) return null;
   return (
     <>
       <Button
@@ -108,7 +109,13 @@ export default function TopicUpdateForm(props: TopicUpdateFormProps) {
 
   const initialValues = React.useMemo(() => {
     if (focusedTopic) {
-      return focusedTopic;
+      return {
+        id: focusedTopic.id,
+        original: focusedTopic.original,
+        label: focusedTopic.label ?? '',
+        tags: focusedTopic.tags ?? [],
+        description: focusedTopic.description ?? '',
+      };
     }
     return {
       id: topicId,
