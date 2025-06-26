@@ -74,7 +74,7 @@ export const MantineReactTableBehaviors = {
     enableColumnResizing: true,
     // Don't render the additional buttons
     enableColumnDragging: false,
-    enableColumnActions: false,
+    enableColumnActions: true,
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Virtualized(rows: any[], columns: any[]) {
@@ -116,10 +116,13 @@ export function useSchemaColumnToMantineReactTableAdapter(
               );
             },
             // ensure the header column doesn't wrap
-            size: Math.max(
-              column.name.length * 10,
-              DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
-            ),
+            // 16 is the padding for the column action icons
+            size:
+              16 +
+              Math.max(
+                column.name.length * 10,
+                DEFAULT_COLUMN_SIZES[column.type as SchemaColumnTypeEnum],
+              ),
             enableSorting: SORTABLE_COLUMNS.includes(
               column.type as SchemaColumnTypeEnum,
             ),
@@ -155,7 +158,7 @@ export function useTableStateToMantineReactTableAdapter(
       ? [
           {
             id: sort.name,
-            desc: sort.asc,
+            desc: !sort.asc,
           },
         ]
       : [];
