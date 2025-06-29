@@ -50,13 +50,15 @@ const tableFilterFormSchemaBuilder = {
     otherwise: (schema) => schema.strip(),
   });
 
-(tableFilterFormSchemaBuilder as any).operand = yupNullableArray
-  .of(Yup.lazy(() => Yup.object(tableFilterFormSchemaBuilder)))
-  .when('type', {
-    is: TableFilterTypeEnum.Not,
-    then: (schema) => schema.required(),
-    otherwise: (schema) => schema.strip(),
-  });
+(tableFilterFormSchemaBuilder as any).operand = Yup.mixed().when('type', {
+  is: TableFilterTypeEnum.Not,
+  then: () =>
+    Yup.lazy((value) => {
+      if (!value) return Yup.mixed().required();
+      return Yup.object(tableFilterFormSchemaBuilder).required();
+    }),
+  otherwise: (schema) => schema.strip(),
+});
 
 export const tableFilterFormSchema = Yup.object(tableFilterFormSchemaBuilder);
 

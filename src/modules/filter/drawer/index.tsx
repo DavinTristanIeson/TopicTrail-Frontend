@@ -167,6 +167,7 @@ function TableFilterDrawerForm(props: TableFilterDrawerFormProps) {
           setAppliedFilter(filter);
           onClose();
         }}
+        canReset
       />
     </FormWrapper>
   );

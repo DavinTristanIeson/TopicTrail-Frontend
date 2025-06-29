@@ -128,7 +128,7 @@ function LogisticRegressionFilterDrawerContents(
         name=""
         close={onClose}
         setFilter={loadFilter}
-        canReset
+        canReset={false}
       />
     </FormWrapper>
   );
