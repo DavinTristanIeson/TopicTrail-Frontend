@@ -32,6 +32,7 @@ export function useTopicVisualizationPlotlyData(
         x,
         y,
         mode: 'markers+text',
+        type: 'scattergl',
         hovertemplate: topicsHovertemplate,
         text: labels,
         textposition: 'bottom center',

@@ -113,7 +113,7 @@ export default function VisualizationProportionsComponent(
           },
         },
       } as PlotParams;
-    } else {
+    } else if (isAreaChart) {
       return {
         data: uniqueValues.map((uniqueValue, idx) => {
           const y = frequenciesPerSubdataset.map(
@@ -123,11 +123,13 @@ export default function VisualizationProportionsComponent(
             name: uniqueValue,
             x: subdatasetNames,
             y: y,
-            hoveron: isAreaChart ? 'points' : undefined,
-            stackgroup: isAreaChart ? 'all' : undefined,
-            type: isAreaChart ? 'scattergl' : 'bar',
+            hoveron: 'points',
+            stackgroup: 'all',
+            type: 'scatter',
+            fill: 'tonexty',
+            mode: 'markers',
             hovertemplate: [
-              `<b>${item.column}</b>: %{x}`,
+              `<b>Subdataset</b>: %{x}`,
               `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`,
             ].join('<br>'),
             marker: {
@@ -146,14 +148,46 @@ export default function VisualizationProportionsComponent(
             title:
               `Proportions of ${item.column}` + (needsPercentage ? ' (%)' : ''),
           },
-          barmode: isBarChart ? 'stack' : undefined,
+        },
+      } as PlotParams;
+    } else {
+      return {
+        data: uniqueValues.map((uniqueValue, idx) => {
+          const y = frequenciesPerSubdataset.map(
+            (frequencies) => frequencies[uniqueValue] ?? 0,
+          );
+          return {
+            name: uniqueValue,
+            x: subdatasetNames,
+            y: y,
+            type: 'bar',
+            hovertemplate: [
+              `<b>Subdataset</b>: %{x}`,
+              `<b>${needsPercentage ? 'Proportion' : 'Frequency'}</b>: %{y}`,
+            ].join('<br>'),
+            marker: {
+              color: colors[idx],
+            },
+          };
+        }),
+        layout: {
+          title,
+          xaxis: {
+            title: 'Subdatasets',
+            type: 'category',
+          },
+          yaxis: {
+            ...plotlyLayoutProps,
+            title:
+              `Proportions of ${item.column}` + (needsPercentage ? ' (%)' : ''),
+          },
+          barmode: 'stack',
         },
       } as PlotParams;
     }
   }, [
     data,
     isAreaChart,
-    isBarChart,
     isHeatmap,
     item.column,
     needsPercentage,
